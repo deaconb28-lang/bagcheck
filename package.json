@@ -8,9 +8,13 @@
     "start": "next start"
   },
   "dependencies": {
+    "@auth/mongodb-adapter": "^3.11.3",
+    "mongodb": "^6.21.0",
     "next": "^15.4.6",
+    "next-auth": "^5.0.0-beta.32",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "snaptrade-typescript-sdk": "^11.0.4"
   },
   "devDependencies": {
     "@types/node": "^22",

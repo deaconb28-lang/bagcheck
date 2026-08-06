@@ -1,2 +1,3 @@
-// SnapTrade client — read-only brokerage connection. Arrives with M1.
-export {};
+export { getSnapTrade, isSnapTradeConfigured } from "./client";
+export { ensureRegistered, getPortalUrl, syncUser } from "./sync";
+export type { SyncResult } from "./sync";

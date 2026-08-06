@@ -1,0 +1,269 @@
+import type { Metadata } from "next";
+import { auth, isAuthConfigured, signIn, signOut } from "@/auth";
+import { getCollections, isDbConfigured } from "@/lib/db";
+import type { ConnectionDoc, PositionSnapshotDoc, TransactionDoc } from "@/lib/db";
+import { isSnapTradeConfigured } from "@/lib/snaptrade";
+import { Button, Eyebrow } from "@/components/primitives";
+import { SyncButton } from "./SyncButton";
+import styles from "./debug.module.css";
+
+export const metadata: Metadata = { title: "Bagcheck — debug" };
+export const dynamic = "force-dynamic";
+
+const ENV_KEYS = [
+  "AUTH_SECRET",
+  "AUTH_GOOGLE_ID",
+  "AUTH_GOOGLE_SECRET",
+  "MONGODB_URI",
+  "SNAPTRADE_CLIENT_ID",
+  "SNAPTRADE_CONSUMER_KEY",
+] as const;
+
+interface LedgerData {
+  connection: ConnectionDoc | null;
+  transactions: TransactionDoc[];
+  transactionCount: number;
+  snapshots: PositionSnapshotDoc[];
+}
+
+async function loadLedger(userId: string): Promise<LedgerData> {
+  const { connections, transactions, positionSnapshots } = await getCollections();
+  const [connection, txns, transactionCount, snapshots] = await Promise.all([
+    connections.findOne({ userId }),
+    transactions.find({ userId }).sort({ date: -1 }).limit(50).toArray(),
+    transactions.countDocuments({ userId }),
+    positionSnapshots.find({ userId }).sort({ date: -1 }).limit(5).toArray(),
+  ]);
+  return { connection, transactions: txns, transactionCount, snapshots };
+}
+
+async function signInAction() {
+  "use server";
+  await signIn("google", { redirectTo: "/debug" });
+}
+
+async function signOutAction() {
+  "use server";
+  await signOut({ redirectTo: "/debug" });
+}
+
+export default async function DebugPage() {
+  let session = null;
+  let authError: string | null = null;
+  try {
+    session = await auth();
+  } catch (err) {
+    authError = err instanceof Error ? err.message : String(err);
+  }
+
+  let ledger: LedgerData | null = null;
+  let dbError: string | null = null;
+  if (session?.user?.id && isDbConfigured()) {
+    try {
+      ledger = await loadLedger(session.user.id);
+    } catch (err) {
+      dbError = err instanceof Error ? err.message : String(err);
+    }
+  }
+
+  return (
+    <main className={styles.page}>
+      <header className={styles.head}>
+        <Eyebrow>Bagcheck · debug · M1 ledger</Eyebrow>
+        <h1 className={`disp ${styles.title}`}>Raw parsed history</h1>
+      </header>
+
+      <section className={styles.section}>
+        <Eyebrow>Environment</Eyebrow>
+        <div className={styles.envList}>
+          {ENV_KEYS.map((key) => {
+            const present = Boolean(process.env[key]);
+            return (
+              <div key={key} className={styles.envRow}>
+                <span className={present ? "ok" : "missing"}>{present ? "SET" : "———"}</span>
+                <span>{key}</span>
+              </div>
+            );
+          })}
+        </div>
+        {!isAuthConfigured() ? (
+          <p className={styles.notice}>
+            Sign-in is inactive until AUTH_SECRET, AUTH_GOOGLE_ID, and AUTH_GOOGLE_SECRET are
+            set. SnapTrade connect additionally needs MONGODB_URI and the two SnapTrade keys.
+          </p>
+        ) : null}
+      </section>
+
+      <section className={styles.section}>
+        <Eyebrow>Session</Eyebrow>
+        {authError ? <div className={styles.error}>{authError}</div> : null}
+        {session?.user ? (
+          <>
+            <div className={styles.mono}>
+              id: {session.user.id}
+              <br />
+              email: {session.user.email ?? "—"}
+            </div>
+            <div className={styles.actions}>
+              {isSnapTradeConfigured() && isDbConfigured() ? (
+                <Button href="/api/snaptrade/connect">Connect a brokerage</Button>
+              ) : null}
+              <SyncButton />
+              <form action={signOutAction}>
+                <Button ghost type="submit">
+                  Sign out
+                </Button>
+              </form>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className={styles.notice}>No session.</p>
+            {isAuthConfigured() ? (
+              <form action={signInAction}>
+                <Button type="submit">Sign in with Google</Button>
+              </form>
+            ) : null}
+          </>
+        )}
+      </section>
+
+      {session?.user && !isDbConfigured() ? (
+        <section className={styles.section}>
+          <Eyebrow>Ledger</Eyebrow>
+          <p className={styles.notice}>MONGODB_URI is not set — nothing is stored yet.</p>
+        </section>
+      ) : null}
+
+      {dbError ? (
+        <section className={styles.section}>
+          <Eyebrow>Ledger</Eyebrow>
+          <div className={styles.error}>{dbError}</div>
+        </section>
+      ) : null}
+
+      {ledger ? (
+        <>
+          <section className={styles.section}>
+            <Eyebrow>Connection</Eyebrow>
+            {ledger.connection ? (
+              <div className={styles.mono}>
+                snaptradeUserId: {ledger.connection.snaptradeUserId}
+                <br />
+                accounts: {ledger.connection.accounts.length}
+                <br />
+                lastSyncAt: {ledger.connection.lastSyncAt?.toISOString() ?? "never"}
+              </div>
+            ) : (
+              <p className={styles.notice}>Not registered with SnapTrade yet.</p>
+            )}
+            {ledger.connection?.accounts.length ? (
+              <div className={styles.tableWrap}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>id</th>
+                      <th>name</th>
+                      <th>number</th>
+                      <th>institution</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ledger.connection.accounts.map((account) => (
+                      <tr key={account.id}>
+                        <td>{account.id}</td>
+                        <td>{account.name ?? "—"}</td>
+                        <td>{account.number ?? "—"}</td>
+                        <td>{account.institution ?? "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : null}
+          </section>
+
+          <section className={styles.section}>
+            <Eyebrow>
+              Position snapshots · latest {ledger.snapshots.length}
+            </Eyebrow>
+            {ledger.snapshots.length ? (
+              <div className={styles.tableWrap}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>date</th>
+                      <th>account</th>
+                      <th>positions</th>
+                      <th>taken at</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ledger.snapshots.map((snapshot) => (
+                      <tr key={`${snapshot.accountId}-${snapshot.date}`}>
+                        <td>{snapshot.date}</td>
+                        <td>{snapshot.accountId}</td>
+                        <td>{snapshot.positions.length}</td>
+                        <td>{snapshot.takenAt.toISOString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className={styles.notice}>No snapshots yet.</p>
+            )}
+          </section>
+
+          <section className={styles.section}>
+            <Eyebrow>
+              Transactions · showing {ledger.transactions.length} of {ledger.transactionCount}
+            </Eyebrow>
+            {ledger.transactions.length ? (
+              <>
+                <div className={styles.tableWrap}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>date</th>
+                        <th>type</th>
+                        <th>symbol</th>
+                        <th>units</th>
+                        <th>price</th>
+                        <th>amount</th>
+                        <th>ccy</th>
+                        <th>description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ledger.transactions.map((txn) => (
+                        <tr key={txn.externalId}>
+                          <td>{txn.date ?? "—"}</td>
+                          <td>{txn.type ?? "—"}</td>
+                          <td>{txn.symbol ?? "—"}</td>
+                          <td>{txn.units ?? "—"}</td>
+                          <td>{txn.price ?? "—"}</td>
+                          <td>{txn.amount ?? "—"}</td>
+                          <td>{txn.currency ?? "—"}</td>
+                          <td>{txn.description ?? "—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <details className={styles.details}>
+                  <summary>Raw JSON — latest transaction</summary>
+                  <pre className={styles.raw}>
+                    {JSON.stringify(ledger.transactions[0], null, 2)}
+                  </pre>
+                </details>
+              </>
+            ) : (
+              <p className={styles.notice}>No transactions yet — run a sync.</p>
+            )}
+          </section>
+        </>
+      ) : null}
+    </main>
+  );
+}
