@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
 import { isAuthConfigured, signIn } from "@/auth";
-import { Button, Chip, Eyebrow, Row } from "@/components/primitives";
+import { Button, Chip, Eyebrow } from "@/components/primitives";
 import { DayStrip } from "./DayStrip";
+import { ConvictionBars, DistributionWide, MiniScatter, WinRateBars } from "./Idioms";
 import { Mark } from "./Mark";
-import { ShareCardMock } from "./ShareCardMock";
+import { TodayMock } from "./TodayMock";
+import { WrappedFan } from "./WrappedFan";
 import styles from "./marketing.module.css";
 
 async function connectAction() {
@@ -22,11 +24,11 @@ export default function LandingPage() {
           <Mark />
           <div className={styles.navRight}>
             <nav className={styles.navLinks} aria-label="Site">
-              <a className={styles.navLink} href="#how">
-                How it works
-              </a>
               <a className={styles.navLink} href="#score">
                 The score
+              </a>
+              <a className={styles.navLink} href="#wrapped">
+                Wrapped
               </a>
               <a className={styles.navLink} href="#pricing">
                 Pricing
@@ -57,7 +59,8 @@ export default function LandingPage() {
           </p>
           <DayStrip />
           <p className={styles.stripCap}>
-            Sixty-three trading days — the gold ones stayed inside your rules.
+            Sixty-three trading days — gold stayed inside your rules, violet
+            ran above your exposure baseline.
           </p>
           <div className={styles.heroCtas}>
             <form action={connectAction}>
@@ -72,26 +75,21 @@ export default function LandingPage() {
 
       <section className={styles.section} id="score">
         <div className={`${styles.wrap} ${styles.scoreGrid}`}>
-          <div className={styles.scoreLeft}>
+          <TodayMock />
+          <div className={styles.scoreCopy}>
             <Eyebrow tone="gold">The score</Eyebrow>
-            <div className={`num ${styles.scoreBig}`}>82</div>
-            <p className={styles.sentence}>
-              One number for your discipline, decomposed into what moved it.
+            <h2 className={`disp ${styles.h2}`}>One number, decomposed</h2>
+            <p className={styles.sectionLede}>
+              Every morning opens on a sentence about your behaviour, the
+              Discipline score, and exactly what moved it — gold where you
+              held the line, violet where exposure ran, clay where it cost
+              you.
             </p>
             <p className={styles.baseline}>
               Scored against your own baseline, not a model investor — a
               disciplined day trader and a disciplined index buyer can both
               read 95.
             </p>
-          </div>
-          <div className={styles.scoreRight}>
-            <Eyebrow>What moved it</Eyebrow>
-            <div className={styles.rows}>
-              <Row name="Held through the drawdown" fill={84} value="+9" tone="gold" />
-              <Row name="Contributions on schedule" fill={62} value="+5" tone="gold" />
-              <Row name="Exposure above your baseline" fill={44} value="−2" tone="violet" />
-              <Row name="Sold two winners early" fill={26} value="−4" tone="clay" />
-            </div>
             <p className={styles.inputsLine}>
               Adherence · Consistency · Patience · Exposure
             </p>
@@ -108,20 +106,23 @@ export default function LandingPage() {
           <div className={styles.corrCols}>
             <div className={styles.corrCol}>
               <Eyebrow>Entries by hour</Eyebrow>
+              <MiniScatter />
               <p className={styles.corrLine}>
                 Your average return is negative on positions opened after 2pm.
               </p>
             </div>
             <div className={styles.corrCol}>
-              <Eyebrow>Session size</Eyebrow>
+              <Eyebrow>Trades per session</Eyebrow>
+              <WinRateBars />
               <p className={styles.corrLine}>
                 Win rate falls 20% on sessions with six or more trades.
               </p>
             </div>
             <div className={styles.corrCol}>
-              <Eyebrow>Exit speed</Eyebrow>
+              <Eyebrow>Conviction tags</Eyebrow>
+              <ConvictionBars />
               <p className={styles.corrLine}>
-                You sell winners three times faster than losers.
+                Conviction-5 positions returned 4× your conviction-2 positions.
               </p>
             </div>
           </div>
@@ -134,30 +135,63 @@ export default function LandingPage() {
       </section>
 
       <section className={styles.section}>
-        <div className={`${styles.wrap} ${styles.shareGrid}`}>
-          <ShareCardMock />
-          <div className={styles.shareCopy}>
-            <Eyebrow tone="gold">Wrapped and share cards</Eyebrow>
-            <h2 className={`disp ${styles.h2}`}>Proof you can post</h2>
-            <p className={styles.shareLine}>
-              Every card is rendered server-side and gets a URL — paste it
-              anywhere and it unfurls as artwork.
+        <div className={`${styles.wrap} ${styles.segGrid}`}>
+          <div className={styles.segCopy}>
+            <Eyebrow tone="violet">Segments</Eyebrow>
+            <h2 className={`disp ${styles.h2}`}>Every selloff becomes a leaderboard</h2>
+            <p className={styles.sectionLede}>
+              Market events turn into shared windows — everyone invested
+              through the same drawdown, scored on how they handled it,
+              like-for-like.
             </p>
-            <p className={styles.shareLine}>
-              Rarity is earned, never bought. Sitting through a 20% drawdown
-              mints a rare card whether you pay or not.
+            <Chip tone="violet">Top 12% — March selloff</Chip>
+            <p className={styles.baseline}>
+              A new segment mints itself with every notable market event. You
+              are the violet mark.
             </p>
-            <div className={styles.segmentRow}>
-              <Chip tone="violet">Top 12% — March selloff</Chip>
-              <p className={styles.segmentLine}>
-                Market events become segments — everyone invested through the
-                same window, ranked like-for-like.
+          </div>
+          <div className={styles.segViz}>
+            <DistributionWide />
+            <p className={styles.stripCap}>
+              Everyone invested through the same window — patience percentile.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.section} id="wrapped">
+        <div className={`${styles.wrap} ${styles.wrappedIn}`}>
+          <div className={styles.wrappedHead}>
+            <Eyebrow tone="gold">Wrapped</Eyebrow>
+            <h2 className={`disp ${styles.h2}`}>A year of receipts</h2>
+            <p className={styles.sectionLede}>
+              Because your history arrives in full, your first Wrapped renders
+              the day you connect — then every quarter and every year after.
+            </p>
+          </div>
+          <WrappedFan />
+          <div className={styles.wrappedPoints}>
+            <div className={styles.wrappedPoint}>
+              <Eyebrow>Unfurls anywhere</Eyebrow>
+              <p className={styles.tierBody}>
+                Every card is rendered server-side and gets a URL — paste it
+                and it becomes artwork.
               </p>
             </div>
-            <p className={styles.shareLine}>
-              All of it verified by read-only brokerage data, in a category
-              built on screenshots.
-            </p>
+            <div className={styles.wrappedPoint}>
+              <Eyebrow>Rarity is earned</Eyebrow>
+              <p className={styles.tierBody}>
+                Sitting through a 20% drawdown mints a rare card on any tier —
+                never bought.
+              </p>
+            </div>
+            <div className={styles.wrappedPoint}>
+              <Eyebrow>Verified</Eyebrow>
+              <p className={styles.tierBody}>
+                Read-only brokerage data behind every number, in a category
+                built on screenshots.
+              </p>
+            </div>
           </div>
         </div>
       </section>

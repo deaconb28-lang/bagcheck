@@ -1,6 +1,7 @@
 /*
- * Landing — warm, centered, editorial. Renders in light mode (bone canvas,
- * deep-gold accents); the token system supplies every colour.
+ * Landing — warm bone canvas carrying dark aubergine product specimens.
+ * Gold = discipline, violet = exposure/comparison, and the token system
+ * supplies every colour. One accent per surface.
  */
 
 .page {
@@ -64,7 +65,7 @@
 /* Hero — centered */
 
 .hero {
-  padding: 92px 0 108px;
+  padding: 92px 0 104px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -139,6 +140,10 @@
   background: var(--moss);
 }
 
+.stripBarSig {
+  background: var(--signal);
+}
+
 .stripCap {
   font-size: 13px;
   color: var(--ink2);
@@ -178,50 +183,28 @@
   border-bottom: 1px solid var(--line);
 }
 
-.scoreGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 72px;
-  align-items: end;
-}
-
-.scoreLeft {
+.readsIn {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 52px;
 }
 
-.scoreBig {
-  font-size: clamp(120px, 15vw, 200px);
-  line-height: 0.85;
-  color: var(--moss);
+.readsHead {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.sentence {
-  font-size: 19px;
-  line-height: 1.4;
-  max-width: 26ch;
+.h2 {
+  font-size: clamp(29px, 3.2vw, 36px);
+  max-width: 13ch;
+}
+
+.sectionLede {
+  font-size: 15.5px;
   color: var(--ink2);
-}
-
-.scoreRight {
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-  border-top: 1px solid var(--line2);
-  padding-top: 26px;
-}
-
-.rows {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  line-height: 1.6;
+  max-width: 56ch;
 }
 
 .baseline {
@@ -239,31 +222,134 @@
   color: var(--ink3);
 }
 
-.readsIn {
+/* The score — Today mock beside copy */
+
+.scoreGrid {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.scoreCopy {
   display: flex;
   flex-direction: column;
-  gap: 52px;
+  gap: 18px;
+  align-items: flex-start;
 }
 
-.readsHead {
+.todayCard {
+  background: var(--share-bg);
+  color: var(--share-ink);
+  border-radius: 22px;
+  border: 1px solid var(--share-line);
+  padding: 30px 28px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 20px;
+  width: 100%;
+  max-width: 420px;
 }
 
-.h2 {
-  font-size: clamp(29px, 3.2vw, 36px);
-  max-width: 11ch;
+.todayEyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--share-ink-dim);
 }
 
-.sectionLede {
-  font-size: 15.5px;
-  color: var(--ink2);
-  line-height: 1.6;
-  max-width: 56ch;
+.todaySentence {
+  font-size: 18px;
+  line-height: 1.4;
+  max-width: 24ch;
 }
 
-/* Correlations — hairline columns */
+.todayScoreline {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.todayScore {
+  font-size: 56px;
+  color: var(--share-gold);
+}
+
+.todayRows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.todayRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12.5px;
+}
+
+.todayRowName {
+  flex: 1;
+}
+
+.todayTrack {
+  width: 84px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--share-track);
+  overflow: hidden;
+}
+
+.todayFill {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+}
+
+.todayFill[data-tone="gold"] {
+  background: var(--share-gold);
+}
+
+.todayFill[data-tone="violet"] {
+  background: var(--share-violet);
+}
+
+.todayFill[data-tone="clay"] {
+  background: var(--share-loss);
+}
+
+.todayVal {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  color: var(--share-ink-dim);
+  width: 26px;
+  text-align: right;
+}
+
+.todayChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.todayChip {
+  font-family: var(--font-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 6px 11px;
+  border-radius: 8px;
+  background: var(--share-gold-tint);
+  color: var(--share-gold);
+}
+
+.todayChipV {
+  background: var(--share-violet-tint);
+  color: var(--share-violet);
+}
+
+/* The engine — idiom columns */
 
 .corrCols {
   display: grid;
@@ -273,7 +359,7 @@
 .corrCol {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   padding: 6px 32px 0 0;
 }
 
@@ -283,9 +369,9 @@
 }
 
 .corrLine {
-  font-size: 19px;
+  font-size: 17px;
   line-height: 1.45;
-  max-width: 24ch;
+  max-width: 26ch;
 }
 
 .corrCap {
@@ -295,20 +381,102 @@
   max-width: 62ch;
 }
 
-/* Wrapped / share card */
+.idiomSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
 
-.shareGrid {
+/* Segments — the violet surface */
+
+.segGrid {
   display: grid;
-  grid-template-columns: 420px 1fr;
+  grid-template-columns: 1fr 1.15fr;
   gap: 72px;
   align-items: center;
 }
+
+.segCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.segViz {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Wrapped — the fan */
+
+.wrappedIn {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.wrappedHead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+}
+
+.wrappedHead .h2 {
+  max-width: none;
+}
+
+.fanWrap {
+  position: relative;
+  height: 470px;
+  display: grid;
+  place-items: center;
+}
+
+.fanCard {
+  position: absolute;
+  width: 330px;
+}
+
+.fanLeft {
+  transform: translateX(-64%) rotate(-7deg) scale(0.95);
+}
+
+.fanRight {
+  transform: translateX(64%) rotate(7deg) scale(0.95);
+}
+
+.fanCenter {
+  transform: translateY(-10px);
+  z-index: 2;
+}
+
+.wrappedPoints {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  max-width: 980px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.wrappedPoint {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Share cards */
 
 .shareCard {
   background: var(--share-bg);
   color: var(--share-ink);
   border-radius: 20px;
-  padding: 34px 32px;
+  border: 1px solid var(--share-line);
+  padding: 30px 28px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -326,15 +494,29 @@
   font-family: var(--font-archivo), sans-serif;
   font-variation-settings: "wdth" 122;
   font-weight: 700;
-  font-size: clamp(72px, 7.5vw, 98px);
+  font-size: 84px;
   line-height: 0.88;
   letter-spacing: -0.05em;
   font-variant-numeric: tabular-nums;
   color: var(--share-gold);
 }
 
+.shareVText {
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 118;
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  color: var(--share-gold);
+}
+
+.shareAccentViolet {
+  color: var(--share-violet);
+}
+
 .shareT {
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.4;
   max-width: 22ch;
 }
@@ -358,34 +540,6 @@
 
 .shareCellSig {
   background: var(--share-violet);
-}
-
-.shareCopy {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  align-items: flex-start;
-}
-
-.shareLine {
-  font-size: 15.5px;
-  color: var(--ink2);
-  line-height: 1.55;
-  max-width: 46ch;
-}
-
-.segmentRow {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: flex-start;
-}
-
-.segmentLine {
-  font-size: 13.5px;
-  color: var(--ink2);
-  line-height: 1.55;
-  max-width: 46ch;
 }
 
 /* Pricing tiers — hairline columns */
@@ -424,7 +578,7 @@
   max-width: 36ch;
 }
 
-/* Steps — numbered hairline rows */
+/* Steps — numbered rows, order is real here */
 
 .stepRow {
   display: grid;
@@ -508,9 +662,17 @@
     padding: 56px 0 72px;
   }
 
+  .section {
+    padding: 72px 0;
+  }
+
   .scoreGrid {
     grid-template-columns: 1fr;
-    gap: 48px;
+    gap: 44px;
+  }
+
+  .todayCard {
+    margin: 0 auto;
   }
 
   .corrCols,
@@ -530,22 +692,33 @@
     padding-left: 0;
   }
 
-  .shareGrid {
+  .segGrid {
     grid-template-columns: 1fr;
     gap: 44px;
   }
 
-  .shareCard {
-    max-width: 440px;
+  .fanWrap {
+    height: auto;
+    padding: 8px 0;
   }
 
-  .stepRow {
+  .fanCard {
+    position: static;
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .fanLeft,
+  .fanRight {
+    display: none;
+  }
+
+  .fanCenter {
+    transform: none;
+  }
+
+  .wrappedPoints {
     grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .section {
-    padding: 72px 0;
   }
 
   .ctaSec {

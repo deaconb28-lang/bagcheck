@@ -26,15 +26,21 @@
   --glass-solid: rgba(21, 15, 31, 0.86);
 
   /*
-   * Share-card surface — aubergine-black in BOTH modes, per the brand rule.
-   * Declared once and never overridden by html[data-mode="light"].
+   * Dark specimen surfaces — share cards, Wrapped cards, and in-page app
+   * mocks. Aubergine-black in BOTH modes, per the brand rule; declared once
+   * and never overridden by html[data-mode="light"].
    */
   --share-bg: #0B0711;
+  --share-s1: #150F1F;
   --share-ink: #EDE8F5;
   --share-ink-dim: rgba(237, 232, 245, 0.48);
-  --share-gold: #F2CE6B;
-  --share-violet: #A78BFA;
+  --share-line: rgba(237, 232, 245, 0.09);
   --share-track: rgba(237, 232, 245, 0.13);
+  --share-gold: #F2CE6B;
+  --share-gold-tint: rgba(242, 206, 107, 0.12);
+  --share-violet: #A78BFA;
+  --share-violet-tint: rgba(167, 139, 250, 0.12);
+  --share-loss: #D9756A;
 }
 
 html[data-mode="light"] {
