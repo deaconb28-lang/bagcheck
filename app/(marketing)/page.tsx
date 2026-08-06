@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { isAuthConfigured, signIn } from "@/auth";
 import { Button, Chip, Eyebrow, Row, Stat } from "@/components/primitives";
-import { HeroRing } from "./HeroRing";
+import { DayStrip } from "./DayStrip";
 import { Mark } from "./Mark";
 import styles from "./marketing.module.css";
 
@@ -17,42 +17,85 @@ export default function LandingPage() {
   return (
     <div className={styles.page}>
       <header className={styles.nav}>
-        <Mark />
-        <form action={connectAction}>
-          <button type="submit" className={styles.navCta}>
-            Connect
-          </button>
-        </form>
+        <div className={styles.navIn}>
+          <Mark />
+          <div className={styles.navRight}>
+            <nav className={styles.navLinks} aria-label="Site">
+              <a className={styles.navLink} href="#how">
+                How it works
+              </a>
+              <a className={styles.navLink} href="#score">
+                The score
+              </a>
+              <form action={connectAction}>
+                <button type="submit" className={styles.navLink}>
+                  Sign in
+                </button>
+              </form>
+            </nav>
+            <form action={connectAction}>
+              <Button ghost type="submit">
+                Connect a brokerage
+              </Button>
+            </form>
+          </div>
+        </div>
       </header>
 
       <section className={styles.hero}>
-        <div className={styles.halo} aria-hidden="true" />
-        <div className={styles.heroRing}>
-          <HeroRing />
-        </div>
-        <div className={styles.heroAside}>
-          <Eyebrow tone="gold">Read-only · connects in ninety seconds</Eyebrow>
-          <h1 className={styles.tagline}>
-            Behaviour,
-            <br />
-            not returns
-          </h1>
-          <p className={styles.heroMono}>
-            Bagcheck reads your trading history and shows you the habits
-            underneath it. How long you hold. What you do when things fall.
-            Which decisions you repeat. It cannot place, cancel, or modify an
-            order.
+        <div className={styles.heroIn}>
+          <h1 className={styles.h1}>Find out how you actually invest.</h1>
+          <p className={styles.lede}>
+            Bagcheck reads your brokerage history and shows you the habits
+            underneath it — how long you hold, what you do when things fall,
+            which decisions you keep repeating. It cannot place, cancel, or
+            modify an order. First report, about ninety seconds.
           </p>
-          <form action={connectAction}>
-            <Button type="submit">Connect a brokerage</Button>
-          </form>
-        </div>
-        <div className={styles.giant} aria-hidden="true">
-          BAGCHECK
+          <DayStrip />
+          <p className={styles.stripCap}>
+            Sixty-three trading days — the gold ones stayed inside your rules.
+          </p>
+          <div className={styles.heroCtas}>
+            <form action={connectAction}>
+              <Button type="submit">Connect a brokerage</Button>
+            </form>
+            <p className={styles.ctaCaption}>
+              Read-only · via SnapTrade · never a price alert
+            </p>
+          </div>
         </div>
       </section>
 
-      <section className={styles.section}>
+      <section className={styles.section} id="how">
+        <div className={styles.wrap}>
+          <div className={styles.stepRow}>
+            <span className={styles.stepNum}>01</span>
+            <span className={`disp ${styles.stepTitle}`}>Connect</span>
+            <p className={styles.stepBody}>
+              One tap via SnapTrade. Read-only, permanently — no manual entry,
+              no screenshots, no CSV.
+            </p>
+          </div>
+          <div className={styles.stepRow}>
+            <span className={styles.stepNum}>02</span>
+            <span className={`disp ${styles.stepTitle}`}>It arrives full</span>
+            <p className={styles.stepBody}>
+              Years of history parsed in about ninety seconds. The first thing
+              you see is your own annual retrospective.
+            </p>
+          </div>
+          <div className={styles.stepRow}>
+            <span className={styles.stepNum}>03</span>
+            <span className={`disp ${styles.stepTitle}`}>The quiet one</span>
+            <p className={styles.stepBody}>
+              One calm notification a day, never a price alert. The most
+              valuable message: nothing to do today, you’re on plan.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.section} id="score">
         <div className={`${styles.wrap} ${styles.scoreGrid}`}>
           <div className={styles.scoreLeft}>
             <Eyebrow tone="gold">The score</Eyebrow>
@@ -114,44 +157,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className={styles.section}>
-        <div className={styles.wrap}>
-          <div className={styles.stepRow}>
-            <span className={styles.stepNum}>01</span>
-            <span className={`disp ${styles.stepTitle}`}>Connect</span>
-            <p className={styles.stepBody}>
-              One tap via SnapTrade. Read-only, permanently — no manual entry,
-              no screenshots, no CSV.
-            </p>
-          </div>
-          <div className={styles.stepRow}>
-            <span className={styles.stepNum}>02</span>
-            <span className={`disp ${styles.stepTitle}`}>It arrives full</span>
-            <p className={styles.stepBody}>
-              Years of history parsed in about ninety seconds. The first thing
-              you see is your own annual retrospective.
-            </p>
-          </div>
-          <div className={styles.stepRow}>
-            <span className={styles.stepNum}>03</span>
-            <span className={`disp ${styles.stepTitle}`}>The quiet one</span>
-            <p className={styles.stepBody}>
-              One calm notification a day, never a price alert. The most
-              valuable message: nothing to do today, you’re on plan.
-            </p>
-          </div>
-        </div>
-      </section>
-
       <section className={styles.ctaSec}>
         <div className={`${styles.wrap} ${styles.ctaIn}`}>
           <h2 className={`disp ${styles.ctaH}`}>Ninety seconds to your first report</h2>
           <form action={connectAction}>
             <Button type="submit">Connect a brokerage</Button>
           </form>
-          <p className={styles.ctaTrust}>
-            Read-only, permanently · never a price alert
-          </p>
+          <p className={styles.ctaTrust}>Read-only, permanently · never a price alert</p>
         </div>
       </section>
 
