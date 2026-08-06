@@ -1,0 +1,22 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--moss-tint);
+  color: var(--moss);
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 7px 13px;
+  border-radius: 8px;
+}
+
+.violet {
+  background: var(--signal-tint);
+  color: var(--signal);
+}
+
+.dot {
+  font-style: normal;
+}

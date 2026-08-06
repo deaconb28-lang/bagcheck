@@ -1,0 +1,46 @@
+.page {
+  min-height: 100svh;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 96px 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.mark {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.wm {
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 108;
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.03em;
+}
+
+.h1 {
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 114;
+  font-weight: 700;
+  font-size: clamp(38px, 5.2vw, 60px);
+  line-height: 0.98;
+  letter-spacing: -0.048em;
+  max-width: 10ch;
+}
+
+.lede {
+  color: var(--ink2);
+  max-width: 44ch;
+  font-size: 16.5px;
+  line-height: 1.58;
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

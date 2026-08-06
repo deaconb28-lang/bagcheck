@@ -1,0 +1,47 @@
+/*
+ * Bagcheck colour tokens — the single source of colour.
+ * A palette hex anywhere else in the repo's source is a bug.
+ *
+ * Token names are legacy: --moss is gold, --signal is violet. Keep them.
+ * Dark is :root; light is html[data-mode="light"].
+ */
+
+:root {
+  --bg: #0B0711;
+  --s1: #150F1F;
+  --ink: #EDE8F5;
+  --ink2: rgba(237, 232, 245, 0.6);
+  --ink3: rgba(237, 232, 245, 0.34);
+  --line: rgba(237, 232, 245, 0.09);
+  --line2: rgba(237, 232, 245, 0.17);
+  --track: rgba(237, 232, 245, 0.1);
+  --moss: #F2CE6B;
+  --moss-dim: rgba(242, 206, 107, 0.22);
+  --moss-tint: rgba(242, 206, 107, 0.12);
+  --on-moss: #241703;
+  --signal: #A78BFA;
+  --signal-tint: rgba(167, 139, 250, 0.12);
+  --loss: #D9756A;
+  --glass: rgba(21, 15, 31, 0.82);
+  --glass-solid: rgba(21, 15, 31, 0.86);
+}
+
+html[data-mode="light"] {
+  --bg: #F4F1EA;
+  --s1: #FBFAF6;
+  --ink: #170F2B;
+  --ink2: rgba(23, 15, 43, 0.62);
+  --ink3: rgba(23, 15, 43, 0.38);
+  --line: rgba(23, 15, 43, 0.1);
+  --line2: rgba(23, 15, 43, 0.18);
+  --track: rgba(23, 15, 43, 0.12);
+  --moss: #9A7318;
+  --moss-dim: rgba(154, 115, 24, 0.22);
+  --moss-tint: rgba(154, 115, 24, 0.12);
+  --on-moss: #FBFAF6;
+  --signal: #6D4AD1;
+  --signal-tint: rgba(109, 74, 209, 0.12);
+  --loss: #B04A3C;
+  --glass: rgba(251, 250, 246, 0.86);
+  --glass-solid: rgba(251, 250, 246, 0.92);
+}

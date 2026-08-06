@@ -1,0 +1,104 @@
+/*
+ * Specimen sheet — mirrors the brand kit's 1080px wrap so cards render
+ * at realistic width. App screens use the 640px reading column instead.
+ */
+
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 56px 34px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.headText {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.title {
+  font-size: 29px;
+  max-width: 11ch;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.stack12 {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stack20 {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stack22 {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.sentence {
+  font-size: 19px;
+  line-height: 1.4;
+  max-width: 26ch;
+}
+
+.scoreline {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.score {
+  font-size: 60px;
+  color: var(--moss);
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 880px) {
+  .grid2,
+  .grid3 {
+    grid-template-columns: 1fr;
+  }
+}

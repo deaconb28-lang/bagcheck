@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bagcheck — brand kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400;62..125,500;62..125,600;62..125,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0711; --s1:#150F1F;
+  --ink:#EDE8F5; --ink2:rgba(237,232,245,.60); --ink3:rgba(237,232,245,.34);
+  --line:rgba(237,232,245,.09); --line2:rgba(237,232,245,.17); --track:rgba(237,232,245,.10);
+  --moss:#F2CE6B; --moss-dim:rgba(242,206,107,.22); --moss-tint:rgba(242,206,107,.12); --on-moss:#241703;
+  --signal:#A78BFA; --signal-tint:rgba(167,139,250,.12);
+  --loss:#D9756A;
+  --glass:rgba(21,15,31,.82); --glass-solid:rgba(21,15,31,.86);
+}
+html[data-mode="light"]{
+  --bg:#F4F1EA; --s1:#FBFAF6;
+  --ink:#170F2B; --ink2:rgba(23,15,43,.62); --ink3:rgba(23,15,43,.38);
+  --line:rgba(23,15,43,.10); --line2:rgba(23,15,43,.18); --track:rgba(23,15,43,.12);
+  --moss:#9A7318; --moss-dim:rgba(154,115,24,.22); --moss-tint:rgba(154,115,24,.12); --on-moss:#FBFAF6;
+  --signal:#6D4AD1; --signal-tint:rgba(109,74,209,.12);
+  --loss:#B04A3C;
+  --glass:rgba(251,250,246,.86); --glass-solid:rgba(251,250,246,.92);
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15.5px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;transition:background .3s ease,color .3s ease;text-wrap:pretty}
+a{color:inherit;text-decoration:none}
+button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
+:focus-visible{outline:2px solid var(--moss);outline-offset:3px}
+
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3)}
+.eyebrow.g{color:var(--moss)} .eyebrow.v{color:var(--signal)}
+.disp{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 112;font-weight:700;
+  letter-spacing:-.042em;font-variant-numeric:tabular-nums;line-height:1}
+.num{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 118;font-weight:700;
+  letter-spacing:-.048em;font-variant-numeric:tabular-nums;line-height:1}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 34px}
+header.top{position:sticky;top:0;z-index:30;background:var(--glass);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line)}
+.top .in{display:flex;justify-content:space-between;align-items:center;padding:15px 0}
+.mark{display:flex;align-items:center;gap:11px}
+.mark .wm{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 108;font-weight:700;font-size:19px;letter-spacing:-.03em}
+.toggle{display:flex;gap:2px;border:1px solid var(--line2);border-radius:9px;padding:3px}
+.toggle button{font-size:12.5px;padding:5px 14px;border-radius:6px;color:var(--ink2);min-height:32px}
+.toggle button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+section{padding:68px 0;border-bottom:1px solid var(--line)}
+section h2{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 108;font-weight:700;font-size:29px;
+  letter-spacing:-.035em;margin:12px 0 10px;line-height:1.08;max-width:11ch}
+section .lede{color:var(--ink2);max-width:62ch;margin:0 0 36px;font-size:16px;line-height:1.58}
+
+.hero{padding:64px 0 58px;border-bottom:1px solid var(--line)}
+.hero .in{display:grid;grid-template-columns:1fr 300px;gap:56px;align-items:center}
+.hero h1{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 114;font-weight:700;
+  font-size:clamp(38px,5.2vw,60px);line-height:.98;letter-spacing:-.048em;margin:16px 0 18px;max-width:10ch}
+.hero p{color:var(--ink2);max-width:44ch;margin:0;font-size:16.5px;line-height:1.58}
+
+.ring{position:relative;width:300px;height:300px;display:grid;place-items:center;margin-left:auto}
+.ring svg{position:absolute;inset:0}
+.ring .rv{font-size:80px;color:var(--moss)}
+.ring .rl{margin-top:9px}
+
+.sw-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.sw{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--s1)}
+.sw .fill{height:74px}
+.sw .meta{padding:13px 14px}
+.sw .nm{font-size:13.5px;font-weight:500}
+.sw .hx{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink3);margin-top:4px}
+.sw .role{font-size:12.5px;color:var(--ink2);margin-top:9px;line-height:1.45}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--s1);border:1px solid var(--line);border-radius:20px;padding:28px 30px}
+.card.tight{padding:24px 26px}
+.btn{display:inline-flex;align-items:center;min-height:44px;background:var(--moss);color:var(--on-moss);
+  font-size:14.5px;font-weight:500;padding:0 24px;border-radius:12px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line2)}
+.chip{display:inline-flex;align-items:center;gap:7px;background:var(--moss-tint);color:var(--moss);
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  padding:7px 13px;border-radius:8px}
+.chip.v{background:var(--signal-tint);color:var(--signal)}
+
+.stat .lab{margin-bottom:14px}
+.stat .val{display:flex;align-items:baseline;gap:9px}
+.stat .val .n{font-size:56px}
+.stat .val .u{font-size:14px;color:var(--ink2)}
+.stat .tail{margin-top:14px;font-size:14px;color:var(--ink2);line-height:1.5}
+
+.idiom{background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:22px 24px}
+.idiom svg{width:100%;height:104px;display:block;margin:16px 0 12px}
+.idiom .cap{font-size:13px;color:var(--ink2);line-height:1.45}
+.days{display:grid;grid-template-columns:repeat(21,1fr);gap:4px;margin:18px 0 12px}
+.days i{aspect-ratio:1;border-radius:3px;background:var(--track);display:block}
+.days i.on{background:var(--moss)} .days i.mid{background:var(--moss-dim)} .days i.sig{background:var(--signal)}
+
+.row{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.row .nm{flex:1;font-size:14px}
+.row .tr{width:104px;height:4px;background:var(--track);border-radius:99px;overflow:hidden}
+.row .tr span{display:block;height:100%;border-radius:99px}
+.row .pc{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink3);width:30px;text-align:right}
+
+.share{background:#0B0711;border-radius:20px;padding:32px 30px;color:#EDE8F5}
+.share .k{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:rgba(237,232,245,.48)}
+.share .v{font-family:Archivo,sans-serif;font-variation-settings:'wdth' 122;font-weight:700;font-size:98px;
+  line-height:.88;letter-spacing:-.05em;margin:18px 0 8px;color:#F2CE6B;font-variant-numeric:tabular-nums}
+.share .t{font-size:16px;line-height:1.4;color:rgba(237,232,245,.78);max-width:22ch}
+.share .strip{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;margin-top:26px}
+.share .strip i{aspect-ratio:1;border-radius:2px;background:rgba(237,232,245,.13)}
+.share .strip i.on{background:#F2CE6B} .share .strip i.sig{background:#A78BFA}
+
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rule{border:1px solid var(--line);border-radius:14px;padding:19px 21px;background:var(--s1)}
+.rule .h{font-size:14px;font-weight:500;margin-bottom:6px;display:flex;gap:9px}
+.rule p{margin:0;font-size:13.5px;color:var(--ink2);line-height:1.5}
+.yes{color:var(--moss)} .no{color:var(--loss)}
+.scale{display:flex;flex-wrap:wrap;gap:9px}
+.scale div{border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:var(--ink2)}
+footer{padding:36px 0 64px;color:var(--ink3);font-size:13px;display:flex;justify-content:space-between}
+
+@media(max-width:880px){
+  .hero .in{grid-template-columns:1fr;gap:32px}
+  .ring{margin:0 auto}
+  .sw-grid{grid-template-columns:repeat(2,1fr)}
+  .two,.three,.rules{grid-template-columns:1fr}
+  .days{grid-template-columns:repeat(14,1fr)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap in">
+    <div class="mark">
+      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="9.4" fill="none" stroke="currentColor" stroke-opacity=".24" stroke-width="2.6"/>
+        <path d="M12 2.6a9.4 9.4 0 0 1 8.1 14.1" fill="none" stroke="var(--moss)" stroke-width="2.6" stroke-linecap="round"/>
+      </svg>
+      <span class="wm">Bagcheck</span>
+    </div>
+    <div class="toggle" role="group" aria-label="Mode">
+      <button aria-pressed="true" data-m="dark">Dark</button>
+      <button aria-pressed="false" data-m="light">Light</button>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap in">
+    <div>
+      <div class="eyebrow g">Brand kit — v3</div>
+      <h1>Gold on aubergine.</h1>
+      <p>An instrument, not a publication. One signal per surface, a readout legible at a glance, and no decoration anywhere near the data.</p>
+    </div>
+    <div class="ring">
+      <svg viewBox="0 0 300 300" id="ringsvg" aria-hidden="true"></svg>
+      <div style="text-align:center">
+        <div class="num rv" id="scorev">82</div>
+        <div class="eyebrow rl">Discipline</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow g">01 — Voice</div>
+    <h2>Descriptive, never prescriptive</h2>
+    <p class="lede">State what the user did. Never suggest a trade, never imply urgency. No exclamation marks, no coaching tone, no "you should." Numbers describe behavior — hold time, drawdown response, conviction decay, streaks — never a benchmark and never another person. One notification a day, and it is never a price alert.</p>
+    <div class="two">
+      <div class="card tight">
+        <div class="eyebrow" style="color:var(--moss)">Say this</div>
+        <p style="margin:14px 0 0;font-size:17px;line-height:1.45">You held through three straight down weeks. That's new for you.</p>
+        <p style="margin:12px 0 0;font-size:17px;line-height:1.45">Your winners: 41 days. Your losers: 6.</p>
+      </div>
+      <div class="card tight">
+        <div class="eyebrow" style="color:var(--loss)">Never this</div>
+        <p style="margin:14px 0 0;font-size:17px;line-height:1.45;color:var(--ink2)">Consider trimming your position before earnings.</p>
+        <p style="margin:12px 0 0;font-size:17px;line-height:1.45;color:var(--ink2)">You're beating 94% of investors — keep it up!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow g">02 — Color</div>
+    <h2>Aubergine-black, not black</h2>
+    <p class="lede">The canvas carries a violet undertone rather than sitting at neutral black, so a gold readout looks lit rather than merely colored. Light mode mirrors it in warm bone. Token names are legacy — <code>--moss</code> is gold, <code>--signal</code> is violet. Keep them.</p>
+    <div class="sw-grid">
+      <div class="sw"><div class="fill" style="background:var(--bg);border-bottom:1px solid var(--line)"></div>
+        <div class="meta"><div class="nm">Canvas · --bg</div><div class="hx" data-hx="bg"></div>
+        <div class="role">Page. Aubergine-black in dark, warm bone in light.</div></div></div>
+      <div class="sw"><div class="fill" style="background:var(--s1)"></div>
+        <div class="meta"><div class="nm">Surface · --s1</div><div class="hx" data-hx="s1"></div>
+        <div class="role">Cards and modules. One step off the canvas, never more.</div></div></div>
+      <div class="sw"><div class="fill" style="background:var(--ink)"></div>
+        <div class="meta"><div class="nm">Ink · --ink</div><div class="hx" data-hx="ink"></div>
+        <div class="role">Type. Tinted toward the canvas so it sits in the surface, not on it.</div></div></div>
+      <div class="sw"><div class="fill" style="background:var(--moss)"></div>
+        <div class="meta"><div class="nm">Gold · --moss</div><div class="hx" data-hx="moss"></div>
+        <div class="role">Discipline. Owns every primary CTA.</div></div></div>
+      <div class="sw"><div class="fill" style="background:var(--signal)"></div>
+        <div class="meta"><div class="nm">Violet · --signal</div><div class="hx" data-hx="signal"></div>
+        <div class="role">Exposure, comparison, percentile.</div></div></div>
+      <div class="sw"><div class="fill" style="background:var(--loss)"></div>
+        <div class="meta"><div class="nm">Clay · --loss</div><div class="hx" data-hx="loss"></div>
+        <div class="role">Negative P&amp;L and nothing else.</div></div></div>
+      <div class="sw"><div class="fill" style="background:var(--moss-dim)"></div>
+        <div class="meta"><div class="nm">Gold dim · --moss-dim</div><div class="hx">22% gold</div>
+        <div class="role">Partial states, held positions, the middle of a ribbon.</div></div></div>
+      <div class="sw"><div class="fill" style="background:var(--track)"></div>
+        <div class="meta"><div class="nm">Track · --track</div><div class="hx">10–12% ink</div>
+        <div class="role">Empty segments, unfilled bars, meter grooves.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow v">03 — Semantics</div>
+    <h2>Two axes, one accent per surface</h2>
+    <p class="lede">Gold and violet are not a highlight pair — they are two readings of the same person. Never let two saturated fills compete in one view; when both belong on a surface, the secondary drops to <code>--ink2</code>.</p>
+    <div class="three">
+      <div class="card tight"><span class="chip">● Gold — discipline</span>
+        <p style="font-size:13.5px;color:var(--ink2);margin:15px 0 0;line-height:1.5">Rules kept, contributions made, drawdowns held, positive P&amp;L. Every primary CTA.</p></div>
+      <div class="card tight"><span class="chip v">● Violet — exposure</span>
+        <p style="font-size:13.5px;color:var(--ink2);margin:15px 0 0;line-height:1.5">Trade count, speculative weight, percentile, any comparison against other people.</p></div>
+      <div class="card tight"><span class="chip" style="background:rgba(217,117,106,.12);color:var(--loss)">● Clay — negative P&amp;L</span>
+        <p style="font-size:13.5px;color:var(--ink2);margin:15px 0 0;line-height:1.5">Nothing else. Warnings, errors, and empty states stay in ink.</p></div>
+    </div>
+    <p class="lede" style="margin:24px 0 0">Share cards and Wrapped viewers stay aubergine-black in <strong>both</strong> modes.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow g">04 — Type</div>
+    <h2>Archivo, Inter, JetBrains Mono</h2>
+    <p class="lede">Archivo variable runs wide for every display figure — the width axis is the most identifiable thing in the system. Inter handles interface prose. Mono handles eyebrows and metric labels. Never Roboto, and never Inter for display.</p>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="eyebrow" style="margin-bottom:20px">Archivo · wdth 118 · 700 · tabular · −.048em</div>
+      <div class="num" style="font-size:94px">82</div>
+      <div style="display:flex;gap:40px;margin-top:24px;flex-wrap:wrap">
+        <div><div class="num" style="font-size:34px;color:var(--moss)">412</div><div class="eyebrow" style="margin-top:7px">Longest hold</div></div>
+        <div><div class="num" style="font-size:34px;color:var(--signal)">94<span style="font-size:17px">th</span></div><div class="eyebrow" style="margin-top:7px">Percentile</div></div>
+        <div><div class="num" style="font-size:34px">6.4</div><div class="eyebrow" style="margin-top:7px">Trades / session</div></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="eyebrow" style="margin-bottom:16px">Archivo · wdth 108 · 700 — headlines, 9–11ch</div>
+      <div class="disp" style="font-size:29px;font-variation-settings:'wdth' 108;line-height:1.08;max-width:11ch">You held through three down weeks</div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="eyebrow" style="margin-bottom:16px">Inter · 400 / 500 · 15.5–22px · line-height 1.5–1.6</div>
+      <p style="margin:0 0 9px;max-width:58ch">Bagcheck reads your trading history and shows you the habits underneath it — how long you actually hold, what you do when things fall, which decisions you keep repeating.</p>
+      <p style="margin:0;font-size:13.5px;color:var(--ink2)">Secondary text sits at 60% and never below 13px.</p>
+    </div>
+    <div class="card">
+      <div class="eyebrow" style="margin-bottom:15px">JetBrains Mono · 9.5–11px · +.18–.24em · uppercase</div>
+      <div class="eyebrow">Q3 2026 · 63 sessions · average hold · read-only</div>
+    </div>
+
+    <div class="scale" style="margin-top:24px">
+      <div>10 eyebrow</div><div>13.5 secondary</div><div>15.5 body</div><div>22 lede</div>
+      <div>29 heading</div><div>56 readout</div><div>80 score</div><div>98 share</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow g">05 — Data idiom</div>
+    <h2>One idiom per statement</h2>
+    <p class="lede">Each must stay legible at 200px wide. Full equity curves live on Portfolio and nowhere else. No decorative gradients, no emoji, no icon sets, and never four identical sparklines in a row.</p>
+    <div class="three" style="margin-bottom:16px">
+      <div class="idiom"><div class="eyebrow">Segment ring — a quarter's discipline</div>
+        <svg viewBox="0 0 200 104" id="i-ring" aria-hidden="true"></svg>
+        <p class="cap">63 segments, one per trading day. Filled when you stayed inside your rules.</p></div>
+      <div class="idiom"><div class="eyebrow">Day-cell grid</div>
+        <div class="days" id="i-days"></div>
+        <p class="cap">The same data unrolled where the surface is wider than it is tall.</p></div>
+      <div class="idiom"><div class="eyebrow">Dot scatter — the gap is the insight</div>
+        <svg viewBox="0 0 200 104" id="i-scatter" aria-hidden="true"></svg>
+        <p class="cap">Entries by hour. The cluster after 2pm is where the losses live.</p></div>
+    </div>
+    <div class="three">
+      <div class="idiom"><div class="eyebrow">Distribution — your marker on the tail</div>
+        <svg viewBox="0 0 200 104" id="i-dist" aria-hidden="true"></svg>
+        <p class="cap">Everyone invested through the same window. You are the violet mark.</p></div>
+      <div class="idiom"><div class="eyebrow">Decay line — conviction over time</div>
+        <svg viewBox="0 0 200 104" id="i-decay" aria-hidden="true"></svg>
+        <p class="cap">How long your stated conviction survives contact with a drawdown.</p></div>
+      <div class="idiom"><div class="eyebrow">Contribution grid — current cell lit</div>
+        <svg viewBox="0 0 200 104" id="i-contrib" aria-hidden="true"></svg>
+        <p class="cap">Deposits by week. The lit cell is the one in progress.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow g">06 — Stat card grammar</div>
+    <h2>Label, number, unit, why</h2>
+    <p class="lede">Every card reads in that order, and all cards in a set parse identically. The eyebrow names the metric the number measures — never an event name sitting over a percentage. The tail line ships the specific comparison.</p>
+    <div class="three" style="margin-bottom:16px">
+      <div class="card tight stat">
+        <div class="eyebrow lab">Average hold — winners</div>
+        <div class="val"><span class="num n" style="color:var(--moss)">41</span><span class="u">days</span></div>
+        <div class="tail">Your losers: 6. You hold what's working almost seven times longer.</div>
+      </div>
+      <div class="card tight stat">
+        <div class="eyebrow lab">Sessions inside max-loss rule</div>
+        <div class="val"><span class="num n">58</span><span class="u">of 63</span></div>
+        <div class="tail">The five breaks all fell in the same week in August.</div>
+      </div>
+      <div class="card tight stat">
+        <div class="eyebrow lab">Patience percentile</div>
+        <div class="val"><span class="num n" style="color:var(--signal)">94</span><span class="u">th</span></div>
+        <div class="tail">Among everyone invested through the same drawdown.</div>
+      </div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="eyebrow">Today</div>
+        <p style="font-size:19px;line-height:1.4;margin:15px 0 22px;max-width:26ch">You held through three straight down weeks. That's new for you.</p>
+        <div style="display:flex;align-items:baseline;gap:12px">
+          <span class="num" style="font-size:60px;color:var(--moss)">82</span>
+          <span class="eyebrow">Discipline · +3 this week</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:20px">What moved your score</div>
+        <div class="row"><span class="nm">Held through the drawdown</span><span class="tr"><span style="width:84%;background:var(--moss)"></span></span><span class="pc">+9</span></div>
+        <div class="row"><span class="nm">Contributions on schedule</span><span class="tr"><span style="width:62%;background:var(--moss)"></span></span><span class="pc">+5</span></div>
+        <div class="row"><span class="nm">Exposure above your baseline</span><span class="tr"><span style="width:44%;background:var(--signal)"></span></span><span class="pc">−2</span></div>
+        <div class="row" style="margin-bottom:0"><span class="nm">Sold two winners early</span><span class="tr"><span style="width:26%;background:var(--loss)"></span></span><span class="pc">−4</span></div>
+      </div>
+    </div>
+    <div class="card tight" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px">
+      <a class="btn" href="#">Connect a brokerage</a>
+      <a class="btn ghost" href="#">See a sample report</a>
+      <span class="chip">● 41-day streak</span>
+      <span class="chip v">● Top 6% patience</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow g">07 — Share cards</div>
+    <h2>Aubergine in both modes</h2>
+    <p class="lede">Posted artwork never goes light. The width axis opens to 122, the readout fills the frame, and the day strip underneath proves the number came from somewhere.</p>
+    <div class="two">
+      <div class="share">
+        <div class="k">Bagcheck · 2026</div>
+        <div class="v">412</div>
+        <div class="t">days holding — your longest yet</div>
+        <div class="strip" id="sc1"></div>
+      </div>
+      <div class="share">
+        <div class="k">Bagcheck · Q3 report</div>
+        <div class="v">0</div>
+        <div class="t">panic sells in a quarter that gave you three chances</div>
+        <div class="strip" id="sc2"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow g">08 — Surfaces, motion, minimums</div>
+    <h2>The rules that keep it consistent</h2>
+    <div class="rules">
+      <div class="rule"><div class="h"><span class="yes">✓</span> 16–22px radii, 1px hairlines, 26–34px padding</div><p>No shadows in-app. Flex and grid with <code>gap</code> — never margin-spaced inline siblings.</p></div>
+      <div class="rule"><div class="h"><span class="yes">✓</span> 640px reading column, rails on desktop</div><p>Single column with bottom tabs on mobile, breaking at 900px. Err toward whitespace.</p></div>
+      <div class="rule"><div class="h"><span class="yes">✓</span> Ease-out, nothing over 500ms</div><p>Entrances stagger ~80ms. Count-ups run on <code>setInterval</code>, and the real value is the default render so numbers are correct if the tween never starts.</p></div>
+      <div class="rule"><div class="h"><span class="no">✕</span> No decorative gradients or emoji</div><p>No icon sets, and never four identical sparklines. One idiom per statement.</p></div>
+      <div class="rule"><div class="h"><span class="yes">✓</span> 44px hit targets, 24px slide floor, 12pt print</div><p>Honour <code>prefers-reduced-motion</code> everywhere.</p></div>
+      <div class="rule"><div class="h"><span class="no">✕</span> Never hardcode a palette hex</div><p>Always <code>var(--*)</code>. Both modes are declared on <code>html</code>; dark is <code>:root</code>.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <span>Bagcheck brand kit — v3</span>
+  <span style="font-family:'JetBrains Mono',monospace" id="modelabel">dark</span>
+</footer>
+
+<script>
+(function(){
+  const S=(i)=>Math.sin(i*1.7)+Math.cos(i*0.53);
+  const state=(i)=> i>54 ? 'empty' : (S(i)>1.15 ? 'sig' : (S(i)<-1.05 ? 'mid' : 'on'));
+  const col=(s)=> s==='on'?'var(--moss)':s==='mid'?'var(--moss-dim)':s==='sig'?'var(--signal)':'var(--track)';
+
+  function arcRing(el,cx,cy,r,w,n){
+    const step=360/n, gap= n>40 ? 1.9 : 3; let out='';
+    for(let i=0;i<n;i++){
+      const a0=(i*step-90+gap)*Math.PI/180, a1=((i+1)*step-90-gap)*Math.PI/180;
+      const x0=cx+r*Math.cos(a0), y0=cy+r*Math.sin(a0);
+      const x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
+      out+='<path d="M'+x0.toFixed(2)+' '+y0.toFixed(2)+' A'+r+' '+r+' 0 0 1 '+x1.toFixed(2)+' '+y1.toFixed(2)+
+           '" fill="none" stroke="'+col(state(i))+'" stroke-width="'+w+'" stroke-linecap="round"/>';
+    }
+    el.innerHTML=out;
+  }
+  arcRing(document.getElementById('ringsvg'),150,150,126,9,63);
+  arcRing(document.getElementById('i-ring'),100,52,42,5,63);
+
+  let g=''; for(let i=0;i<63;i++){const s=state(i); g+='<i class="'+(s==='empty'?'':s)+'"></i>';}
+  document.getElementById('i-days').innerHTML=g;
+
+  // scatter
+  (function(){let o='';
+    for(let i=0;i<60;i++){
+      const x=8+ (i*3.1)%184;
+      const late = x>132;
+      const y=20+ (Math.abs(Math.sin(i*2.3))*62) + (late? 12:0);
+      o+='<circle cx="'+x.toFixed(1)+'" cy="'+Math.min(y,94).toFixed(1)+'" r="2.6" fill="'+(late?'var(--signal)':'var(--moss-dim)')+'"/>';
+    }
+    o+='<line x1="132" y1="6" x2="132" y2="98" stroke="var(--line2)" stroke-width="1" stroke-dasharray="3 3"/>';
+    document.getElementById('i-scatter').innerHTML=o;})();
+
+  // distribution
+  (function(){let p='M4 96 ';
+    for(let x=4;x<=196;x+=4){const y=96-70*Math.exp(-Math.pow((x-78)/34,2)); p+='L'+x+' '+y.toFixed(1)+' ';}
+    p+='L196 96 Z';
+    document.getElementById('i-dist').innerHTML=
+      '<path d="'+p+'" fill="var(--moss-tint)" stroke="var(--moss)" stroke-width="1.6"/>'+
+      '<line x1="166" y1="30" x2="166" y2="96" stroke="var(--signal)" stroke-width="2.4" stroke-linecap="round"/>'+
+      '<circle cx="166" cy="30" r="3.4" fill="var(--signal)"/>';})();
+
+  // decay
+  (function(){let p='M6 16 ';
+    for(let x=6;x<=194;x+=4){const y=16+72*(1-Math.exp(-(x-6)/58)); p+='L'+x+' '+y.toFixed(1)+' ';}
+    document.getElementById('i-decay').innerHTML=
+      '<path d="'+p+'" fill="none" stroke="var(--moss)" stroke-width="2.2" stroke-linecap="round"/>'+
+      '<circle cx="6" cy="16" r="3.2" fill="var(--moss)"/>'+
+      '<circle cx="194" cy="86" r="3.2" fill="var(--loss)"/>';})();
+
+  // contribution grid
+  (function(){let o='';const cols=26,rows=4;
+    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+      const i=r*cols+c, on=(S(i)>-0.4), last=(r===rows-1&&c===cols-1);
+      o+='<rect x="'+(4+c*7.4).toFixed(1)+'" y="'+(14+r*22)+'" width="5.6" height="16" rx="1.6" fill="'+
+        (last?'var(--moss)':(on?'var(--moss-dim)':'var(--track)'))+'"/>';
+    }
+    document.getElementById('i-contrib').innerHTML=o;})();
+
+  // share strips
+  [['sc1',0],['sc2',1]].forEach(([id,k])=>{
+    const el=document.getElementById(id); let h='';
+    for(let i=0;i<48;i++){const x=Math.sin(i*(1.3+k*0.4))+Math.cos(i*0.61);
+      h+='<i class="'+(x>1.3?'sig':(x>-0.7?'on':''))+'"></i>';}
+    el.innerHTML=h;});
+
+  function paintHex(){
+    const cs=getComputedStyle(document.documentElement);
+    const map={bg:'--bg',s1:'--s1',ink:'--ink',moss:'--moss',signal:'--signal',loss:'--loss'};
+    document.querySelectorAll('[data-hx]').forEach(el=>{
+      const v=cs.getPropertyValue(map[el.dataset.hx]).trim(); if(v) el.textContent=v.toUpperCase();});
+  }
+  paintHex();
+  const btns=document.querySelectorAll('.toggle button');
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    btns.forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+    document.documentElement.dataset.mode=b.dataset.m;
+    document.getElementById('modelabel').textContent=b.dataset.m;
+    paintHex();}));
+
+  // count-up: real value is the default render
+  const el=document.getElementById('scorev'), target=82;
+  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    let v=0; const t=setInterval(()=>{v+=3; if(v>=target){v=target;clearInterval(t);} el.textContent=v;},18);
+  }
+})();
+</script>
+</body>
+</html>
