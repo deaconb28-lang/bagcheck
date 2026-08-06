@@ -224,6 +224,21 @@
   gap: 10px;
 }
 
+.baseline {
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.55;
+  max-width: 40ch;
+}
+
+.inputsLine {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink3);
+}
+
 .readsIn {
   display: flex;
   flex-direction: column;
@@ -241,18 +256,172 @@
   max-width: 11ch;
 }
 
-.statCols {
+.sectionLede {
+  font-size: 15.5px;
+  color: var(--ink2);
+  line-height: 1.6;
+  max-width: 56ch;
+}
+
+/* Correlations — hairline columns */
+
+.corrCols {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
 }
 
-.statCol {
+.corrCol {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
   padding: 6px 32px 0 0;
 }
 
-.statCol + .statCol {
+.corrCol + .corrCol {
   border-left: 1px solid var(--line);
   padding-left: 32px;
+}
+
+.corrLine {
+  font-size: 19px;
+  line-height: 1.45;
+  max-width: 24ch;
+}
+
+.corrCap {
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.55;
+  max-width: 62ch;
+}
+
+/* Wrapped / share card */
+
+.shareGrid {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 72px;
+  align-items: center;
+}
+
+.shareCard {
+  background: var(--share-bg);
+  color: var(--share-ink);
+  border-radius: 20px;
+  padding: 34px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.shareK {
+  font-family: var(--font-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--share-ink-dim);
+}
+
+.shareV {
+  font-family: var(--font-archivo), sans-serif;
+  font-variation-settings: "wdth" 122;
+  font-weight: 700;
+  font-size: clamp(72px, 7.5vw, 98px);
+  line-height: 0.88;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--share-gold);
+}
+
+.shareT {
+  font-size: 16px;
+  line-height: 1.4;
+  max-width: 22ch;
+}
+
+.shareStrip {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 3px;
+}
+
+.shareCell {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: var(--share-track);
+  display: block;
+}
+
+.shareCellOn {
+  background: var(--share-gold);
+}
+
+.shareCellSig {
+  background: var(--share-violet);
+}
+
+.shareCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.shareLine {
+  font-size: 15.5px;
+  color: var(--ink2);
+  line-height: 1.55;
+  max-width: 46ch;
+}
+
+.segmentRow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.segmentLine {
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.55;
+  max-width: 46ch;
+}
+
+/* Pricing tiers — hairline columns */
+
+.tierCols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.tierCol {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 6px 32px 0 0;
+}
+
+.tierCol + .tierCol {
+  border-left: 1px solid var(--line);
+  padding-left: 32px;
+}
+
+.tierPrice {
+  font-size: 44px;
+}
+
+.tierUnit {
+  font-size: 15px;
+  color: var(--ink2);
+  letter-spacing: 0;
+}
+
+.tierBody {
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.55;
+  max-width: 36ch;
 }
 
 /* Steps — numbered hairline rows */
@@ -344,18 +513,30 @@
     gap: 48px;
   }
 
-  .statCols {
+  .corrCols,
+  .tierCols {
     grid-template-columns: 1fr;
   }
 
-  .statCol {
+  .corrCol,
+  .tierCol {
     padding: 28px 0;
   }
 
-  .statCol + .statCol {
+  .corrCol + .corrCol,
+  .tierCol + .tierCol {
     border-left: 0;
     border-top: 1px solid var(--line);
     padding-left: 0;
+  }
+
+  .shareGrid {
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+
+  .shareCard {
+    max-width: 440px;
   }
 
   .stepRow {

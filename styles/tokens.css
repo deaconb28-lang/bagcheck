@@ -24,6 +24,17 @@
   --loss: #D9756A;
   --glass: rgba(21, 15, 31, 0.82);
   --glass-solid: rgba(21, 15, 31, 0.86);
+
+  /*
+   * Share-card surface — aubergine-black in BOTH modes, per the brand rule.
+   * Declared once and never overridden by html[data-mode="light"].
+   */
+  --share-bg: #0B0711;
+  --share-ink: #EDE8F5;
+  --share-ink-dim: rgba(237, 232, 245, 0.48);
+  --share-gold: #F2CE6B;
+  --share-violet: #A78BFA;
+  --share-track: rgba(237, 232, 245, 0.13);
 }
 
 html[data-mode="light"] {
