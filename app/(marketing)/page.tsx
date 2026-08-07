@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { isAuthConfigured, signIn } from "@/auth";
+import { getUserId, isAuthConfigured, signIn } from "@/auth";
 import { Button, Chip, Eyebrow } from "@/components/primitives";
 import { DayStrip } from "./DayStrip";
 import { ConvictionBars, DistributionWide, MiniScatter, WinRateBars } from "./Idioms";
@@ -8,15 +8,25 @@ import { TodayMock } from "./TodayMock";
 import { WrappedFan } from "./WrappedFan";
 import styles from "./marketing.module.css";
 
+/**
+ * The single CTA path: already signed in goes straight to the ledger,
+ * otherwise Google sign-in lands there. Without auth configured it falls
+ * back to /debug, which explains what is missing.
+ */
 async function connectAction() {
   "use server";
   if (!isAuthConfigured()) {
     redirect("/debug");
   }
+  if (await getUserId()) {
+    redirect("/debug");
+  }
   await signIn("google", { redirectTo: "/debug" });
 }
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const signedIn = Boolean(await getUserId());
+
   return (
     <div className={styles.page}>
       <header className={styles.nav}>
@@ -35,13 +45,13 @@ export default function LandingPage() {
               </a>
               <form action={connectAction}>
                 <button type="submit" className={styles.navLink}>
-                  Sign in
+                  {signedIn ? "Your ledger" : "Sign in"}
                 </button>
               </form>
             </nav>
             <form action={connectAction}>
               <Button ghost type="submit">
-                Connect a brokerage
+                {signedIn ? "Open Bagcheck" : "Connect a brokerage"}
               </Button>
             </form>
           </div>
@@ -64,7 +74,9 @@ export default function LandingPage() {
           </p>
           <div className={styles.heroCtas}>
             <form action={connectAction}>
-              <Button type="submit">Connect a brokerage</Button>
+              <Button type="submit">
+                {signedIn ? "Open your ledger" : "Connect a brokerage"}
+              </Button>
             </form>
             <p className={styles.ctaCaption}>
               Read-only · via SnapTrade · never a price alert
@@ -272,7 +284,9 @@ export default function LandingPage() {
         <div className={`${styles.wrap} ${styles.ctaIn}`}>
           <h2 className={`disp ${styles.ctaH}`}>Ninety seconds to your first report</h2>
           <form action={connectAction}>
-            <Button type="submit">Connect a brokerage</Button>
+            <Button type="submit">
+              {signedIn ? "Open your ledger" : "Connect a brokerage"}
+            </Button>
           </form>
           <p className={styles.ctaTrust}>Read-only, permanently · never a price alert</p>
         </div>

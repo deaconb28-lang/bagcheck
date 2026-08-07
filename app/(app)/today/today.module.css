@@ -1,0 +1,71 @@
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 56px 34px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.h1 {
+  font-size: 29px;
+  max-width: 11ch;
+}
+
+.sentence {
+  font-size: 29px;
+  font-variation-settings: "wdth" 108;
+  max-width: 15ch;
+  line-height: 1.08;
+}
+
+.scoreline {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.score {
+  font-size: 60px;
+  color: var(--moss);
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.body {
+  font-size: 15px;
+  color: var(--ink2);
+  line-height: 1.55;
+  max-width: 46ch;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.link {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink3);
+}
+
+.link:hover {
+  color: var(--ink);
+}

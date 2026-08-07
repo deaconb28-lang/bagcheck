@@ -1,4 +1,5 @@
 import type { AccountUniversalActivity, Position } from "snaptrade-typescript-sdk";
+import type { Contributor, ScoreComponents, StyleBaseline } from "@/lib/score";
 
 export interface ConnectionAccount {
   id: string;
@@ -15,6 +16,8 @@ export interface ConnectionDoc {
   accounts: ConnectionAccount[];
   createdAt: Date;
   lastSyncAt: Date | null;
+  /** Chosen at onboarding (M3+); until then the scorer infers from cadence. */
+  styleBaseline?: StyleBaseline;
 }
 
 export interface TransactionDoc {
@@ -47,13 +50,14 @@ export interface PositionSnapshotDoc {
   positions: Position[];
 }
 
-// M2+ shapes — kept minimal until those milestones land.
-
 export interface ScoreDoc {
   userId: string;
   date: string;
+  baseline: StyleBaseline;
   score: number;
-  contributors: Array<{ name: string; value: number }>;
+  components: ScoreComponents;
+  contributors: Contributor[];
+  computedAt: Date;
 }
 
 export interface TagDoc {

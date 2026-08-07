@@ -95,8 +95,8 @@ export default function ScratchPage() {
         <Card tight>
           <div className={styles.inline}>
             <Button href="/">Connect a brokerage</Button>
-            <Button href="/" ghost>
-              See a sample report
+            <Button href="/debug" ghost>
+              Open the ledger
             </Button>
             <Chip>41-day streak</Chip>
             <Chip tone="violet">Top 6% patience</Chip>

@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
 import { auth, isAuthConfigured, isDevIdentity, signIn, signOut } from "@/auth";
 import { getCollections, isDbConfigured } from "@/lib/db";
-import type { ConnectionDoc, PositionSnapshotDoc, TransactionDoc } from "@/lib/db";
+import type {
+  ConnectionDoc,
+  PositionSnapshotDoc,
+  ScoreDoc,
+  TransactionDoc,
+} from "@/lib/db";
 import { isSnapTradeConfigured } from "@/lib/snaptrade";
 import { Button, Eyebrow } from "@/components/primitives";
+import { ScoreButton } from "./ScoreButton";
 import { SyncButton } from "./SyncButton";
 import styles from "./debug.module.css";
 
@@ -25,17 +31,25 @@ interface LedgerData {
   transactions: TransactionDoc[];
   transactionCount: number;
   snapshots: PositionSnapshotDoc[];
+  scores: ScoreDoc[];
 }
 
 async function loadLedger(userId: string): Promise<LedgerData> {
-  const { connections, transactions, positionSnapshots } = await getCollections();
-  const [connection, txns, transactionCount, snapshots] = await Promise.all([
+  const { connections, transactions, positionSnapshots, scores } = await getCollections();
+  const [connection, txns, transactionCount, snapshots, scoreDocs] = await Promise.all([
     connections.findOne({ userId }),
     transactions.find({ userId }).sort({ date: -1 }).limit(50).toArray(),
     transactions.countDocuments({ userId }),
     positionSnapshots.find({ userId }).sort({ date: -1 }).limit(5).toArray(),
+    scores.find({ userId }).sort({ date: -1 }).limit(7).toArray(),
   ]);
-  return { connection, transactions: txns, transactionCount, snapshots };
+  return {
+    connection,
+    transactions: txns,
+    transactionCount,
+    snapshots,
+    scores: scoreDocs,
+  };
 }
 
 async function signInAction() {
@@ -137,6 +151,7 @@ export default async function DebugPage() {
                 <Button href="/api/snaptrade/connect">Connect a brokerage</Button>
               ) : null}
               <SyncButton />
+              <ScoreButton />
               {!devIdentity ? (
                 <form action={signOutAction}>
                   <Button ghost type="submit">
@@ -214,6 +229,51 @@ export default async function DebugPage() {
                 </table>
               </div>
             ) : null}
+          </section>
+
+          <section className={styles.section}>
+            <Eyebrow>Discipline score · latest {ledger.scores.length}</Eyebrow>
+            {ledger.scores.length ? (
+              <div className={styles.tableWrap}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>date</th>
+                      <th>score</th>
+                      <th>baseline</th>
+                      <th>adh</th>
+                      <th>cons</th>
+                      <th>pat</th>
+                      <th>exp</th>
+                      <th>contributors</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ledger.scores.map((doc) => (
+                      <tr key={doc.date}>
+                        <td>{doc.date}</td>
+                        <td>{doc.score}</td>
+                        <td>{doc.baseline}</td>
+                        <td>{doc.components.adherence}</td>
+                        <td>{doc.components.consistency}</td>
+                        <td>{doc.components.patience}</td>
+                        <td>{doc.components.exposure}</td>
+                        <td>
+                          {doc.contributors
+                            .map((c) => `${c.name} ${c.value > 0 ? "+" : ""}${c.value}`)
+                            .join(" · ") || "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className={styles.notice}>
+                No score yet — Recompute score builds one from the synced
+                history.
+              </p>
+            )}
           </section>
 
           <section className={styles.section}>
