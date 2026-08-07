@@ -77,7 +77,7 @@ export default async function LandingPage() {
           </p>
           <div className={styles.heroCtas}>
             <form action={connectAction}>
-              <Button type="submit">
+              <Button marketing type="submit">
                 {signedIn ? "Open your ledger" : "Connect a brokerage"}
               </Button>
             </form>
@@ -287,7 +287,7 @@ export default async function LandingPage() {
         <div className={`${styles.wrap} ${styles.ctaIn}`}>
           <h2 className={`disp ${styles.ctaH}`}>Ninety seconds to your first report</h2>
           <form action={connectAction}>
-            <Button type="submit">
+            <Button marketing type="submit">
               {signedIn ? "Open your ledger" : "Connect a brokerage"}
             </Button>
           </form>

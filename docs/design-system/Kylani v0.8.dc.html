@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <template id="__bundler_thumbnail" data-bg-color="#F6F3EE">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <rect width="200" height="200" fill="#F6F3EE"></rect>
+      <circle cx="100" cy="100" r="58" fill="#0FA47A"></circle>
+      <text x="100" y="113" font-family="Arial, sans-serif" font-weight="700" font-size="32" fill="#FDFCFA" text-anchor="middle">K</text>
+    </svg>
+  </template>
+  <style>
+    body { margin: 0; background: #F6F3EE; font-family: 'Public Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #0FA47A; text-decoration: none; }
+    a:hover { color: #0A7A59; }
+    button, input { font-family: inherit; transition: background .16s ease, border-color .16s ease, color .16s ease, box-shadow .16s ease, transform .16s ease; }
+    button:focus-visible, input:focus-visible { outline: 2px solid #0FA47A; outline-offset: 2px; }
+    input::placeholder { color: #A39B90; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-thumb { background: #DED7CD; border-radius: 999px; border: 3px solid transparent; background-clip: content-box; }
+    [data-rail]::-webkit-scrollbar { width: 6px; }
+    [data-rail]::-webkit-scrollbar-thumb { background: rgba(253,252,250,.22); border: none; }
+    @keyframes km-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    @keyframes km-slide { from { transform: translateX(28px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+</helmet>
+
+<div style="display: flex; height: 100vh; overflow: hidden; background: #F6F3EE; color: #14120F;">
+
+  <div style="width: 244px; flex-shrink: 0; background: #17140F; display: flex; flex-direction: column; padding: 22px 14px 16px;">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 8px 22px;">
+      <span style="width: 28px; height: 28px; border-radius: 9px; background: #0FA47A; color: #FDFCFA; font-family: 'Outfit'; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center;">K</span>
+      <span style="font-family: 'Outfit'; font-weight: 700; font-size: 19px; letter-spacing: -.02em; color: #FDFCFA;">Kylani</span>
+    </div>
+
+    <button style="text-align: left; background: rgba(253,252,250,.06); border: 1px solid rgba(253,252,250,.1); border-radius: 12px; padding: 11px 13px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; margin-bottom: 20px;" style-hover="background: rgba(253,252,250,.1);">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #9C948A;">Campaign</span>
+      <span style="display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13.5px; font-weight: 600; color: #FDFCFA; line-height: 1.35;">Dockside — First 100 operators<span style="color: #9C948A; font-size: 11px;">▾</span></span>
+    </button>
+
+    <div data-rail="nav" style="display: flex; flex-direction: column; gap: 3px; flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: rgba(253,252,250,.22) transparent;">
+      <sc-for list="{{ nav }}" as="item" hint-placeholder-count="6">
+        <button onClick="{{ item.go }}" style="{{ item.style }}">
+          <span style="display: flex; align-items: center; gap: 11px;"><span style="width: 15px; text-align: center; font-size: 12px; opacity: .8;">{{ item.glyph }}</span>{{ item.label }}</span>
+          <sc-if value="{{ item.badge }}" hint-placeholder-val="{{ false }}">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #FDFCFA; background: #0FA47A; border-radius: 999px; padding: 2px 7px;">{{ item.badge }}</span>
+          </sc-if>
+        </button>
+      </sc-for>
+    </div>
+
+    <div style="height: 1px; background: rgba(253,252,250,.09); margin: 16px 10px;"></div>
+
+    <div style="display: flex; flex-direction: column; gap: 3px;">
+      <sc-for list="{{ navSecondary }}" as="item" hint-placeholder-count="2">
+        <button onClick="{{ item.go }}" style="{{ item.style }}">
+          <span style="display: flex; align-items: center; gap: 11px;"><span style="width: 15px; text-align: center; font-size: 12px; opacity: .8;">{{ item.glyph }}</span>{{ item.label }}</span>
+        </button>
+      </sc-for>
+    </div>
+
+    <div style="height: 14px;"></div>
+
+    <div style="display: flex; align-items: center; gap: 11px; padding: 11px; border-radius: 13px; background: rgba(253,252,250,.06); flex-shrink: 0;">
+      <span style="width: 32px; height: 32px; border-radius: 999px; background: #5B7C99; color: #FDFCFA; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">MC</span>
+      <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+        <span style="font-size: 13px; font-weight: 600; color: #FDFCFA;">Maya Chen</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #9C948A;">{{ modeLabel }} mode</span>
+      </span>
+    </div>
+  </div>
+
+  <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+
+    <div style="flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 30px 16px; flex-wrap: wrap;">
+      <div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 260px; min-width: 0;">
+        <span style="font-family: 'Outfit'; font-weight: 700; font-size: 25px; letter-spacing: -.025em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ screenTitle }}</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #857E74; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ screenSub }}</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
+        <button onClick="{{ toggleLog }}" style="display: inline-flex; align-items: center; gap: 10px; min-width: 0; padding: 9px 15px; border-radius: 999px; background: #FFFFFF; border: 1px solid #EAE4DB; cursor: pointer; box-shadow: 0 1px 2px rgba(20,18,15,.03);" style-hover="border-color: #0FA47A; box-shadow: 0 2px 10px -4px rgba(15,164,122,.4);">
+          <span style="width: 7px; height: 7px; border-radius: 999px; background: #0FA47A; box-shadow: 0 0 0 3px #E3F6EE; flex-shrink: 0;"></span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #14120F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ agentStatus }}</span>
+        </button>
+        <div style="display: inline-flex; padding: 3px; border-radius: 11px; background: #EFE9E1; border: 1px solid #EAE4DB;">
+          <sc-for list="{{ modes }}" as="m" hint-placeholder-count="3">
+            <button onClick="{{ m.go }}" style="{{ m.style }}">{{ m.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex: 1; min-height: 0; overflow: auto; padding: 6px 30px 56px;">
+
+      <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; max-width: 1560px;">
+
+          <div style="display: flex; flex-direction: column; gap: 22px; flex: 3 1 560px; min-width: 0;">
+
+            <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 30px 28px 26px; box-shadow: 0 1px 2px rgba(20,18,15,.03), 0 18px 40px -30px rgba(20,18,15,.3);">
+              <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 24px;">
+                <span style="font-family: 'Outfit'; font-weight: 700; font-size: 17px;">One funnel, from stranger to customer</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #857E74;">day 12 · dockside.app</span>
+              </div>
+              <div style="position: relative;">
+                <div style="position: absolute; left: 10%; right: 10%; top: 34px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, #DDE5EB, #CFDCE6, #F3E4CA, #CFE3D8); transform-origin: left; animation: km-draw 1s cubic-bezier(.22,.61,.36,1) both;"></div>
+                <div style="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px;">
+                  <sc-for list="{{ funnel }}" as="f" hint-placeholder-count="4">
+                    <button onClick="{{ f.go }}" style="{{ f.style }}">
+                      <span style="display: flex; align-items: center; gap: 8px;">
+                        <span style="{{ f.dotStyle }}"></span>
+                        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: #857E74;">{{ f.label }}</span>
+                      </span>
+                      <span style="display: flex; align-items: baseline; gap: 9px;">
+                        <span style="{{ f.countStyle }}">{{ f.count }}</span>
+                        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #1E6B4A;">{{ f.delta }}</span>
+                      </span>
+                      <span style="{{ f.trackStyle }}"><span style="{{ f.fillStyle }}"></span></span>
+                      <span style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                        <sc-for list="{{ f.previews }}" as="p" hint-placeholder-count="2">
+                          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #6E6760; background: #F3EFE9; border-radius: 999px; padding: 4px 9px;">{{ p }}</span>
+                        </sc-for>
+                      </span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 24px 26px; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+              <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 6px;">
+                <span style="font-family: 'Outfit'; font-weight: 700; font-size: 16px;">{{ stageCaption }}</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74;">click a stage above to switch</span>
+              </div>
+              <sc-for list="{{ stageList }}" as="row" hint-placeholder-count="4">
+                <div style="display: flex; align-items: center; gap: 15px; padding: 13px 2px; border-bottom: 1px solid #F4F0EA;">
+                  <span style="{{ row.avatarStyle }}">{{ row.initials }}</span>
+                  <span style="font-size: 14px; font-weight: 600; width: 168px; flex-shrink: 0;">{{ row.name }}</span>
+                  <span style="font-size: 14px; color: #6E6760; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ row.line }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74; flex-shrink: 0;">{{ row.meta }}</span>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px;">
+              <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 26px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+                <span style="font-family: 'Outfit'; font-weight: 700; font-size: 16px;">While you were building</span>
+                <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #4A453E; text-wrap: pretty;">Since yesterday, Kylani posted twice, answered 9 replies, and moved 3 people into conversation. Best thread: your X post on no-show fees, 31 replies.</p>
+                <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #4A453E; text-wrap: pretty;">Two operators asked about pricing. Both were escalated to you and are waiting in Inbox.</p>
+                <button onClick="{{ goInbox }}" style="align-self: flex-start; margin-top: 4px; font-size: 13.5px; font-weight: 600; color: #14120F; background: #FFFFFF; border: 1px solid #DED7CD; border-radius: 10px; padding: 9px 15px; cursor: pointer;" style-hover="background: #F6F3EE; border-color: #CFC7BB;">Open Inbox</button>
+              </div>
+
+              <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+                <span style="font-family: 'Outfit'; font-weight: 700; font-size: 16px;">Which buyer theory is winning</span>
+                <sc-for list="{{ hypotheses }}" as="h" hint-placeholder-count="3">
+                  <div style="display: flex; flex-direction: column; gap: 9px;">
+                    <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+                      <span style="font-size: 14px; font-weight: 600; line-height: 1.4;">{{ h.title }}</span>
+                      <span style="font-family: 'Outfit'; font-weight: 700; font-size: 15px; flex-shrink: 0;">{{ h.share }}</span>
+                    </span>
+                    <span style="display: flex; align-items: center; gap: 12px;">
+                      <span style="flex: 1; height: 7px; border-radius: 999px; background: #F3EFE9; overflow: hidden;"><span style="{{ h.fillStyle }}"></span></span>
+                      <span style="flex-shrink: 0;">{{ h.spark }}</span>
+                    </span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74;">{{ h.meta }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 24px 26px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+              <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                <span style="font-family: 'Outfit'; font-weight: 700; font-size: 16px;">Going out today</span>
+                <button onClick="{{ goCalendar }}" style="font-size: 13px; font-weight: 600; color: #857E74; background: transparent; border: none; cursor: pointer; padding: 0;" style-hover="color: #14120F;">Open Calendar →</button>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px;">
+                <sc-for list="{{ todayPosts }}" as="p" hint-placeholder-count="3">
+                  <div style="{{ p.cardStyle }}">
+                    <span style="display: flex; align-items: center; gap: 11px;">
+                      <span style="{{ p.tileStyle }}">{{ p.glyph }}</span>
+                      <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #14120F;">{{ p.time }}</span>
+                        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #857E74;">{{ p.platform }}</span>
+                      </span>
+                    </span>
+                    <span style="font-size: 14px; line-height: 1.5; color: #14120F;">{{ p.title }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #857E74; line-height: 1.5;">{{ p.purpose }}</span>
+                    <span style="{{ p.badgeStyle }}">{{ p.status }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 16px; flex: 1 1 320px; min-width: 0; position: sticky; top: 0;">
+            <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 24px 22px; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 1px 2px rgba(20,18,15,.03), 0 18px 40px -30px rgba(20,18,15,.3);">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-family: 'Outfit'; font-weight: 700; font-size: 16px;">Needs you</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #0A7A59; background: #E3F6EE; border-radius: 999px; padding: 3px 9px;">{{ needsCount }}</span>
+              </div>
+              <sc-for list="{{ needs }}" as="n" hint-placeholder-count="3">
+                <div style="border: 1px solid #B7E4D2; border-radius: 16px; padding: 17px 18px; background: linear-gradient(180deg, #F2FBF7, #FFFFFF); display: flex; flex-direction: column; gap: 10px;">
+                  <span style="display: flex; align-items: center; gap: 8px;">
+                    <span style="width: 6px; height: 6px; border-radius: 999px; background: #0FA47A;"></span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase; color: #0A7A59;">{{ n.kind }}</span>
+                  </span>
+                  <span style="font-size: 14px; line-height: 1.55; color: #14120F;">{{ n.body }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74; line-height: 1.55;">{{ n.why }}</span>
+                  <span style="display: flex; align-items: center; gap: 8px; padding-top: 4px;">
+                    <button onClick="{{ n.approve }}" style="font-size: 13px; font-weight: 600; color: #FDFCFA; background: #17140F; border: 1px solid #17140F; border-radius: 9px; padding: 8px 13px; cursor: pointer;" style-hover="background: #000;">{{ n.cta }}</button>
+                    <button onClick="{{ n.edit }}" style="font-size: 13px; font-weight: 600; color: #14120F; background: #FFFFFF; border: 1px solid #DED7CD; border-radius: 9px; padding: 8px 13px; cursor: pointer;" style-hover="background: #F6F3EE;">Edit</button>
+                    <button onClick="{{ n.skip }}" style="font-size: 13px; font-weight: 600; color: #857E74; background: transparent; border: none; padding: 8px 4px; cursor: pointer;" style-hover="color: #14120F;">Skip</button>
+                  </span>
+                </div>
+              </sc-for>
+              <sc-if value="{{ needsEmpty }}" hint-placeholder-val="{{ false }}">
+                <div style="border: 1px dashed #DED7CD; border-radius: 16px; padding: 20px 18px; display: flex; flex-direction: column; gap: 8px;">
+                  <span style="font-size: 14px; font-weight: 600;">Nothing waiting on you.</span>
+                  <span style="font-size: 13.5px; line-height: 1.6; color: #6E6760;">Kylani is drafting tomorrow's post and will bring it here for approval by 6pm.</span>
+                </div>
+              </sc-if>
+            </div>
+
+            <div style="background: #17140F; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 13px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: #9C948A;">Next 24 hours</span>
+              <sc-for list="{{ upcoming }}" as="u" hint-placeholder-count="3">
+                <span style="display: flex; gap: 12px; align-items: baseline;">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #0FA47A; flex-shrink: 0; width: 44px;">{{ u.when }}</span>
+                  <span style="font-size: 13.5px; line-height: 1.5; color: #E6E1DA;">{{ u.what }}</span>
+                </span>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isDiscover }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width: 1560px; display: flex; flex-direction: column; gap: 18px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 22px;">
+              <sc-for list="{{ discoverTabs }}" as="t" hint-placeholder-count="2">
+                <button onClick="{{ t.go }}" style="{{ t.style }}">{{ t.label }}</button>
+              </sc-for>
+            </div>
+            <div style="display: inline-flex; padding: 3px; border-radius: 11px; background: #EFE9E1; border: 1px solid #EAE4DB;">
+              <sc-for list="{{ views }}" as="v" hint-placeholder-count="2">
+                <button onClick="{{ v.go }}" style="{{ v.style }}">{{ v.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 222px minmax(0, 1fr); gap: 22px; align-items: start;">
+            <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 20px; padding: 20px 17px; display: flex; flex-direction: column; gap: 20px; position: sticky; top: 0; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+              <sc-for list="{{ filterGroups }}" as="g" hint-placeholder-count="4">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: #857E74;">{{ g.label }}</span>
+                  <sc-for list="{{ g.options }}" as="o" hint-placeholder-count="3">
+                    <button onClick="{{ o.go }}" style="{{ o.style }}">
+                      <span style="display: flex; align-items: center; gap: 9px;"><span style="{{ o.dotStyle }}"></span>{{ o.label }}</span>
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #857E74;">{{ o.count }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0;">
+              <sc-if value="{{ showSignals }}" hint-placeholder-val="{{ true }}">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #857E74;">{{ signalCaption }}</span>
+                <sc-for list="{{ signals }}" as="s" hint-placeholder-count="5">
+                  <div style="{{ s.cardStyle }}">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px;">
+                      <span style="display: flex; align-items: center; gap: 11px;">
+                        <span style="{{ s.tileStyle }}">{{ s.glyph }}</span>
+                        <span style="display: flex; flex-direction: column; gap: 2px;">
+                          <span style="font-size: 13.5px; font-weight: 600;">{{ s.community }}</span>
+                          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #857E74;">{{ s.author }} · {{ s.age }}</span>
+                        </span>
+                      </span>
+                      <span style="display: flex; align-items: center; gap: 10px;">
+                        <span style="{{ s.stageStyle }}">{{ s.stage }}</span>
+                        <button onClick="{{ s.toggleWhy }}" style="{{ s.fitStyle }}">{{ s.fit }}</button>
+                      </span>
+                    </div>
+                    <p style="margin: 0; font-size: 18px; line-height: 1.55; color: #14120F; text-wrap: pretty; letter-spacing: -.005em;">{{ s.quote }}</p>
+                    <sc-if value="{{ s.whyOpen }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; line-height: 1.65; color: #6E6760; background: #F6F3EE; border-radius: 11px; padding: 11px 13px;">why this scored {{ s.fit }} — {{ s.why }}</span>
+                    </sc-if>
+                    <div style="display: flex; align-items: center; gap: 9px; border-top: 1px solid #F4F0EA; padding-top: 15px;">
+                      <button onClick="{{ s.draft }}" style="font-size: 13px; font-weight: 600; color: #FDFCFA; background: #17140F; border: 1px solid #17140F; border-radius: 9px; padding: 9px 15px; cursor: pointer;" style-hover="background: #000;">{{ s.action }}</button>
+                      <button onClick="{{ s.watch }}" style="font-size: 13px; font-weight: 600; color: #14120F; background: #FFFFFF; border: 1px solid #DED7CD; border-radius: 9px; padding: 9px 15px; cursor: pointer;" style-hover="background: #F6F3EE;">Watch</button>
+                      <button onClick="{{ s.dismiss }}" style="font-size: 13px; font-weight: 600; color: #857E74; background: transparent; border: none; padding: 9px 6px; cursor: pointer;" style-hover="color: #14120F;">Not a fit</button>
+                    </div>
+                  </div>
+                </sc-for>
+              </sc-if>
+
+              <sc-if value="{{ showMap }}" hint-placeholder-val="{{ false }}">
+                <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 20px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #857E74;">Territory — node size is signal volume, ember means new since your last visit</span>
+                  <span>{{ territory }}</span>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ showCommunities }}" hint-placeholder-val="{{ false }}">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;">
+                  <sc-for list="{{ communities }}" as="c" hint-placeholder-count="5">
+                    <div style="{{ c.cardStyle }}">
+                      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+                        <span style="display: flex; align-items: center; gap: 11px;">
+                          <span style="{{ c.tileStyle }}">{{ c.glyph }}</span>
+                          <span style="display: flex; flex-direction: column; gap: 3px;">
+                            <span style="font-family: 'Outfit'; font-weight: 700; font-size: 15.5px;">{{ c.name }}</span>
+                            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #857E74;">{{ c.kind }}</span>
+                          </span>
+                        </span>
+                        <span style="{{ c.statusStyle }}">{{ c.status }}</span>
+                      </div>
+                      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;">
+                        <span style="display: flex; flex-direction: column; gap: 3px;">
+                          <span style="font-family: 'Outfit'; font-weight: 700; font-size: 22px;">{{ c.signals }}</span>
+                          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #857E74;">{{ c.trend }}</span>
+                        </span>
+                        <span>{{ c.spark }}</span>
+                      </div>
+                      <div style="display: flex; flex-direction: column; gap: 7px; border-top: 1px solid #F4F0EA; padding-top: 13px;">
+                        <sc-for list="{{ c.threads }}" as="t" hint-placeholder-count="2">
+                          <span style="font-size: 13px; color: #4A453E; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ t }}</span>
+                        </sc-for>
+                      </div>
+                      <sc-if value="{{ c.needsApproval }}" hint-placeholder-val="{{ false }}">
+                        <button onClick="{{ c.approve }}" style="align-self: flex-start; font-size: 13px; font-weight: 600; color: #FDFCFA; background: #17140F; border: 1px solid #17140F; border-radius: 9px; padding: 9px 14px; cursor: pointer;" style-hover="background: #000;">Approve joining</button>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isCalendar }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width: 1620px; display: flex; flex-direction: column; gap: 18px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <sc-for list="{{ calCounts }}" as="c" hint-placeholder-count="3">
+                <span style="{{ c.style }}"><span style="{{ c.dotStyle }}"></span>{{ c.label }}</span>
+              </sc-for>
+            </div>
+            <div style="display: inline-flex; padding: 3px; border-radius: 11px; background: #EFE9E1; border: 1px solid #EAE4DB;">
+              <span style="padding: 7px 14px; border-radius: 9px; font-size: 13px; font-weight: 600; color: #14120F; background: #FFFFFF; border: 1px solid #EAE4DB;">Week</span>
+              <span style="padding: 7px 14px; border-radius: 9px; font-size: 13px; font-weight: 600; color: #857E74;">Month</span>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 8px; box-shadow: 0 1px 2px rgba(20,18,15,.03); overflow-x: auto;">
+            <div style="display: grid; grid-template-columns: repeat(7, minmax(138px, 1fr)); gap: 0; align-items: stretch; overflow-wrap: anywhere;">
+              <sc-for list="{{ week }}" as="d" hint-placeholder-count="7">
+                <div style="{{ d.colStyle }}">
+                  <div style="display: flex; align-items: center; gap: 8px; padding: 6px 4px 10px;">
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #857E74;">{{ d.day }}</span>
+                    <span style="{{ d.dateStyle }}">{{ d.date }}</span>
+                  </div>
+                  <sc-for list="{{ d.posts }}" as="p" hint-placeholder-count="1">
+                    <button onClick="{{ p.open }}" style="{{ p.style }}">
+                      <span style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                        <span style="{{ p.tileStyle }}">{{ p.glyph }}</span>
+                        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #14120F;">{{ p.time }}</span>
+                      </span>
+                      <span style="font-size: 12.5px; line-height: 1.45; color: #14120F; text-align: left;">{{ p.title }}</span>
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #857E74; text-align: left; line-height: 1.45;">{{ p.purpose }}</span>
+                      <span style="{{ p.badgeStyle }}"><span style="{{ p.badgeDot }}"></span>{{ p.short }}</span>
+                    </button>
+                  </sc-for>
+                  <sc-if value="{{ d.suggestion }}" hint-placeholder-val="{{ false }}">
+                    <div style="border: 1px dashed #DED7CD; border-radius: 13px; padding: 12px; display: flex; flex-direction: column; gap: 9px;">
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: #857E74;">Kylani suggests</span>
+                      <span style="font-size: 12.5px; line-height: 1.45; color: #6E6760;">{{ d.suggestion }}</span>
+                      <span style="display: flex; gap: 6px;">
+                        <button onClick="{{ d.accept }}" style="font-size: 12px; font-weight: 600; color: #14120F; background: #FFFFFF; border: 1px solid #DED7CD; border-radius: 8px; padding: 6px 11px; cursor: pointer;" style-hover="background: #F6F3EE;">Accept</button>
+                        <button style="font-size: 12px; font-weight: 600; color: #857E74; background: transparent; border: none; padding: 6px 4px; cursor: pointer;" style-hover="color: #14120F;">Change</button>
+                      </span>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <sc-if value="{{ postPanel }}" hint-placeholder-val="{{ false }}">
+          <div style="position: fixed; inset: 0; background: rgba(20,18,15,.32); display: flex; justify-content: flex-end; z-index: 40;">
+            <div style="width: 480px; max-width: 92vw; background: #FFFFFF; height: 100%; overflow: auto; padding: 28px 28px 44px; display: flex; flex-direction: column; gap: 20px; animation: km-slide .24s cubic-bezier(.22,.61,.36,1) both;">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+                <span style="display: flex; flex-direction: column; gap: 6px;">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #857E74;">{{ postPanel.when }}</span>
+                  <span style="font-family: 'Outfit'; font-weight: 700; font-size: 21px; letter-spacing: -.02em;">{{ postPanel.platform }} post</span>
+                </span>
+                <button onClick="{{ closePanel }}" style="font-size: 15px; color: #857E74; background: #F6F3EE; border: none; border-radius: 9px; cursor: pointer; padding: 7px 11px;" style-hover="color: #14120F; background: #EFE9E1;">✕</button>
+              </div>
+              <div style="border: 1px solid #EAE4DB; border-radius: 18px; padding: 20px; background: #FCFAF7; display: flex; flex-direction: column; gap: 14px;">
+                <span style="display: flex; align-items: center; gap: 10px;">
+                  <span style="width: 34px; height: 34px; border-radius: 999px; background: #5B7C99; color: #FDFCFA; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;">MC</span>
+                  <span style="display: flex; flex-direction: column;">
+                    <span style="font-size: 13.5px; font-weight: 600;">Maya Chen</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #857E74;">@mayabuildsdockside</span>
+                  </span>
+                </span>
+                <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #14120F; text-wrap: pretty; white-space: pre-line;">{{ postPanel.body }}</p>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: #857E74;">Why this post exists</span>
+                <span style="font-size: 14.5px; line-height: 1.7; color: #4A453E;">{{ postPanel.why }}</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px; border-top: 1px solid #F4F0EA; padding-top: 18px;">
+                <button onClick="{{ closePanel }}" style="font-size: 14px; font-weight: 600; color: #FDFCFA; background: #17140F; border: 1px solid #17140F; border-radius: 11px; padding: 11px 18px; cursor: pointer;" style-hover="background: #000;">Approve &amp; schedule</button>
+                <button style="font-size: 14px; font-weight: 600; color: #14120F; background: #FFFFFF; border: 1px solid #DED7CD; border-radius: 11px; padding: 11px 18px; cursor: pointer;" style-hover="background: #F6F3EE;">Edit</button>
+                <button onClick="{{ closePanel }}" style="font-size: 14px; font-weight: 600; color: #857E74; background: transparent; border: none; padding: 11px 6px; cursor: pointer;" style-hover="color: #14120F;">Skip</button>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ isInbox }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-wrap: wrap; gap: 18px; align-items: stretch; max-width: 1660px; min-height: calc(100vh - 148px);">
+
+          <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; flex: 1 1 300px; min-width: 0; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+            <div style="display: flex; gap: 4px; padding: 14px 12px 12px; border-bottom: 1px solid #F4F0EA; flex-wrap: wrap;">
+              <sc-for list="{{ inboxTabs }}" as="t" hint-placeholder-count="4">
+                <button onClick="{{ t.go }}" style="{{ t.style }}">{{ t.label }}</button>
+              </sc-for>
+            </div>
+            <div style="flex: 1; overflow: auto;">
+              <sc-for list="{{ convos }}" as="c" hint-placeholder-count="5">
+                <button onClick="{{ c.open }}" style="{{ c.style }}">
+                  <span style="display: flex; align-items: center; gap: 11px; width: 100%;">
+                    <span style="{{ c.avatarStyle }}">{{ c.initials }}</span>
+                    <span style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;">
+                      <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px;">
+                        <span style="font-size: 13.5px; font-weight: 600;">{{ c.name }}</span>
+                        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #857E74;">{{ c.time }}</span>
+                      </span>
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #857E74;">{{ c.source }}</span>
+                    </span>
+                  </span>
+                  <span style="font-size: 13px; color: #6E6760; line-height: 1.5; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">{{ c.last }}</span>
+                  <span style="{{ c.stageStyle }}">{{ c.stage }}</span>
+                </button>
+              </sc-for>
+            </div>
+            <div style="border-top: 1px solid #F4F0EA; padding: 13px;">
+              <button onClick="{{ approveAll }}" style="width: 100%; font-size: 13px; font-weight: 600; color: #14120F; background: #FFFFFF; border: 1px solid #DED7CD; border-radius: 10px; padding: 10px 12px; cursor: pointer;" style-hover="background: #F6F3EE;">{{ approveAllLabel }}</button>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; flex: 3 1 420px; min-width: 0; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+            <div style="padding: 18px 22px; border-bottom: 1px solid #F4F0EA; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+              <span style="display: flex; align-items: center; gap: 12px;">
+                <span style="{{ lead.avatarStyle }}">{{ lead.initials }}</span>
+                <span style="display: flex; flex-direction: column; gap: 3px;">
+                  <span style="font-family: 'Outfit'; font-weight: 700; font-size: 17px;">{{ thread.name }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74;">{{ thread.meta }}</span>
+                </span>
+              </span>
+              <span style="{{ thread.stageStyle }}">{{ thread.stage }}</span>
+            </div>
+
+            <div style="flex: 1; overflow: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; background: #FCFAF7;">
+              <sc-for list="{{ thread.messages }}" as="m" hint-placeholder-count="4">
+                <div style="{{ m.rowStyle }}">
+                  <sc-if value="{{ m.isMarker }}" hint-placeholder-val="{{ false }}">
+                    <span style="display: inline-flex; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: #1E6B4A; background: #E9F2EC; border-radius: 999px; padding: 5px 13px;">{{ m.text }}</span>
+                  </sc-if>
+                  <sc-if value="{{ m.isBubble }}" hint-placeholder-val="{{ true }}">
+                    <span style="{{ m.bubbleStyle }}">
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; opacity: .7;">{{ m.who }} · {{ m.time }}</span>
+                      <span style="font-size: 15px; line-height: 1.65;">{{ m.text }}</span>
+                    </span>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="border-top: 1px solid #F4F0EA; padding: 18px 22px 20px; display: flex; flex-direction: column; gap: 11px;">
+              <sc-if value="{{ draftPending }}" hint-placeholder-val="{{ true }}">
+                <span style="display: flex; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74;">
+                  <span style="width: 6px; height: 6px; border-radius: 999px; background: #0FA47A;"></span>{{ thread.reasoning }}
+                </span>
+                <div style="border: 1px solid #B7E4D2; border-radius: 16px; padding: 18px 19px 16px; position: relative; display: flex; flex-direction: column; gap: 14px; background: linear-gradient(180deg, #F2FBF7, #FFFFFF);">
+                  <span style="position: absolute; top: -10px; left: 16px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #0A7A59; background: #F2FBF7; padding: 0 8px;">Draft by Kylani</span>
+                  <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #14120F; text-wrap: pretty;">{{ thread.draft }}</p>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <button onClick="{{ sendDraft }}" style="font-size: 14px; font-weight: 600; color: #FDFCFA; background: #17140F; border: 1px solid #17140F; border-radius: 11px; padding: 10px 17px; cursor: pointer;" style-hover="background: #000;">Approve &amp; send</button>
+                    <button style="font-size: 14px; font-weight: 600; color: #14120F; background: #FFFFFF; border: 1px solid #DED7CD; border-radius: 11px; padding: 10px 17px; cursor: pointer;" style-hover="background: #F6F3EE;">Edit</button>
+                    <button style="font-size: 14px; font-weight: 600; color: #857E74; background: transparent; border: none; padding: 10px 6px; cursor: pointer;" style-hover="color: #14120F;">Write my own</button>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ draftSent }}" hint-placeholder-val="{{ false }}">
+                <div style="border: 1px solid #BFD9CB; background: #E9F2EC; border-radius: 14px; padding: 15px 17px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                  <span style="font-size: 14px; color: #1E6B4A; font-weight: 600;">{{ sentLabel }}</span>
+                  <button onClick="{{ undoSend }}" style="font-size: 13px; font-weight: 600; color: #14120F; background: #FFFFFF; border: 1px solid #BFD9CB; border-radius: 9px; padding: 8px 13px; cursor: pointer;" style-hover="background: #F6F3EE;">Undo</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ threadPaused }}" hint-placeholder-val="{{ false }}">
+                <div style="border: 1px solid #EAE4DB; border-radius: 14px; padding: 15px 17px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                  <span style="font-size: 14px; color: #4A453E;">Kylani is waiting 2 days before following up.</span>
+                  <button style="font-size: 13px; font-weight: 600; color: #14120F; background: #FFFFFF; border: 1px solid #DED7CD; border-radius: 9px; padding: 8px 13px; cursor: pointer;" style-hover="background: #F6F3EE;">Nudge now</button>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 20px; padding: 22px; overflow: auto; display: flex; flex-direction: column; gap: 18px; flex: 1 1 320px; min-width: 0; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="{{ lead.bigAvatarStyle }}">{{ lead.initials }}</span>
+              <span style="display: flex; flex-direction: column; gap: 3px;">
+                <span style="font-family: 'Outfit'; font-weight: 700; font-size: 16px;">{{ lead.name }}</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #857E74; line-height: 1.4;">{{ lead.role }}</span>
+              </span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 9px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: #857E74;">Where Kylani found them</span>
+              <span style="font-size: 15px; line-height: 1.6; color: #14120F; border-left: 2px solid #0FA47A; padding-left: 14px;">{{ lead.signal }}</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74;">{{ lead.signalMeta }}</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 11px;">
+              <span style="background: #FCFAF7; border: 1px solid #EAE4DB; border-radius: 13px; padding: 13px 14px; display: flex; flex-direction: column; gap: 4px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #857E74;">Fit</span>
+                <span style="font-family: 'Outfit'; font-weight: 700; font-size: 21px;">{{ lead.fit }}</span>
+              </span>
+              <span style="background: #FCFAF7; border: 1px solid #EAE4DB; border-radius: 13px; padding: 13px 14px; display: flex; flex-direction: column; gap: 4px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #857E74;">Touches</span>
+                <span style="font-family: 'Outfit'; font-weight: 700; font-size: 21px;">{{ lead.touches }}</span>
+              </span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 9px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: #857E74;">Hypothesis matched</span>
+              <span style="font-size: 14px; line-height: 1.6; color: #4A453E;">{{ lead.hypothesis }}</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: #857E74;">Touch history</span>
+              <sc-for list="{{ lead.history }}" as="h" hint-placeholder-count="4">
+                <span style="display: flex; gap: 11px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6E6760; line-height: 1.5;">
+                  <span style="flex-shrink: 0; color: #14120F;">{{ h.when }}</span>
+                  <span>{{ h.what }}</span>
+                </span>
+              </sc-for>
+            </div>
+            <div style="border-top: 1px solid #F4F0EA; padding-top: 16px; display: flex; flex-direction: column; gap: 10px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: #857E74;">Stage</span>
+              <button onClick="{{ convert }}" style="font-size: 13.5px; font-weight: 600; color: #FDFCFA; background: #1E6B4A; border: 1px solid #1E6B4A; border-radius: 10px; padding: 10px 15px; cursor: pointer;" style-hover="background: #17553B;">Move to Converted</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isCampaigns }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width: 1300px; display: flex; flex-direction: column; gap: 22px;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 18px;">
+            <sc-for list="{{ campaigns }}" as="c" hint-placeholder-count="2">
+              <div style="{{ c.cardStyle }}">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+                  <span style="display: flex; flex-direction: column; gap: 5px;">
+                    <span style="font-family: 'Outfit'; font-weight: 700; font-size: 17px; letter-spacing: -.015em;">{{ c.name }}</span>
+                    <span style="font-size: 13.5px; color: #6E6760;">{{ c.goal }}</span>
+                  </span>
+                  <span style="{{ c.modeStyle }}">{{ c.mode }}</span>
+                </div>
+                <div style="display: flex; align-items: flex-end; gap: 0; border-top: 1px solid #F4F0EA; padding-top: 16px;">
+                  <sc-for list="{{ c.funnel }}" as="f" hint-placeholder-count="4">
+                    <span style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: .07em; text-transform: uppercase; color: #857E74;">{{ f.label }}</span>
+                      <span style="{{ f.countStyle }}">{{ f.count }}</span>
+                      <span style="{{ f.barStyle }}"></span>
+                    </span>
+                  </sc-for>
+                </div>
+                <span style="font-size: 13.5px; color: #4A453E; line-height: 1.6;">{{ c.health }}</span>
+              </div>
+            </sc-for>
+            <button onClick="{{ newCampaign }}" style="border: 1px dashed #DED7CD; border-radius: 20px; padding: 24px; background: transparent; cursor: pointer; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; text-align: left;" style-hover="background: #FCFAF7; border-color: #0FA47A;">
+              <span style="font-family: 'Outfit'; font-weight: 700; font-size: 17px; color: #14120F;">Give Kylani a job</span>
+              <span style="font-size: 13.5px; color: #6E6760; line-height: 1.6;">A URL, a goal, and who you think buys. Kylani proposes the rest for your approval.</span>
+            </button>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 28px; display: flex; flex-direction: column; gap: 24px; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+              <span style="font-family: 'Outfit'; font-weight: 700; font-size: 19px; letter-spacing: -.02em;">Dockside — First 100 operators</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #857E74;">running 12 days · {{ modeLabel }} mode</span>
+            </div>
+
+            <div style="position: relative;">
+              <div style="position: absolute; left: 10%; right: 10%; top: 19px; height: 2px; background: #EFE9E1;"></div>
+              <div style="position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px;">
+                <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
+                  <button onClick="{{ s.go }}" style="display: flex; flex-direction: column; align-items: center; gap: 11px; background: transparent; border: none; cursor: pointer; padding: 0;">
+                    <span style="{{ s.dotStyle }}">{{ s.n }}</span>
+                    <span style="{{ s.labelStyle }}">{{ s.label }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="border: 1px solid #EAE4DB; border-radius: 18px; background: #FCFAF7; padding: 26px 28px; display: flex; flex-direction: column; gap: 18px; min-height: 260px;">
+              <span style="font-family: 'Outfit'; font-weight: 700; font-size: 17px;">{{ stepPanel.title }}</span>
+              <sc-for list="{{ stepPanel.rows }}" as="r" hint-placeholder-count="4">
+                <div style="display: flex; gap: 22px; align-items: flex-start; border-bottom: 1px solid #F0EBE4; padding-bottom: 15px;">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #857E74; width: 136px; flex-shrink: 0; padding-top: 3px;">{{ r.label }}</span>
+                  <span style="display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 0;">
+                    <span style="font-size: 15px; line-height: 1.6; color: #14120F;">{{ r.value }}</span>
+                    <sc-if value="{{ r.note }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74; line-height: 1.55;">{{ r.note }}</span>
+                    </sc-if>
+                  </span>
+                </div>
+              </sc-for>
+              <span style="font-size: 14px; line-height: 1.7; color: #6E6760; text-wrap: pretty;">{{ stepPanel.footer }}</span>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isVoice }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width: 1160px; display: flex; flex-direction: column; gap: 22px;">
+
+          <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 28px; display: flex; flex-direction: column; gap: 22px; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+            <div style="display: flex; flex-direction: column; gap: 7px;">
+              <span style="font-family: 'Outfit'; font-weight: 700; font-size: 19px; letter-spacing: -.02em;">Your voice, learned from your writing</span>
+              <span style="font-size: 14.5px; color: #6E6760; line-height: 1.7;">Kylani writes from 41 of your real posts and emails. No tone sliders, no personas. If it sounds wrong, add a better sample.</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+              <div style="border: 1px solid #EAE4DB; border-radius: 18px; padding: 20px 22px; background: #FCFAF7; display: flex; flex-direction: column; gap: 12px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: #857E74;">Generic AI reply</span>
+                <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #857E74; text-wrap: pretty;">Great question! Dockside is an all-in-one booking and CRM solution designed to streamline operations for marina businesses. I'd love to show you how it can help — feel free to book a demo at your convenience.</p>
+              </div>
+              <div style="border: 1px solid #B7E4D2; border-radius: 18px; padding: 20px 22px; background: linear-gradient(180deg, #F2FBF7, #FFFFFF); display: flex; flex-direction: column; gap: 12px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: #0A7A59;">The same reply, in your voice</span>
+                <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #14120F; text-wrap: pretty;">Yeah, the whiteboard thing is exactly why I built Dockside. Bookings, deposits, and haul-out slots in one place, and it texts the customer so you're not chasing anyone. <span style="background: #C9EEDD; border-radius: 3px; padding: 0 3px;">Happy to just show you my own marina's setup</span> — no pitch.</p>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74; line-height: 1.6;">matched from your writing: short sentences, “yeah”, offers a look instead of a demo</span>
+              </div>
+            </div>
+
+            <div style="border-top: 1px solid #F4F0EA; padding-top: 20px; display: flex; flex-direction: column; gap: 12px;">
+              <span style="font-family: 'Outfit'; font-weight: 700; font-size: 16px;">Test the voice</span>
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <input value="{{ testTopic }}" onChange="{{ setTopic }}" placeholder="A topic — why deposits stop no-shows" style="flex: 1; min-width: 280px; font-size: 14.5px; color: #14120F; background: #FFFFFF; border: 1px solid #DED7CD; border-radius: 11px; padding: 12px 15px;" style-focus="border-color: #0FA47A;" />
+                <button onClick="{{ runTest }}" style="font-size: 14px; font-weight: 600; color: #FDFCFA; background: #17140F; border: 1px solid #17140F; border-radius: 11px; padding: 12px 18px; cursor: pointer;" style-hover="background: #000;">Draft it in my voice</button>
+              </div>
+              <sc-if value="{{ testOut }}" hint-placeholder-val="{{ false }}">
+                <div style="border: 1px solid #B7E4D2; border-radius: 16px; padding: 18px 19px; display: flex; flex-direction: column; gap: 10px; background: linear-gradient(180deg, #F2FBF7, #FFFFFF);">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #0A7A59;">Draft by Kylani</span>
+                  <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #14120F; text-wrap: pretty;">{{ testOut }}</p>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 28px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+            <span style="font-family: 'Outfit'; font-weight: 700; font-size: 19px; letter-spacing: -.02em;">Guardrails</span>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <sc-for list="{{ rules }}" as="r" hint-placeholder-count="4">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 16px; border: 1px solid #EAE4DB; border-radius: 13px; background: #FCFAF7;">
+                  <span style="display: flex; align-items: center; gap: 11px; font-size: 15px; color: #14120F;"><span style="width: 5px; height: 5px; border-radius: 999px; background: #5B7C99;"></span>{{ r.text }}</span>
+                  <button onClick="{{ r.remove }}" style="font-size: 13px; font-weight: 600; color: #857E74; background: transparent; border: none; cursor: pointer; padding: 4px 6px;" style-hover="color: #14120F;">Remove</button>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <input value="{{ ruleDraft }}" onChange="{{ setRuleDraft }}" placeholder="Add a rule in plain words" style="flex: 1; min-width: 280px; font-size: 14.5px; color: #14120F; background: #FFFFFF; border: 1px solid #DED7CD; border-radius: 11px; padding: 12px 15px;" style-focus="border-color: #0FA47A;" />
+              <button onClick="{{ addRule }}" style="font-size: 14px; font-weight: 600; color: #14120F; background: #FFFFFF; border: 1px solid #DED7CD; border-radius: 11px; padding: 12px 18px; cursor: pointer;" style-hover="background: #F6F3EE;">Add rule</button>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 28px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+            <span style="font-family: 'Outfit'; font-weight: 700; font-size: 19px; letter-spacing: -.02em;">How much rope Kylani gets</span>
+            <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;">
+              <sc-for list="{{ modeCards }}" as="m" hint-placeholder-count="3">
+                <button onClick="{{ m.go }}" style="{{ m.style }}">
+                  <span style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                    <span style="font-family: 'Outfit'; font-weight: 700; font-size: 16px; color: #14120F;">{{ m.label }}</span>
+                    <span style="{{ m.pipStyle }}"></span>
+                  </span>
+                  <span style="font-size: 14px; line-height: 1.65; color: #4A453E; text-align: left;">{{ m.body }}</span>
+                </button>
+              </sc-for>
+            </div>
+            <div style="border-top: 1px solid #F4F0EA; padding-top: 18px; display: flex; flex-direction: column; gap: 13px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: #857E74;">Per-surface overrides</span>
+              <sc-for list="{{ overrides }}" as="o" hint-placeholder-count="3">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                  <span style="font-size: 14.5px; color: #14120F;">{{ o.label }}</span>
+                  <span style="display: inline-flex; padding: 3px; border-radius: 10px; background: #EFE9E1; border: 1px solid #EAE4DB;">
+                    <sc-for list="{{ o.opts }}" as="p" hint-placeholder-count="3">
+                      <button onClick="{{ p.go }}" style="{{ p.style }}">{{ p.label }}</button>
+                    </sc-for>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAnalytics }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width: 1300px; display: flex; flex-direction: column; gap: 22px;">
+
+          <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 28px; display: flex; flex-direction: column; gap: 24px; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: flex-start; gap: 40px; flex-wrap: wrap; min-width: 0;">
+                <sc-for list="{{ funnel }}" as="f" hint-placeholder-count="4">
+                  <span style="display: flex; flex-direction: column; gap: 7px;">
+                    <span style="display: flex; align-items: center; gap: 8px;">
+                      <span style="{{ f.dotStyle }}"></span>
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #857E74;">{{ f.label }}</span>
+                    </span>
+                    <span style="{{ f.bigCountStyle }}">{{ f.count }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #1E6B4A;">{{ f.delta }}</span>
+                  </span>
+                </sc-for>
+              </div>
+              <div style="display: inline-flex; padding: 3px; border-radius: 11px; background: #EFE9E1; border: 1px solid #EAE4DB;">
+                <sc-for list="{{ periods }}" as="p" hint-placeholder-count="3">
+                  <button onClick="{{ p.go }}" style="{{ p.style }}">{{ p.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <span>{{ areaChart }}</span>
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid #F2EDE6; padding-top: 9px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74;">6 Jul</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74;">13 Jul</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74;">20 Jul</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74;">27 Jul</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74;">3 Aug</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+                <sc-for list="{{ legend }}" as="l" hint-placeholder-count="4">
+                  <span style="display: inline-flex; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6E6760;">
+                    <span style="{{ l.swatch }}"></span>{{ l.label }}
+                  </span>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 22px; align-items: start;">
+            <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 26px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+              <span style="font-family: 'Outfit'; font-weight: 700; font-size: 18px; letter-spacing: -.02em;">What's working</span>
+              <sc-for list="{{ insights }}" as="i" hint-placeholder-count="3">
+                <div style="{{ i.cardStyle }}">
+                  <span style="{{ i.tagStyle }}">{{ i.tag }}</span>
+                  <p style="margin: 0; font-size: 15px; line-height: 1.65; color: #14120F; text-wrap: pretty;">{{ i.text }}</p>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74;">{{ i.evidence }}</span>
+                  <button onClick="{{ i.act }}" style="align-self: flex-start; font-size: 13px; font-weight: 600; color: #14120F; background: #FFFFFF; border: 1px solid #DED7CD; border-radius: 10px; padding: 9px 14px; cursor: pointer;" style-hover="background: #F6F3EE;">{{ i.action }}</button>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 26px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+              <span style="font-family: 'Outfit'; font-weight: 700; font-size: 18px; letter-spacing: -.02em;">Where they came from</span>
+              <sc-for list="{{ attribution }}" as="a" hint-placeholder-count="4">
+                <div style="display: flex; flex-direction: column; gap: 9px;">
+                  <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px;">
+                    <span style="display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 600;"><span style="{{ a.dotStyle }}"></span>{{ a.label }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74;">{{ a.meta }}</span>
+                  </span>
+                  <span style="display: block; height: 10px; border-radius: 999px; background: #F3EFE9; position: relative; overflow: hidden;">
+                    <span style="{{ a.barStyle }}"></span>
+                    <span style="{{ a.convStyle }}"></span>
+                  </span>
+                </div>
+              </sc-for>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #857E74; line-height: 1.6;">slate: conversations · green: converted</span>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+            <span style="font-family: 'Outfit'; font-weight: 700; font-size: 18px; letter-spacing: -.02em;">Six paying operators, and where each came from</span>
+            <div style="display: flex; flex-direction: column;">
+              <div style="display: grid; grid-template-columns: 1.2fr 1fr .9fr .7fr 1.5fr; gap: 16px; padding-bottom: 12px; border-bottom: 1px solid #EAE4DB;">
+                <sc-for list="{{ cohortHead }}" as="h" hint-placeholder-count="5">
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #857E74;">{{ h }}</span>
+                </sc-for>
+              </div>
+              <sc-for list="{{ cohort }}" as="c" hint-placeholder-count="6">
+                <div style="display: grid; grid-template-columns: 1.2fr 1fr .9fr .7fr 1.5fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid #F4F0EA; align-items: center;">
+                  <span style="display: flex; align-items: center; gap: 11px;">
+                    <span style="{{ c.avatarStyle }}">{{ c.initials }}</span>
+                    <span style="font-size: 14px; font-weight: 600;">{{ c.name }}</span>
+                  </span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #6E6760;">{{ c.source }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #857E74;">{{ c.first }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #1E6B4A;">{{ c.days }}</span>
+                  <span style="font-size: 13.5px; color: #4A453E; line-height: 1.5;">{{ c.hypothesis }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 22px 26px; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+            <button onClick="{{ toggleReach }}" style="width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: transparent; border: none; cursor: pointer; padding: 0;">
+              <span style="font-family: 'Outfit'; font-weight: 700; font-size: 16px; color: #14120F;">Reach</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #857E74;">{{ reachLabel }}</span>
+            </button>
+            <sc-if value="{{ reachOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; gap: 44px; padding-top: 20px; margin-top: 18px; border-top: 1px solid #F4F0EA; flex-wrap: wrap;">
+                <sc-for list="{{ reach }}" as="r" hint-placeholder-count="3">
+                  <span style="display: flex; flex-direction: column; gap: 5px;">
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #857E74;">{{ r.label }}</span>
+                    <span style="font-family: 'Outfit'; font-weight: 700; font-size: 24px;">{{ r.value }}</span>
+                  </span>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width: 860px; display: flex; flex-direction: column; gap: 20px;">
+          <div style="background: #FFFFFF; border: 1px solid #EAE4DB; border-radius: 22px; padding: 28px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(20,18,15,.03);">
+            <span style="font-family: 'Outfit'; font-weight: 700; font-size: 19px; letter-spacing: -.02em;">Connected accounts</span>
+            <sc-for list="{{ accounts }}" as="a" hint-placeholder-count="4">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border: 1px solid #EAE4DB; border-radius: 14px; background: #FCFAF7;">
+                <span style="display: flex; align-items: center; gap: 12px;">
+                  <span style="{{ a.tileStyle }}">{{ a.glyph }}</span>
+                  <span style="display: flex; flex-direction: column; gap: 3px;">
+                    <span style="font-size: 14.5px; font-weight: 600;">{{ a.name }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74;">{{ a.handle }}</span>
+                  </span>
+                </span>
+                <span style="{{ a.style }}">{{ a.status }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+
+  <sc-if value="{{ logOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; inset: 0; background: rgba(20,18,15,.32); display: flex; justify-content: flex-end; z-index: 50;">
+      <div style="width: 440px; max-width: 92vw; background: #FFFFFF; height: 100%; overflow: auto; padding: 26px 26px 44px; display: flex; flex-direction: column; gap: 20px; animation: km-slide .24s cubic-bezier(.22,.61,.36,1) both;">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+          <span style="display: flex; flex-direction: column; gap: 6px;">
+            <span style="font-family: 'Outfit'; font-weight: 700; font-size: 20px; letter-spacing: -.02em;">What Kylani did</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #857E74;">today · 34 actions · tap a line for the why</span>
+          </span>
+          <button onClick="{{ toggleLog }}" style="font-size: 15px; color: #857E74; background: #F6F3EE; border: none; border-radius: 9px; cursor: pointer; padding: 7px 11px;" style-hover="color: #14120F; background: #EFE9E1;">✕</button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <sc-for list="{{ activity }}" as="a" hint-placeholder-count="8">
+            <button onClick="{{ a.toggle }}" style="{{ a.style }}">
+              <span style="display: flex; gap: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; line-height: 1.5; width: 100%;">
+                <span style="color: #857E74; flex-shrink: 0;">{{ a.time }}</span>
+                <span style="color: #14120F; text-align: left;">{{ a.what }}</span>
+              </span>
+              <sc-if value="{{ a.open }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size: 13.5px; line-height: 1.65; color: #6E6760; text-align: left; padding-left: 58px;">{{ a.why }}</span>
+              </sc-if>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;autonomyMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Suggest&quot;,&quot;Approve&quot;,&quot;Run&quot;],&quot;default&quot;:&quot;Approve&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Agent&quot;},&quot;agentStatus&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Kylani is reading 14 new threads in r/boating&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Agent&quot;}}">
+const EMBER = '#0FA47A', INK = '#17140F', GREEN = '#1E6B4A', GREY = '#857E74';
+const SLATE = '#5B7C99', OCEAN = '#3E6B8A', AMBER = '#C8892F', PLUM = '#7A4E7E';
+const STAGE_C = { found: '#8FA9B8', engaged: SLATE, conversation: AMBER, converted: GREEN };
+const AV = [SLATE, PLUM, AMBER, OCEAN, GREEN, '#8A6A4E'];
+const avatar = (name, size) => {
+  let h = 0; for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 997;
+  const c = AV[h % AV.length];
+  return `width:${size}px;height:${size}px;border-radius:999px;background:${c};color:#FDFCFA;font-size:${Math.round(size * 0.38)}px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:.02em;`;
+};
+const PLAT = { X: INK, Reddit: AMBER, LinkedIn: OCEAN, Discord: PLUM, Forum: '#8A6A4E', Email: SLATE };
+const GLYPH = { X: '𝕏', Reddit: 'r/', LinkedIn: 'in', Discord: '◇', Forum: '❝', Email: '✉' };
+const tile = (platform, size) => `width:${size}px;height:${size}px;border-radius:${Math.round(size * 0.32)}px;background:${PLAT[platform] || INK};color:#FDFCFA;font-family:'Outfit';font-weight:700;font-size:${Math.round(size * 0.42)}px;display:flex;align-items:center;justify-content:center;flex-shrink:0;`;
+const seg = (on) => `padding:7px 14px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid ${on ? '#EAE4DB' : 'transparent'};background:${on ? '#FFFFFF' : 'transparent'};color:${on ? '#14120F' : GREY};box-shadow:${on ? '0 1px 2px rgba(20,18,15,.04)' : 'none'};`;
+const navBtn = (on) => `display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;font-size:14px;font-weight:${on ? 600 : 400};color:${on ? '#FDFCFA' : '#B4ADA3'};background:${on ? 'rgba(253,252,250,.1)' : 'transparent'};border:none;border-radius:10px;padding:10px 11px;cursor:pointer;`;
+const pill = (kind) => {
+  const map = {
+    'Draft by Kylani': `border:1px dashed #CFC7BB;color:${GREY};background:transparent;`,
+    'Awaiting your approval': `border:1px solid #B7E4D2;color:#0A7A59;background:#E3F6EE;`,
+    'Needs you': `border:1px solid #B7E4D2;color:#0A7A59;background:#E3F6EE;`,
+    'Scheduled': `border:1px solid #EAE4DB;color:#4A453E;background:#F3EFE9;`,
+    'Sent / Posted': `border:1px solid #BFD9CB;color:${GREEN};background:#E9F2EC;`,
+    'Posted': `border:1px solid #BFD9CB;color:${GREEN};background:#E9F2EC;`,
+    'Replied': `border:1px solid #CFDCE6;color:${OCEAN};background:#EDF3F7;`,
+    'Engaged': `border:1px solid #CFDCE6;color:${OCEAN};background:#EDF3F7;`,
+    'In conversation': `border:1px solid #EEDCBF;color:#8A5F1B;background:#FBF1E2;`,
+    'New signal': `border:1px solid #B7E4D2;color:#0A7A59;background:#E3F6EE;`,
+    'Member': `border:1px solid #BFD9CB;color:${GREEN};background:#E9F2EC;`,
+    'Suggested': `border:1px dashed #CFC7BB;color:${GREY};background:transparent;`,
+    'Connected': `border:1px solid #BFD9CB;color:${GREEN};background:#E9F2EC;`,
+    'Converted': `border:1px solid ${GREEN};color:#FDFCFA;background:${GREEN};`
+  };
+  return `align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap;${map[kind] || map['Scheduled']}`;
+};
+
+class Component extends DCLogic {
+  state = {
+    screen: 'home', mode: null, logOpen: false, logOpenIdx: -1,
+    stage: 'found', needsSkipped: [], dTab: 'signals', dView: 'list', whyIdx: -1,
+    dismissed: [], filter: 'all', calSel: null, joined: false,
+    inboxTab: 'needs', convo: 0, sentIds: [], converted: [],
+    step: 1, period: '30d', reachOpen: false, testTopic: '', testOut: null, ruleDraft: '',
+    rules: ['Never discuss competitors by name', 'Always include the booking link in DMs', 'No emojis', 'Pricing questions escalate to me'],
+    overrides: { Posts: 'Approve', Replies: 'Approve', DMs: 'Suggest' }
+  };
+
+  mode() { return this.state.mode || this.props.autonomyMode || 'Approve'; }
+  set(patch) { this.setState(patch); }
+
+  spark(points, color) {
+    const w = 72, h = 26, max = Math.max(...points), min = Math.min(...points);
+    const pts = points.map((p, i) => [(i / (points.length - 1)) * w, h - ((p - min) / ((max - min) || 1)) * (h - 5) - 3]);
+    const line = pts.map((p) => p.join(',')).join(' ');
+    return React.createElement('svg', { width: w, height: h, viewBox: `0 0 ${w} ${h}`, style: { display: 'block', overflow: 'visible' } },
+      React.createElement('polyline', { points: line, fill: 'none', stroke: color, strokeWidth: 1.75, strokeLinejoin: 'round', strokeLinecap: 'round' }),
+      React.createElement('circle', { cx: pts[pts.length - 1][0], cy: pts[pts.length - 1][1], r: 2.6, fill: color })
+    );
+  }
+
+  territoryMap() {
+    const nodes = [
+      { x: 140, y: 96, r: 46, label: 'r/boating', n: 41, hot: true, c: AMBER },
+      { x: 320, y: 62, r: 37, label: 'The Hull Truth', n: 28, hot: true, c: '#8A6A4E' },
+      { x: 468, y: 138, r: 28, label: 'X boating', n: 17, hot: false, c: INK },
+      { x: 264, y: 198, r: 24, label: 'marine-trades', n: 12, hot: true, c: PLUM },
+      { x: 92, y: 214, r: 19, label: 'r/smallbusiness', n: 9, hot: false, c: AMBER },
+      { x: 578, y: 72, r: 15, label: 'r/liveaboard', n: 5, hot: false, c: AMBER }
+    ];
+    const links = [[0, 1], [1, 2], [0, 3], [0, 4], [1, 5], [2, 3]];
+    return React.createElement('svg', { viewBox: '0 0 660 280', style: { width: '100%', height: 'auto', display: 'block' } },
+      links.map(([a, b], i) => React.createElement('line', { key: 'l' + i, x1: nodes[a].x, y1: nodes[a].y, x2: nodes[b].x, y2: nodes[b].y, stroke: '#E7E0D6', strokeWidth: 1.25 })),
+      nodes.map((n, i) => React.createElement('g', { key: 'n' + i },
+        React.createElement('circle', { cx: n.x, cy: n.y, r: n.r, fill: n.c, opacity: 0.12 }),
+        React.createElement('circle', { cx: n.x, cy: n.y, r: n.r, fill: 'none', stroke: n.c, strokeWidth: 1.25, opacity: 0.55 }),
+        n.hot ? React.createElement('circle', { cx: n.x + n.r * 0.72, cy: n.y - n.r * 0.72, r: 5, fill: EMBER, stroke: '#FFFFFF', strokeWidth: 2 }) : null,
+        React.createElement('text', { x: n.x, y: n.y + 5, textAnchor: 'middle', fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 15, fill: '#14120F' }, String(n.n)),
+        React.createElement('text', { x: n.x, y: n.y + n.r + 16, textAnchor: 'middle', fontFamily: 'IBM Plex Mono, monospace', fontSize: 10.5, fill: GREY }, n.label)
+      ))
+    );
+  }
+
+  areaChart() {
+    const series = [
+      { color: '#8FA9B8', pts: [78, 84, 90, 96, 101, 108, 114, 119, 128] },
+      { color: SLATE, pts: [30, 34, 37, 40, 44, 47, 50, 52, 54] },
+      { color: AMBER, pts: [7, 9, 10, 12, 14, 15, 17, 18, 19] },
+      { color: GREEN, pts: [1, 1, 2, 2, 3, 4, 5, 5, 6] }
+    ];
+    const w = 1180, h = 230, max = 140;
+    const smooth = (pts) => {
+      const step = w / (pts.length - 1);
+      const P = pts.map((p, i) => [i * step, h - (p / max) * h]);
+      let d = `M${P[0][0]},${P[0][1]}`;
+      for (let i = 0; i < P.length - 1; i++) {
+        const [x0, y0] = P[i], [x1, y1] = P[i + 1], mx = (x0 + x1) / 2;
+        d += ` C${mx},${y0} ${mx},${y1} ${x1},${y1}`;
+      }
+      return `${d} L${w},${h} L0,${h} Z`;
+    };
+    return React.createElement('svg', { viewBox: `0 0 ${w} ${h}`, preserveAspectRatio: 'none', style: { width: '100%', height: '230px', display: 'block' } },
+      React.createElement('defs', null, series.map((s, i) => React.createElement('linearGradient', { key: 'g' + i, id: 'kg' + i, x1: 0, y1: 0, x2: 0, y2: 1 },
+        React.createElement('stop', { offset: '0%', stopColor: s.color, stopOpacity: 0.34 }),
+        React.createElement('stop', { offset: '100%', stopColor: s.color, stopOpacity: 0.06 })
+      ))),
+      [0, 1, 2, 3].map((i) => React.createElement('line', { key: 'r' + i, x1: 0, y1: (h / 3) * i, x2: w, y2: (h / 3) * i, stroke: '#F2EDE6', strokeWidth: 1 })),
+      series.map((s, i) => React.createElement('path', { key: 'p' + i, d: smooth(s.pts), fill: `url(#kg${i})`, stroke: s.color, strokeWidth: 1.75, vectorEffect: 'non-scaling-stroke' }))
+    );
+  }
+
+  renderVals() {
+    const st = this.state, screen = st.screen;
+    const go = (s) => () => this.set({ screen: s, logOpen: false });
+    const titles = { home: 'Good morning, Maya', discover: 'Discover', calendar: 'Calendar', inbox: 'Inbox', campaigns: 'Campaigns', analytics: 'Analytics', voice: 'Voice', settings: 'Settings' };
+    const subs = {
+      home: 'Dockside — First 100 operators · day 12 of the campaign',
+      discover: 'watching 23 sources for Dockside · last sweep 6 min ago',
+      calendar: 'Kylani plans, you approve · week of 3 August',
+      inbox: 'every reply, comment and DM in one place',
+      campaigns: 'how a stranger in r/boating becomes a customer',
+      analytics: 'revenue funnel · last 30 days',
+      voice: '41 samples learned · updated 2 days ago',
+      settings: '3 accounts connected · 1 waiting on you'
+    };
+
+    const needsAll = [
+      { id: 'reply', kind: 'Reply awaiting approval', body: 'harborhand asked about pricing twice. Kylani drafted a reply with your onboarding call link.', why: 'pricing asked twice — your escalation rule sends these to you', cta: 'Approve & send' },
+      { id: 'post', kind: 'Post awaiting approval', body: 'Tomorrow 09:00 on X — a short thread on why deposits stop no-shows.', why: 'answers 12 signals from r/boating and the marine-trades Discord', cta: 'Approve & schedule' },
+      { id: 'join', kind: 'Community request', body: 'The Hull Truth — 41 threads match your buyer hypothesis. Approve joining?', why: 'highest signal density of any source Kylani cannot post in yet', cta: 'Approve joining' }
+    ];
+    const needs = needsAll.filter((n) => !st.needsSkipped.includes(n.id)).map((n) => ({
+      ...n,
+      approve: () => this.set({ needsSkipped: [...st.needsSkipped, n.id] }),
+      edit: () => this.set({ screen: n.id === 'reply' ? 'inbox' : n.id === 'post' ? 'calendar' : 'discover', dTab: 'communities' }),
+      skip: () => this.set({ needsSkipped: [...st.needsSkipped, n.id] })
+    }));
+
+    const stages = [
+      { key: 'found', label: 'Found', count: 128, delta: '+12', previews: ['reddit 41', 'forum 28'], pct: 100 },
+      { key: 'engaged', label: 'Engaged', count: 54, delta: '+8', previews: ['9 replies', '2 DMs'], pct: 42 },
+      { key: 'conversation', label: 'In conversation', count: 19, delta: '+3', previews: ['2 need you'], pct: 15 },
+      { key: 'converted', label: 'Converted', count: 6 + st.converted.length, delta: '+2', previews: ['3 trials', '3 paid'], pct: 5 }
+    ];
+    const funnel = stages.map((s) => ({
+      ...s,
+      go: () => this.set({ stage: s.key }),
+      style: `display:flex;flex-direction:column;gap:11px;align-items:flex-start;text-align:left;min-width:0;overflow:hidden;cursor:pointer;padding:18px 18px 16px;border-radius:18px;background:#FFFFFF;border:1px solid ${st.stage === s.key ? EMBER : '#EAE4DB'};box-shadow:${st.stage === s.key ? '0 6px 20px -10px rgba(15,164,122,.34)' : '0 1px 2px rgba(20,18,15,.03)'};`,
+      dotStyle: `width:8px;height:8px;border-radius:999px;background:${STAGE_C[s.key]};`,
+      countStyle: `font-family:'Outfit';font-weight:800;font-size:38px;letter-spacing:-.035em;line-height:1;color:${s.key === 'converted' ? GREEN : '#14120F'};`,
+      bigCountStyle: `font-family:'Outfit';font-weight:800;font-size:38px;letter-spacing:-.035em;line-height:1;color:${s.key === 'converted' ? GREEN : '#14120F'};`,
+      trackStyle: 'display:block;width:100%;height:6px;border-radius:999px;background:#F3EFE9;overflow:hidden;',
+      fillStyle: `display:block;height:100%;width:${s.pct}%;border-radius:999px;background:${STAGE_C[s.key]};`
+    }));
+
+    const rows = {
+      found: [
+        { name: 'u/slipkeeper', line: 'we lose two slips a month to double-bookings', meta: 'fit 92 · 4h' },
+        { name: 'harborhand', line: 'running a 40-slip marina off a paper ledger', meta: 'fit 89 · 6h' },
+        { name: 'u/coastalcarole', line: 'we double-booked the travel lift twice last month', meta: 'fit 81 · 1d' },
+        { name: '@northwindboatyard', line: 'our booking system is three google calendars', meta: 'fit 78 · 2d' }
+      ],
+      engaged: [
+        { name: '@baysidemarine', line: 'replied to your no-show-fee thread', meta: 'engaged · 9h' },
+        { name: '@northwindboatyard', line: 'quoted your calendar post', meta: 'engaged · 2d' },
+        { name: 'u/trawlerdad', line: 'commented on your r/boating answer', meta: 'engaged · 2d' }
+      ],
+      conversation: [
+        { name: 'dieselpete', line: 'asking whether deposits can be partial', meta: 'needs you · 2h' },
+        { name: 'harborhand', line: 'asked about pricing twice', meta: 'needs you · 6h' },
+        { name: 'Lena Brandt', line: 'wants to see the haul-out scheduling view', meta: 'Kylani handling · 1d' }
+      ],
+      converted: [
+        { name: 'Gulfpoint Marine', line: 'paid — 40 slips, migrated from a whiteboard', meta: 'converted · 5d' },
+        { name: 'Salter Bay Yard', line: 'trial started after a Hull Truth thread', meta: 'converted · 8d' },
+        { name: 'Rockcliff Charters', line: 'paid — found in the marine-trades Discord', meta: 'converted · 11d' }
+      ]
+    };
+    const initials = (n) => n.replace(/^[@]|^u\//, '').split(/[\s_]/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+    const stageList = rows[st.stage].map((r) => ({ ...r, initials: initials(r.name), avatarStyle: avatar(r.name, 32) }));
+    const stageCaption = { found: 'Newest of 128 found', engaged: '54 engaged — they replied, quoted or followed', conversation: '19 in conversation', converted: `${6 + st.converted.length} converted` }[st.stage];
+
+    const hyp = [
+      { title: 'Marina operators drowning in phone bookings', share: '62%', meta: '4 of 6 conversions · trending up', pts: [3, 4, 4, 6, 7, 9, 12], color: GREEN, pct: 62 },
+      { title: 'Boatyards losing money to no-shows', share: '28%', meta: '2 of 6 conversions · steady', pts: [2, 3, 3, 4, 4, 4, 5], color: SLATE, pct: 28 },
+      { title: 'Operators outgrowing spreadsheets', share: '10%', meta: 'no conversions in 9 days · Kylani suggests retiring it', pts: [4, 4, 3, 3, 2, 2, 1], color: GREY, pct: 10 }
+    ].map((h) => ({ ...h, spark: this.spark(h.pts, h.color), fillStyle: `display:block;height:100%;width:${h.pct}%;border-radius:999px;background:${h.color};` }));
+
+    const todayPosts = [
+      { time: '09:00', platform: 'X', status: 'Posted', title: 'Thread: what one double-booking costs a marina', purpose: 'serves: phone-bookings hypothesis' },
+      { time: '13:30', platform: 'Reddit', status: 'Awaiting your approval', title: 'Answer in r/boating: deposits vs no-show fees', purpose: 'answers 12 signals from r/boating' },
+      { time: '17:00', platform: 'LinkedIn', status: 'Scheduled', title: 'Gulfpoint Marine moved off a whiteboard in a week', purpose: 'serves: weekly proof slot' }
+    ].map((p) => ({
+      ...p, glyph: GLYPH[p.platform], tileStyle: tile(p.platform, 34), badgeStyle: pill(p.status),
+      cardStyle: `background:#FCFAF7;border:1px solid ${p.status === 'Awaiting your approval' ? '#B7E4D2' : '#EAE4DB'};border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:11px;`
+    }));
+
+    const upcoming = [
+      { when: '13:30', what: 'Reddit answer goes out, if you approve it' },
+      { when: '17:00', what: 'LinkedIn proof post publishes as you' },
+      { when: '19:00', what: 'Kylani sweeps 23 sources again' },
+      { when: '07:00', what: 'Two follow-ups go out unless someone replies first' }
+    ];
+
+    const activityRaw = [
+      { time: '09:41', what: 'drafted reply to harborhand', why: 'They asked about pricing twice. Your escalation rule sends pricing questions to you, so the draft is waiting instead of sending.' },
+      { time: '09:28', what: 'posted thread on X', why: 'Scheduled slot for the phone-bookings hypothesis. You approved this draft yesterday at 18:02.' },
+      { time: '09:12', what: 'found 3 new signals in The Hull Truth', why: 'All three describe manual booking workflows on marinas above 30 slips.' },
+      { time: '08:55', what: 'moved dieselpete to In conversation', why: 'He replied twice in the marine-trades Discord and asked a product question.' },
+      { time: '08:31', what: 'answered 4 comments in r/boating', why: 'Routine replies inside your guardrails — no pricing, no competitor names.' },
+      { time: '07:50', what: 'requested to join The Hull Truth', why: '41 threads match your buyer hypothesis. Waiting on your approval before posting there.' },
+      { time: '07:14', what: 'swept 23 sources', why: 'Scheduled morning sweep. 14 new threads matched, 6 cleared the fit threshold of 75.' },
+      { time: '06:02', what: 'skipped 9 low-fit threads', why: 'They mention boats but not booking, scheduling or payment problems.' }
+    ];
+    const activity = activityRaw.map((a, i) => ({
+      ...a, open: st.logOpenIdx === i, toggle: () => this.set({ logOpenIdx: st.logOpenIdx === i ? -1 : i }),
+      style: `text-align:left;background:${st.logOpenIdx === i ? '#FCFAF7' : 'transparent'};border:none;border-radius:11px;padding:12px 10px;cursor:pointer;display:flex;flex-direction:column;gap:8px;`
+    }));
+
+    const sig = [
+      { id: 0, platform: 'Reddit', community: 'r/boating', author: 'u/slipkeeper', age: '4h', fit: 92, stage: 'New signal', quote: '“we lose at least two slips a month to double-bookings, our system is a whiteboard”', why: 'describes the exact problem, owns a 40-slip marina, posts weekly', hyp: 'phone' },
+      { id: 1, platform: 'Forum', community: 'The Hull Truth', author: 'harborhand', age: '6h', fit: 89, stage: 'Awaiting your approval', quote: '“I\u2019m running a 40-slip marina off a paper ledger and a cell phone. Asked about pricing twice and never heard back.”', why: 'asked about pricing twice — Kylani drafted a reply and is holding it for you', hyp: 'phone' },
+      { id: 2, platform: 'X', community: 'boating circles', author: '@baysidemarine', age: '9h', fit: 86, stage: 'Engaged', quote: '“spent my saturday calling 20 people to confirm haul-outs. there has to be software for this”', why: 'active complaint about the exact workflow, replied to your no-show-fee post', hyp: 'phone' },
+      { id: 3, platform: 'Discord', community: 'marine-trades', author: 'dieselpete', age: '1d', fit: 84, stage: 'In conversation', quote: '“customers no-show and I eat the lift fee. no deposits, no consequences.”', why: 'matches the deposits hypothesis, runs a 3-person boatyard', hyp: 'noshow' },
+      { id: 4, platform: 'Reddit', community: 'r/smallbusiness', author: 'u/coastalcarole', age: '1d', fit: 81, stage: 'New signal', quote: '“we double-booked the travel lift twice last month and lost a customer over it”', why: 'operational pain, decision-maker, names the revenue lost', hyp: 'phone' },
+      { id: 5, platform: 'X', community: 'SaaS circles', author: '@northwindboatyard', age: '2d', fit: 78, stage: 'Engaged', quote: '“our booking system is three google calendars and a group text”', why: 'self-identifies the workaround Dockside replaces', hyp: 'spreadsheet' }
+    ];
+    const fMap = { all: () => true, reddit: (s) => s.platform === 'Reddit', x: (s) => s.platform === 'X', forum: (s) => s.platform === 'Forum', discord: (s) => s.platform === 'Discord', phone: (s) => s.hyp === 'phone', noshow: (s) => s.hyp === 'noshow', spreadsheet: (s) => s.hyp === 'spreadsheet', high: (s) => s.fit >= 85, new: (s) => s.stage === 'New signal' };
+    const signals = sig.filter((s) => !st.dismissed.includes(s.id)).filter(fMap[st.filter] || (() => true)).map((s) => ({
+      ...s,
+      glyph: GLYPH[s.platform], tileStyle: tile(s.platform, 36),
+      cardStyle: `background:#FFFFFF;border:1px solid ${s.stage === 'New signal' || s.stage === 'Awaiting your approval' ? '#B7E4D2' : '#EAE4DB'};border-radius:20px;padding:22px 24px;display:flex;flex-direction:column;gap:15px;box-shadow:0 1px 2px rgba(20,18,15,.03);`,
+      stageStyle: pill(s.stage),
+      fitStyle: `display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:13px;font-family:'Outfit';font-weight:700;font-size:15px;cursor:pointer;color:${s.fit >= 85 ? '#0A7A59' : '#4A453E'};background:${s.fit >= 85 ? '#E3F6EE' : '#F3EFE9'};border:1px solid ${s.fit >= 85 ? '#B7E4D2' : '#EAE4DB'};`,
+      whyOpen: st.whyIdx === s.id,
+      toggleWhy: () => this.set({ whyIdx: st.whyIdx === s.id ? -1 : s.id }),
+      action: s.stage === 'New signal' ? 'Draft outreach' : 'Open thread',
+      draft: () => this.set({ screen: 'inbox', inboxTab: 'needs' }),
+      watch: () => this.set({ whyIdx: s.id }),
+      dismiss: () => this.set({ dismissed: [...st.dismissed, s.id] })
+    }));
+
+    const fOpt = (key, label, count, color) => ({
+      label, count, go: () => this.set({ filter: key }),
+      dotStyle: `width:7px;height:7px;border-radius:999px;background:${color || '#CFC7BB'};flex-shrink:0;`,
+      style: `display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;font-size:13px;font-weight:${st.filter === key ? 600 : 400};color:${st.filter === key ? '#14120F' : '#4A453E'};background:${st.filter === key ? '#F3EFE9' : 'transparent'};border:none;border-radius:9px;padding:8px 9px;cursor:pointer;`
+    });
+    const filterGroups = [
+      { label: 'Source', options: [fOpt('all', 'All sources', 23, INK), fOpt('reddit', 'Reddit', 8, AMBER), fOpt('x', 'X', 6, INK), fOpt('forum', 'Forums', 5, '#8A6A4E'), fOpt('discord', 'Discord', 4, PLUM)] },
+      { label: 'Hypothesis', options: [fOpt('phone', 'Phone bookings', 62, GREEN), fOpt('noshow', 'No-shows', 28, SLATE), fOpt('spreadsheet', 'Spreadsheets', 10, GREY)] },
+      { label: 'Fit', options: [fOpt('high', '85 and above', 14, EMBER)] },
+      { label: 'Stage', options: [fOpt('new', 'New signal', 9, EMBER)] }
+    ];
+
+    const communities = [
+      { name: 'r/boating', platform: 'Reddit', kind: '412k members', signals: '41 signals', trend: '+9 this week', status: 'Member', pts: [12, 16, 19, 24, 28, 33, 41], threads: ['“whiteboard for slip assignments — help”', '“how do you handle deposits?”'] },
+      { name: 'The Hull Truth', platform: 'Forum', kind: 'marina trades', signals: '28 signals', trend: '+11 this week', status: st.joined ? 'Member' : 'Awaiting your approval', pts: [4, 7, 9, 14, 18, 23, 28], threads: ['“paper ledger and a cell phone”', '“software for haul-out scheduling?”'], needsApproval: !st.joined },
+      { name: 'marine-trades', platform: 'Discord', kind: '3.1k members', signals: '12 signals', trend: '+3 this week', status: 'Member', pts: [3, 4, 5, 7, 8, 10, 12], threads: ['“no deposits, no consequences”', '“lift fee eaten again”'] },
+      { name: 'r/smallbusiness', platform: 'Reddit', kind: '1.8m members', signals: '9 signals', trend: 'steady', status: 'Member', pts: [6, 7, 7, 8, 8, 9, 9], threads: ['“double-booked the travel lift”'] },
+      { name: 'X boating circles', platform: 'X', kind: '40 accounts watched', signals: '17 signals', trend: '+4 this week', status: 'Suggested', pts: [5, 6, 9, 11, 13, 15, 17], threads: ['“three google calendars and a group text”'] }
+    ].map((c) => ({
+      ...c, glyph: GLYPH[c.platform], tileStyle: tile(c.platform, 34),
+      cardStyle: `background:#FFFFFF;border:1px solid ${c.needsApproval ? '#B7E4D2' : '#EAE4DB'};border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:16px;box-shadow:0 1px 2px rgba(20,18,15,.03);`,
+      statusStyle: pill(c.status),
+      spark: this.spark(c.pts, c.needsApproval ? EMBER : STAGE_C.engaged),
+      approve: () => this.set({ joined: true })
+    }));
+
+    const shortStatus = { 'Sent / Posted': 'Posted', 'Awaiting your approval': 'Needs you', 'Draft by Kylani': 'Draft', 'Scheduled': 'Scheduled' };
+    const posts = {
+      Mon: [{ time: '09:00', platform: 'X', title: 'Why one double-booking costs a marina $400', purpose: 'serves: phone-bookings hypothesis', status: 'Sent / Posted', body: 'One double-booking at a 40-slip marina costs about $400 once you count the refund, the angry call, and the slip you could not resell.\n\nWe built Dockside so the calendar refuses to take the second booking.', why: 'Answers the most common complaint in r/boating this month, and the hypothesis behind 62% of your conversions.' }],
+      Tue: [{ time: '11:00', platform: 'Reddit', title: 'Answer: deposits vs no-show fees', purpose: 'answers 12 signals from r/boating', status: 'Sent / Posted', body: 'Deposits work better than fees. A fee is a fight after the fact; a deposit is a decision before it.', why: 'Twelve signals in r/boating asked some version of this question in the last two weeks.' }],
+      Wed: [
+        { time: '09:00', platform: 'X', title: 'Thread: what a marina loses to one double-booking', purpose: 'serves: phone-bookings hypothesis', status: 'Sent / Posted', body: 'Thread. Every marina I talk to has the same story.', why: 'Second post in the phone-bookings series. The first drew 31 replies.' },
+        { time: '13:30', platform: 'Reddit', title: 'Answer: deposits vs no-show fees', purpose: 'answers 12 signals from r/boating', status: 'Awaiting your approval', body: 'Short version: take a 20% deposit at booking and the no-shows mostly stop.\n\nI run a 12-slip yard myself and went from 4 no-shows a month to under one.', why: 'Twelve r/boating signals describe no-shows. Held for approval because it references your own operation.' }
+      ],
+      Thu: [{ time: '17:00', platform: 'LinkedIn', title: 'Gulfpoint Marine moved off a whiteboard in a week', purpose: 'serves: weekly proof slot', status: 'Awaiting your approval', body: 'Gulfpoint Marine ran 40 slips on a whiteboard. One week after switching, they had zero double-bookings and deposits on every haul-out.', why: 'Your cadence calls for one proof post a week. Gulfpoint converted 5 days ago and agreed to be named.' }],
+      Fri: [{ time: '10:00', platform: 'X', title: 'The three google calendars problem', purpose: 'serves: spreadsheets hypothesis', status: 'Draft by Kylani', body: 'Three google calendars and a group text is a system. It just is not a system that scales past one person.', why: 'Drafted from @northwindboatyard\u2019s own words. Waiting on the earlier posts to land before scheduling.' }],
+      Sat: [],
+      Sun: [{ time: '12:00', platform: 'Reddit', title: 'Weekly answer sweep in r/smallbusiness', purpose: 'answers 4 open signals', status: 'Scheduled', body: 'Kylani will answer four open threads about booking workflows.', why: 'Sunday is when r/smallbusiness threads get the most replies.' }]
+    };
+    const suggestions = { Thu: 'Thu 11:00, X thread from your 3 best Hull Truth signals', Sat: 'Sat 09:00, Reddit answer — “how do you handle deposits?”' };
+    const dates = { Mon: '3', Tue: '4', Wed: '5', Thu: '6', Fri: '7', Sat: '8', Sun: '9' };
+    const today = 'Tue';
+    const week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, di) => ({
+      day, date: dates[day],
+      colStyle: `display:flex;flex-direction:column;gap:9px;padding:12px 10px 14px;border-radius:16px;background:${day === today ? '#FCFAF7' : 'transparent'};border-left:1px solid ${di === 0 ? 'transparent' : '#F4F0EA'};min-height:230px;`,
+      dateStyle: `font-family:'Outfit';font-weight:700;font-size:15px;color:${day === today ? '#FDFCFA' : '#14120F'};${day === today ? `background:${INK};border-radius:8px;padding:1px 7px;` : ''}`,
+      suggestion: suggestions[day] || null,
+      accept: () => this.set({ calSel: null }),
+      posts: (posts[day] || []).map((p) => ({
+        ...p, glyph: GLYPH[p.platform], tileStyle: tile(p.platform, 22),
+        short: shortStatus[p.status] || p.status,
+        badgeStyle: pill(shortStatus[p.status] || p.status) + 'white-space:normal;max-width:100%;text-align:left;line-height:1.3;gap:0;',
+        badgeDot: 'display:none;',
+        style: `display:flex;flex-direction:column;gap:9px;align-items:flex-start;min-width:0;cursor:pointer;padding:12px;border-radius:14px;background:#FFFFFF;border:1px solid ${p.status === 'Awaiting your approval' ? '#B7E4D2' : '#EAE4DB'};box-shadow:0 1px 2px rgba(20,18,15,.03);`,
+        open: () => this.set({ calSel: { ...p, when: `${day} ${dates[day]} August · ${p.time}` } })
+      }))
+    }));
+    const calCounts = [
+      { label: '6 scheduled', c: SLATE }, { label: '3 drafts by Kylani', c: GREY }, { label: '2 awaiting your approval', c: EMBER }
+    ].map((c) => ({
+      label: c.label, dotStyle: `width:7px;height:7px;border-radius:999px;background:${c.c};`,
+      style: `display:inline-flex;align-items:center;gap:9px;padding:7px 13px;border-radius:999px;background:#FFFFFF;border:1px solid #EAE4DB;font-size:13px;font-weight:600;color:#4A453E;`
+    }));
+
+    const convoData = [
+      { id: 0, name: 'harborhand', source: 'The Hull Truth', last: 'So what does it run per slip?', time: '6h', stage: 'Awaiting your approval', tab: 'needs' },
+      { id: 1, name: 'dieselpete', source: 'marine-trades Discord', last: 'Can deposits be partial?', time: '2h', stage: 'Awaiting your approval', tab: 'needs' },
+      { id: 2, name: '@baysidemarine', source: 'X · DM', last: 'Kylani sent your calendar walkthrough', time: '9h', stage: 'Replied', tab: 'handling' },
+      { id: 3, name: 'u/coastalcarole', source: 'Reddit · DM', last: 'Following up in 2 days', time: '1d', stage: 'Engaged', tab: 'waiting' },
+      { id: 4, name: 'Gulfpoint Marine', source: 'Email', last: 'Migrated 40 slips, thanks', time: '5d', stage: 'Converted', tab: 'done' }
+    ];
+    const inboxTabs = [
+      { key: 'needs', label: 'Needs you (2)' }, { key: 'handling', label: 'Kylani handling' },
+      { key: 'waiting', label: 'Waiting on them' }, { key: 'done', label: 'Done' }
+    ].map((t) => ({ label: t.label, go: () => this.set({ inboxTab: t.key }), style: `font-size:12.5px;font-weight:600;padding:7px 11px;border-radius:9px;cursor:pointer;border:1px solid ${st.inboxTab === t.key ? '#EAE4DB' : 'transparent'};background:${st.inboxTab === t.key ? '#FCFAF7' : 'transparent'};color:${st.inboxTab === t.key ? '#14120F' : GREY};` }));
+    const convos = convoData.filter((c) => c.tab === st.inboxTab).map((c) => ({
+      ...c, initials: initials(c.name), avatarStyle: avatar(c.name, 34), stageStyle: pill(c.stage),
+      open: () => this.set({ convo: c.id }),
+      style: `width:100%;display:flex;flex-direction:column;gap:8px;align-items:flex-start;text-align:left;cursor:pointer;padding:15px 16px;background:${st.convo === c.id ? '#FCFAF7' : 'transparent'};border:none;border-bottom:1px solid #F4F0EA;border-left:3px solid ${c.stage === 'Awaiting your approval' ? EMBER : 'transparent'};`
+    }));
+
+    const threads = {
+      0: {
+        name: 'harborhand', meta: 'The Hull Truth · 40-slip marina · fit 89', stage: 'Awaiting your approval',
+        reasoning: 'Suggesting a call link — they asked about pricing twice, and your rule escalates pricing to you.',
+        draft: 'Happy to talk numbers. It is $49/month up to 25 slips and $89 above that, no setup fee. Honestly though, pricing is the least interesting part — want me to walk you through how a 40-slip yard runs a week on it? Fifteen minutes, no pitch.',
+        messages: [
+          { who: 'harborhand', time: 'Mon 14:02', text: 'I\u2019m running a 40-slip marina off a paper ledger and a cell phone. Saw your post about double-bookings.', side: 'left' },
+          { who: 'Maya, sent by Kylani', time: 'Mon 14:40', text: 'That was exactly my situation. The ledger works right up until two people want the same slip on the fourth of July.', side: 'right' },
+          { marker: 'moved to In conversation' },
+          { who: 'harborhand', time: 'Tue 08:15', text: 'What does something like this cost?', side: 'left' },
+          { who: 'harborhand', time: 'Wed 07:58', text: 'So what does it run per slip?', side: 'left' }
+        ],
+        lead: { name: 'harborhand', role: 'Owner · 40-slip marina · Beaufort NC', signal: '“I\u2019m running a 40-slip marina off a paper ledger and a cell phone.”', signalMeta: 'The Hull Truth · found day 9 · fit 89', fit: 89, touches: 6, hypothesis: 'Marina operators drowning in phone bookings', history: [{ when: 'day 9', what: 'saw your X thread on double-bookings' }, { when: 'day 9', what: 'Kylani replied in his forum thread' }, { when: 'day 10', what: 'asked about pricing' }, { when: 'day 12', what: 'asked about pricing again' }] }
+      },
+      1: {
+        name: 'dieselpete', meta: 'marine-trades Discord · 3-person boatyard · fit 84', stage: 'Awaiting your approval',
+        reasoning: 'Answering the deposit question directly — it is a product question, not pricing, so no escalation.',
+        draft: 'Yeah, partial works. You set the percentage per service type — most yards do 20% on haul-outs and nothing on transient slips. The customer gets a text with the balance due the morning of.',
+        messages: [
+          { who: 'dieselpete', time: 'Mon 19:22', text: 'customers no-show and I eat the lift fee. no deposits, no consequences.', side: 'left' },
+          { who: 'Maya, sent by Kylani', time: 'Mon 20:01', text: 'Deposits fixed that for us. A fee is a fight after the fact; a deposit is a decision before it.', side: 'right' },
+          { marker: 'moved to In conversation' },
+          { who: 'dieselpete', time: 'Wed 07:40', text: 'Can deposits be partial?', side: 'left' }
+        ],
+        lead: { name: 'dieselpete', role: 'Owner · 3-person boatyard · Annapolis MD', signal: '“customers no-show and I eat the lift fee. no deposits, no consequences.”', signalMeta: 'marine-trades Discord · found day 6 · fit 84', fit: 84, touches: 4, hypothesis: 'Boatyards losing money to no-shows', history: [{ when: 'day 6', what: 'posted about no-shows' }, { when: 'day 6', what: 'Kylani replied in the Discord' }, { when: 'day 11', what: 'saw your LinkedIn proof post' }, { when: 'day 12', what: 'asked about partial deposits' }] }
+      },
+      2: {
+        name: '@baysidemarine', meta: 'X DM · 28 slips · fit 86', stage: 'Replied', paused: true,
+        reasoning: 'Waiting before the next touch — two messages in one day reads as pressure.',
+        draft: 'Checking in — did the calendar walkthrough make sense for a yard your size?',
+        messages: [
+          { who: '@baysidemarine', time: 'Tue 11:10', text: 'spent my saturday calling 20 people to confirm haul-outs. there has to be software for this', side: 'left' },
+          { who: 'Maya, sent by Kylani', time: 'Tue 11:45', text: 'There is, and the confirmations are the part worth automating first. Here is how our haul-out week looks.', side: 'right' }
+        ],
+        lead: { name: '@baysidemarine', role: 'Yard manager · 28 slips · Sarasota FL', signal: '“spent my saturday calling 20 people to confirm haul-outs.”', signalMeta: 'X · found day 10 · fit 86', fit: 86, touches: 3, hypothesis: 'Marina operators drowning in phone bookings', history: [{ when: 'day 10', what: 'replied to your no-show-fee thread' }, { when: 'day 11', what: 'Kylani sent the calendar walkthrough' }, { when: 'day 12', what: 'follow-up queued for Friday' }] }
+      },
+      3: {
+        name: 'u/coastalcarole', meta: 'Reddit DM · boatyard co-owner · fit 81', stage: 'Engaged', paused: true,
+        reasoning: 'Holding the follow-up two days after the first message, per the campaign playbook.',
+        draft: 'Following up once: happy to show you how the travel lift schedule works. No pitch.',
+        messages: [
+          { who: 'u/coastalcarole', time: 'Sun 16:30', text: 'we double-booked the travel lift twice last month and lost a customer over it', side: 'left' },
+          { who: 'Maya, sent by Kylani', time: 'Sun 17:02', text: 'That is the exact failure we built for. The lift gets its own calendar so it cannot be promised twice.', side: 'right' }
+        ],
+        lead: { name: 'u/coastalcarole', role: 'Co-owner · boatyard · Portland ME', signal: '“we double-booked the travel lift twice last month.”', signalMeta: 'r/smallbusiness · found day 11 · fit 81', fit: 81, touches: 2, hypothesis: 'Marina operators drowning in phone bookings', history: [{ when: 'day 11', what: 'Kylani found the thread' }, { when: 'day 11', what: 'Kylani sent a DM' }] }
+      },
+      4: {
+        name: 'Gulfpoint Marine', meta: 'Email · converted day 7', stage: 'Converted', draft: '',
+        reasoning: 'No draft — this thread is closed as converted.',
+        messages: [
+          { who: 'Gulfpoint Marine', time: 'day 5', text: 'We are in. 40 slips, and the whiteboard goes in the dumpster today.', side: 'left' },
+          { marker: 'moved to Converted' },
+          { who: 'Gulfpoint Marine', time: 'day 7', text: 'Migrated 40 slips, thanks. Zero double-bookings this week.', side: 'left' }
+        ],
+        lead: { name: 'Gulfpoint Marine', role: 'Owner · 40 slips · Gulfport MS', signal: '“our system is a whiteboard and a landline.”', signalMeta: 'r/boating · found day 2 · fit 94', fit: 94, touches: 8, hypothesis: 'Marina operators drowning in phone bookings', history: [{ when: 'day 2', what: 'Kylani found the thread' }, { when: 'day 3', what: 'Kylani replied as you' }, { when: 'day 5', what: 'you took the call' }, { when: 'day 7', what: 'converted — paid annually' }] }
+      }
+    };
+    const t = threads[st.convo] || threads[0];
+    const isConv = st.converted.includes(st.convo);
+    const thread = {
+      name: t.name, meta: t.meta, stage: isConv ? 'Converted' : t.stage, stageStyle: pill(isConv ? 'Converted' : t.stage),
+      reasoning: t.reasoning, draft: t.draft,
+      messages: t.messages.map((m) => m.marker
+        ? { isMarker: true, isBubble: false, text: m.marker, rowStyle: 'display:flex;justify-content:center;padding:2px 0;' }
+        : {
+          isMarker: false, isBubble: true, who: m.who, time: m.time, text: m.text,
+          rowStyle: `display:flex;justify-content:${m.side === 'right' ? 'flex-end' : 'flex-start'};`,
+          bubbleStyle: `max-width:76%;display:flex;flex-direction:column;gap:7px;padding:15px 17px;border-radius:18px;${m.side === 'right' ? `background:${INK};color:#FDFCFA;border-bottom-right-radius:6px;` : 'background:#FFFFFF;border:1px solid #EAE4DB;color:#14120F;border-bottom-left-radius:6px;'}`
+        })
+    };
+    const lead = { ...t.lead, initials: initials(t.lead.name), avatarStyle: avatar(t.lead.name, 38), bigAvatarStyle: avatar(t.lead.name, 46) };
+    const runMode = this.mode() === 'Run';
+    const hasDraft = !!t.draft && !isConv;
+
+    const steps = ['Goal', 'Audience', 'Content', 'Conversations', 'Results'].map((label, i) => ({
+      n: i + 1, label, go: () => this.set({ step: i }),
+      dotStyle: `width:38px;height:38px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12.5px;background:${st.step === i ? INK : '#FFFFFF'};color:${st.step === i ? '#FDFCFA' : GREY};border:1px solid ${st.step === i ? INK : '#EAE4DB'};box-shadow:${st.step === i ? '0 6px 16px -8px rgba(20,18,15,.5)' : 'none'};`,
+      labelStyle: `font-size:13.5px;font-weight:${st.step === i ? 600 : 400};color:${st.step === i ? '#14120F' : GREY};`
+    }));
+    const stepPanels = [
+      { title: 'Goal — 100 paying operators by 31 October', rows: [{ label: 'Target', value: '100 paying operators' }, { label: 'Deadline', value: '31 October' }, { label: 'Offer', value: 'Free migration off whatever they use now, plus the first month free', note: 'used in 4 of 6 conversions' }], footer: 'Kylani measures every other step against this number. At the current rate — 6 converted in 12 days — the target lands 9 days late, so it is asking to raise reply volume.' },
+      { title: 'Audience — three theories of your buyer', rows: [{ label: 'Hypothesis 1', value: 'Marina operators drowning in phone bookings', note: '62% of conversions · trending up' }, { label: 'Hypothesis 2', value: 'Boatyards losing money to no-shows', note: '28% of conversions · steady' }, { label: 'Hypothesis 3', value: 'Operators outgrowing spreadsheets', note: '10% of conversions · trending down — Kylani suggests retiring this one' }, { label: 'Sources', value: 'r/boating · The Hull Truth · marine-trades Discord · r/smallbusiness · 40 X accounts', note: '23 sources watched, swept every 4 hours' }], footer: 'Each hypothesis is a search brief. Retiring one changes what Discover surfaces tomorrow morning.' },
+      { title: 'Content — three posts a week, each with a job', rows: [{ label: 'Cadence', value: '1 story, 1 answer-post, 1 proof' }, { label: 'Next five', value: 'Wed 13:30 Reddit answer · Thu 17:00 LinkedIn proof · Fri 10:00 X story · Sun 12:00 Reddit sweep · Mon 09:00 X story', note: '2 of these are awaiting your approval' }, { label: 'Platforms', value: 'X, Reddit, LinkedIn' }], footer: 'Answer-posts convert three times better than product posts here, so Kylani is asking to swap one story slot for a second answer-post.' },
+      { title: 'Conversations — the playbook Kylani follows', rows: [{ label: 'Reply speed', value: 'Within 40 minutes, 07:00 to 21:00 local' }, { label: 'Follow-up', value: '2 touches, 2 days apart, then stop' }, { label: 'Escalation', value: 'Pricing questions always come to you. Anything naming a competitor comes to you.' }, { label: 'Autonomy', value: `${this.mode()} for this campaign`, note: 'Replies and posts wait for you; DMs are drafts only' }], footer: 'This playbook is why harborhand is sitting in your Inbox instead of having already been answered.' },
+      { title: 'Results — where the funnel leaks', rows: [{ label: 'Found → Engaged', value: '42% · 128 found, 54 engaged' }, { label: 'Engaged → Conversation', value: '35% · 19 in conversation', note: 'weakest stage — a reply-volume problem, not a targeting one' }, { label: 'Conversation → Converted', value: '32% · 6 converted', note: 'best-performing stage in the funnel' }, { label: 'Days to convert', value: 'Median 5 days from first signal' }], footer: 'Six paying operators from 128 strangers in 12 days.' }
+    ];
+
+    const campaigns = [
+      { name: 'Dockside — First 100 operators', goal: '100 paying operators by October', mode: `${this.mode()} mode`, health: 'Healthy — conversations up, conversions steady.', counts: [128, 54, 19, 6], active: true },
+      { name: 'Dockside — Boatyard switchers', goal: '20 switchers off legacy software', mode: 'Paused', health: 'Paused by you on day 4 — 11 signals waiting when you resume.', counts: [31, 6, 1, 0], active: false }
+    ].map((c) => ({
+      ...c,
+      cardStyle: `background:#FFFFFF;border:1px solid ${c.active ? '#EAE4DB' : '#EFE9E1'};border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 1px 2px rgba(20,18,15,.03);opacity:${c.active ? 1 : .78};`,
+      modeStyle: `align-self:flex-start;display:inline-flex;padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap;${c.active ? 'background:#F3EFE9;color:#4A453E;border:1px solid #EAE4DB;' : 'background:transparent;color:#857E74;border:1px dashed #CFC7BB;'}`,
+      funnel: ['Found', 'Engaged', 'In conv.', 'Won'].map((label, i) => {
+        const key = ['found', 'engaged', 'conversation', 'converted'][i];
+        return {
+          label, count: c.counts[i],
+          countStyle: `font-family:'Outfit';font-weight:700;font-size:22px;letter-spacing:-.025em;color:${i === 3 ? GREEN : '#14120F'};`,
+          barStyle: `display:block;width:80%;height:4px;border-radius:999px;background:${STAGE_C[key]};opacity:${c.active ? 1 : .5};`
+        };
+      })
+    }));
+
+    const modeBodies = {
+      Suggest: 'Kylani drafts and shows you everything. Nothing is scheduled or sent.',
+      Approve: 'Kylani drafts, schedules and queues. Nothing goes out until you say so.',
+      Run: 'Kylani sends without asking. You get a daily digest and a 10-minute undo window.'
+    };
+    const modeCards = ['Suggest', 'Approve', 'Run'].map((label) => ({
+      label, body: modeBodies[label], go: () => this.set({ mode: label }),
+      pipStyle: `width:16px;height:16px;border-radius:999px;border:${this.mode() === label ? `5px solid ${EMBER}` : '1px solid #DED7CD'};background:#FFFFFF;`,
+      style: `display:flex;flex-direction:column;gap:11px;align-items:flex-start;cursor:pointer;padding:20px;border-radius:18px;background:${this.mode() === label ? 'linear-gradient(180deg,#F2FBF7,#FFFFFF)' : '#FCFAF7'};border:1px solid ${this.mode() === label ? '#B7E4D2' : '#EAE4DB'};box-shadow:${this.mode() === label ? '0 8px 22px -14px rgba(15,164,122,.5)' : 'none'};`
+    }));
+    const overrides = ['Posts', 'Replies', 'DMs'].map((label) => ({
+      label,
+      opts: ['Suggest', 'Approve', 'Run'].map((o) => ({ label: o, go: () => this.set({ overrides: { ...st.overrides, [label]: o } }), style: seg(st.overrides[label] === o) + 'font-size:12px;padding:6px 11px;' }))
+    }));
+
+    const insights = [
+      { tag: 'Cadence', color: GREEN, text: 'Answer-posts convert three times better than product posts. Nine of your last twelve conversations started from one.', evidence: '12 conversations · 9 from answer-posts · day 1–12', action: 'Shift cadence toward answer-posts' },
+      { tag: 'Access', color: EMBER, text: 'The Hull Truth produces your highest-fit signals, but Kylani cannot post there yet.', evidence: '28 signals · median fit 87 · join request pending 5 days', action: 'Approve joining' },
+      { tag: 'Speed', color: SLATE, text: 'Replies sent within 40 minutes convert at 38%. Past four hours it drops to 11%.', evidence: '54 replies · split at the 40-minute mark', action: 'Let Kylani send routine replies' }
+    ].map((i) => ({
+      ...i,
+      cardStyle: 'border:1px solid #EAE4DB;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px;background:#FCFAF7;',
+      tagStyle: `align-self:flex-start;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:${i.color};background:#FFFFFF;border:1px solid #EAE4DB;border-radius:999px;padding:4px 10px;`,
+      act: () => this.set({ screen: i.action === 'Approve joining' ? 'discover' : 'voice', dTab: 'communities' })
+    }));
+
+    const attribution = [
+      { label: 'The Hull Truth', conv: 7, won: 2, meta: '7 conversations · 2 converted', c: '#8A6A4E' },
+      { label: 'r/boating', conv: 6, won: 2, meta: '6 conversations · 2 converted', c: AMBER },
+      { label: 'marine-trades', conv: 4, won: 1, meta: '4 conversations · 1 converted', c: PLUM },
+      { label: 'X', conv: 2, won: 1, meta: '2 conversations · 1 converted', c: INK }
+    ].map((a) => ({
+      ...a, dotStyle: `width:8px;height:8px;border-radius:999px;background:${a.c};`,
+      barStyle: `position:absolute;left:0;top:0;bottom:0;width:${(a.conv / 7) * 100}%;background:${SLATE};opacity:.4;border-radius:999px;`,
+      convStyle: `position:absolute;left:0;top:0;bottom:0;width:${(a.won / 7) * 100}%;background:${GREEN};border-radius:999px;`
+    }));
+
+    const cohort = [
+      { name: 'Gulfpoint Marine', source: 'r/boating', first: 'day 2', days: '5 days', hypothesis: 'Phone bookings' },
+      { name: 'Salter Bay Yard', source: 'The Hull Truth', first: 'day 3', days: '5 days', hypothesis: 'Phone bookings' },
+      { name: 'Rockcliff Charters', source: 'marine-trades', first: 'day 1', days: '10 days', hypothesis: 'No-shows' },
+      { name: 'Anchorline Marina', source: 'r/boating', first: 'day 4', days: '4 days', hypothesis: 'Phone bookings' },
+      { name: 'Pier 9 Boatworks', source: 'X', first: 'day 5', days: '6 days', hypothesis: 'No-shows' },
+      { name: 'Kestrel Marine', source: 'The Hull Truth', first: 'day 6', days: '3 days', hypothesis: 'Spreadsheets' }
+    ].map((c) => ({ ...c, initials: initials(c.name), avatarStyle: avatar(c.name, 28) }));
+
+    const navItems = [
+      { key: 'home', label: 'Home', glyph: '◈' }, { key: 'discover', label: 'Discover', glyph: '◎' },
+      { key: 'calendar', label: 'Calendar', glyph: '▦' }, { key: 'inbox', label: 'Inbox', glyph: '✉', badge: '2' },
+      { key: 'campaigns', label: 'Campaigns', glyph: '⬢' }, { key: 'analytics', label: 'Analytics', glyph: '◧' }
+    ];
+
+    return {
+      nav: navItems.map((n) => ({ ...n, go: go(n.key), style: navBtn(screen === n.key) })),
+      navSecondary: [{ key: 'voice', label: 'Voice', glyph: '❞' }, { key: 'settings', label: 'Settings', glyph: '⚙' }].map((n) => ({ ...n, go: go(n.key), style: navBtn(screen === n.key) })),
+      screenTitle: titles[screen], screenSub: subs[screen], modeLabel: this.mode(),
+      modes: ['Suggest', 'Approve', 'Run'].map((m) => ({ label: m, go: () => this.set({ mode: m }), style: seg(this.mode() === m) })),
+      agentStatus: this.props.agentStatus || 'Kylani is reading 14 new threads in r/boating',
+      toggleLog: () => this.set({ logOpen: !st.logOpen }), logOpen: st.logOpen, activity,
+      isHome: screen === 'home', isDiscover: screen === 'discover', isCalendar: screen === 'calendar',
+      isInbox: screen === 'inbox', isCampaigns: screen === 'campaigns', isVoice: screen === 'voice',
+      isAnalytics: screen === 'analytics', isSettings: screen === 'settings',
+      funnel, stageList, stageCaption, hypotheses: hyp, todayPosts, upcoming,
+      needs, needsCount: needs.length ? `${needs.length} waiting` : 'all clear', needsEmpty: needs.length === 0,
+      goInbox: go('inbox'), goCalendar: go('calendar'),
+      discoverTabs: [{ key: 'signals', label: 'Signals' }, { key: 'communities', label: 'Communities' }].map((tb) => ({
+        label: tb.label, go: () => this.set({ dTab: tb.key }),
+        style: `font-family:'Outfit';font-weight:700;font-size:17px;letter-spacing:-.02em;background:transparent;border:none;cursor:pointer;padding:4px 0 8px;border-bottom:2px solid ${st.dTab === tb.key ? EMBER : 'transparent'};color:${st.dTab === tb.key ? '#14120F' : GREY};`
+      })),
+      views: [{ key: 'list', label: 'List' }, { key: 'map', label: 'Map' }].map((v) => ({ label: v.label, go: () => this.set({ dView: v.key }), style: seg(st.dView === v.key) })),
+      showSignals: st.dTab === 'signals' && st.dView === 'list',
+      showMap: st.dTab === 'signals' && st.dView === 'map',
+      showCommunities: st.dTab === 'communities',
+      signalCaption: `${signals.length} signals · ranked by fit · tap a score for the reason`,
+      signals, filterGroups, communities, territory: this.territoryMap(),
+      week, calCounts, postPanel: st.calSel, closePanel: () => this.set({ calSel: null }),
+      inboxTabs, convos, thread, lead,
+      draftPending: hasDraft && !st.sentIds.includes(st.convo) && !runMode && !t.paused,
+      draftSent: st.sentIds.includes(st.convo) || (runMode && hasDraft),
+      sentLabel: runMode && !st.sentIds.includes(st.convo) ? 'Sent by Kylani — 10-minute undo window' : 'Sent as you.',
+      threadPaused: !!t.paused && !st.sentIds.includes(st.convo),
+      sendDraft: () => this.set({ sentIds: [...st.sentIds, st.convo] }),
+      undoSend: () => this.set({ sentIds: st.sentIds.filter((i) => i !== st.convo) }),
+      approveAll: () => this.set({ sentIds: [0, 1] }),
+      approveAllLabel: st.sentIds.length >= 2 ? 'All routine drafts approved' : 'Approve all 2 routine drafts',
+      convert: () => this.set({ converted: [...st.converted, st.convo] }),
+      campaigns, steps, stepPanel: stepPanels[st.step], newCampaign: () => this.set({ step: 0 }),
+      testTopic: st.testTopic, setTopic: (e) => this.set({ testTopic: e.target.value }),
+      runTest: () => this.set({ testOut: st.testTopic.trim() ? `Deposits are not really about the money, they are about the decision. We take 20% at booking and no-shows went from four a month to under one. On ${st.testTopic.trim()} — happy to show you how it looks on a real week if that helps.` : 'Give me a topic and I will draft it the way you write.' }),
+      testOut: st.testOut,
+      rules: st.rules.map((text, i) => ({ text, remove: () => this.set({ rules: st.rules.filter((_, j) => j !== i) }) })),
+      ruleDraft: st.ruleDraft, setRuleDraft: (e) => this.set({ ruleDraft: e.target.value }),
+      addRule: () => st.ruleDraft.trim() && this.set({ rules: [...st.rules, st.ruleDraft.trim()], ruleDraft: '' }),
+      modeCards, overrides,
+      periods: [{ k: '7d', l: '7 days' }, { k: '30d', l: '30 days' }, { k: 'all', l: 'All time' }].map((p) => ({ label: p.l, go: () => this.set({ period: p.k }), style: seg(st.period === p.k) })),
+      areaChart: this.areaChart(),
+      legend: [{ label: 'Found', c: '#8FA9B8' }, { label: 'Engaged', c: SLATE }, { label: 'In conversation', c: AMBER }, { label: 'Converted', c: GREEN }].map((l) => ({ label: l.label, swatch: `width:11px;height:11px;border-radius:4px;background:${l.c};display:inline-block;` })),
+      insights, attribution,
+      cohortHead: ['Customer', 'Source', 'First signal', 'To convert', 'Hypothesis matched'], cohort,
+      reachOpen: st.reachOpen, toggleReach: () => this.set({ reachOpen: !st.reachOpen }),
+      reachLabel: st.reachOpen ? 'hide' : 'followers and impressions — show',
+      reach: [{ label: 'Followers', value: '1,284' }, { label: 'Impressions', value: '96.2k' }, { label: 'Best post', value: '31 replies' }],
+      accounts: [
+        { name: 'X', platform: 'X', handle: '@mayabuildsdockside', status: 'Connected' },
+        { name: 'Reddit', platform: 'Reddit', handle: 'u/maya_dockside', status: 'Connected' },
+        { name: 'Discord', platform: 'Discord', handle: 'marine-trades', status: 'Connected' },
+        { name: 'LinkedIn', platform: 'LinkedIn', handle: 'Maya Chen', status: 'Awaiting your approval' }
+      ].map((a) => ({ ...a, glyph: GLYPH[a.platform], tileStyle: tile(a.platform, 36), style: pill(a.status) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

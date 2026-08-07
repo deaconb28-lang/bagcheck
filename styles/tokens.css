@@ -2,119 +2,155 @@
  * Bagcheck colour tokens — the single source of colour.
  * A palette hex anywhere else in the repo's source is a bug.
  *
- * Two axes, and the token names now mean what they say: --moss is green
- * (discipline), --signal is blue (exposure). Light is :root; dark is
- * html[data-mode="dark"].
+ * The palette is the Kylani v0.8 design system: a paper-and-ink surface
+ * language, deliberately flat and matte. No iridescence, no gloss, no glass.
+ * Bagcheck's three semantic roles map onto its semantic scale —
+ *   --moss   discipline        -> the "converted / won" deep forest
+ *   --signal exposure          -> the "engaged" slate blue
+ *   --loss   negative P&L      -> a muted terracotta (see the note below)
+ * and --accent carries the one thing Kylani reserves an accent for: work the
+ * product did on its own.
  */
 
 :root {
-  /*
-   * Iridescent white. The canvas is a pearl white pushed a few degrees
-   * green; cards rise to pure white; --iridescence is the only multi-hue
-   * wash in the system and only the page canvas may carry it.
-   */
-  --bg: #f5f9f6;
+  /* Neutrals */
+  --bg: #f6f3ee;
   --s1: #ffffff;
-  --ink: #0a1512;
-  --ink2: rgba(10, 21, 18, 0.62);
-  /* .48, not the .38 the dark palette used — 10px mono eyebrows land at
-     2.5:1 on a white canvas at .38, and at 3.3:1 here. */
-  --ink3: rgba(10, 21, 18, 0.48);
-  --line: rgba(10, 21, 18, 0.1);
-  --line2: rgba(10, 21, 18, 0.18);
-  --track: rgba(10, 21, 18, 0.1);
-  /*
-   * Insets — a step *into* a card, for hover and selected states on controls
-   * that already sit on --s1. Cards are the brightest surface in light mode,
-   * so those states cannot lift; they have to sink.
-   */
-  --inset: rgba(10, 21, 18, 0.045);
-  --inset2: rgba(10, 21, 18, 0.085);
-  --moss: #1a6e47;
-  --moss-dim: rgba(26, 110, 71, 0.24);
-  --moss-tint: rgba(26, 110, 71, 0.1);
-  --on-moss: #ffffff;
-  --signal: #1b6cc4;
-  --signal-tint: rgba(27, 108, 196, 0.1);
-  --loss: #a8452f;
-  --glass: rgba(255, 255, 255, 0.82);
-  --glass-solid: rgba(255, 255, 255, 0.9);
+  --sunken: #fcfaf7;
+  --inset: #f3efe9;
+  --track: #f3efe9;
+  --control: #efe9e1;
+
+  --ink: #14120f;
+  --ink2: #4a453e;
+  --ink3: #6e6760;
+  /* Mono metadata only, and the contrast floor at 4.5:1 on white. Never put
+     it on --inset or any surface lighter than white. */
+  --meta: #857e74;
+
+  --line: #eae4db;
+  --line-light: #f4f0ea;
+  --line2: #ded7cd;
+  --line2-hover: #cfc7bb;
+
+  /* Ink field — the sidebar, primary buttons, dark specimens */
+  --ink-field: #17140f;
+  --ink-field-hover: #000000;
+  --on-ink: #fdfcfa;
+  --on-ink-muted: #b4ada3;
+  --on-ink-faint: #9c948a;
+  --on-ink-body: #e6e1da;
+  --ink-fill: rgba(253, 252, 250, 0.06);
+  --ink-fill-active: rgba(253, 252, 250, 0.1);
+  --ink-line: rgba(253, 252, 250, 0.09);
 
   /*
-   * The shimmer: the two brand axes blooming through the white field, so
-   * the iridescence is the palette rather than decoration. Alphas stay
-   * under .11 — data must read flat on top of it.
+   * Discipline. Kylani's "shipped or won" forest — the outcome colour.
+   * Ink owns the primary action inside the app; a moss-filled button appears
+   * only on marketing surfaces, so the colour keeps its meaning in-product.
    */
-  --iridescence:
-    radial-gradient(
-      120% 82% at 10% -6%,
-      rgba(26, 110, 71, 0.1),
-      rgba(26, 110, 71, 0) 62%
-    ),
-    radial-gradient(
-      104% 72% at 92% 4%,
-      rgba(27, 108, 196, 0.09),
-      rgba(27, 108, 196, 0) 60%
-    ),
-    radial-gradient(
-      96% 64% at 46% 104%,
-      rgba(64, 176, 158, 0.08),
-      rgba(64, 176, 158, 0) 58%
-    );
+  --moss: #1e6b4a;
+  --moss-hover: #17553b;
+  --moss-tint: #e9f2ec;
+  --moss-line: #bfd9cb;
+  --moss-dim: rgba(30, 107, 74, 0.34);
+  --on-moss: #fdfcfa;
+
+  /* Exposure, comparison, percentile. Kylani's "engaged" slate. */
+  --signal: #3e6b8a;
+  --signal-tint: #edf3f7;
+  --signal-line: #cfdce6;
 
   /*
-   * Dark specimen surfaces — share cards, Wrapped cards, and in-page app
-   * mocks. Green-black in BOTH modes, per the brand rule; declared once
-   * and never overridden by html[data-mode="dark"].
+   * Negative P&L, and nothing else. The handoff adds no red to the palette;
+   * Bagcheck has to mark a down day, so this is a muted terracotta drawn from
+   * the same warm family rather than a red — information, not alarm.
    */
-  --share-bg: #080d0b;
-  --share-s1: #101714;
-  --share-ink: #e6eee9;
-  --share-ink-dim: rgba(230, 238, 233, 0.48);
-  --share-line: rgba(230, 238, 233, 0.09);
-  --share-track: rgba(230, 238, 233, 0.13);
-  --share-moss: #5fbe86;
-  --share-moss-tint: rgba(95, 190, 134, 0.12);
-  --share-signal: #5aa6f0;
-  --share-signal-tint: rgba(90, 166, 240, 0.12);
-  --share-loss: #d2705c;
+  --loss: #9a4a2c;
+  --loss-tint: #f7ece6;
+  --loss-line: #e5cfc3;
+
+  /*
+   * The accent, reserved. Kylani's rule: one colour means "the product did
+   * something on its own." Here that is the nightly score and the written
+   * daily insight — never decoration, never a hover fill, never a heading.
+   */
+  --accent: #0fa47a;
+  --accent-deep: #0a7a59;
+  --accent-tint: #e3f6ee;
+  --accent-line: #b7e4d2;
+  --accent-wash: #f2fbf7;
+
+  /* Elevation is for lift only, never style. Dark-neutral and low. */
+  --lift: 0 1px 2px rgba(20, 18, 15, 0.03);
+  --lift-hero: 0 1px 2px rgba(20, 18, 15, 0.03), 0 18px 40px -30px rgba(20, 18, 15, 0.3);
+  --scrim: rgba(20, 18, 15, 0.32);
+
+  /*
+   * Dark specimen surfaces — share cards and Wrapped viewers, which stay dark
+   * in both modes per the brand rule. Declared once; never overridden.
+   */
+  --share-bg: #17140f;
+  --share-s1: #211d17;
+  --share-ink: #fdfcfa;
+  --share-ink-dim: rgba(253, 252, 250, 0.52);
+  --share-line: rgba(253, 252, 250, 0.09);
+  --share-track: rgba(253, 252, 250, 0.13);
+  --share-moss: #4fb287;
+  --share-moss-tint: rgba(79, 178, 135, 0.14);
+  --share-signal: #7ba6c4;
+  --share-signal-tint: rgba(123, 166, 196, 0.14);
+  --share-loss: #c87a5c;
 }
 
+/*
+ * The handoff specifies no dark mode. This is a coherent ink-field variant so
+ * the mode toggle keeps working; it is derived from the ink surfaces above
+ * rather than being part of the system.
+ */
 html[data-mode="dark"] {
-  --bg: #080d0b;
-  --s1: #101714;
-  --ink: #e6eee9;
-  --ink2: rgba(230, 238, 233, 0.6);
-  --ink3: rgba(230, 238, 233, 0.34);
-  --line: rgba(230, 238, 233, 0.09);
-  --line2: rgba(230, 238, 233, 0.17);
-  --track: rgba(230, 238, 233, 0.1);
-  --inset: rgba(230, 238, 233, 0.05);
-  --inset2: rgba(230, 238, 233, 0.1);
-  --moss: #5fbe86;
-  --moss-dim: rgba(95, 190, 134, 0.22);
-  --moss-tint: rgba(95, 190, 134, 0.12);
-  --on-moss: #04120b;
-  --signal: #5aa6f0;
-  --signal-tint: rgba(90, 166, 240, 0.12);
-  --loss: #d2705c;
-  --glass: rgba(16, 23, 20, 0.82);
-  --glass-solid: rgba(16, 23, 20, 0.86);
+  --ink-field: #fdfcfa;
+  --ink-field-hover: #ffffff;
+  --on-ink: #14120f;
 
-  --iridescence:
-    radial-gradient(
-      120% 82% at 10% -6%,
-      rgba(95, 190, 134, 0.09),
-      rgba(95, 190, 134, 0) 62%
-    ),
-    radial-gradient(
-      104% 72% at 92% 4%,
-      rgba(90, 166, 240, 0.08),
-      rgba(90, 166, 240, 0) 60%
-    ),
-    radial-gradient(
-      96% 64% at 46% 104%,
-      rgba(64, 176, 158, 0.07),
-      rgba(64, 176, 158, 0) 58%
-    );
+  --bg: #17140f;
+  --s1: #211d17;
+  --sunken: #1c1913;
+  --inset: rgba(253, 252, 250, 0.05);
+  --track: rgba(253, 252, 250, 0.1);
+  --control: rgba(253, 252, 250, 0.07);
+
+  --ink: #fdfcfa;
+  --ink2: #e6e1da;
+  --ink3: #b4ada3;
+  --meta: #9c948a;
+
+  --line: rgba(253, 252, 250, 0.1);
+  --line-light: rgba(253, 252, 250, 0.06);
+  --line2: rgba(253, 252, 250, 0.18);
+  --line2-hover: rgba(253, 252, 250, 0.28);
+
+  --moss: #4fb287;
+  --moss-hover: #6cc39c;
+  --moss-tint: rgba(79, 178, 135, 0.14);
+  --moss-line: rgba(79, 178, 135, 0.34);
+  --moss-dim: rgba(79, 178, 135, 0.34);
+  --on-moss: #14120f;
+
+  --signal: #7ba6c4;
+  --signal-tint: rgba(123, 166, 196, 0.14);
+  --signal-line: rgba(123, 166, 196, 0.34);
+
+  --loss: #c87a5c;
+  --loss-tint: rgba(200, 122, 92, 0.14);
+  --loss-line: rgba(200, 122, 92, 0.34);
+
+  --accent: #16c091;
+  --accent-deep: #3ed4aa;
+  --accent-tint: rgba(22, 192, 145, 0.14);
+  --accent-line: rgba(22, 192, 145, 0.36);
+  --accent-wash: rgba(22, 192, 145, 0.07);
+
+  --lift: none;
+  --lift-hero: none;
 }

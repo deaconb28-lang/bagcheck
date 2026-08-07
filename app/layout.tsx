@@ -1,28 +1,29 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Martian_Mono, Public_Sans } from "next/font/google";
+import { IBM_Plex_Mono, Outfit, Public_Sans } from "next/font/google";
 import "../styles/tokens.css";
 import "./globals.css";
 
-// Display: engineered numerals with optical-size and width axes.
-const display = Bricolage_Grotesque({
+// Display — headings, score numerals, the wordmark. Always negatively
+// tracked; the tracking scale by size lives in globals.css.
+const display = Outfit({
   subsets: ["latin"],
-  axes: ["opsz", "wdth"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-display",
   display: "swap",
 });
 
-// Body: quiet, legible, and deliberately not the default UI grotesque.
+// UI and body — every sentence, label, button, input.
 const body = Public_Sans({
   subsets: ["latin"],
   variable: "--font-body",
   display: "swap",
 });
 
-// Labels: a monospace built for UI, which is what makes the eyebrows read
-// like instrument markings rather than code.
-const mono = Martian_Mono({
+// Machine facts only: timestamps, counts, metadata, caps micro-labels.
+// Never body copy, never headings.
+const mono = IBM_Plex_Mono({
   subsets: ["latin"],
-  axes: ["wdth"],
+  weight: ["400", "500"],
   variable: "--font-mono",
   display: "swap",
 });

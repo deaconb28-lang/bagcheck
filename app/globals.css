@@ -29,22 +29,6 @@ body {
   text-wrap: pretty;
 }
 
-/*
- * The iridescence. Fixed rather than scrolled so it reads as a property of
- * the surface the app sits on, not a graphic in the page — and painted on a
- * pseudo-element rather than `background-attachment: fixed`, which forces a
- * repaint per scroll frame on mobile. This is the one multi-hue fill in the
- * system; nothing above it may carry another.
- */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: var(--iridescence);
-}
-
 a {
   color: inherit;
   text-decoration: none;
@@ -59,18 +43,26 @@ button {
 }
 
 :focus-visible {
-  outline: 2px solid var(--moss);
-  outline-offset: 3px;
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
-/* Shared type classes — the three voices of the system. */
+/*
+ * Shared type classes — the three voices.
+ *
+ * Display is Outfit, always negatively tracked, and the tracking tightens
+ * with size: -.015em at 16-17px, -.02em at 18-21px, -.025em at 22-25px,
+ * -.035em at 38px+. `.disp` carries the mid setting; the size steps below
+ * override it so a headline and a score are both correct.
+ */
 
 .eyebrow {
   font-family: var(--font-mono), monospace;
-  font-size: 10px;
-  letter-spacing: 0.22em;
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--ink3);
+  color: var(--meta);
 }
 
 .eyebrow[data-tone="moss"] {
@@ -81,22 +73,31 @@ button {
   color: var(--signal);
 }
 
+/* The one thing the product did on its own. Reserved — see tokens.css. */
+.eyebrow[data-tone="accent"] {
+  color: var(--accent-deep);
+}
+
 .disp {
   font-family: var(--font-display), sans-serif;
-  font-optical-sizing: auto;
-  font-variation-settings: "wdth" 96;
   font-weight: 700;
-  letter-spacing: -0.042em;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
-  line-height: 1.08;
+  line-height: 1.2;
+}
+
+.disp[data-size="s"] {
+  letter-spacing: -0.015em;
+}
+
+.disp[data-size="l"] {
+  letter-spacing: -0.025em;
 }
 
 .num {
   font-family: var(--font-display), sans-serif;
-  font-optical-sizing: auto;
-  font-variation-settings: "wdth" 90;
   font-weight: 800;
-  letter-spacing: -0.048em;
+  letter-spacing: -0.035em;
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }

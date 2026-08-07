@@ -126,9 +126,9 @@
   cursor: pointer;
   font-family: var(--font-mono), monospace;
   font-size: 10.5px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--ink3);
+  color: var(--meta);
 }
 
 .notice {

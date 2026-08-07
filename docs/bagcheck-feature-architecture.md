@@ -247,77 +247,30 @@ No exclamation marks, no coaching tone, no "you should." Numbers are always abou
 
 One notification a day, and it is never a price alert.
 
-### Color tokens
+### Color tokens, type, and surfaces
 
-> Superseded 2026-08-07. This section originally specified an aubergine
-> dark-first canvas with gold and violet accents. The palette below replaced
-> it: an iridescent white canvas, green as the primary, blue as the second
-> axis. The semantics are unchanged — only the hues and the default mode
-> moved.
-
-Define both modes on `html`: light as `:root`, dark under `html[data-mode="dark"]`. Never hardcode a palette hex in a component — always `var(--*)`.
-
-**The token names now mean what they say. `--moss` is green. `--signal` is blue.**
-
-**Light — the default**
-
-| Token | Value |
-|---|---|
-| `--bg` | `#F5F9F6` |
-| `--s1` | `#FFFFFF` |
-| `--ink` | `#0A1512` |
-| `--ink2` | `rgba(10,21,18,.62)` |
-| `--ink3` | `rgba(10,21,18,.38)` |
-| `--line` / `--line2` / `--track` | `rgba(10,21,18,.10 / .18 / .10)` |
-| `--moss` *(green, primary)* | `#1A6E47` |
-| `--moss-dim` | `rgba(26,110,71,.24)` |
-| `--moss-tint` | `rgba(26,110,71,.10)` |
-| `--on-moss` | `#FFFFFF` |
-| `--signal` *(blue, secondary)* | `#1B6CC4` |
-| `--signal-tint` | `rgba(27,108,196,.10)` |
-| `--loss` *(clay)* | `#A8452F` |
-| `--glass` | `rgba(255,255,255,.82)` |
-| `--glass-solid` | `rgba(255,255,255,.90)` |
-
-**Dark**
-
-| Token | Value |
-|---|---|
-| `--bg` | `#080D0B` |
-| `--s1` | `#101714` |
-| `--ink` | `#E6EEE9` |
-| `--moss` | `#5FBE86` |
-| `--on-moss` | `#04120B` |
-| `--signal` | `#5AA6F0` |
-| `--loss` | `#D2705C` |
-| `--glass` | `rgba(16,23,20,.82)` |
-| lines / line2 / track | `rgba(230,238,233,.09 / .17 / .10)` |
-
-**The iridescence.** `--iridescence` is three very low-alpha radial washes —
-green, blue, and a teal between them — painted once on `body::before` and
-fixed to the viewport. It is the only multi-hue fill in the system; nothing
-layered above the canvas may carry another. Alphas stay under .11 so every
-readout still sits flat on top of it.
-
-### Semantics
-
-- **Green** (`--moss`) means discipline, and owns every primary CTA.
-- **Blue** (`--signal`) means exposure, comparison, or percentile.
-- **Clay** marks negative P&L and nothing else.
-- One accent per surface — never two saturated fills competing in one view.
-- Share cards and Wrapped viewers stay green-black in **both** modes.
-
-### Type
-
-> Superseded 2026-08-07. This section originally specified Archivo / Inter /
-> JetBrains Mono; the stack below replaced it. Everything else in the addendum
-> stands. The width axes are the equivalents in the new families, not new
-> intentions — Bricolage's usable width range sits lower than Archivo's.
-
-- **Bricolage Grotesque variable — display.** `font-variation-settings:'wdth' 86–96`, `font-optical-sizing:auto`, weight 700 (800 for numerals), letter-spacing −.04 to −.05em, `font-variant-numeric:tabular-nums`, headlines capped at 9–11ch.
-- **Public Sans — body.** 15.5–22px, line-height 1.5–1.6, `text-wrap:pretty`.
-- **Martian Mono — eyebrows and metric labels.** 9.5–11px, letter-spacing .18–.24em, uppercase.
-- Never Roboto, and never the body face for display.
+> **Superseded 2026-08-07.** The visual system is now the Kylani v0.8 design
+> handoff in `docs/design-system/` — a paper-and-ink surface language with
+> Outfit / Public Sans / IBM Plex Mono. Read `docs/design-system/README.md`
+> and `styles/tokens.css` for the authoritative values; `CLAUDE.md` carries
+> the working rules.
+>
+> What this section originally specified — an aubergine dark-first canvas,
+> gold and violet accents, Archivo/Inter/JetBrains Mono, and a `wdth` width
+> axis as the identifying gesture — no longer describes the product.
+>
+> **What survives from it, unchanged:** the semantic assignments. One colour
+> means discipline and owns the marketing CTA (now `--moss`, a deep forest).
+> One means exposure, comparison, and percentile (now `--signal`, a slate
+> blue). Clay still marks negative P&L and nothing else. One accent per
+> surface still holds. Share cards and Wrapped viewers still stay dark in
+> both modes. Tabular figures on every changeable number, sentence-then-number
+> on every readout, no serif anywhere.
+>
+> **What changed beyond colour and type:** the product is light-first; the
+> left icon rail became a 244px ink sidebar with labelled routes; low neutral
+> elevation is now allowed on cards where the old rule said no shadows at all;
+> and one colour, `--accent`, is reserved for work Bagcheck did on its own.
 
 ### Data idiom
 

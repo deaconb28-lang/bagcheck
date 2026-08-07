@@ -1,7 +1,7 @@
 /*
- * Landing — iridescent white canvas carrying green-black product specimens.
- * Moss = discipline, signal = exposure/comparison, and the token system
- * supplies every colour. One accent per surface.
+ * Landing — paper canvas carrying ink product specimens. Moss = discipline,
+ * signal = exposure/comparison, and the token system supplies every colour.
+ * Flat and matte: no glass, no blur, no decorative gradient.
  */
 
 .page {
@@ -21,8 +21,7 @@
   position: sticky;
   top: 0;
   z-index: 30;
-  background: var(--glass);
-  backdrop-filter: blur(14px);
+  background: var(--bg);
   border-bottom: 1px solid var(--line);
 }
 
@@ -44,10 +43,9 @@
 
 .wm {
   font-family: var(--font-display), sans-serif;
-  font-variation-settings: "wdth" 96;
   font-weight: 700;
   font-size: 19px;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 
 .navRight {
@@ -111,7 +109,6 @@
 
 .h1 {
   font-family: var(--font-display), sans-serif;
-  font-variation-settings: "wdth" 94;
   font-weight: 700;
   font-size: clamp(44px, 6.4vw, 72px);
   line-height: 1.02;
@@ -169,9 +166,9 @@
 .ctaCaption {
   font-family: var(--font-mono), monospace;
   font-size: 10px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--ink3);
+  color: var(--meta);
 }
 
 @keyframes rise {
@@ -226,9 +223,9 @@
 .inputsLine {
   font-family: var(--font-mono), monospace;
   font-size: 10px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--ink3);
+  color: var(--meta);
 }
 
 /* The score — Today mock beside copy */
@@ -263,7 +260,7 @@
 .todayEyebrow {
   font-family: var(--font-mono), monospace;
   font-size: 9.5px;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--share-ink-dim);
 }
@@ -345,7 +342,7 @@
 .todayChip {
   font-family: var(--font-mono), monospace;
   font-size: 9.5px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   padding: 6px 11px;
   border-radius: 8px;
@@ -494,30 +491,27 @@
 .shareK {
   font-family: var(--font-mono), monospace;
   font-size: 9.5px;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--share-ink-dim);
 }
 
 .shareV {
   font-family: var(--font-display), sans-serif;
-  font-optical-sizing: auto;
-  font-variation-settings: "wdth" 86;
   font-weight: 800;
   font-size: 84px;
   line-height: 0.88;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.035em;
   font-variant-numeric: tabular-nums;
   color: var(--share-moss);
 }
 
 .shareVText {
   font-family: var(--font-display), sans-serif;
-  font-variation-settings: "wdth" 90;
   font-weight: 700;
   font-size: 38px;
   line-height: 1;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.035em;
   color: var(--share-moss);
 }
 
@@ -606,7 +600,7 @@
   font-family: var(--font-mono), monospace;
   font-size: 10.5px;
   letter-spacing: 0.22em;
-  color: var(--ink3);
+  color: var(--meta);
 }
 
 .stepTitle {
@@ -643,9 +637,9 @@
 .ctaTrust {
   font-family: var(--font-mono), monospace;
   font-size: 10px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--ink3);
+  color: var(--meta);
 }
 
 /* Footer */

@@ -1,7 +1,7 @@
 .stat {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 }
 
 .val {
@@ -11,7 +11,7 @@
 }
 
 .n {
-  font-size: 56px;
+  font-size: 38px;
 }
 
 .n[data-tone="moss"] {
@@ -23,12 +23,13 @@
 }
 
 .u {
-  font-size: 14px;
-  color: var(--ink2);
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  color: var(--meta);
 }
 
 .tail {
   font-size: 14px;
   color: var(--ink2);
-  line-height: 1.5;
+  line-height: 1.65;
 }

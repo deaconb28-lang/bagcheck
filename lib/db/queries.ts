@@ -162,3 +162,17 @@ export async function loadActivity(
       .sort((a, b) => b.count - a.count),
   };
 }
+
+/** Just what the app shell paints — one projected lookup, no history. */
+export async function loadShellConnection(
+  userId: string,
+): Promise<{ institution: string | null } | null> {
+  const { connections } = await getCollections();
+  const doc = await connections.findOne(
+    { userId },
+    { projection: { _id: 0, accounts: 1 } },
+  );
+  if (!doc) return null;
+  const institution = doc.accounts?.find((a) => a.institution)?.institution ?? null;
+  return { institution };
+}

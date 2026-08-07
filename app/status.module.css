@@ -31,8 +31,8 @@
 .digest {
   font-family: var(--font-mono), monospace;
   font-size: 10px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--ink3);
+  color: var(--meta);
   margin-top: 8px;
 }

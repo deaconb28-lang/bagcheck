@@ -38,10 +38,9 @@
 /* 2 — the sentence: display wdth 96, 29px, capped at 11ch */
 .sentence {
   font-family: var(--font-display), sans-serif;
-  font-variation-settings: "wdth" 96;
   font-weight: 700;
   font-size: 29px;
-  letter-spacing: -0.042em;
+  letter-spacing: -0.025em;
   line-height: 1.08;
   max-width: 11ch;
   text-wrap: balance;

@@ -3,7 +3,13 @@ import styles from "./Button.module.css";
 
 type ButtonProps = {
   children: React.ReactNode;
+  /** Secondary: outlined, transparent, fills on hover. */
   ghost?: boolean;
+  /**
+   * Moss-filled. Marketing surfaces and first-run moments only — inside the
+   * app the primary action is ink, so the colour keeps its meaning.
+   */
+  marketing?: boolean;
   href?: string;
   onClick?: () => void;
   type?: "button" | "submit";
@@ -12,11 +18,14 @@ type ButtonProps = {
 export function Button({
   children,
   ghost = false,
+  marketing = false,
   href,
   onClick,
   type = "button",
 }: ButtonProps) {
-  const cls = ghost ? `${styles.btn} ${styles.ghost}` : styles.btn;
+  const cls = [styles.btn, ghost ? styles.ghost : "", marketing ? styles.marketing : ""]
+    .filter(Boolean)
+    .join(" ");
   if (href) {
     return (
       <Link href={href} className={cls}>

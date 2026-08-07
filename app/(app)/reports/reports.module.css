@@ -89,7 +89,7 @@
 .recurringVal {
   font-family: var(--font-mono), monospace;
   font-size: 11px;
-  color: var(--ink3);
+  color: var(--meta);
 }
 
 .recurringVal {

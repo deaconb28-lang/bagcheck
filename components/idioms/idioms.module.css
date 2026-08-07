@@ -29,9 +29,9 @@
   justify-content: space-between;
   font-family: var(--font-mono), monospace;
   font-size: 9.5px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--ink3);
+  color: var(--meta);
 }
 
 /* Contribution grid */

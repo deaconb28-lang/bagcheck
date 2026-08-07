@@ -1,22 +1,45 @@
+/*
+ * Status pill. Public Sans 11.5/600 in a 999px pill with a tinted field and a
+ * matching hairline — status is never encoded by colour alone, so the word
+ * always carries it and the dot is only reinforcement.
+ */
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 7px;
   background: var(--moss-tint);
+  border: 1px solid var(--moss-line);
   color: var(--moss);
-  font-family: var(--font-mono), monospace;
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  padding: 7px 13px;
-  border-radius: 8px;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 999px;
 }
 
 .signal {
   background: var(--signal-tint);
+  border-color: var(--signal-line);
   color: var(--signal);
 }
 
+/* Reserved: work the product did on its own. */
+.accent {
+  background: var(--accent-tint);
+  border-color: var(--accent-line);
+  color: var(--accent-deep);
+}
+
+.neutral {
+  background: var(--inset);
+  border-color: var(--line);
+  color: var(--ink2);
+}
+
 .dot {
-  font-style: normal;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+  flex: none;
 }

@@ -1,10 +1,30 @@
+/*
+ * White field, 1px hairline, low neutral lift. Elevation is for lift only —
+ * never for style, never coloured, never a bevel.
+ */
 .card {
   background: var(--s1);
   border: 1px solid var(--line);
   border-radius: 20px;
-  padding: 28px 30px;
+  padding: 24px 26px;
+  box-shadow: var(--lift);
 }
 
+/* Compact and nested cards. */
 .tight {
-  padding: 24px 26px;
+  border-radius: 18px;
+  padding: 18px 22px;
+}
+
+/* Hero panels lift a half step further, and only these. */
+.hero {
+  border-radius: 22px;
+  padding: 28px 30px;
+  box-shadow: var(--lift-hero);
+}
+
+/* A nested panel inside a card — no lift of its own. */
+.sunken {
+  background: var(--sunken);
+  box-shadow: none;
 }

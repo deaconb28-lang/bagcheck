@@ -36,9 +36,9 @@
 .back {
   font-family: var(--font-mono), monospace;
   font-size: 10px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--ink3);
+  color: var(--meta);
   min-height: 44px;
   display: inline-flex;
   align-items: center;
@@ -81,15 +81,15 @@
 .date {
   font-family: var(--font-mono), monospace;
   font-size: 10.5px;
-  color: var(--ink3);
+  color: var(--meta);
 }
 
 .type {
   font-family: var(--font-mono), monospace;
   font-size: 9.5px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--ink2);
+  color: var(--ink3);
 }
 
 .mid {
@@ -155,7 +155,7 @@
 .pageLink {
   font-family: var(--font-mono), monospace;
   font-size: 10px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--ink2);
   min-height: 44px;
@@ -196,21 +196,21 @@
 }
 
 .filter:hover {
-  background: var(--inset);
+  background: var(--sunken);
   color: var(--ink);
 }
 
 /* Moss already owns the count above; a second saturated fill in the same
    rail would put two accents on one surface, so the selected state is ink. */
 .filter[data-active] {
-  background: var(--inset2);
+  background: var(--inset);
   color: var(--ink);
 }
 
 .filterCount {
   font-family: var(--font-mono), monospace;
   font-size: 10px;
-  color: var(--ink3);
+  color: var(--meta);
 }
 
 .filter[data-active] .filterCount {
