@@ -26,6 +26,16 @@ set. Sign-in needs the three `AUTH_*` vars; brokerage connect and sync
 additionally need `MONGODB_URI`, `SNAPTRADE_CLIENT_ID`, and
 `SNAPTRADE_CONSUMER_KEY`.
 
+No domain yet? Two options:
+
+- Register the Google OAuth client against `http://localhost:3000` and your
+  `*.vercel.app` URL (redirect URI `<origin>/api/auth/callback/google`) and
+  add the real domain to the same client later — no code change.
+- Or skip auth entirely for now: set `DEV_USER_ID=<anything>` and `/debug`
+  plus the SnapTrade connect/sync flow run under that stand-in identity.
+  The bypass only works while the `AUTH_*` vars are absent and should not
+  be left set on a public deployment.
+
 ## Milestones
 
 M1 ledger (auth, SnapTrade, Mongo models, `/debug`) — in progress.

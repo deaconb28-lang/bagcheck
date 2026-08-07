@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getUserId } from "@/auth";
 import { syncUser } from "@/lib/snaptrade";
 
 export async function POST() {
-  const session = await auth();
-  if (!session?.user?.id) {
+  const userId = await getUserId();
+  if (!userId) {
     return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
   try {
-    const result = await syncUser(session.user.id);
+    const result = await syncUser(userId);
     return NextResponse.json(result);
   } catch (err) {
     return NextResponse.json(

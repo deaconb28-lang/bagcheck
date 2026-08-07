@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { auth, isAuthConfigured, signIn, signOut } from "@/auth";
+import { auth, isAuthConfigured, isDevIdentity, signIn, signOut } from "@/auth";
 import { getCollections, isDbConfigured } from "@/lib/db";
 import type { ConnectionDoc, PositionSnapshotDoc, TransactionDoc } from "@/lib/db";
 import { isSnapTradeConfigured } from "@/lib/snaptrade";
@@ -17,6 +17,7 @@ const ENV_KEYS = [
   "MONGODB_URI",
   "SNAPTRADE_CLIENT_ID",
   "SNAPTRADE_CONSUMER_KEY",
+  "DEV_USER_ID",
 ] as const;
 
 interface LedgerData {
@@ -48,23 +49,34 @@ async function signOutAction() {
 }
 
 export default async function DebugPage() {
-  let session = null;
+  let userId: string | null = null;
+  let userEmail: string | null = null;
   let authError: string | null = null;
+  const devIdentity = isDevIdentity();
+
   try {
-    session = await auth();
+    if (isAuthConfigured()) {
+      const session = await auth();
+      userId = session?.user?.id ?? null;
+      userEmail = session?.user?.email ?? null;
+    } else if (devIdentity) {
+      userId = process.env.DEV_USER_ID ?? null;
+    }
   } catch (err) {
     authError = err instanceof Error ? err.message : String(err);
   }
 
   let ledger: LedgerData | null = null;
   let dbError: string | null = null;
-  if (session?.user?.id && isDbConfigured()) {
+  if (userId && isDbConfigured()) {
     try {
-      ledger = await loadLedger(session.user.id);
+      ledger = await loadLedger(userId);
     } catch (err) {
       dbError = err instanceof Error ? err.message : String(err);
     }
   }
+
+  const canConnect = Boolean(userId) && isSnapTradeConfigured() && isDbConfigured();
 
   return (
     <main className={styles.page}>
@@ -86,34 +98,52 @@ export default async function DebugPage() {
             );
           })}
         </div>
-        {!isAuthConfigured() ? (
+        {!isAuthConfigured() && !devIdentity ? (
           <p className={styles.notice}>
-            Sign-in is inactive until AUTH_SECRET, AUTH_GOOGLE_ID, and AUTH_GOOGLE_SECRET are
-            set. SnapTrade connect additionally needs MONGODB_URI and the two SnapTrade keys.
+            No identity available. Either set the three AUTH_* vars (Google
+            sign-in), or set DEV_USER_ID to any string to exercise SnapTrade
+            and MongoDB without auth while the domain is undecided.
           </p>
         ) : null}
       </section>
 
       <section className={styles.section}>
-        <Eyebrow>Session</Eyebrow>
+        <Eyebrow>Identity</Eyebrow>
         {authError ? <div className={styles.error}>{authError}</div> : null}
-        {session?.user ? (
+        {userId ? (
           <>
+            {devIdentity ? (
+              <p className={styles.notice}>
+                Acting as DEV_USER_ID “{userId}” — Google sign-in is not
+                configured, so this stand-in identity is active. On a public
+                deployment this ledger is open to anyone with the URL; remove
+                DEV_USER_ID once auth is live (the bypass also disables
+                itself the moment the AUTH_* vars are set).
+              </p>
+            ) : null}
             <div className={styles.mono}>
-              id: {session.user.id}
+              id: {userId}
+              {userEmail ? (
+                <>
+                  <br />
+                  email: {userEmail}
+                </>
+              ) : null}
               <br />
-              email: {session.user.email ?? "—"}
+              source: {devIdentity ? "DEV_USER_ID (auth off)" : "Google session"}
             </div>
             <div className={styles.actions}>
-              {isSnapTradeConfigured() && isDbConfigured() ? (
+              {canConnect ? (
                 <Button href="/api/snaptrade/connect">Connect a brokerage</Button>
               ) : null}
               <SyncButton />
-              <form action={signOutAction}>
-                <Button ghost type="submit">
-                  Sign out
-                </Button>
-              </form>
+              {!devIdentity ? (
+                <form action={signOutAction}>
+                  <Button ghost type="submit">
+                    Sign out
+                  </Button>
+                </form>
+              ) : null}
             </div>
           </>
         ) : (
@@ -128,7 +158,7 @@ export default async function DebugPage() {
         )}
       </section>
 
-      {session?.user && !isDbConfigured() ? (
+      {userId && !isDbConfigured() ? (
         <section className={styles.section}>
           <Eyebrow>Ledger</Eyebrow>
           <p className={styles.notice}>MONGODB_URI is not set — nothing is stored yet.</p>
@@ -155,7 +185,10 @@ export default async function DebugPage() {
                 lastSyncAt: {ledger.connection.lastSyncAt?.toISOString() ?? "never"}
               </div>
             ) : (
-              <p className={styles.notice}>Not registered with SnapTrade yet.</p>
+              <p className={styles.notice}>
+                Not registered with SnapTrade yet — Connect a brokerage above
+                starts the read-only portal flow.
+              </p>
             )}
             {ledger.connection?.accounts.length ? (
               <div className={styles.tableWrap}>
