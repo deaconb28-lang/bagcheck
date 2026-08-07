@@ -63,6 +63,7 @@ Reference docs (read before any UI work — the design system is authoritative o
 
 - Global transition on buttons and inputs: `background, border-color, color, box-shadow` at .16s ease.
 - **Nothing animates on load.** The handoff allows one orchestrated moment in the whole app; screens do not stagger in.
+- Marketing may use scroll-driven motion (`animation-timeline: view()` / `scroll()`), always behind `@supports` and `prefers-reduced-motion`, and always so the static state is the finished design. Never write a hover rule against a property a scroll animation also writes — `fill: both` wins and the hover silently dies.
 - Ease-out, nothing over 500ms.
 - Count-ups run on `setInterval`. The real value is the default render — if the tween never starts, the number on screen must still be correct.
 - Everything honours `prefers-reduced-motion`.
@@ -80,5 +81,6 @@ Reference docs (read before any UI work — the design system is authoritative o
 ## Code conventions
 
 - Next.js App Router. Server components by default; `'use client'` only where interaction requires it.
-- `lib/score` is pure functions — no I/O.
+- `lib/score` and `lib/engine` are pure functions — no I/O.
+- Engine findings are descriptive and self-silencing: below their sample floor they return `null` rather than report a coincidence, and the evidence line must never contradict the sentence it sits under.
 - Screens are assembled from `components/primitives`; new visual patterns start there, not inline.

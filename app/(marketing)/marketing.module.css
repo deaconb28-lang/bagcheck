@@ -559,19 +559,12 @@
   z-index: 2;
 }
 
-/* The hand opens on hover — the cards are a set, and they read as one. */
-.fanWrap:hover .fanLeft {
-  transform: translateX(-102%) rotate(-9deg) scale(0.94);
-}
-
-.fanWrap:hover .fanRight {
-  transform: translateX(102%) rotate(9deg) scale(0.94);
-}
-
-.fanWrap:hover .fanCenter {
-  transform: translateY(-24px);
-}
-
+/*
+ * The hand deals itself open as the section scrolls in (see the motion block
+ * at the foot of this file). There is deliberately no hover variant: an
+ * animation with fill:both beats a hover rule writing the same property, so
+ * the two would fight and the hover would look broken.
+ */
 /* Below the fan's natural width the hand closes into a stack. */
 @media (max-width: 1060px) {
   .fanCard {
@@ -818,34 +811,55 @@
 
 /* Steps — numbered rows, order is real here */
 
-.stepRow {
-  display: grid;
-  grid-template-columns: 72px 1fr 1.2fr;
-  gap: 28px;
-  align-items: baseline;
-  padding: 30px 0;
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
 }
 
-.stepRow + .stepRow {
-  border-top: 1px solid var(--line);
+.stepRow {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1.15fr) minmax(0, 0.7fr);
+  gap: 28px;
+  align-items: start;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--line);
 }
 
 .stepNum {
   font-family: var(--font-mono), monospace;
-  font-size: 10.5px;
-  letter-spacing: 0.22em;
+  font-size: 11.5px;
+  letter-spacing: 0.09em;
   color: var(--meta);
+  padding-top: 7px;
+}
+
+.stepText {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .stepTitle {
-  font-size: 25px;
+  font-size: 21px;
+  letter-spacing: -0.02em;
 }
 
 .stepBody {
-  font-size: 13.5px;
+  font-size: 14.5px;
   color: var(--ink2);
-  line-height: 1.55;
-  max-width: 46ch;
+  line-height: 1.65;
+  max-width: 52ch;
+}
+
+/* The one-line consequence, held right so the column scans on its own. */
+.stepMeta {
+  font-family: var(--font-mono), monospace;
+  font-size: 11.5px;
+  color: var(--meta);
+  padding-top: 8px;
+  text-align: right;
 }
 
 /* Closing CTA */
@@ -860,12 +874,45 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 24px;
+  gap: 20px;
 }
 
 .ctaH {
-  font-size: clamp(32px, 4.2vw, 46px);
+  font-size: clamp(34px, 4.6vw, 52px);
   max-width: 13ch;
+}
+
+.ctaLede {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink2);
+  max-width: 46ch;
+}
+
+.ctaFacts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 26px;
+  margin-top: 6px;
+}
+
+.ctaFact {
+  font-family: var(--font-mono), monospace;
+  font-size: 11.5px;
+  color: var(--meta);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ctaFact::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--moss);
+  flex: none;
 }
 
 .ctaTrust {
@@ -1091,5 +1138,98 @@
 
   .inputCol:nth-child(n + 3) {
     margin-top: 0;
+  }
+}
+
+/*
+ * Motion. Everything here is scroll-driven — nothing animates on load, per
+ * the handoff. Progressive enhancement behind @supports, and reduced-motion
+ * skips it entirely: the page is complete and correct without any of it.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Sections arrive as they enter, and settle before they are read. */
+    .readsHead,
+    .scoreGrid,
+    .fanWrap,
+    .wrappedPoints,
+    .inputCols,
+    .tierCols,
+    .tierFoot,
+    .corrCols,
+    .segCopy,
+    .segViz,
+    .ctaIn {
+      animation: sectionIn linear both;
+      animation-timeline: view();
+      animation-range: entry 8% entry 62%;
+    }
+
+    /* Steps come in one after another rather than as a block. */
+    .stepRow {
+      animation: sectionIn linear both;
+      animation-timeline: view();
+      animation-range: entry 4% entry 54%;
+    }
+
+    /* The hand deals itself open as the section arrives. */
+    .fanLeft {
+      animation: dealLeft linear both;
+      animation-timeline: view(block);
+      animation-range: entry 10% cover 42%;
+    }
+
+    .fanRight {
+      animation: dealRight linear both;
+      animation-timeline: view(block);
+      animation-range: entry 10% cover 42%;
+    }
+  }
+}
+
+@keyframes sectionIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes dealLeft {
+  from {
+    transform: translateX(-24%) rotate(-2deg) scale(0.9);
+    opacity: 0.55;
+  }
+  to {
+    transform: translateX(-96%) rotate(-7deg) scale(0.93);
+    opacity: 1;
+  }
+}
+
+@keyframes dealRight {
+  from {
+    transform: translateX(24%) rotate(2deg) scale(0.9);
+    opacity: 0.55;
+  }
+  to {
+    transform: translateX(96%) rotate(7deg) scale(0.93);
+    opacity: 1;
+  }
+}
+
+/* How it works, narrow: the consequence line drops under the step. */
+@media (max-width: 860px) {
+  .stepRow {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .stepMeta {
+    grid-column: 2;
+    text-align: left;
+    padding-top: 0;
   }
 }

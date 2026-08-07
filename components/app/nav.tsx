@@ -109,11 +109,31 @@ export function ProfileMark() {
   );
 }
 
+/** Correlations: two axes crossing, and the cluster that carries the finding. */
+export function PatternsMark() {
+  return (
+    <svg {...svgProps()}>
+      <path
+        d="M3.4 3.4v13.2h13.2"
+        stroke="currentColor"
+        strokeWidth={STROKE}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity=".34"
+      />
+      <circle cx="7.4" cy="12.6" r="1.5" fill="currentColor" />
+      <circle cx="11" cy="9.4" r="1.5" fill="currentColor" />
+      <circle cx="14.4" cy="5.8" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}
+
 /** Plain names, no invented words. */
 export const ROUTES = [
   { href: "/today", label: "Today", Mark: TodayMark },
   { href: "/portfolio", label: "Portfolio", Mark: PortfolioMark },
   { href: "/activity", label: "Activity", Mark: ActivityMark },
+  { href: "/patterns", label: "Patterns", Mark: PatternsMark },
   { href: "/reports", label: "Reports", Mark: ReportsMark },
 ] as const;
 

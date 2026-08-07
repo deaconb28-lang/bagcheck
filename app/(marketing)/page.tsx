@@ -257,31 +257,68 @@ export default async function LandingPage() {
       </section>
 
       <section className={styles.section} id="how">
-        <div className={styles.wrap}>
-          <div className={styles.stepRow}>
-            <span className={styles.stepNum}>01</span>
-            <span className={`disp ${styles.stepTitle}`}>Connect</span>
-            <p className={styles.stepBody}>
-              One tap via SnapTrade. Read-only, permanently — no manual entry,
-              no screenshots, no CSV.
+        <div className={`${styles.wrap} ${styles.readsIn}`}>
+          <div className={styles.readsHead}>
+            <Eyebrow tone="moss">How it works</Eyebrow>
+            <h2 className={`disp ${styles.h2}`}>Ninety seconds, then nothing</h2>
+            <p className={styles.sectionLede}>
+              There is no daily logging step, because there is nothing to log.
+              The brokerage supplies what you did; the only thing it cannot
+              supply is why, and that is two taps.
             </p>
           </div>
-          <div className={styles.stepRow}>
-            <span className={styles.stepNum}>02</span>
-            <span className={`disp ${styles.stepTitle}`}>It arrives full</span>
-            <p className={styles.stepBody}>
-              Years of history parsed in about ninety seconds. The first thing
-              you see is your own annual retrospective.
-            </p>
-          </div>
-          <div className={styles.stepRow}>
-            <span className={styles.stepNum}>03</span>
-            <span className={`disp ${styles.stepTitle}`}>The quiet one</span>
-            <p className={styles.stepBody}>
-              One calm notification a day, never a price alert. The most
-              valuable message: nothing to do today, you’re on plan.
-            </p>
-          </div>
+
+          <ol className={styles.steps}>
+            <li className={styles.stepRow}>
+              <span className={styles.stepNum}>01</span>
+              <div className={styles.stepText}>
+                <span className={`disp ${styles.stepTitle}`}>Connect</span>
+                <p className={styles.stepBody}>
+                  One tap via SnapTrade. Read-only, permanently — Bagcheck can
+                  see what you did and cannot place, cancel, or modify an order.
+                </p>
+              </div>
+              <p className={styles.stepMeta}>
+                No manual entry, no screenshots, no CSV
+              </p>
+            </li>
+            <li className={styles.stepRow}>
+              <span className={styles.stepNum}>02</span>
+              <div className={styles.stepText}>
+                <span className={`disp ${styles.stepTitle}`}>It arrives full</span>
+                <p className={styles.stepBody}>
+                  Years of history parsed in about ninety seconds. A wearable is
+                  useless for thirty days while it learns you — the first thing
+                  you see here is your own annual retrospective.
+                </p>
+              </div>
+              <p className={styles.stepMeta}>Day one is not an empty state</p>
+            </li>
+            <li className={styles.stepRow}>
+              <span className={styles.stepNum}>03</span>
+              <div className={styles.stepText}>
+                <span className={`disp ${styles.stepTitle}`}>It compounds</span>
+                <p className={styles.stepBody}>
+                  Two taps at entry — why, and conviction one to five. Months
+                  in, that is what turns a ledger into “your average return is
+                  negative on positions opened after 2pm.”
+                </p>
+              </div>
+              <p className={styles.stepMeta}>None of it works on day one</p>
+            </li>
+            <li className={styles.stepRow}>
+              <span className={styles.stepNum}>04</span>
+              <div className={styles.stepText}>
+                <span className={`disp ${styles.stepTitle}`}>The quiet one</span>
+                <p className={styles.stepBody}>
+                  One calm notification a day, never a price alert. The most
+                  valuable message Bagcheck can send is that there is nothing to
+                  do today and you are on plan.
+                </p>
+              </div>
+              <p className={styles.stepMeta}>One a day, and never about price</p>
+            </li>
+          </ol>
         </div>
       </section>
 
@@ -347,13 +384,22 @@ export default async function LandingPage() {
 
       <section className={styles.ctaSec}>
         <div className={`${styles.wrap} ${styles.ctaIn}`}>
+          <Eyebrow tone="moss">Start</Eyebrow>
           <h2 className={`disp ${styles.ctaH}`}>Ninety seconds to your first report</h2>
+          <p className={styles.ctaLede}>
+            Connect once. The history you already have becomes a score, a
+            quarter of receipts, and one calm message a day.
+          </p>
           <form action={connectAction}>
             <Button marketing type="submit">
               {signedIn ? "Open your ledger" : "Connect a brokerage"}
             </Button>
           </form>
-          <p className={styles.ctaTrust}>Read-only, permanently · never a price alert</p>
+          <div className={styles.ctaFacts}>
+            <span className={styles.ctaFact}>Read-only, permanently</span>
+            <span className={styles.ctaFact}>Never a price alert</span>
+            <span className={styles.ctaFact}>Sharing is never paywalled</span>
+          </div>
         </div>
       </section>
 
