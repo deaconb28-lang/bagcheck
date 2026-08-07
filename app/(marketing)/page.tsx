@@ -86,32 +86,71 @@ export default async function LandingPage() {
         <div className={styles.waveBlock}>
           <DayStrip />
           <p className={styles.stripCap}>
-            Sixty-three trading days — green stayed inside your rules, blue
-            ran above your exposure baseline.
+            Sixty-three trading days of P&amp;L, straight from your brokerage.
+            Bagcheck reads all of it and scores none of it — the score is what
+            you did on each of these days.
           </p>
         </div>
       </section>
 
       <section className={styles.section} id="score">
-        <div className={`${styles.wrap} ${styles.scoreGrid}`}>
-          <TodayMock />
-          <div className={styles.scoreCopy}>
+        <div className={`${styles.wrap} ${styles.scoreIn}`}>
+          <div className={styles.readsHead}>
             <Eyebrow tone="moss">The score</Eyebrow>
             <h2 className={`disp ${styles.h2}`}>One number, decomposed</h2>
             <p className={styles.sectionLede}>
               Every morning opens on a sentence about your behaviour, the
               Discipline score, and exactly what moved it — green where you
-              held the line, blue where exposure ran, clay where it cost
-              you.
+              held the line, blue where exposure ran, clay where it cost you.
             </p>
-            <p className={styles.baseline}>
-              Scored against your own baseline, not a model investor — a
-              disciplined day trader and a disciplined index buyer can both
-              read 95.
-            </p>
-            <p className={styles.inputsLine}>
-              Adherence · Consistency · Patience · Exposure
-            </p>
+          </div>
+
+          <div className={styles.scoreGrid}>
+            <TodayMock />
+            <div className={styles.scoreCopy}>
+              <p className={styles.scoreClaim}>
+                Scored against your own baseline, not a model investor.
+              </p>
+              <p className={styles.baseline}>
+                A day trader taking twelve trades a day is at baseline, not
+                penalised — they are scored on whether they run their own game
+                consistently. A disciplined day trader and a disciplined index
+                buyer can both read 95.
+              </p>
+              <p className={styles.baseline}>
+                It moves slowly by design. If you could spike it in a day, the
+                number would be wrong: the failure mode is someone trading to
+                raise their score.
+              </p>
+            </div>
+          </div>
+
+          <div className={styles.inputCols}>
+            <div className={styles.inputCol}>
+              <Eyebrow>Adherence</Eyebrow>
+              <p className={styles.tierBody}>
+                Did you follow the rules you set for yourself.
+              </p>
+            </div>
+            <div className={styles.inputCol}>
+              <Eyebrow>Consistency</Eyebrow>
+              <p className={styles.tierBody}>
+                Sizing, cadence and hold times against your own baseline.
+              </p>
+            </div>
+            <div className={styles.inputCol}>
+              <Eyebrow>Patience</Eyebrow>
+              <p className={styles.tierBody}>
+                What you do in a drawdown, and how fast you sell winners.
+              </p>
+            </div>
+            <div className={styles.inputCol}>
+              <Eyebrow>Exposure</Eyebrow>
+              <p className={styles.tierBody}>
+                Speculative weight and trade count against the game you said
+                you were playing.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -253,39 +292,56 @@ export default async function LandingPage() {
             <h2 className={`disp ${styles.h2}`}>Sharing is never paywalled</h2>
             <p className={styles.sectionLede}>
               A free user can post every achievement they earn, at full
-              quality, forever. Paid tiers add formats, not permission.
+              quality, forever. Paid tiers add formats, not permission — and
+              no tier sells you a rare card.
             </p>
           </div>
           <div className={styles.tierCols}>
             <div className={styles.tierCol}>
-              <Eyebrow>Free</Eyebrow>
-              <div className={`num ${styles.tierPrice}`}>$0</div>
-              <p className={styles.tierBody}>
-                The score, streaks, Wrapped, and every rare card your
-                behaviour earns.
-              </p>
+              <div className={styles.tierHead}>
+                <Eyebrow>Free</Eyebrow>
+                <div className={`num ${styles.tierPrice}`}>$0</div>
+                <p className={styles.tierWho}>Anyone with a brokerage</p>
+              </div>
+              <ul className={styles.tierList}>
+                <li>The Discipline score and what moved it</li>
+                <li>Streaks, Wrapped, and event segments</li>
+                <li>Every rare card your behaviour earns</li>
+              </ul>
             </div>
             <div className={styles.tierCol}>
-              <Eyebrow>Plus</Eyebrow>
-              <div className={`num ${styles.tierPrice}`}>
-                $9<span className={styles.tierUnit}>/mo</span>
+              <div className={styles.tierHead}>
+                <Eyebrow>Plus</Eyebrow>
+                <div className={`num ${styles.tierPrice}`}>
+                  $9<span className={styles.tierUnit}>/mo</span>
+                </div>
+                <p className={styles.tierWho}>People who write about investing</p>
               </div>
-              <p className={styles.tierBody}>
-                Depth for people who write — report carousels, correlation
-                cards, publication-grade exports, a live score badge.
-              </p>
+              <ul className={styles.tierList}>
+                <li>Report carousels and correlation cards</li>
+                <li>Publication-grade exports and embeds</li>
+                <li>A live score badge for your site</li>
+              </ul>
             </div>
             <div className={styles.tierCol}>
-              <Eyebrow>Trader</Eyebrow>
-              <div className={`num ${styles.tierPrice}`}>
-                $29<span className={styles.tierUnit}>/mo</span>
+              <div className={styles.tierHead}>
+                <Eyebrow>Trader</Eyebrow>
+                <div className={`num ${styles.tierPrice}`}>
+                  $29<span className={styles.tierUnit}>/mo</span>
+                </div>
+                <p className={styles.tierWho}>Active day and swing traders</p>
               </div>
-              <p className={styles.tierBody}>
-                Cadence and proof — daily session recap cards, motion exports,
-                a verified public track record.
-              </p>
+              <ul className={styles.tierList}>
+                <li>Daily session recap cards</li>
+                <li>Motion exports for video</li>
+                <li>A verified public track record</li>
+              </ul>
             </div>
           </div>
+          <p className={styles.tierFoot}>
+            Rarity is earned by conduct at every tier. Sitting through a 20%
+            drawdown mints the same rare card whether you pay or not.
+          </p>
         </div>
       </section>
 

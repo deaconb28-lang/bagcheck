@@ -129,8 +129,9 @@
 }
 
 /*
- * The wave. Full-bleed at the foot of the hero — the quarter itself, used as
- * the page's one piece of art.
+ * The wave — the quarter's P&L, full-bleed at the foot of the hero and used
+ * as the page's one piece of art. A zero line is the surface: green above,
+ * clay below.
  */
 .waveBlock {
   display: flex;
@@ -140,40 +141,60 @@
   padding-bottom: 34px;
 }
 
-.strip {
+.wave {
+  position: relative;
   display: flex;
-  align-items: flex-end;
+  align-items: stretch;
   gap: clamp(3px, 0.55vw, 9px);
   width: 100%;
-  height: clamp(96px, 17vh, 190px);
+  height: clamp(120px, 20vh, 220px);
   padding: 0 clamp(16px, 3vw, 46px);
 }
 
-.stripBar {
-  display: block;
-  flex: 1 1 0;
-  min-width: 2px;
-  border-radius: 999px;
+/* The surface. Every bar is measured from here. */
+.waveZero {
+  position: absolute;
+  left: clamp(16px, 3vw, 46px);
+  right: clamp(16px, 3vw, 46px);
+  top: 50%;
+  height: 1px;
   background: var(--line2);
-  transform-origin: bottom center;
 }
 
-.stripBarOn {
+.waveCol {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 2px;
+}
+
+.waveBar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-radius: 999px;
   background: var(--moss);
 }
 
-.stripBarSig {
-  background: var(--signal);
+.waveBar[data-dir="up"] {
+  bottom: calc(50% + 2px);
+  transform-origin: bottom center;
+}
+
+/* Below the surface is negative P&L, which is the one thing clay marks. */
+.waveBar[data-dir="down"] {
+  top: calc(50% + 2px);
+  background: var(--loss);
+  transform-origin: top center;
 }
 
 /*
  * Scroll-driven: a pulse travels left to right as the page moves, staggered
  * by each bar's index. Progressive enhancement — without scroll timelines the
- * bars stand at their real heights, which is the design either way.
+ * bars stand at their real values, which is the design either way.
  */
 @supports (animation-timeline: scroll()) {
   @media (prefers-reduced-motion: no-preference) {
-    .stripBar {
+    .waveBar {
       animation: barWave linear both;
       animation-timeline: scroll(root block);
       animation-range: calc(var(--i) * 0.42%) calc(46% + var(--i) * 0.42%);
@@ -186,7 +207,7 @@
     transform: scaleY(1);
   }
   50% {
-    transform: scaleY(1.34);
+    transform: scaleY(1.32);
   }
   100% {
     transform: scaleY(1);
@@ -261,20 +282,54 @@
   color: var(--meta);
 }
 
-/* The score — Today mock beside copy */
+/* The score — head, then the Today mock beside the design claim, then the
+   four inputs as hairline columns. */
+
+.scoreIn {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
 
 .scoreGrid {
   display: grid;
-  grid-template-columns: 420px 1fr;
-  gap: 80px;
+  grid-template-columns: 420px minmax(0, 1fr);
+  gap: 72px;
   align-items: center;
 }
 
 .scoreCopy {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
   align-items: flex-start;
+}
+
+.scoreClaim {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  font-size: 21px;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  max-width: 22ch;
+}
+
+.inputCols {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+}
+
+.inputCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 26px 24px 0 0;
+}
+
+.inputCol + .inputCol {
+  border-left: 1px solid var(--line);
+  padding-left: 24px;
 }
 
 .todayCard {
@@ -692,8 +747,51 @@
 .tierCol {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 20px;
   padding: 6px 32px 0 0;
+}
+
+.tierHead {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tierWho {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  color: var(--meta);
+}
+
+.tierList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --line, not --line-light: the light divider is for inside a white card,
+   and against the paper canvas it is invisible. */
+.tierList li {
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.5;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.tierList li:last-child {
+  border-bottom: 0;
+}
+
+.tierFoot {
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.7;
+  max-width: 58ch;
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
 }
 
 .tierCol + .tierCol {
@@ -885,8 +983,8 @@
     padding-bottom: 20px;
   }
 
-  .strip {
-    height: clamp(84px, 14vh, 150px);
+  .wave {
+    height: clamp(104px, 16vh, 170px);
   }
 }
 
@@ -903,10 +1001,15 @@
     gap: 20px;
   }
 
-  .strip {
-    height: clamp(72px, 12vh, 110px);
+  .wave {
+    height: clamp(96px, 14vh, 130px);
     gap: 2px;
     padding: 0 14px;
+  }
+
+  .waveZero {
+    left: 14px;
+    right: 14px;
   }
 
   .waveBlock {
@@ -938,5 +1041,55 @@
     border-left: 0;
     border-top: 1px solid var(--line);
     padding-left: 0;
+  }
+}
+
+/* Score and pricing, narrow: the columns stack rather than crush. */
+@media (max-width: 980px) {
+  .scoreGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 34px;
+  }
+
+  .inputCols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .inputCol:nth-child(3) {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .inputCol:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+    padding-top: 22px;
+    margin-top: 22px;
+  }
+}
+
+@media (max-width: 720px) {
+  .scoreIn {
+    gap: 34px;
+  }
+
+  .inputCols,
+  .tierCols {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .inputCol,
+  .tierCol {
+    padding: 22px 0 0;
+  }
+
+  .inputCol + .inputCol,
+  .tierCol + .tierCol {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding-left: 0;
+  }
+
+  .inputCol:nth-child(n + 3) {
+    margin-top: 0;
   }
 }
