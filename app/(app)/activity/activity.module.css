@@ -1,0 +1,265 @@
+.scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.scroll > * {
+  animation: rise 0.42s ease-out both;
+}
+
+.scroll > *:nth-child(2) { animation-delay: 80ms; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.title {
+  font-size: 29px;
+  max-width: 11ch;
+}
+
+.body {
+  font-size: 15px;
+  color: var(--ink2);
+  line-height: 1.55;
+  max-width: 46ch;
+}
+
+.back {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.back:hover {
+  color: var(--moss);
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  border-top: 1px solid var(--line);
+  padding-top: 26px;
+}
+
+/* Ledger rows */
+
+.rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 108px 1fr auto;
+  gap: 18px;
+  align-items: baseline;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.date {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  color: var(--ink3);
+}
+
+.type {
+  font-family: var(--font-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+
+.mid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.symbol {
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.desc {
+  font-size: 12px;
+  color: var(--ink3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.right {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Desktop: the wrapper dissolves so units and price sit as sibling columns. */
+.qty {
+  display: contents;
+}
+
+.units {
+  color: var(--ink3);
+  min-width: 58px;
+  text-align: right;
+}
+
+.price {
+  color: var(--ink3);
+  min-width: 68px;
+  text-align: right;
+}
+
+.amount {
+  color: var(--ink);
+  min-width: 84px;
+  text-align: right;
+}
+
+/* Pager */
+
+.pager {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 6px;
+}
+
+.pageLink {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink2);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.pageLink:hover {
+  color: var(--moss);
+}
+
+/* Rail */
+
+.railBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.filter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  text-transform: capitalize;
+  color: var(--ink2);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.filter:hover {
+  background: var(--s1);
+  color: var(--ink);
+}
+
+/* Gold already owns the count above; a second saturated fill in the same
+   rail would put two accents on one surface, so the selected state is ink. */
+.filter[data-active] {
+  background: var(--s1);
+  color: var(--ink);
+}
+
+.filterCount {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  color: var(--ink3);
+}
+
+.filter[data-active] .filterCount {
+  color: var(--ink2);
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+  }
+
+  .left {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    gap: 10px;
+    align-items: baseline;
+  }
+
+  /* Amount sits level with the symbol; units and price drop beside the
+     description, which gets the width back. */
+  .right {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+  }
+
+  .amount {
+    order: -1;
+  }
+
+  .qty {
+    display: flex;
+    gap: 10px;
+  }
+
+  /* Transfers and dividends carry no units or price. The em-dashes hold a
+     column on desktop; stacked, they are just noise. */
+  .qty[data-empty] {
+    display: none;
+  }
+
+  .units,
+  .price,
+  .amount {
+    min-width: 0;
+  }
+
+  .desc {
+    max-width: 22ch;
+  }
+}

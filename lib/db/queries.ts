@@ -90,3 +90,75 @@ export async function loadAppData(userId: string, scoreLimit = 30): Promise<AppD
   ]);
   return { connection, scores: scoreDocs, snapshots, transactionCount };
 }
+
+export interface ActivityRow {
+  externalId: string;
+  date: string | null;
+  type: string | null;
+  symbol: string | null;
+  units: number | null;
+  price: number | null;
+  amount: number | null;
+  currency: string | null;
+  description: string | null;
+}
+
+export interface ActivityPage {
+  rows: ActivityRow[];
+  total: number;
+  /** Counts by normalised kind, across the whole ledger. */
+  kinds: Array<{ kind: string; count: number }>;
+}
+
+const KIND_OF = (type: string | null): string => {
+  const t = (type ?? "").toLowerCase();
+  if (t.includes("buy")) return "buy";
+  if (t.includes("sell")) return "sell";
+  if (t.includes("dividend")) return "dividend";
+  if (t.includes("contribution") || t.includes("deposit")) return "deposit";
+  if (t.includes("withdraw")) return "withdrawal";
+  return "other";
+};
+
+/** The ledger itself, paged — every trade and transfer Bagcheck holds. */
+export async function loadActivity(
+  userId: string,
+  { limit = 50, skip = 0, kind }: { limit?: number; skip?: number; kind?: string } = {},
+): Promise<ActivityPage> {
+  const { transactions } = await getCollections();
+
+  // Kind is derived from the broker's free-text type rather than stored, so
+  // both the filter and the counts run in memory over one sorted read.
+  const docs = await transactions
+    .find({ userId })
+    .sort({ date: -1 })
+    .project<ActivityRow>({
+      _id: 0,
+      externalId: 1,
+      date: 1,
+      type: 1,
+      symbol: 1,
+      units: 1,
+      price: 1,
+      amount: 1,
+      currency: 1,
+      description: 1,
+    })
+    .toArray();
+
+  const counts = new Map<string, number>();
+  for (const doc of docs) {
+    const k = KIND_OF(doc.type);
+    counts.set(k, (counts.get(k) ?? 0) + 1);
+  }
+
+  const filtered = kind ? docs.filter((d) => KIND_OF(d.type) === kind) : docs;
+
+  return {
+    rows: filtered.slice(skip, skip + limit),
+    total: filtered.length,
+    kinds: [...counts.entries()]
+      .map(([k, count]) => ({ kind: k, count }))
+      .sort((a, b) => b.count - a.count),
+  };
+}

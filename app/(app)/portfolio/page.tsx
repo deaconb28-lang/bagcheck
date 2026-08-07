@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getUserId } from "@/auth";
 import { holdingsFrom, isDbConfigured, loadAppData } from "@/lib/db";
 import { Card, Eyebrow, Stat } from "@/components/primitives";
@@ -42,7 +43,7 @@ export default async function PortfolioPage() {
     );
   }
 
-  const { connection, snapshots } = await loadAppData(userId, 1);
+  const { connection, snapshots, transactionCount } = await loadAppData(userId, 1);
   const holdings = holdingsFrom(snapshots);
 
   if (!holdings.length) {
@@ -81,23 +82,37 @@ export default async function PortfolioPage() {
     .map(([date, value]) => ({ date, value }));
 
   const rail = (
-    <Card tight>
-      <div className={styles.railBlock}>
-        <Eyebrow>Accounts</Eyebrow>
-        {connection?.accounts.length ? (
-          <ul className={styles.accountList}>
-            {connection.accounts.map((account) => (
-              <li key={account.id} className={styles.account}>
-                <span className={styles.accountName}>{account.name ?? "Account"}</span>
-                <span className={styles.accountMeta}>{account.institution ?? "—"}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className={styles.railBody}>No accounts linked.</p>
-        )}
-      </div>
-    </Card>
+    <>
+      <Card tight>
+        <div className={styles.railBlock}>
+          <Eyebrow>Accounts</Eyebrow>
+          {connection?.accounts.length ? (
+            <ul className={styles.accountList}>
+              {connection.accounts.map((account) => (
+                <li key={account.id} className={styles.account}>
+                  <span className={styles.accountName}>{account.name ?? "Account"}</span>
+                  <span className={styles.accountMeta}>{account.institution ?? "—"}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className={styles.railBody}>No accounts linked.</p>
+          )}
+        </div>
+      </Card>
+      <Card tight>
+        <div className={styles.railBlock}>
+          <Eyebrow>Ledger</Eyebrow>
+          <p className={styles.railBody}>
+            {transactionCount.toLocaleString("en-US")} trades and transfers on file,
+            exactly as the brokerage reported them.
+          </p>
+          <Link href="/activity" className={styles.railLink}>
+            Open the activity ledger
+          </Link>
+        </div>
+      </Card>
+    </>
   );
 
   return (

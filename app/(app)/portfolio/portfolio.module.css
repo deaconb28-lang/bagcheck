@@ -140,6 +140,21 @@
   color: var(--ink2);
 }
 
+.railLink {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--moss);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.railLink:hover {
+  opacity: 0.78;
+}
+
 .accountList {
   list-style: none;
   margin: 0;
