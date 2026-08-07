@@ -3,6 +3,7 @@ import { DayGrid } from "@/components/idioms";
 import { PageGrid } from "@/components/app/PageGrid";
 import { PageHeader } from "@/components/app/PageHeader";
 import { PulseSurvey } from "@/components/app/PulseSurvey";
+import { ShareButton } from "@/components/app/ShareButton";
 import { contributorTone } from "@/lib/score";
 import type { DayState } from "@/components/idioms";
 import type { Contributor, ScoreComponents } from "@/lib/score";
@@ -103,6 +104,9 @@ export function TodayView(props: TodayViewProps) {
             </span>
           </div>
           {insight.tail ? <p className={styles.tail}>{insight.tail}</p> : null}
+          <div className={styles.share}>
+            <ShareButton kind="score" label="Make a share card" />
+          </div>
         </div>
       </Card>
 

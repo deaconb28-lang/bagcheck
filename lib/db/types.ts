@@ -89,9 +89,21 @@ export interface InsightDoc {
   generatedAt?: Date;
 }
 
+/**
+ * A minted share card. The slug is the only thing standing between the card
+ * and the public internet, so it is random rather than derived — a card is
+ * meant to be pasted, and anything guessable would leak the rest of them.
+ */
 export interface CardDoc {
   userId: string;
   date: string;
   type: string;
+  slug: string;
+  label: string;
+  value: string;
+  tail: string;
+  tone: "moss" | "signal";
+  rarity: "rare" | null;
+  mintedAt: Date;
   url: string | null;
 }

@@ -81,6 +81,8 @@ Reference docs (read before any UI work — the design system is authoritative o
 ## Code conventions
 
 - Next.js App Router. Server components by default; `'use client'` only where interaction requires it.
-- `lib/score` and `lib/engine` are pure functions — no I/O.
+- `lib/score`, `lib/engine` and `lib/cards` are pure functions — no I/O.
+- Share cards are public by slug: `cardBySlug` takes no userId and projects only what a card renders. The slug is 96 bits of randomness, because it is the card's entire access model.
+- `app/og/[slug]/render.tsx` is the one file allowed to repeat palette hexes — Satori renders with no stylesheet and no custom properties. Keep the values in step with the `--share-*` tokens, and give every multi-child element an explicit `display`.
 - Engine findings are descriptive and self-silencing: below their sample floor they return `null` rather than report a coincidence, and the evidence line must never contradict the sentence it sits under.
 - Screens are assembled from `components/primitives`; new visual patterns start there, not inline.

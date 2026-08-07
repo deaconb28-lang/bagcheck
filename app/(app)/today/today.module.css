@@ -44,6 +44,11 @@
   max-width: 52ch;
 }
 
+.share {
+  border-top: 1px solid var(--line-light);
+  padding-top: 18px;
+}
+
 .block {
   display: flex;
   flex-direction: column;

@@ -44,5 +44,6 @@ export async function ensureIndexes() {
     c.tags.createIndex({ userId: 1, date: 1 }),
     c.insights.createIndex({ userId: 1, date: 1, kind: 1 }, { unique: true }),
     c.cards.createIndex({ userId: 1, date: 1 }),
+    c.cards.createIndex({ slug: 1 }, { unique: true }),
   ]);
 }
