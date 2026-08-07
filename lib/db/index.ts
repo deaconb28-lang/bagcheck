@@ -1,5 +1,6 @@
 export { dbName, getMongoClient, isDbConfigured } from "./client";
 export { ensureIndexes, getCollections, getDb } from "./collections";
+export { factsFrom, getDailyInsight } from "./insights";
 export { holdingsFrom, loadAppData } from "./queries";
 export type { AppData, HoldingRow } from "./queries";
 export { scoreUser } from "./scoring";

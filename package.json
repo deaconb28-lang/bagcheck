@@ -9,6 +9,7 @@
     "test": "tsx --test lib/**/*.test.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.115.0",
     "@auth/mongodb-adapter": "^3.11.3",
     "mongodb": "^6.21.0",
     "next": "^15.4.6",

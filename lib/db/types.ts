@@ -72,7 +72,13 @@ export interface InsightDoc {
   userId: string;
   date: string;
   kind: string;
+  /** The headline sentence. */
   text: string;
+  tail?: string;
+  /** Whether the model's draft shipped, or the deterministic readout did. */
+  source?: "model" | "fallback";
+  rejected?: string | null;
+  generatedAt?: Date;
 }
 
 export interface CardDoc {

@@ -39,7 +39,7 @@ export async function ensureIndexes() {
     c.positionSnapshots.createIndex({ userId: 1, date: 1 }),
     c.scores.createIndex({ userId: 1, date: 1 }, { unique: true }),
     c.tags.createIndex({ userId: 1, date: 1 }),
-    c.insights.createIndex({ userId: 1, date: 1 }),
+    c.insights.createIndex({ userId: 1, date: 1, kind: 1 }, { unique: true }),
     c.cards.createIndex({ userId: 1, date: 1 }),
   ]);
 }

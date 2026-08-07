@@ -11,6 +11,13 @@
   line-height: 1.08;
 }
 
+.tail {
+  font-size: 15px;
+  color: var(--ink2);
+  line-height: 1.55;
+  max-width: 44ch;
+}
+
 .scoreline {
   display: flex;
   align-items: baseline;

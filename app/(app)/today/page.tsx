@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getUserId, isAuthConfigured } from "@/auth";
-import { isDbConfigured, loadAppData } from "@/lib/db";
-import type { ScoreDoc } from "@/lib/db";
+import { factsFrom, getDailyInsight, isDbConfigured, loadAppData } from "@/lib/db";
 import { Card, Eyebrow, Row } from "@/components/primitives";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
@@ -18,17 +17,6 @@ function formatDate(date: string): string {
     day: "numeric",
     timeZone: "UTC",
   });
-}
-
-/** Describes what happened — never prescribes, never congratulates. */
-function sentenceFor(doc: ScoreDoc, previous: ScoreDoc | null): string {
-  const top = doc.contributors[0];
-  if (!top) return "Not enough history yet to describe your week.";
-  if (previous && doc.score !== previous.score) {
-    const delta = doc.score - previous.score;
-    return `${top.name}. Your score moved ${delta > 0 ? "up" : "down"} ${Math.abs(delta)}.`;
-  }
-  return `${top.name}.`;
 }
 
 export default async function TodayPage() {
@@ -89,6 +77,17 @@ export default async function TodayPage() {
     );
   }
 
+  const insight = await getDailyInsight(
+    userId,
+    factsFrom(
+      latest,
+      previous,
+      weekStart,
+      transactionCount,
+      connection?.accounts.length ?? 0,
+    ),
+  );
+
   const rail = (
     <>
       <Card tight>
@@ -128,7 +127,8 @@ export default async function TodayPage() {
         <Eyebrow>
           {formatDate(latest.date)} · {latest.baseline}
         </Eyebrow>
-        <h1 className={`disp ${styles.sentence}`}>{sentenceFor(latest, previous)}</h1>
+        <h1 className={`disp ${styles.sentence}`}>{insight.sentence}</h1>
+        {insight.tail ? <p className={styles.tail}>{insight.tail}</p> : null}
         <div className={styles.scoreline}>
           <span className={`num ${styles.score}`}>{latest.score}</span>
           <Eyebrow>
