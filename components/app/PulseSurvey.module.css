@@ -1,15 +1,16 @@
 .pulse {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  border-top: 1px solid var(--line);
-  padding-top: 26px;
+  gap: 16px;
 }
 
 .question {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
   font-size: 17px;
-  line-height: 1.45;
-  max-width: 30ch;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  max-width: 34ch;
 }
 
 .options {
@@ -19,24 +20,26 @@
 }
 
 .option {
-  min-height: 44px;
-  padding: 0 18px;
-  border-radius: 12px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 11px;
   border: 1px solid var(--line2);
   background: transparent;
   color: var(--ink);
-  font-size: 14.5px;
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
 }
 
 .option:hover:not(:disabled) {
-  border-color: var(--moss);
-  color: var(--moss);
+  background: var(--bg);
+  border-color: var(--line2-hover);
 }
 
 .option[data-pending] {
   background: var(--moss-tint);
-  border-color: var(--moss);
+  border-color: var(--moss-line);
   color: var(--moss);
 }
 

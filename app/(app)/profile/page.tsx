@@ -8,6 +8,7 @@ import { Button, Card, Eyebrow, Stat } from "@/components/primitives";
 import { Distribution } from "@/components/idioms";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
+import { PageHeader } from "@/components/app/PageHeader";
 import { SignInCta } from "@/components/app/SignInCta";
 import { BaselinePicker } from "./BaselinePicker";
 import styles from "./profile.module.css";
@@ -115,34 +116,45 @@ export default async function ProfilePage() {
 
   return (
     <PageGrid rail={rail}>
-      <div className={styles.scroll}>
-        <div className={styles.head}>
-          <Eyebrow>Profile</Eyebrow>
-          <h1 className={`disp ${styles.archetype}`}>{archetype.name}</h1>
+      <PageHeader
+        title="Profile"
+        subtitle={`${baseline} baseline · ${connection ? `${connection.accounts.length} linked` : "no brokerage"}`}
+      />
+
+      <Card hero>
+        <div className={styles.block}>
+          <Eyebrow>Your archetype</Eyebrow>
+          <h2 className={`disp ${styles.archetype}`}>{archetype.name}</h2>
           <p className={styles.body}>{archetype.note}</p>
         </div>
+      </Card>
 
-        {percentile != null && latest ? (
-          <section className={styles.block}>
-            <Eyebrow tone="signal">Where today sits</Eyebrow>
+      {percentile != null && latest ? (
+        <Card>
+          <div className={styles.block}>
+            <h2 className={`disp ${styles.h2}`}>Where today sits</h2>
             <Distribution
               percentile={percentile}
               label={`Today's ${latest.score} sits above ${percentile}% of your own scored days. Comparison against other people arrives with event segments.`}
             />
-          </section>
-        ) : null}
+          </div>
+        </Card>
+      ) : null}
 
-        <section className={styles.block}>
-          <Eyebrow>Style baseline</Eyebrow>
+      <Card>
+        <div className={styles.block}>
+          <h2 className={`disp ${styles.h2}`}>The game you say you are playing</h2>
           <p className={styles.body}>
-            Your score is measured against the game you say you are playing, not
-            against a model investor. Changing this rescores your history.
+            Your score is measured against your own baseline, not against a model
+            investor. Changing this rescores your history.
           </p>
           <BaselinePicker current={baseline} canSet={Boolean(connection)} />
-        </section>
+        </div>
+      </Card>
 
-        <section className={styles.block}>
-          <Eyebrow>Connection</Eyebrow>
+      <Card>
+        <div className={styles.block}>
+          <h2 className={`disp ${styles.h2}`}>Connection</h2>
           {connection ? (
             <div className={styles.connection}>
               <p className={styles.body}>
@@ -165,8 +177,8 @@ export default async function ProfilePage() {
               <Button href="/api/snaptrade/connect">Connect a brokerage</Button>
             </div>
           )}
-        </section>
-      </div>
+        </div>
+      </Card>
     </PageGrid>
   );
 }

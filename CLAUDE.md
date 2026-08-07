@@ -26,8 +26,14 @@ Reference docs (read before any UI work — the design system is authoritative o
 - **Outfit** for display, weights 700/800: headings, score numerals, the wordmark. Always negatively tracked, and the tracking tightens with size — −.015em at 16–17px, −.02em at 18–21px, −.025em at 22–25px, −.035em at 38px+. `font-variant-numeric:tabular-nums`. Headlines capped at 9–11ch. No width axis; the negative tracking is the gesture.
 - **Public Sans** for UI and body, 400/500/600: every sentence, label, button, input. Body 15px/1.7, `text-wrap:pretty`.
 - **IBM Plex Mono** for machine facts only, 400/500: timestamps, counts, metadata, uppercase micro-labels at 10.5px/.09em. Never body copy, never headings.
-- Mono metadata takes `--meta`, which is the contrast floor at 4.5:1 — only on white, never on `--inset`.
+- Mono metadata takes `--meta`. It departs from the handoff's `#857E74`, which measures 4.01:1 on white and 3.63:1 on the canvas — below AA at the sizes metadata is set in. `--meta` clears 4.5:1 on every surface Bagcheck uses.
 - Never Roboto, never Inter, and never a serif for display.
+
+## Screen structure
+
+- Every app screen is `<PageHeader>` floating on the canvas, then `<Card>`s in the 640px column. Sections are cards, not `border-top` rules on the canvas — that is what keeps metadata on white, where it is legible.
+- `<PageHeader>` takes a conversational title and a mono subtitle of machine facts. Header metadata is `--ink3`, not `--meta`.
+- One `<Card hero>` per screen at most. Row dividers inside a card are `--line-light`, and the last row drops its border.
 
 ## Layout and surfaces
 
@@ -55,7 +61,8 @@ Reference docs (read before any UI work — the design system is authoritative o
 ## Motion
 
 - Global transition on buttons and inputs: `background, border-color, color, box-shadow` at .16s ease.
-- Ease-out, nothing over 500ms, entrances staggered ~80ms.
+- **Nothing animates on load.** The handoff allows one orchestrated moment in the whole app; screens do not stagger in.
+- Ease-out, nothing over 500ms.
 - Count-ups run on `setInterval`. The real value is the default render — if the tween never starts, the number on screen must still be correct.
 - Everything honours `prefers-reduced-motion`.
 

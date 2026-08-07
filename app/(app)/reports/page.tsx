@@ -6,6 +6,7 @@ import { Card, Eyebrow, Stat } from "@/components/primitives";
 import { DayGrid, SegmentRing } from "@/components/idioms";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
+import { PageHeader } from "@/components/app/PageHeader";
 import { SignInCta } from "@/components/app/SignInCta";
 import styles from "./reports.module.css";
 
@@ -94,31 +95,35 @@ export default async function ReportsPage() {
 
   return (
     <PageGrid rail={rail}>
-      <div className={styles.scroll}>
-        <div className={styles.head}>
-          <Eyebrow>Reports</Eyebrow>
-          <h1 className={`disp ${styles.title}`}>Your quarter so far</h1>
-        </div>
+      <PageHeader
+        title="Your quarter so far"
+        subtitle={`${scores.length} of ${QUARTER} scored days · ${kept} inside your rules`}
+      />
 
-        <section className={styles.ring}>
+      <Card hero>
+        <div className={styles.ring}>
           <SegmentRing days={segments} value={latest.score} label="Discipline" />
           <p className={styles.caption}>
             {QUARTER} trading days, one segment each. {kept} stayed inside your rules.
           </p>
-        </section>
+        </div>
+      </Card>
 
-        <section className={styles.block}>
-          <Eyebrow>The same quarter, unrolled</Eyebrow>
+      <Card>
+        <div className={styles.block}>
+          <h2 className={`disp ${styles.h2}`}>The same quarter, unrolled</h2>
           <DayGrid
             days={segments}
             from={ordered[0]?.date}
             to={ordered[ordered.length - 1]?.date}
           />
-        </section>
+        </div>
+      </Card>
 
-        {recurring.length ? (
-          <section className={styles.block}>
-            <Eyebrow>What keeps showing up</Eyebrow>
+      {recurring.length ? (
+        <Card>
+          <div className={styles.block}>
+            <h2 className={`disp ${styles.h2}`}>What keeps showing up</h2>
             <div className={styles.recurring}>
               {recurring.map(([name, entry]) => (
                 <div key={name} className={styles.recurringRow}>
@@ -133,17 +138,19 @@ export default async function ReportsPage() {
                 </div>
               ))}
             </div>
-          </section>
-        ) : null}
+          </div>
+        </Card>
+      ) : null}
 
-        <section className={styles.block}>
-          <Eyebrow>Quarterly report</Eyebrow>
+      <Card>
+        <div className={styles.block}>
+          <h2 className={`disp ${styles.h2}`}>The written report lands at the quarter</h2>
           <p className={styles.body}>
-            The written report and the Wrapped archive assemble here once a full
+            The quarterly write-up and the Wrapped archive assemble here once a full
             quarter is behind you. You have {scores.length} of {QUARTER} days.
           </p>
-        </section>
-      </div>
+        </div>
+      </Card>
     </PageGrid>
   );
 }

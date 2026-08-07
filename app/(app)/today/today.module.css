@@ -1,84 +1,58 @@
 /*
- * Today — one vertical scroll, in the order the spec fixes:
- * date, sentence, score, contributors, pulse, streaks, upcoming.
- * One hero number per screen; everything else is a tap deeper.
+ * Today — a header on the canvas, then cards. One hero number per screen;
+ * everything else is a tap deeper.
  */
 
-.scroll {
+.hero {
   display: flex;
   flex-direction: column;
-  gap: 26px;
+  gap: 18px;
 }
 
-/* Entrances stagger ~80ms, ease-out, nothing over 500ms.
-   globals.css disables all animation under prefers-reduced-motion,
-   which also drops the fill — so the real content renders either way. */
-.scroll > * {
-  animation: rise 0.42s ease-out both;
-}
-
-.scroll > *:nth-child(2) { animation-delay: 80ms; }
-.scroll > *:nth-child(3) { animation-delay: 160ms; }
-.scroll > *:nth-child(4) { animation-delay: 240ms; }
-.scroll > *:nth-child(5) { animation-delay: 320ms; }
-.scroll > *:nth-child(6) { animation-delay: 400ms; }
-.scroll > *:nth-child(7) { animation-delay: 480ms; }
-
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* 2 — the sentence: display wdth 96, 29px, capped at 11ch */
+/* The sentence is the hero: the plain line explains, the readout confirms. */
 .sentence {
-  font-family: var(--font-display), sans-serif;
-  font-weight: 700;
-  font-size: 29px;
-  letter-spacing: -0.025em;
-  line-height: 1.08;
-  max-width: 11ch;
-  text-wrap: balance;
-}
-
-/* 3 — the score: display wdth 90, 60px, moss */
-.scoreblock {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  font-size: 18px;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  max-width: 30ch;
+  text-wrap: pretty;
 }
 
 .scoreline {
   display: flex;
   align-items: baseline;
-  gap: 14px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .score {
-  font-size: 60px;
+  font-size: 38px;
   color: var(--moss);
+}
+
+.scoreLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  color: var(--meta);
 }
 
 .tail {
   font-size: 15px;
+  line-height: 1.7;
   color: var(--ink2);
-  line-height: 1.55;
-  max-width: 44ch;
+  max-width: 52ch;
 }
 
-/* 4, 6, 7 — sections below the hero */
 .block {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  border-top: 1px solid var(--line);
-  padding-top: 26px;
+}
+
+.h2 {
+  font-size: 17px;
+  letter-spacing: -0.015em;
 }
 
 .rows {
@@ -104,5 +78,5 @@
 .railBody {
   font-size: 13px;
   color: var(--ink2);
-  line-height: 1.5;
+  line-height: 1.6;
 }

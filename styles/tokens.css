@@ -24,9 +24,14 @@
   --ink: #14120f;
   --ink2: #4a453e;
   --ink3: #6e6760;
-  /* Mono metadata only, and the contrast floor at 4.5:1 on white. Never put
-     it on --inset or any surface lighter than white. */
-  --meta: #857e74;
+  /*
+   * Mono metadata. The handoff specifies #857E74 and lists it at 4.5:1 on
+   * white — it actually measures 4.01:1, and 3.63:1 on the paper canvas, so
+   * it fails AA on both surfaces Bagcheck uses at the 10.5-12px sizes
+   * metadata is set in. This is the nearest warm grey that clears 4.5:1
+   * everywhere: 5.8:1 on white, 5.3:1 on the canvas, 5.1:1 on --inset.
+   */
+  --meta: #6b645b;
 
   --line: #eae4db;
   --line-light: #f4f0ea;

@@ -1,58 +1,24 @@
-.scroll {
+.hero {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 26px;
 }
 
-.scroll > * {
-  animation: rise 0.42s ease-out both;
-}
-
-.scroll > *:nth-child(2) { animation-delay: 80ms; }
-.scroll > *:nth-child(3) { animation-delay: 160ms; }
-
-@keyframes rise {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: none; }
-}
-
-.head {
+.curveBlock {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-.totalLine {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.total {
-  font-size: 52px;
-}
-
-.delta {
-  font-family: var(--font-mono), monospace;
-  font-size: 12px;
-  letter-spacing: 0.1em;
-}
-
-.delta[data-tone="moss"] {
-  color: var(--moss);
-}
-
-.delta[data-tone="clay"] {
-  color: var(--loss);
+  gap: 12px;
 }
 
 .block {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  border-top: 1px solid var(--line);
-  padding-top: 26px;
+}
+
+.h2 {
+  font-size: 17px;
+  letter-spacing: -0.015em;
 }
 
 .curve {
@@ -64,7 +30,11 @@
 .holdings {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+}
+
+.holding:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
 }
 
 .holding {
@@ -72,8 +42,8 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--line);
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line-light);
 }
 
 .holdingName {

@@ -5,6 +5,7 @@ import { holdingsFrom, isDbConfigured, loadAppData } from "@/lib/db";
 import { Card, Eyebrow, Stat } from "@/components/primitives";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
+import { PageHeader } from "@/components/app/PageHeader";
 import { SignInCta } from "@/components/app/SignInCta";
 import { EquityCurve } from "./EquityCurve";
 import styles from "./portfolio.module.css";
@@ -117,61 +118,66 @@ export default async function PortfolioPage() {
 
   return (
     <PageGrid rail={rail}>
-      <div className={styles.scroll}>
-      <div className={styles.head}>
-        <Stat
-          eyebrow="Portfolio value"
-          value={money(totalValue)}
-          unit={`across ${holdings.length} ${holdings.length === 1 ? "position" : "positions"}`}
-          tone={totalPnl != null && totalPnl < 0 ? "ink" : "moss"}
-          tail={
-            totalPnl != null
-              ? `Cost basis ${money(totalCost)} — ${totalPnl >= 0 ? "up" : "down"} ${money(Math.abs(totalPnl))}, ${Math.abs(totalPct ?? 0).toFixed(1)}%.`
-              : "Cost basis has not synced for these positions yet."
-          }
-        />
-      </div>
+      <PageHeader
+        title="Portfolio"
+        subtitle={`${holdings.length} ${holdings.length === 1 ? "position" : "positions"} · last synced ${
+          connection?.lastSyncAt ? connection.lastSyncAt.toISOString().slice(0, 10) : "never"
+        }`}
+      />
 
-      {series.length > 1 ? (
-        <section className={styles.block}>
-          <Eyebrow>Value across synced days</Eyebrow>
-          <EquityCurve series={series} />
-        </section>
-      ) : null}
-
-      <section className={styles.block}>
-        <Eyebrow>Holdings</Eyebrow>
-        <div className={styles.holdings}>
-          {holdings.map((holding) => (
-            <div key={holding.symbol} className={styles.holding}>
-              <div className={styles.holdingName}>
-                <span className={styles.symbol}>{holding.symbol}</span>
-                {holding.description ? (
-                  <span className={styles.desc}>{holding.description}</span>
-                ) : null}
-              </div>
-              <div className={styles.holdingNums}>
-                <span className={styles.units}>
-                  {holding.units.toLocaleString("en-US", { maximumFractionDigits: 4 })} units
-                </span>
-                <span className={styles.value}>{money(holding.value)}</span>
-                {holding.pnlPct != null ? (
-                  <span
-                    className={styles.pnl}
-                    data-tone={holding.pnlPct >= 0 ? "moss" : "clay"}
-                  >
-                    {holding.pnlPct >= 0 ? "+" : "−"}
-                    {Math.abs(holding.pnlPct).toFixed(1)}%
-                  </span>
-                ) : (
-                  <span className={styles.pnl}>—</span>
-                )}
-              </div>
+      <Card hero>
+        <div className={styles.hero}>
+          <Stat
+            eyebrow="Portfolio value"
+            value={money(totalValue)}
+            unit={`across ${holdings.length} ${holdings.length === 1 ? "position" : "positions"}`}
+            tone={totalPnl != null && totalPnl < 0 ? "ink" : "moss"}
+            tail={
+              totalPnl != null
+                ? `Cost basis ${money(totalCost)} — ${totalPnl >= 0 ? "up" : "down"} ${money(Math.abs(totalPnl))}, ${Math.abs(totalPct ?? 0).toFixed(1)}%.`
+                : "Cost basis has not synced for these positions yet."
+            }
+          />
+          {series.length > 1 ? (
+            <div className={styles.curveBlock}>
+              <Eyebrow>Value across synced days</Eyebrow>
+              <EquityCurve series={series} />
             </div>
-          ))}
+          ) : null}
         </div>
-      </section>
-      </div>
+      </Card>
+
+      <Card>
+        <div className={styles.block}>
+          <h2 className={`disp ${styles.h2}`}>What you are holding</h2>
+          <div className={styles.holdings}>
+            {holdings.map((holding) => (
+              <div key={holding.symbol} className={styles.holding}>
+                <div className={styles.holdingName}>
+                  <span className={styles.symbol}>{holding.symbol}</span>
+                  {holding.description ? (
+                    <span className={styles.desc}>{holding.description}</span>
+                  ) : null}
+                </div>
+                <div className={styles.holdingNums}>
+                  <span className={styles.units}>
+                    {holding.units.toLocaleString("en-US", { maximumFractionDigits: 4 })} units
+                  </span>
+                  <span className={styles.value}>{money(holding.value)}</span>
+                  {holding.pnlPct != null ? (
+                    <span className={styles.pnl} data-tone={holding.pnlPct >= 0 ? "moss" : "clay"}>
+                      {holding.pnlPct >= 0 ? "+" : "−"}
+                      {Math.abs(holding.pnlPct).toFixed(1)}%
+                    </span>
+                  ) : (
+                    <span className={styles.pnl}>—</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Card>
     </PageGrid>
   );
 }

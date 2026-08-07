@@ -5,6 +5,7 @@ import { isDbConfigured, loadActivity, loadAppData } from "@/lib/db";
 import { Card, Eyebrow, Stat } from "@/components/primitives";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
+import { PageHeader } from "@/components/app/PageHeader";
 import { SignInCta } from "@/components/app/SignInCta";
 import { LedgerRow } from "./LedgerRow";
 import styles from "./activity.module.css";
@@ -114,25 +115,25 @@ export default async function ActivityPage({
 
   return (
     <PageGrid rail={rail}>
-      <div className={styles.scroll}>
-        <div className={styles.head}>
-          <Eyebrow>Activity</Eyebrow>
-          <h1 className={`disp ${styles.title}`}>Every trade and transfer</h1>
+      <PageHeader
+        title="Activity"
+        subtitle={`${total.toLocaleString("en-US")} ${total === 1 ? "entry" : "entries"}${
+          kind ? ` · ${kind}` : ""
+        }${pages > 1 ? ` · page ${page + 1} of ${pages}` : ""}`}
+        aside={
+          <Link href="/portfolio" className={styles.back}>
+            Back to portfolio
+          </Link>
+        }
+      />
+
+      <Card>
+        <div className={styles.block}>
+          <h2 className={`disp ${styles.h2}`}>Every trade and transfer</h2>
           <p className={styles.body}>
             The ledger exactly as your brokerage reported it. Read-only — Bagcheck
             can see what you did and cannot place, cancel, or modify an order.
           </p>
-          <Link href="/portfolio" className={styles.back}>
-            Back to portfolio
-          </Link>
-        </div>
-
-        <section className={styles.block}>
-          <Eyebrow>
-            {kind ? `${kind} · ` : ""}
-            {total} {total === 1 ? "entry" : "entries"}
-            {pages > 1 ? ` · page ${page + 1} of ${pages}` : ""}
-          </Eyebrow>
 
           {rows.length === 0 ? (
             <p className={styles.body}>No entries of that kind.</p>
@@ -162,8 +163,8 @@ export default async function ActivityPage({
               )}
             </div>
           ) : null}
-        </section>
-      </div>
+        </div>
+      </Card>
     </PageGrid>
   );
 }
