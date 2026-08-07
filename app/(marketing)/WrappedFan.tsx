@@ -2,8 +2,9 @@ import { ShareCard } from "./ShareCard";
 import styles from "./marketing.module.css";
 
 /**
- * Three earned cards, dealt like a hand — the product's collectible
- * mechanic made literal. Centre card on top.
+ * Three earned cards, dealt like a hand — the collectible mechanic made
+ * literal. The centre card is the rare one, and it sits on top because
+ * scarcity here is a fact about the behaviour, not a purchase.
  */
 export function WrappedFan() {
   return (
@@ -14,6 +15,7 @@ export function WrappedFan() {
           value="0"
           tail="panic sells in a quarter that gave you three chances"
           seed={1}
+          slug="q3-no-panic"
         />
       </div>
       <div className={`${styles.fanCard} ${styles.fanRight}`}>
@@ -24,6 +26,7 @@ export function WrappedFan() {
           accent="signal"
           textValue
           seed={2}
+          slug="archetype-holder"
         />
       </div>
       <div className={`${styles.fanCard} ${styles.fanCenter}`}>
@@ -32,6 +35,8 @@ export function WrappedFan() {
           value="412"
           tail="days holding — your longest yet"
           seed={0}
+          rarity="rare"
+          slug="412-days"
         />
       </div>
     </div>

@@ -70,11 +70,6 @@ export default async function LandingPage() {
             you control: hold time, sizing, drawdown behaviour, consistency.
             First report in about ninety seconds.
           </p>
-          <DayStrip />
-          <p className={styles.stripCap}>
-            Sixty-three trading days — green stayed inside your rules, blue
-            ran above your exposure baseline.
-          </p>
           <div className={styles.heroCtas}>
             <form action={connectAction}>
               <Button marketing type="submit">
@@ -85,6 +80,15 @@ export default async function LandingPage() {
               Read-only · via SnapTrade · never a price alert
             </p>
           </div>
+        </div>
+
+        {/* The quarter itself, spanning the page. */}
+        <div className={styles.waveBlock}>
+          <DayStrip />
+          <p className={styles.stripCap}>
+            Sixty-three trading days — green stayed inside your rules, blue
+            ran above your exposure baseline.
+          </p>
         </div>
       </section>
 
@@ -177,34 +181,36 @@ export default async function LandingPage() {
       <section className={styles.section} id="wrapped">
         <div className={`${styles.wrap} ${styles.wrappedIn}`}>
           <div className={styles.wrappedHead}>
-            <Eyebrow tone="moss">Wrapped</Eyebrow>
-            <h2 className={`disp ${styles.h2}`}>A year of receipts</h2>
+            <Eyebrow tone="moss">Wrapped and share cards</Eyebrow>
+            <h2 className={`disp ${styles.h2}`}>Proof you can post</h2>
             <p className={styles.sectionLede}>
-              Because your history arrives in full, your first Wrapped renders
-              the day you connect — then every quarter and every year after.
+              Every card is a URL. Paste it into a message and it unfurls as
+              artwork; the click lands on a public page with your numbers on
+              it. Because your history arrives in full, the first set renders
+              the day you connect.
             </p>
           </div>
           <WrappedFan />
           <div className={styles.wrappedPoints}>
             <div className={styles.wrappedPoint}>
-              <Eyebrow>Unfurls anywhere</Eyebrow>
+              <Eyebrow>Rendered server-side</Eyebrow>
               <p className={styles.tierBody}>
-                Every card is rendered server-side and gets a URL — paste it
-                and it becomes artwork.
+                The card is an image at a URL, not a screenshot you crop. It
+                looks the same in every client that opens it.
               </p>
             </div>
             <div className={styles.wrappedPoint}>
-              <Eyebrow>Rarity is earned</Eyebrow>
+              <Eyebrow>Rarity is behaviour</Eyebrow>
               <p className={styles.tierBody}>
-                Sitting through a 20% drawdown mints a rare card on any tier —
-                never bought.
+                Sitting through a 20% drawdown mints a rare card on the free
+                tier. Paying unlocks new formats, never scarce ones.
               </p>
             </div>
             <div className={styles.wrappedPoint}>
-              <Eyebrow>Verified</Eyebrow>
+              <Eyebrow>The strip is the receipt</Eyebrow>
               <p className={styles.tierBody}>
-                Read-only brokerage data behind every number, in a category
-                built on screenshots.
+                Every card carries the days behind its number, read from your
+                brokerage — in a category that runs on unverifiable claims.
               </p>
             </div>
           </div>

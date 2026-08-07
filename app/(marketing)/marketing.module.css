@@ -5,6 +5,9 @@
  */
 
 .page {
+  /* The nav sits in flow above the hero, so the hero's full-viewport height
+     has to subtract it or the wave lands past the fold. */
+  --nav-h: 88px;
   overflow-x: clip;
 }
 
@@ -28,7 +31,8 @@
 .navIn {
   max-width: 1160px;
   margin: 0 auto;
-  padding: 22px 34px;
+  min-height: var(--nav-h);
+  padding: 0 34px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -74,7 +78,11 @@
 .hero {
   position: relative;
   isolation: isolate;
-  padding: 92px 0 104px;
+  min-height: calc(100svh - var(--nav-h));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 0 0;
   border-bottom: 1px solid var(--line);
 }
 
@@ -89,69 +97,65 @@
 }
 
 .heroIn {
-  max-width: 880px;
+  max-width: 980px;
   margin: 0 auto;
   padding: 0 34px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 24px;
-}
-
-.heroIn > * {
-  animation: rise 0.45s ease-out both;
-}
-
-.heroIn > *:nth-child(2) {
-  animation-delay: 0.08s;
-}
-
-.heroIn > *:nth-child(3) {
-  animation-delay: 0.16s;
-}
-
-.heroIn > *:nth-child(4) {
-  animation-delay: 0.24s;
-}
-
-.heroIn > *:nth-child(5) {
-  animation-delay: 0.32s;
+  gap: 26px;
+  flex: 1 1 auto;
+  justify-content: center;
 }
 
 .h1 {
   font-family: var(--font-display), sans-serif;
-  font-weight: 700;
-  font-size: clamp(44px, 6.4vw, 72px);
-  line-height: 1.02;
+  font-weight: 800;
+  /* Height matters as much as width here: the hero has to hold the wave
+     inside one viewport on a short laptop screen too. */
+  font-size: clamp(44px, min(9vw, 13.5vh), 108px);
+  line-height: 0.94;
   letter-spacing: -0.045em;
-  max-width: 12ch;
+  max-width: 11ch;
   text-wrap: balance;
 }
 
 .lede {
-  font-size: 17px;
+  font-size: clamp(17px, 1.5vw, 20px);
   line-height: 1.6;
   color: var(--ink2);
-  max-width: 52ch;
+  max-width: 54ch;
+}
+
+/*
+ * The wave. Full-bleed at the foot of the hero — the quarter itself, used as
+ * the page's one piece of art.
+ */
+.waveBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 34px;
 }
 
 .strip {
   display: flex;
   align-items: flex-end;
-  justify-content: center;
-  gap: 4px;
-  height: 72px;
+  gap: clamp(3px, 0.55vw, 9px);
   width: 100%;
-  max-width: 820px;
-  margin-top: 22px;
+  height: clamp(96px, 17vh, 190px);
+  padding: 0 clamp(16px, 3vw, 46px);
 }
 
 .stripBar {
   display: block;
-  width: 4px;
+  flex: 1 1 0;
+  min-width: 2px;
   border-radius: 999px;
   background: var(--line2);
+  transform-origin: bottom center;
 }
 
 .stripBarOn {
@@ -162,9 +166,37 @@
   background: var(--signal);
 }
 
+/*
+ * Scroll-driven: a pulse travels left to right as the page moves, staggered
+ * by each bar's index. Progressive enhancement — without scroll timelines the
+ * bars stand at their real heights, which is the design either way.
+ */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .stripBar {
+      animation: barWave linear both;
+      animation-timeline: scroll(root block);
+      animation-range: calc(var(--i) * 0.42%) calc(46% + var(--i) * 0.42%);
+    }
+  }
+}
+
+@keyframes barWave {
+  0% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.34);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
 .stripCap {
   font-size: 13px;
   color: var(--ink2);
+  padding: 0 34px;
 }
 
 .heroCtas {
@@ -436,6 +468,11 @@
   max-width: none;
 }
 
+/*
+ * Three cards dealt like a hand. The spread is set so the centre card never
+ * covers a neighbour's label or readout — an occluded card reads as broken
+ * text rather than as depth.
+ */
 .fanWrap {
   position: relative;
   height: 470px;
@@ -445,72 +482,148 @@
 
 .fanCard {
   position: absolute;
-  width: 330px;
+  width: 346px;
+  transition: transform 0.24s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
+/*
+ * 96% clears the centre card's edge past where a neighbour's label and
+ * readout begin. Anything tighter truncates "The Holder" to "e Holder",
+ * which reads as a bug rather than as a stack.
+ */
 .fanLeft {
-  transform: translateX(-64%) rotate(-7deg) scale(0.95);
+  transform: translateX(-96%) rotate(-7deg) scale(0.93);
 }
 
 .fanRight {
-  transform: translateX(64%) rotate(7deg) scale(0.95);
+  transform: translateX(96%) rotate(7deg) scale(0.93);
 }
 
 .fanCenter {
-  transform: translateY(-10px);
+  transform: translateY(-14px);
   z-index: 2;
 }
 
+/* The hand opens on hover — the cards are a set, and they read as one. */
+.fanWrap:hover .fanLeft {
+  transform: translateX(-102%) rotate(-9deg) scale(0.94);
+}
+
+.fanWrap:hover .fanRight {
+  transform: translateX(102%) rotate(9deg) scale(0.94);
+}
+
+.fanWrap:hover .fanCenter {
+  transform: translateY(-24px);
+}
+
+/* Below the fan's natural width the hand closes into a stack. */
+@media (max-width: 1060px) {
+  .fanCard {
+    width: min(330px, 82vw);
+  }
+
+  .fanLeft {
+    transform: translateX(-40%) rotate(-9deg) scale(0.88);
+  }
+
+  .fanRight {
+    transform: translateX(40%) rotate(9deg) scale(0.88);
+  }
+
+  .fanWrap:hover .fanLeft {
+    transform: translateX(-46%) rotate(-11deg) scale(0.89);
+  }
+
+  .fanWrap:hover .fanRight {
+    transform: translateX(46%) rotate(11deg) scale(0.89);
+  }
+}
+
+
+/* Claims sit as hairline columns, the same grammar as the engine section. */
 .wrappedPoints {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
-  max-width: 980px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 1000px;
   margin: 0 auto;
   width: 100%;
+  border-top: 1px solid var(--line);
 }
 
 .wrappedPoint {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding: 28px 26px 0 0;
 }
 
-/* Share cards */
+.wrappedPoint + .wrappedPoint {
+  border-left: 1px solid var(--line);
+  padding-left: 26px;
+}
+
+/* Share cards — the ink field, in both modes */
 
 .shareCard {
   background: var(--share-bg);
   color: var(--share-ink);
-  border-radius: 20px;
+  border-radius: 22px;
   border: 1px solid var(--share-line);
-  padding: 30px 28px;
+  padding: 26px 26px 22px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 22px;
+}
+
+.shareTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .shareK {
   font-family: var(--font-mono), monospace;
-  font-size: 9.5px;
+  font-size: 10px;
   letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--share-ink-dim);
 }
 
+/* Earned by conduct, never bought — so it is stated, not decorated. */
+.shareRarity {
+  font-family: var(--font-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--share-moss);
+  border: 1px solid var(--share-moss-tint);
+  background: var(--share-moss-tint);
+  border-radius: 999px;
+  padding: 4px 9px;
+}
+
+.shareBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .shareV {
   font-family: var(--font-display), sans-serif;
   font-weight: 800;
-  font-size: 84px;
-  line-height: 0.88;
-  letter-spacing: -0.035em;
+  font-size: 92px;
+  line-height: 0.86;
+  letter-spacing: -0.045em;
   font-variant-numeric: tabular-nums;
   color: var(--share-moss);
 }
 
 .shareVText {
   font-family: var(--font-display), sans-serif;
-  font-weight: 700;
-  font-size: 38px;
+  font-weight: 800;
+  font-size: 42px;
   line-height: 1;
   letter-spacing: -0.035em;
   color: var(--share-moss);
@@ -522,13 +635,14 @@
 
 .shareT {
   font-size: 15px;
-  line-height: 1.4;
+  line-height: 1.45;
   max-width: 22ch;
+  color: var(--share-ink);
 }
 
 .shareStrip {
   display: grid;
-  grid-template-columns: repeat(24, 1fr);
+  grid-template-columns: repeat(24, minmax(0, 1fr));
   gap: 3px;
 }
 
@@ -545,6 +659,27 @@
 
 .shareCellSig {
   background: var(--share-signal);
+}
+
+.shareFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid var(--share-line);
+  padding-top: 14px;
+}
+
+.shareUrl,
+.shareVerified {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  color: var(--share-ink-dim);
+}
+
+.shareVerified {
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
 }
 
 /* Pricing tiers — hairline columns */
@@ -728,5 +863,80 @@
 
   .ctaSec {
     padding: 88px 0;
+  }
+}
+
+/* Short viewports — a landscape laptop still has to fit the whole hero. */
+@media (max-height: 820px) and (min-width: 721px) {
+  .hero {
+    padding-top: 18px;
+  }
+
+  .heroIn {
+    gap: 18px;
+  }
+
+  .lede {
+    font-size: 16px;
+  }
+
+  .waveBlock {
+    gap: 12px;
+    padding-bottom: 20px;
+  }
+
+  .strip {
+    height: clamp(84px, 14vh, 150px);
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    --nav-h: 72px;
+  }
+
+  .hero {
+    padding-top: 24px;
+  }
+
+  .heroIn {
+    gap: 20px;
+  }
+
+  .strip {
+    height: clamp(72px, 12vh, 110px);
+    gap: 2px;
+    padding: 0 14px;
+  }
+
+  .waveBlock {
+    gap: 12px;
+    padding-bottom: 22px;
+  }
+
+  .stripCap {
+    font-size: 12px;
+    padding: 0 22px;
+  }
+}
+
+/* Wrapped, narrow: the hand closes to one card and the claims stack. */
+@media (max-width: 720px) {
+  .fanWrap {
+    height: 420px;
+  }
+
+  .wrappedPoints {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wrappedPoint {
+    padding: 22px 0 0;
+  }
+
+  .wrappedPoint + .wrappedPoint {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding-left: 0;
   }
 }
