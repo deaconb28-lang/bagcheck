@@ -299,10 +299,15 @@ Define both modes on `html`: dark as `:root`, light under `html[data-mode="light
 
 ### Type
 
-- **Archivo variable — display.** `font-variation-settings:'wdth' 108–122`, weight 700, letter-spacing −.04 to −.05em, `font-variant-numeric:tabular-nums`, headlines capped at 9–11ch.
-- **Inter — body.** 15.5–22px, line-height 1.5–1.6, `text-wrap:pretty`.
-- **JetBrains Mono — eyebrows and metric labels.** 9.5–11px, letter-spacing .18–.24em, uppercase.
-- Never Roboto, and never Inter for display.
+> Superseded 2026-08-07. This section originally specified Archivo / Inter /
+> JetBrains Mono; the stack below replaced it. Everything else in the addendum
+> stands. The width axes are the equivalents in the new families, not new
+> intentions — Bricolage's usable width range sits lower than Archivo's.
+
+- **Bricolage Grotesque variable — display.** `font-variation-settings:'wdth' 86–96`, `font-optical-sizing:auto`, weight 700 (800 for numerals), letter-spacing −.04 to −.05em, `font-variant-numeric:tabular-nums`, headlines capped at 9–11ch.
+- **Public Sans — body.** 15.5–22px, line-height 1.5–1.6, `text-wrap:pretty`.
+- **Martian Mono — eyebrows and metric labels.** 9.5–11px, letter-spacing .18–.24em, uppercase.
+- Never Roboto, and never the body face for display.
 
 ### Data idiom
 

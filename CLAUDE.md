@@ -19,10 +19,11 @@ Reference docs (read before any UI work — the brand addendum is authoritative 
 
 ## Type
 
-- Archivo variable for display: `font-variation-settings:'wdth' 108–122`, weight 700, letter-spacing −.04 to −.05em, `font-variant-numeric:tabular-nums`. Headlines capped at 9–11ch.
-- Inter for body: 15.5–22px, line-height 1.5–1.6, `text-wrap:pretty`. Secondary text at 60% ink, never below 13px.
-- JetBrains Mono for eyebrows and metric labels: 9.5–11px, letter-spacing .18–.24em, uppercase.
-- Never Roboto. Never Inter for display.
+- Bricolage Grotesque variable for display: `font-optical-sizing:auto`, `font-variation-settings:'wdth' 86–96` (the axis runs 75–100, so display sits slightly condensed), weight 700 for headlines and 800 for numerals, letter-spacing −.03 to −.05em, `font-variant-numeric:tabular-nums`. Headlines capped at 9–11ch.
+- Public Sans for body: 15.5–22px, line-height 1.5–1.6, `text-wrap:pretty`. Secondary text at 60% ink, never below 13px.
+- Martian Mono for eyebrows and metric labels: 9.5–11px, letter-spacing .18–.24em, uppercase.
+- Never Roboto, never Inter, and never a serif for display.
+- The width axis is still the identifying gesture — it now reads tight rather than wide, which is what makes a readout look like an instrument.
 
 ## Layout and surfaces
 

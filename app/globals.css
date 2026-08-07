@@ -21,7 +21,7 @@ p {
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
   font-size: 15.5px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
@@ -66,8 +66,9 @@ button {
 }
 
 .disp {
-  font-family: var(--font-archivo), sans-serif;
-  font-variation-settings: "wdth" 108;
+  font-family: var(--font-display), sans-serif;
+  font-optical-sizing: auto;
+  font-variation-settings: "wdth" 96;
   font-weight: 700;
   letter-spacing: -0.042em;
   font-variant-numeric: tabular-nums;
@@ -75,9 +76,10 @@ button {
 }
 
 .num {
-  font-family: var(--font-archivo), sans-serif;
-  font-variation-settings: "wdth" 118;
-  font-weight: 700;
+  font-family: var(--font-display), sans-serif;
+  font-optical-sizing: auto;
+  font-variation-settings: "wdth" 90;
+  font-weight: 800;
   letter-spacing: -0.048em;
   font-variant-numeric: tabular-nums;
   line-height: 1;

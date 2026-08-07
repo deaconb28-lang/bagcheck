@@ -35,10 +35,10 @@
   }
 }
 
-/* 2 — the sentence: Archivo wdth 108, 29px, capped at 11ch */
+/* 2 — the sentence: display wdth 96, 29px, capped at 11ch */
 .sentence {
-  font-family: var(--font-archivo), sans-serif;
-  font-variation-settings: "wdth" 108;
+  font-family: var(--font-display), sans-serif;
+  font-variation-settings: "wdth" 96;
   font-weight: 700;
   font-size: 29px;
   letter-spacing: -0.042em;
@@ -47,7 +47,7 @@
   text-wrap: balance;
 }
 
-/* 3 — the score: Archivo wdth 118, 60px, gold */
+/* 3 — the score: display wdth 90, 60px, gold */
 .scoreblock {
   display: flex;
   flex-direction: column;

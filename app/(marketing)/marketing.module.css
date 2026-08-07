@@ -43,8 +43,8 @@
 }
 
 .wm {
-  font-family: var(--font-archivo), sans-serif;
-  font-variation-settings: "wdth" 108;
+  font-family: var(--font-display), sans-serif;
+  font-variation-settings: "wdth" 96;
   font-weight: 700;
   font-size: 19px;
   letter-spacing: -0.03em;
@@ -110,8 +110,8 @@
 }
 
 .h1 {
-  font-family: var(--font-archivo), sans-serif;
-  font-variation-settings: "wdth" 112;
+  font-family: var(--font-display), sans-serif;
+  font-variation-settings: "wdth" 94;
   font-weight: 700;
   font-size: clamp(44px, 6.4vw, 72px);
   line-height: 1.02;
@@ -500,9 +500,10 @@
 }
 
 .shareV {
-  font-family: var(--font-archivo), sans-serif;
-  font-variation-settings: "wdth" 122;
-  font-weight: 700;
+  font-family: var(--font-display), sans-serif;
+  font-optical-sizing: auto;
+  font-variation-settings: "wdth" 86;
+  font-weight: 800;
   font-size: 84px;
   line-height: 0.88;
   letter-spacing: -0.05em;
@@ -511,8 +512,8 @@
 }
 
 .shareVText {
-  font-family: var(--font-archivo), sans-serif;
-  font-variation-settings: "wdth" 118;
+  font-family: var(--font-display), sans-serif;
+  font-variation-settings: "wdth" 90;
   font-weight: 700;
   font-size: 38px;
   line-height: 1;
