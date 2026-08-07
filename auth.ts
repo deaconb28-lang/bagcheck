@@ -14,6 +14,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     : {}),
   session: { strategy: withDb ? "database" : "jwt" },
   providers: [Google],
+  // Surfaces the failure reason instead of Auth.js's generic server error.
+  pages: { error: "/auth/error" },
+  logger: {
+    error(error) {
+      console.error("[auth]", error);
+    },
+    warn(code) {
+      console.warn("[auth]", code);
+    },
+  },
   callbacks: {
     session({ session, user, token }) {
       if (user?.id) {
@@ -42,8 +52,15 @@ export function isAuthConfigured(): boolean {
  */
 export async function getUserId(): Promise<string | null> {
   if (isAuthConfigured()) {
-    const session = await auth();
-    return session?.user?.id ?? null;
+    try {
+      const session = await auth();
+      return session?.user?.id ?? null;
+    } catch (err) {
+      // With database sessions, auth() reaches MongoDB. A store that is
+      // unreachable should render the page signed-out, not 500 it.
+      console.error("[auth] session lookup failed", err);
+      return null;
+    }
   }
   return process.env.DEV_USER_ID || null;
 }
