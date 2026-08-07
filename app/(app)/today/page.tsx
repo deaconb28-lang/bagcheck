@@ -1,9 +1,19 @@
 import type { Metadata } from "next";
 import { getUserId, isAuthConfigured } from "@/auth";
-import { factsFrom, getDailyInsight, isDbConfigured, loadAppData } from "@/lib/db";
-import { Card, Eyebrow, Row } from "@/components/primitives";
+import {
+  factsFrom,
+  getDailyInsight,
+  getPulse,
+  isDbConfigured,
+  loadAppData,
+  questionFor,
+} from "@/lib/db";
+import { activeStreaks, disciplineSegments } from "@/lib/score";
+import { Card, Chip, Eyebrow, Row } from "@/components/primitives";
+import { DayGrid } from "@/components/idioms";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
+import { PulseSurvey } from "@/components/app/PulseSurvey";
 import { SignInCta } from "@/components/app/SignInCta";
 import styles from "./today.module.css";
 
@@ -12,7 +22,7 @@ export const dynamic = "force-dynamic";
 
 function formatDate(date: string): string {
   return new Date(`${date}T12:00:00Z`).toLocaleDateString("en-US", {
-    weekday: "short",
+    weekday: "long",
     month: "short",
     day: "numeric",
     timeZone: "UTC",
@@ -54,11 +64,9 @@ export default async function TodayPage() {
     );
   }
 
-  const { connection, scores, transactionCount } = await loadAppData(userId, 8);
+  const { connection, scores, transactionCount } = await loadAppData(userId, 63);
   const latest = scores[0] ?? null;
   const previous = scores[1] ?? null;
-  const weekStart = scores.length > 1 ? scores[scores.length - 1] : null;
-  const weekDelta = latest && weekStart ? latest.score - weekStart.score : null;
 
   if (!latest) {
     return (
@@ -77,16 +85,22 @@ export default async function TodayPage() {
     );
   }
 
-  const insight = await getDailyInsight(
-    userId,
-    factsFrom(
-      latest,
-      previous,
-      weekStart,
-      transactionCount,
-      connection?.accounts.length ?? 0,
+  // The week is the last seven scored days, not the last seven calendar days.
+  const week = scores.slice(0, 7);
+  const weekStart = week.length > 1 ? week[week.length - 1] : null;
+  const weekDelta = weekStart ? latest.score - weekStart.score : null;
+
+  const [insight, pulse] = await Promise.all([
+    getDailyInsight(
+      userId,
+      factsFrom(latest, previous, weekStart, transactionCount, connection?.accounts.length ?? 0),
     ),
-  );
+    getPulse(userId, latest.date),
+  ]);
+
+  const streaks = activeStreaks(scores);
+  const segments = disciplineSegments(scores, 42);
+  const question = questionFor(latest.date);
 
   const rail = (
     <>
@@ -103,18 +117,12 @@ export default async function TodayPage() {
       </Card>
       <Card tight>
         <div className={styles.railBlock}>
-          <Eyebrow>Ledger</Eyebrow>
+          <Eyebrow>Last {segments.length} days</Eyebrow>
+          <DayGrid days={segments} />
           <p className={styles.railBody}>
-            {transactionCount} transactions across{" "}
-            {connection?.accounts.length ?? 0}{" "}
-            {connection?.accounts.length === 1 ? "account" : "accounts"}.
-          </p>
-          <p className={styles.railBody}>
-            Last sync{" "}
-            {connection?.lastSyncAt
-              ? connection.lastSyncAt.toISOString().slice(0, 10)
-              : "never"}
-            .
+            {transactionCount} transactions across {connection?.accounts.length ?? 0}{" "}
+            {connection?.accounts.length === 1 ? "account" : "accounts"}. Last sync{" "}
+            {connection?.lastSyncAt ? connection.lastSyncAt.toISOString().slice(0, 10) : "never"}.
           </p>
         </div>
       </Card>
@@ -123,45 +131,68 @@ export default async function TodayPage() {
 
   return (
     <PageGrid rail={rail}>
-      <div className={styles.head}>
-        <Eyebrow>
-          {formatDate(latest.date)} · {latest.baseline}
-        </Eyebrow>
+      <div className={styles.scroll}>
+        {/* 1 — the date */}
+        <Eyebrow>{formatDate(latest.date)}</Eyebrow>
+
+        {/* 2 — the sentence */}
         <h1 className={`disp ${styles.sentence}`}>{insight.sentence}</h1>
-        {insight.tail ? <p className={styles.tail}>{insight.tail}</p> : null}
-        <div className={styles.scoreline}>
-          <span className={`num ${styles.score}`}>{latest.score}</span>
-          <Eyebrow>
-            Discipline
-            {weekDelta != null && weekDelta !== 0
-              ? ` · ${weekDelta > 0 ? "+" : "−"}${Math.abs(weekDelta)} this week`
-              : ""}
-          </Eyebrow>
-        </div>
-      </div>
 
-      {latest.contributors.length ? (
-        <section className={styles.block}>
-          <Eyebrow>What moved your score</Eyebrow>
-          <div className={styles.rows}>
-            {latest.contributors.map((contributor) => (
-              <Row
-                key={contributor.name}
-                name={contributor.name}
-                fill={Math.min(100, Math.abs(contributor.value) * 11)}
-                value={`${contributor.value > 0 ? "+" : "−"}${Math.abs(contributor.value)}`}
-                tone={contributor.tone}
-              />
-            ))}
+        {/* 3 — the score, the one hero number on this screen */}
+        <div className={styles.scoreblock}>
+          <div className={styles.scoreline}>
+            <span className={`num ${styles.score}`}>{latest.score}</span>
+            <Eyebrow>
+              Discipline
+              {weekDelta != null && weekDelta !== 0
+                ? ` · ${weekDelta > 0 ? "+" : "−"}${Math.abs(weekDelta)} this week`
+                : ""}
+            </Eyebrow>
           </div>
-        </section>
-      ) : null}
+          {insight.tail ? <p className={styles.tail}>{insight.tail}</p> : null}
+        </div>
 
-      {previous ? (
-        <p className={styles.body}>
-          Previous reading: {previous.score} on {formatDate(previous.date)}.
-        </p>
-      ) : null}
+        {/* 4 — what moved it, four rows max */}
+        {latest.contributors.length ? (
+          <section className={styles.block}>
+            <Eyebrow>What moved your score</Eyebrow>
+            <div className={styles.rows}>
+              {latest.contributors.slice(0, 4).map((contributor) => (
+                <Row
+                  key={contributor.name}
+                  name={contributor.name}
+                  fill={Math.min(100, Math.abs(contributor.value) * 11)}
+                  value={`${contributor.value > 0 ? "+" : "−"}${Math.abs(contributor.value)}`}
+                  tone={contributor.tone}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {/* 5 — the pulse, gone once answered */}
+        {pulse ? null : (
+          <PulseSurvey
+            date={latest.date}
+            question={question.question}
+            options={question.options}
+          />
+        )}
+
+        {/* 6 — streaks at stake */}
+        {streaks.length ? (
+          <section className={styles.block}>
+            <Eyebrow>Streaks at stake</Eyebrow>
+            <div className={styles.chips}>
+              {streaks.map((streak) => (
+                <Chip key={streak.name}>
+                  {streak.days} {streak.name}
+                </Chip>
+              ))}
+            </div>
+          </section>
+        ) : null}
+      </div>
     </PageGrid>
   );
 }

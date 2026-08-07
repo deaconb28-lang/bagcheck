@@ -1,11 +1,32 @@
 import type { Metadata } from "next";
 import { Button, Card, Chip, Eyebrow, Row, Stat } from "@/components/primitives";
+import {
+  ContributionGrid,
+  DayGrid,
+  DecayLine,
+  Distribution,
+  DotScatter,
+  SegmentRing,
+} from "@/components/idioms";
+import type { DayState } from "@/components/idioms";
 import { ModeToggle } from "./ModeToggle";
 import styles from "./scratch.module.css";
 
 export const metadata: Metadata = {
   title: "Bagcheck — scratch",
 };
+
+const S = (i: number) => Math.sin(i * 1.7) + Math.cos(i * 0.53);
+
+const days = (n: number): DayState[] =>
+  Array.from({ length: n }, (_, i) =>
+    i > n - 6 ? "empty" : S(i) > 1.15 ? "exposed" : S(i) < -1.05 ? "partial" : "kept",
+  );
+
+const scatter = Array.from({ length: 60 }, (_, i) => {
+  const x = ((i * 3.1) % 92) / 100;
+  return { x, y: Math.abs(Math.sin(i * 2.3)), accent: x > 0.66 };
+});
 
 export default function ScratchPage() {
   return (
@@ -85,6 +106,56 @@ export default function ScratchPage() {
                 <Row name="Exposure above your baseline" fill={44} value="−2" tone="violet" />
                 <Row name="Sold two winners early" fill={26} value="−4" tone="clay" />
               </div>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <Eyebrow>Idioms — one per statement, legible at 200px</Eyebrow>
+        <div className={styles.grid3}>
+          <Card tight>
+            <div className={styles.stack12}>
+              <Eyebrow>Segment ring — a quarter</Eyebrow>
+              <SegmentRing days={days(63)} value={82} label="Discipline" />
+            </div>
+          </Card>
+          <Card tight>
+            <div className={styles.stack12}>
+              <Eyebrow>Day grid — the same, unrolled</Eyebrow>
+              <DayGrid days={days(63)} from="Q3 open" to="today" />
+            </div>
+          </Card>
+          <Card tight>
+            <div className={styles.stack12}>
+              <Eyebrow>Dot scatter — the gap is the insight</Eyebrow>
+              <DotScatter points={scatter} divider={0.66} label="Entries by hour." />
+            </div>
+          </Card>
+        </div>
+        <div className={styles.grid3}>
+          <Card tight>
+            <div className={styles.stack12}>
+              <Eyebrow tone="violet">Distribution — your marker</Eyebrow>
+              <Distribution percentile={86} label="You are the violet mark." />
+            </div>
+          </Card>
+          <Card tight>
+            <div className={styles.stack12}>
+              <Eyebrow>Decay line — over time</Eyebrow>
+              <DecayLine
+                series={[1, 0.94, 0.86, 0.72, 0.6, 0.44, 0.3, 0.22]}
+                label="How long conviction survives a drawdown."
+              />
+            </div>
+          </Card>
+          <Card tight>
+            <div className={styles.stack12}>
+              <Eyebrow>Contribution grid — current cell lit</Eyebrow>
+              <ContributionGrid
+                days={Array.from({ length: 63 }, (_, i) => (S(i) > -0.4 ? 1 : 0))}
+                label="Deposits by week."
+              />
             </div>
           </Card>
         </div>

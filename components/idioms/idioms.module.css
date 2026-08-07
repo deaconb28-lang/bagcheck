@@ -1,0 +1,63 @@
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Day grid */
+
+.dayGrid {
+  display: grid;
+  grid-template-columns: repeat(21, 1fr);
+  gap: 3px;
+}
+
+.dayCell {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  display: block;
+}
+
+.ends {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink3);
+}
+
+/* Contribution grid */
+
+.contribGrid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.contribCell {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  display: block;
+  min-width: 6px;
+}
+
+.caption {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.5;
+}
+
+@media (max-width: 899px) {
+  .dayGrid {
+    grid-template-columns: repeat(14, 1fr);
+  }
+}

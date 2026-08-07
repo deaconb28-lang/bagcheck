@@ -1,0 +1,45 @@
+.pulse {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 26px;
+}
+
+.question {
+  font-size: 17px;
+  line-height: 1.45;
+  max-width: 30ch;
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.option {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 12px;
+  border: 1px solid var(--line2);
+  background: transparent;
+  color: var(--ink);
+  font-size: 14.5px;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.option:hover:not(:disabled) {
+  border-color: var(--moss);
+  color: var(--moss);
+}
+
+.option[data-pending] {
+  background: var(--moss-tint);
+  border-color: var(--moss);
+  color: var(--moss);
+}
+
+.option:disabled {
+  cursor: default;
+}

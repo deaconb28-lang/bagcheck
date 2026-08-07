@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { getUserId, isAuthConfigured, isDevIdentity, signOut } from "@/auth";
 import { isDbConfigured, loadAppData } from "@/lib/db";
 import type { ScoreDoc } from "@/lib/db";
+import { selfPercentile } from "@/lib/score";
 import type { StyleBaseline } from "@/lib/score";
-import { Button, Card, Eyebrow } from "@/components/primitives";
+import { Button, Card, Eyebrow, Stat } from "@/components/primitives";
+import { Distribution } from "@/components/idioms";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { SignInCta } from "@/components/app/SignInCta";
@@ -13,13 +15,14 @@ import styles from "./profile.module.css";
 export const metadata: Metadata = { title: "Bagcheck — profile" };
 export const dynamic = "force-dynamic";
 
-/** Archetype reads the strongest component — descriptive, not a grade. */
+/** Archetype reads the strongest component — descriptive, never a grade. */
 function archetypeFor(doc: ScoreDoc | null): { name: string; note: string } {
   if (!doc) {
     return { name: "Unread", note: "Not enough history to name a pattern yet." };
   }
-  const entries = Object.entries(doc.components) as Array<[string, number]>;
-  const [key] = entries.sort((a, b) => b[1] - a[1])[0];
+  const [key] = (Object.entries(doc.components) as Array<[string, number]>).sort(
+    (a, b) => b[1] - a[1],
+  )[0];
   switch (key) {
     case "patience":
       return { name: "The Holder", note: "Your hold times carry the score." };
@@ -67,29 +70,22 @@ export default async function ProfilePage() {
     (top, doc) => (!top || doc.score > top.score ? doc : top),
     null,
   );
+  const percentile = latest ? selfPercentile(scores, latest.score) : null;
 
   const rail = (
     <>
       <Card tight>
-        <div className={styles.railBlock}>
-          <Eyebrow>Records</Eyebrow>
-          <dl className={styles.records}>
-            <div className={styles.record}>
-              <dt className={styles.recordKey}>Best score</dt>
-              <dd className={styles.recordVal}>
-                {best ? `${best.score} · ${best.date}` : "—"}
-              </dd>
-            </div>
-            <div className={styles.record}>
-              <dt className={styles.recordKey}>Days scored</dt>
-              <dd className={styles.recordVal}>{scores.length}</dd>
-            </div>
-            <div className={styles.record}>
-              <dt className={styles.recordKey}>Transactions</dt>
-              <dd className={styles.recordVal}>{transactionCount}</dd>
-            </div>
-          </dl>
-        </div>
+        <Stat
+          eyebrow="Days scored"
+          value={scores.length}
+          unit={scores.length === 1 ? "day" : "days"}
+          tone="gold"
+          tail={
+            best
+              ? `Your best reading is ${best.score}, set on ${best.date}.`
+              : "Your records fill in as days are scored."
+          }
+        />
       </Card>
       <Card tight>
         <div className={styles.railBlock}>
@@ -99,6 +95,7 @@ export default async function ProfilePage() {
               ? "Acting as a development identity — sign-in is not configured."
               : "Signed in with Google."}
           </p>
+          <p className={styles.railBody}>{transactionCount} transactions on file.</p>
           <div className={styles.railActions}>
             <Button href="/debug" ghost>
               Raw ledger
@@ -118,46 +115,58 @@ export default async function ProfilePage() {
 
   return (
     <PageGrid rail={rail}>
-      <div className={styles.head}>
-        <Eyebrow>Profile</Eyebrow>
-        <h1 className={`disp ${styles.archetype}`}>{archetype.name}</h1>
-        <p className={styles.body}>{archetype.note}</p>
+      <div className={styles.scroll}>
+        <div className={styles.head}>
+          <Eyebrow>Profile</Eyebrow>
+          <h1 className={`disp ${styles.archetype}`}>{archetype.name}</h1>
+          <p className={styles.body}>{archetype.note}</p>
+        </div>
+
+        {percentile != null && latest ? (
+          <section className={styles.block}>
+            <Eyebrow tone="violet">Where today sits</Eyebrow>
+            <Distribution
+              percentile={percentile}
+              label={`Today's ${latest.score} sits above ${percentile}% of your own scored days. Comparison against other people arrives with event segments.`}
+            />
+          </section>
+        ) : null}
+
+        <section className={styles.block}>
+          <Eyebrow>Style baseline</Eyebrow>
+          <p className={styles.body}>
+            Your score is measured against the game you say you are playing, not
+            against a model investor. Changing this rescores your history.
+          </p>
+          <BaselinePicker current={baseline} canSet={Boolean(connection)} />
+        </section>
+
+        <section className={styles.block}>
+          <Eyebrow>Connection</Eyebrow>
+          {connection ? (
+            <div className={styles.connection}>
+              <p className={styles.body}>
+                {connection.accounts.length}{" "}
+                {connection.accounts.length === 1 ? "account" : "accounts"} linked,
+                read-only. Last sync{" "}
+                {connection.lastSyncAt
+                  ? connection.lastSyncAt.toISOString().slice(0, 10)
+                  : "never"}
+                .
+              </p>
+              <p className={styles.note}>
+                Bagcheck can see what you did. It cannot place, cancel, or modify
+                an order.
+              </p>
+            </div>
+          ) : (
+            <div className={styles.connection}>
+              <p className={styles.body}>No brokerage connected yet.</p>
+              <Button href="/api/snaptrade/connect">Connect a brokerage</Button>
+            </div>
+          )}
+        </section>
       </div>
-
-      <section className={styles.block}>
-        <Eyebrow>Style baseline</Eyebrow>
-        <p className={styles.body}>
-          Your score is measured against the game you say you are playing, not
-          against a model investor. Changing this rescores your history.
-        </p>
-        <BaselinePicker current={baseline} canSet={Boolean(connection)} />
-      </section>
-
-      <section className={styles.block}>
-        <Eyebrow>Connection</Eyebrow>
-        {connection ? (
-          <div className={styles.connection}>
-            <p className={styles.body}>
-              {connection.accounts.length}{" "}
-              {connection.accounts.length === 1 ? "account" : "accounts"} linked,
-              read-only. Last sync{" "}
-              {connection.lastSyncAt
-                ? connection.lastSyncAt.toISOString().slice(0, 10)
-                : "never"}
-              .
-            </p>
-            <p className={styles.note}>
-              Bagcheck can see what you did. It cannot place, cancel, or modify
-              an order.
-            </p>
-          </div>
-        ) : (
-          <div className={styles.connection}>
-            <p className={styles.body}>No brokerage connected yet.</p>
-            <Button href="/api/snaptrade/connect">Connect a brokerage</Button>
-          </div>
-        )}
-      </section>
     </PageGrid>
   );
 }

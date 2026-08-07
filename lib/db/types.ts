@@ -60,6 +60,14 @@ export interface ScoreDoc {
   computedAt: Date;
 }
 
+export interface PulseDoc {
+  userId: string;
+  date: string;
+  questionId: string;
+  answer: string;
+  answeredAt: Date;
+}
+
 export interface TagDoc {
   userId: string;
   date: string;

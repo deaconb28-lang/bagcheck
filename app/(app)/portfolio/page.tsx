@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getUserId } from "@/auth";
 import { holdingsFrom, isDbConfigured, loadAppData } from "@/lib/db";
-import { Card, Eyebrow } from "@/components/primitives";
+import { Card, Eyebrow, Stat } from "@/components/primitives";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { SignInCta } from "@/components/app/SignInCta";
@@ -102,20 +102,19 @@ export default async function PortfolioPage() {
 
   return (
     <PageGrid rail={rail}>
+      <div className={styles.scroll}>
       <div className={styles.head}>
-        <Eyebrow>Portfolio · {holdings.length} positions</Eyebrow>
-        <div className={styles.totalLine}>
-          <span className={`num ${styles.total}`}>{money(totalValue)}</span>
-          {totalPnl != null ? (
-            <span
-              className={styles.delta}
-              data-tone={totalPnl >= 0 ? "gold" : "clay"}
-            >
-              {totalPnl >= 0 ? "+" : "−"}
-              {money(Math.abs(totalPnl))} ({totalPct?.toFixed(1)}%)
-            </span>
-          ) : null}
-        </div>
+        <Stat
+          eyebrow="Portfolio value"
+          value={money(totalValue)}
+          unit={`across ${holdings.length} ${holdings.length === 1 ? "position" : "positions"}`}
+          tone={totalPnl != null && totalPnl < 0 ? "ink" : "gold"}
+          tail={
+            totalPnl != null
+              ? `Cost basis ${money(totalCost)} — ${totalPnl >= 0 ? "up" : "down"} ${money(Math.abs(totalPnl))}, ${Math.abs(totalPct ?? 0).toFixed(1)}%.`
+              : "Cost basis has not synced for these positions yet."
+          }
+        />
       </div>
 
       {series.length > 1 ? (
@@ -157,6 +156,7 @@ export default async function PortfolioPage() {
           ))}
         </div>
       </section>
+      </div>
     </PageGrid>
   );
 }
