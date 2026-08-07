@@ -249,53 +249,63 @@ One notification a day, and it is never a price alert.
 
 ### Color tokens
 
-Define both modes on `html`: dark as `:root`, light under `html[data-mode="light"]`. Never hardcode a palette hex in a component — always `var(--*)`.
+> Superseded 2026-08-07. This section originally specified an aubergine
+> dark-first canvas with gold and violet accents. The palette below replaced
+> it: an iridescent white canvas, green as the primary, blue as the second
+> axis. The semantics are unchanged — only the hues and the default mode
+> moved.
 
-**Token names are legacy. `--moss` is gold. `--signal` is violet.** Keep the names.
+Define both modes on `html`: light as `:root`, dark under `html[data-mode="dark"]`. Never hardcode a palette hex in a component — always `var(--*)`.
+
+**The token names now mean what they say. `--moss` is green. `--signal` is blue.**
+
+**Light — the default**
+
+| Token | Value |
+|---|---|
+| `--bg` | `#F5F9F6` |
+| `--s1` | `#FFFFFF` |
+| `--ink` | `#0A1512` |
+| `--ink2` | `rgba(10,21,18,.62)` |
+| `--ink3` | `rgba(10,21,18,.38)` |
+| `--line` / `--line2` / `--track` | `rgba(10,21,18,.10 / .18 / .10)` |
+| `--moss` *(green, primary)* | `#1A6E47` |
+| `--moss-dim` | `rgba(26,110,71,.24)` |
+| `--moss-tint` | `rgba(26,110,71,.10)` |
+| `--on-moss` | `#FFFFFF` |
+| `--signal` *(blue, secondary)* | `#1B6CC4` |
+| `--signal-tint` | `rgba(27,108,196,.10)` |
+| `--loss` *(clay)* | `#A8452F` |
+| `--glass` | `rgba(255,255,255,.82)` |
+| `--glass-solid` | `rgba(255,255,255,.90)` |
 
 **Dark**
 
 | Token | Value |
 |---|---|
-| `--bg` | `#0B0711` |
-| `--s1` | `#150F1F` |
-| `--ink` | `#EDE8F5` |
-| `--ink2` | `rgba(237,232,245,.60)` |
-| `--ink3` | `rgba(237,232,245,.34)` |
-| `--line` | `rgba(237,232,245,.09)` |
-| `--line2` | `rgba(237,232,245,.17)` |
-| `--track` | `rgba(237,232,245,.10)` |
-| `--moss` *(gold, primary)* | `#F2CE6B` |
-| `--moss-dim` | `rgba(242,206,107,.22)` |
-| `--moss-tint` | `rgba(242,206,107,.12)` |
-| `--on-moss` | `#241703` |
-| `--signal` *(violet, secondary)* | `#A78BFA` |
-| `--signal-tint` | `rgba(167,139,250,.12)` |
-| `--loss` *(clay)* | `#D9756A` |
-| `--glass` | `rgba(21,15,31,.82)` |
-| `--glass-solid` | `rgba(21,15,31,.86)` |
+| `--bg` | `#080D0B` |
+| `--s1` | `#101714` |
+| `--ink` | `#E6EEE9` |
+| `--moss` | `#5FBE86` |
+| `--on-moss` | `#04120B` |
+| `--signal` | `#5AA6F0` |
+| `--loss` | `#D2705C` |
+| `--glass` | `rgba(16,23,20,.82)` |
+| lines / line2 / track | `rgba(230,238,233,.09 / .17 / .10)` |
 
-**Light**
-
-| Token | Value |
-|---|---|
-| `--bg` | `#F4F1EA` |
-| `--s1` | `#FBFAF6` |
-| `--ink` | `#170F2B` |
-| `--moss` | `#9A7318` |
-| `--on-moss` | `#FBFAF6` |
-| `--signal` | `#6D4AD1` |
-| `--loss` | `#B04A3C` |
-| `--glass` | `rgba(251,250,246,.86)` |
-| lines / line2 / track | `rgba(23,15,43,.10 / .18 / .12)` |
+**The iridescence.** `--iridescence` is three very low-alpha radial washes —
+green, blue, and a teal between them — painted once on `body::before` and
+fixed to the viewport. It is the only multi-hue fill in the system; nothing
+layered above the canvas may carry another. Alphas stay under .11 so every
+readout still sits flat on top of it.
 
 ### Semantics
 
-- **Gold** means discipline, and owns every primary CTA.
-- **Violet** means exposure, comparison, or percentile.
+- **Green** (`--moss`) means discipline, and owns every primary CTA.
+- **Blue** (`--signal`) means exposure, comparison, or percentile.
 - **Clay** marks negative P&L and nothing else.
 - One accent per surface — never two saturated fills competing in one view.
-- Share cards and Wrapped viewers stay aubergine-black in **both** modes.
+- Share cards and Wrapped viewers stay green-black in **both** modes.
 
 ### Type
 

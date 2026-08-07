@@ -123,7 +123,7 @@ export default async function PortfolioPage() {
           eyebrow="Portfolio value"
           value={money(totalValue)}
           unit={`across ${holdings.length} ${holdings.length === 1 ? "position" : "positions"}`}
-          tone={totalPnl != null && totalPnl < 0 ? "ink" : "gold"}
+          tone={totalPnl != null && totalPnl < 0 ? "ink" : "moss"}
           tail={
             totalPnl != null
               ? `Cost basis ${money(totalCost)} — ${totalPnl >= 0 ? "up" : "down"} ${money(Math.abs(totalPnl))}, ${Math.abs(totalPct ?? 0).toFixed(1)}%.`
@@ -158,7 +158,7 @@ export default async function PortfolioPage() {
                 {holding.pnlPct != null ? (
                   <span
                     className={styles.pnl}
-                    data-tone={holding.pnlPct >= 0 ? "gold" : "clay"}
+                    data-tone={holding.pnlPct >= 0 ? "moss" : "clay"}
                   >
                     {holding.pnlPct >= 0 ? "+" : "−"}
                     {Math.abs(holding.pnlPct).toFixed(1)}%

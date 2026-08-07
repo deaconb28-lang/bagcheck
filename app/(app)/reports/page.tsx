@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getUserId } from "@/auth";
 import { isDbConfigured, loadAppData } from "@/lib/db";
-import { disciplineSegments } from "@/lib/score";
+import { contributorTone, disciplineSegments } from "@/lib/score";
 import { Card, Eyebrow, Stat } from "@/components/primitives";
 import { DayGrid, SegmentRing } from "@/components/idioms";
 import { EmptyState } from "@/components/app/EmptyState";
@@ -77,7 +77,7 @@ export default async function ReportsPage() {
           eyebrow="Average discipline"
           value={average}
           unit={`over ${scores.length} days`}
-          tone="gold"
+          tone="moss"
           tail={`Your best reading was ${best.score} on ${best.date}.`}
         />
       </Card>
@@ -126,7 +126,7 @@ export default async function ReportsPage() {
                   <span className={styles.recurringCount}>
                     {entry.count} {entry.count === 1 ? "day" : "days"}
                   </span>
-                  <span className={styles.recurringVal} data-tone={entry.tone}>
+                  <span className={styles.recurringVal} data-tone={contributorTone(entry.tone)}>
                     {entry.total > 0 ? "+" : "−"}
                     {Math.abs(entry.total)}
                   </span>

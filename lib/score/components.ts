@@ -46,13 +46,13 @@ export function consistency(txns: TxnLite[], asOf: string): ComponentResult {
   const score = Math.round(0.6 * cadence + 0.4 * sizing);
   const signals: Contributor[] = [];
   if (cadence >= 88 && impact(cadence, 0.3) !== 0) {
-    signals.push({ name: "Cadence steady against your baseline", value: impact(cadence, 0.3), tone: "gold" });
+    signals.push({ name: "Cadence steady against your baseline", value: impact(cadence, 0.3), tone: "moss" });
   }
   if (cadence <= 55 && impact(cadence, 0.3) !== 0) {
-    signals.push({ name: "Trading pace far from your baseline", value: impact(cadence, 0.3), tone: "violet" });
+    signals.push({ name: "Trading pace far from your baseline", value: impact(cadence, 0.3), tone: "signal" });
   }
   if (sizing <= 55 && impact(sizing, 0.2) !== 0) {
-    signals.push({ name: "Sizing drifted from your baseline", value: impact(sizing, 0.2), tone: "violet" });
+    signals.push({ name: "Sizing drifted from your baseline", value: impact(sizing, 0.2), tone: "signal" });
   }
   return { score, signals };
 }
@@ -89,13 +89,13 @@ export function patience(
   const score = Math.round(flips == null ? hold : 0.7 * hold + 0.3 * flips);
   const signals: Contributor[] = [];
   if (ratio != null && ratio >= 1.3 && impact(hold, 0.3) !== 0) {
-    signals.push({ name: "Held winners longer than losers", value: impact(hold, 0.3), tone: "gold" });
+    signals.push({ name: "Held winners longer than losers", value: impact(hold, 0.3), tone: "moss" });
   }
   if (ratio != null && ratio <= 0.75 && impact(hold, 0.3) !== 0) {
     signals.push({ name: "Sold winners faster than losers", value: impact(hold, 0.3), tone: "clay" });
   }
   if (flips != null && flips <= 60 && impact(flips, 0.15) !== 0) {
-    signals.push({ name: "Quick flips above your baseline", value: impact(flips, 0.15), tone: "violet" });
+    signals.push({ name: "Quick flips above your baseline", value: impact(flips, 0.15), tone: "signal" });
   }
   return { score, signals };
 }
@@ -141,13 +141,13 @@ export function exposure(
   const score = Math.round(0.6 * count + 0.4 * conc);
   const signals: Contributor[] = [];
   if (tpw > band.ideal && impact(count, 0.2) !== 0) {
-    signals.push({ name: "Trade count above your baseline", value: impact(count, 0.2), tone: "violet" });
+    signals.push({ name: "Trade count above your baseline", value: impact(count, 0.2), tone: "signal" });
   }
   if (tpw <= band.ideal && impact(count, 0.2) !== 0) {
-    signals.push({ name: "Trade count inside your baseline", value: impact(count, 0.2), tone: "gold" });
+    signals.push({ name: "Trade count inside your baseline", value: impact(count, 0.2), tone: "moss" });
   }
   if (topShare > 0.5 && impact(conc, 0.1) !== 0) {
-    signals.push({ name: "Concentrated in one name", value: impact(conc, 0.1), tone: "violet" });
+    signals.push({ name: "Concentrated in one name", value: impact(conc, 0.1), tone: "signal" });
   }
   return { score, signals };
 }
@@ -199,16 +199,16 @@ export function adherence(
   const score = Math.round(0.5 * dep + 0.5 * panic);
   const signals: Contributor[] = [];
   if (deposits.length >= 3 && dep >= 85 && impact(dep, 0.2) !== 0) {
-    signals.push({ name: "Contributions on schedule", value: impact(dep, 0.2), tone: "gold" });
+    signals.push({ name: "Contributions on schedule", value: impact(dep, 0.2), tone: "moss" });
   }
   if (deposits.length >= 3 && dep <= 55 && impact(dep, 0.2) !== 0) {
-    signals.push({ name: "Contributions off schedule", value: impact(dep, 0.2), tone: "violet" });
+    signals.push({ name: "Contributions off schedule", value: impact(dep, 0.2), tone: "signal" });
   }
   if (flagged > 0 && impact(panic, 0.25) !== 0) {
     signals.push({ name: "Sold into a losing week", value: impact(panic, 0.25), tone: "clay" });
   }
   if (flagged === 0 && closed.length >= 3 && impact(panic, 0.15) !== 0) {
-    signals.push({ name: "No sells into losing weeks", value: impact(panic, 0.15), tone: "gold" });
+    signals.push({ name: "No sells into losing weeks", value: impact(panic, 0.15), tone: "moss" });
   }
   return { score, signals };
 }

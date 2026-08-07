@@ -7,7 +7,8 @@ export default function MarketingLayout({
 }) {
   return (
     <>
-      {/* Set before paint so a direct load never flashes dark. */}
+      {/* Light is the default, but /scratch can leave dark on <html>; set
+          before paint so arriving from it never flashes the wrong canvas. */}
       <script
         dangerouslySetInnerHTML={{
           __html: 'document.documentElement.dataset.mode="light";',

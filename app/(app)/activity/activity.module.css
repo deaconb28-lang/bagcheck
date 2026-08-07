@@ -196,14 +196,14 @@
 }
 
 .filter:hover {
-  background: var(--s1);
+  background: var(--inset);
   color: var(--ink);
 }
 
-/* Gold already owns the count above; a second saturated fill in the same
+/* Moss already owns the count above; a second saturated fill in the same
    rail would put two accents on one surface, so the selected state is ink. */
 .filter[data-active] {
-  background: var(--s1);
+  background: var(--inset2);
   color: var(--ink);
 }
 

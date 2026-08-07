@@ -1,6 +1,6 @@
 /*
- * Landing — warm bone canvas carrying dark aubergine product specimens.
- * Gold = discipline, violet = exposure/comparison, and the token system
+ * Landing — iridescent white canvas carrying green-black product specimens.
+ * Moss = discipline, signal = exposure/comparison, and the token system
  * supplies every colour. One accent per surface.
  */
 
@@ -282,7 +282,7 @@
 
 .todayScore {
   font-size: 56px;
-  color: var(--share-gold);
+  color: var(--share-moss);
 }
 
 .todayRows {
@@ -316,12 +316,12 @@
   border-radius: 99px;
 }
 
-.todayFill[data-tone="gold"] {
-  background: var(--share-gold);
+.todayFill[data-tone="moss"] {
+  background: var(--share-moss);
 }
 
-.todayFill[data-tone="violet"] {
-  background: var(--share-violet);
+.todayFill[data-tone="signal"] {
+  background: var(--share-signal);
 }
 
 .todayFill[data-tone="clay"] {
@@ -349,13 +349,13 @@
   text-transform: uppercase;
   padding: 6px 11px;
   border-radius: 8px;
-  background: var(--share-gold-tint);
-  color: var(--share-gold);
+  background: var(--share-moss-tint);
+  color: var(--share-moss);
 }
 
 .todayChipV {
-  background: var(--share-violet-tint);
-  color: var(--share-violet);
+  background: var(--share-signal-tint);
+  color: var(--share-signal);
 }
 
 /* The engine — idiom columns */
@@ -396,7 +396,7 @@
   display: block;
 }
 
-/* Segments — the violet surface */
+/* Segments — the signal surface */
 
 .segGrid {
   display: grid;
@@ -508,7 +508,7 @@
   line-height: 0.88;
   letter-spacing: -0.05em;
   font-variant-numeric: tabular-nums;
-  color: var(--share-gold);
+  color: var(--share-moss);
 }
 
 .shareVText {
@@ -518,11 +518,11 @@
   font-size: 38px;
   line-height: 1;
   letter-spacing: -0.045em;
-  color: var(--share-gold);
+  color: var(--share-moss);
 }
 
-.shareAccentViolet {
-  color: var(--share-violet);
+.shareAccentSignal {
+  color: var(--share-signal);
 }
 
 .shareT {
@@ -545,11 +545,11 @@
 }
 
 .shareCellOn {
-  background: var(--share-gold);
+  background: var(--share-moss);
 }
 
 .shareCellSig {
-  background: var(--share-violet);
+  background: var(--share-signal);
 }
 
 /* Pricing tiers — hairline columns */

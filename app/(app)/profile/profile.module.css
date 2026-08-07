@@ -79,7 +79,7 @@
 }
 
 .option:hover:not(:disabled) {
-  background: var(--s1);
+  background: var(--inset);
 }
 
 .option[data-selected] {

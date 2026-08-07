@@ -26,8 +26,15 @@ Examples of the register, for shape only — do not reuse their content:
 - "Your cadence has not moved since June."
 - "Contributions landed on schedule every week this month."`;
 
+/*
+ * Keyed on the stored tone. "gold" and "violet" are the pre-green/blue
+ * spellings and still sit on older score documents, so both map through —
+ * a miss here would silently drop the phrase from the prompt.
+ */
 const TONE: Record<string, string> = {
+  moss: "held the line",
   gold: "held the line",
+  signal: "ran above baseline",
   violet: "ran above baseline",
   clay: "cost you",
 };

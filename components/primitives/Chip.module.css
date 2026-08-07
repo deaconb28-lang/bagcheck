@@ -12,7 +12,7 @@
   border-radius: 8px;
 }
 
-.violet {
+.signal {
   background: var(--signal-tint);
   color: var(--signal);
 }

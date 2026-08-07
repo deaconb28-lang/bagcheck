@@ -1,15 +1,16 @@
 import styles from "./marketing.module.css";
 
 const ROWS = [
-  { name: "Held through the drawdown", fill: 84, value: "+9", tone: "gold" },
-  { name: "Contributions on schedule", fill: 62, value: "+5", tone: "gold" },
-  { name: "Exposure above your baseline", fill: 44, value: "−2", tone: "violet" },
+  { name: "Held through the drawdown", fill: 84, value: "+9", tone: "moss" },
+  { name: "Contributions on schedule", fill: 62, value: "+5", tone: "moss" },
+  { name: "Exposure above your baseline", fill: 44, value: "−2", tone: "signal" },
   { name: "Sold two winners early", fill: 26, value: "−4", tone: "clay" },
 ] as const;
 
 /**
- * The Today screen as it actually renders — the app defaults to dark, so
- * the mock stays aubergine on the light page via --share-* tokens.
+ * The Today screen as it actually renders. The app canvas is iridescent
+ * white now, but a posted specimen stays green-black in both modes, so the
+ * mock keeps the --share-* tokens.
  */
 export function TodayMock() {
   return (

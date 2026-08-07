@@ -1,6 +1,17 @@
 export type StyleBaseline = "long-term" | "swing" | "active";
 
-export type ContributorTone = "gold" | "violet" | "clay";
+export type ContributorTone = "moss" | "signal" | "clay";
+
+/**
+ * Scores computed before the palette moved to green/blue stored "gold" and
+ * "violet". They are still in Mongo and still render, so map them on read —
+ * an unrecognised tone would paint a contributor bar with no fill at all.
+ */
+export function contributorTone(stored: string): ContributorTone {
+  if (stored === "moss" || stored === "gold") return "moss";
+  if (stored === "signal" || stored === "violet") return "signal";
+  return "clay";
+}
 
 /** One ranked row of the decomposition — name, signed value, semantic tone. */
 export interface Contributor {

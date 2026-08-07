@@ -11,11 +11,13 @@ Reference docs (read before any UI work — the brand addendum is authoritative 
 ## Colour
 
 - `styles/tokens.css` is the single source of colour. A palette hex anywhere else in `app/`, `components/`, `lib/`, or `styles/` is a bug. Always `var(--*)`. (`docs/` is imported reference material and exempt.)
-- Token names are legacy: `--moss` is gold, `--signal` is violet. Keep the names.
-- Both modes are declared on `html`: dark is `:root`, light is `html[data-mode="light"]`.
-- Gold means discipline and owns every primary CTA. Violet means exposure, comparison, percentile. Clay (`--loss`) marks negative P&L and nothing else — warnings, errors, and empty states stay in ink.
+- Token names mean what they say: `--moss` is green, `--signal` is blue.
+- Both modes are declared on `html`: light is `:root`, dark is `html[data-mode="dark"]`. The product is light-first — every screen ships on the iridescent white canvas.
+- The canvas is iridescent white: a pearl white pushed a few degrees green, with cards rising to pure white. `--iridescence` is the only multi-hue fill in the system and only the page canvas may carry it (painted once on `body::before`). Everything above it is a flat fill.
+- Green means discipline and owns every primary CTA. Blue means exposure, comparison, percentile. Clay (`--loss`) marks negative P&L and nothing else — warnings, errors, and empty states stay in ink.
 - One accent per surface — never two saturated fills competing in one view; the secondary drops to `--ink2`.
-- Share cards and Wrapped viewers stay aubergine-black in both modes.
+- Share cards and Wrapped viewers stay green-black in both modes, via the `--share-*` tokens.
+- Tone props follow the tokens: `moss`, `signal`, `clay`, `ink`. Contributor tones are persisted in Mongo, so read them through `contributorTone()` — pre-existing documents still carry the old `gold`/`violet` spellings.
 
 ## Type
 

@@ -79,7 +79,7 @@ export default async function ProfilePage() {
           eyebrow="Days scored"
           value={scores.length}
           unit={scores.length === 1 ? "day" : "days"}
-          tone="gold"
+          tone="moss"
           tail={
             best
               ? `Your best reading is ${best.score}, set on ${best.date}.`
@@ -124,7 +124,7 @@ export default async function ProfilePage() {
 
         {percentile != null && latest ? (
           <section className={styles.block}>
-            <Eyebrow tone="violet">Where today sits</Eyebrow>
+            <Eyebrow tone="signal">Where today sits</Eyebrow>
             <Distribution
               percentile={percentile}
               label={`Today's ${latest.score} sits above ${percentile}% of your own scored days. Comparison against other people arrives with event segments.`}

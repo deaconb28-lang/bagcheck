@@ -14,11 +14,11 @@
   font-size: 56px;
 }
 
-.n[data-tone="gold"] {
+.n[data-tone="moss"] {
   color: var(--moss);
 }
 
-.n[data-tone="violet"] {
+.n[data-tone="signal"] {
   color: var(--signal);
 }
 

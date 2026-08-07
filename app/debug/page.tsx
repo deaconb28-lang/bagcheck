@@ -96,7 +96,7 @@ export default async function DebugPage() {
 
   return (
     <main className={styles.page}>
-      <ModeScope mode="dark" />
+      <ModeScope mode="light" />
       <header className={styles.head}>
         <Eyebrow>Bagcheck · debug · M1 ledger</Eyebrow>
         <h1 className={`disp ${styles.title}`}>Raw parsed history</h1>

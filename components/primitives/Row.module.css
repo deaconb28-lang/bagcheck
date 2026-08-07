@@ -23,11 +23,11 @@
   border-radius: 99px;
 }
 
-.fill[data-tone="gold"] {
+.fill[data-tone="moss"] {
   background: var(--moss);
 }
 
-.fill[data-tone="violet"] {
+.fill[data-tone="signal"] {
   background: var(--signal);
 }
 

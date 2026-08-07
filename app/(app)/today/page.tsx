@@ -8,7 +8,7 @@ import {
   loadAppData,
   questionFor,
 } from "@/lib/db";
-import { activeStreaks, disciplineSegments } from "@/lib/score";
+import { activeStreaks, contributorTone, disciplineSegments } from "@/lib/score";
 import { Card, Chip, Eyebrow, Row } from "@/components/primitives";
 import { DayGrid } from "@/components/idioms";
 import { EmptyState } from "@/components/app/EmptyState";
@@ -108,10 +108,10 @@ export default async function TodayPage() {
         <div className={styles.railBlock}>
           <Eyebrow>Components</Eyebrow>
           <div className={styles.rows}>
-            <Row name="Adherence" fill={latest.components.adherence} value={`${latest.components.adherence}`} tone="gold" />
-            <Row name="Consistency" fill={latest.components.consistency} value={`${latest.components.consistency}`} tone="gold" />
-            <Row name="Patience" fill={latest.components.patience} value={`${latest.components.patience}`} tone="gold" />
-            <Row name="Exposure" fill={latest.components.exposure} value={`${latest.components.exposure}`} tone="violet" />
+            <Row name="Adherence" fill={latest.components.adherence} value={`${latest.components.adherence}`} tone="moss" />
+            <Row name="Consistency" fill={latest.components.consistency} value={`${latest.components.consistency}`} tone="moss" />
+            <Row name="Patience" fill={latest.components.patience} value={`${latest.components.patience}`} tone="moss" />
+            <Row name="Exposure" fill={latest.components.exposure} value={`${latest.components.exposure}`} tone="signal" />
           </div>
         </div>
       </Card>
@@ -163,7 +163,7 @@ export default async function TodayPage() {
                   name={contributor.name}
                   fill={Math.min(100, Math.abs(contributor.value) * 11)}
                   value={`${contributor.value > 0 ? "+" : "−"}${Math.abs(contributor.value)}`}
-                  tone={contributor.tone}
+                  tone={contributorTone(contributor.tone)}
                 />
               ))}
             </div>

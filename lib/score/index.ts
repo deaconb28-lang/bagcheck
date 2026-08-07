@@ -5,6 +5,7 @@ export { buildRoundTrips } from "./fifo";
 export { computeScore } from "./score";
 export { activeStreaks, disciplineSegments, selfPercentile } from "./shape";
 export type { DayShape, ScoredDay, Streak } from "./shape";
+export { contributorTone } from "./types";
 export type {
   Contributor,
   ContributorTone,

@@ -6,10 +6,10 @@ type RowProps = {
   fill: number;
   /** Signed mono value, e.g. "+9" or "−4". */
   value: string;
-  tone?: "gold" | "violet" | "clay";
+  tone?: "moss" | "signal" | "clay";
 };
 
-export function Row({ name, fill, value, tone = "gold" }: RowProps) {
+export function Row({ name, fill, value, tone = "moss" }: RowProps) {
   const width = Math.max(0, Math.min(100, fill));
   return (
     <div className={styles.row}>

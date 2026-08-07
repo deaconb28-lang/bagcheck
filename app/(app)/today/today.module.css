@@ -47,7 +47,7 @@
   text-wrap: balance;
 }
 
-/* 3 — the score: display wdth 90, 60px, gold */
+/* 3 — the score: display wdth 90, 60px, moss */
 .scoreblock {
   display: flex;
   flex-direction: column;

@@ -5,7 +5,7 @@ export type ScatterPoint = {
   x: number;
   /** 0–1 up the vertical axis. */
   y: number;
-  /** Draws violet — use for the cluster that carries the insight. */
+  /** Draws in signal blue — use for the cluster that carries the insight. */
   accent?: boolean;
 };
 

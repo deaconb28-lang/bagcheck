@@ -5,7 +5,7 @@ import styles from "./marketing.module.css";
  * The reusable data-driven idiom set arrives with M3 in components/idioms.
  */
 
-/** Entries by hour — the violet cluster after 2pm is where the losses live. */
+/** Entries by hour — the signal cluster after 2pm is where the losses live. */
 export function MiniScatter() {
   const dots = Array.from({ length: 60 }, (_, i) => {
     const x = 8 + ((i * 3.1) % 184);
@@ -37,7 +37,7 @@ export function MiniScatter() {
   );
 }
 
-/** Win rate by trades per session — violet from the sixth trade on. */
+/** Win rate by trades per session — signal from the sixth trade on. */
 export function WinRateBars() {
   const rates = [78, 80, 76, 74, 72, 58, 52, 47, 44];
   return (
@@ -60,7 +60,7 @@ export function WinRateBars() {
   );
 }
 
-/** Return by stated conviction, 1–5 — the top tag in gold. */
+/** Return by stated conviction, 1–5 — the top tag in moss. */
 export function ConvictionBars() {
   const heights = [18, 26, 38, 54, 88];
   return (
@@ -80,7 +80,7 @@ export function ConvictionBars() {
   );
 }
 
-/** Distribution over everyone in the same window — the user is the violet mark. */
+/** Distribution over everyone in the same window — the user is the signal mark. */
 export function DistributionWide() {
   let path = "M8 190 ";
   for (let x = 8; x <= 512; x += 8) {

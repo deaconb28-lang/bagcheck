@@ -78,7 +78,7 @@ test("empty history lands near neutral, no contributors", () => {
   assert.equal(result.contributors.length, 0);
 });
 
-test("patient long-term investor scores well with gold contributors", () => {
+test("patient long-term investor scores well with moss contributors", () => {
   const result = computeScore({
     date: AS_OF,
     baseline: "long-term",
@@ -89,8 +89,8 @@ test("patient long-term investor scores well with gold contributors", () => {
   const names = result.contributors.map((c) => c.name);
   assert.ok(names.includes("Held winners longer than losers"), names.join(", "));
   assert.ok(
-    result.contributors.some((c) => c.tone === "gold" && c.value > 0),
-    "expected a positive gold contributor",
+    result.contributors.some((c) => c.tone === "moss" && c.value > 0),
+    "expected a positive moss contributor",
   );
 });
 
@@ -100,7 +100,7 @@ test("a disciplined day trader at baseline is not penalized for volume", () => {
   assert.ok(result.score >= 75, `score ${result.score}`);
 });
 
-test("the same volume against a long-term baseline is penalized in violet", () => {
+test("the same volume against a long-term baseline is penalized in signal", () => {
   const active = computeScore({ date: AS_OF, baseline: "active", transactions: activeHistory() });
   const mismatched = computeScore({
     date: AS_OF,
@@ -113,9 +113,9 @@ test("the same volume against a long-term baseline is penalized in violet", () =
   );
   assert.ok(
     mismatched.contributors.some(
-      (c) => c.name === "Trade count above your baseline" && c.tone === "violet" && c.value < 0,
+      (c) => c.name === "Trade count above your baseline" && c.tone === "signal" && c.value < 0,
     ),
-    "expected violet over-baseline contributor",
+    "expected signal over-baseline contributor",
   );
 });
 

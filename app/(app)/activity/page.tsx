@@ -77,7 +77,7 @@ export default async function ActivityPage({
           eyebrow="Transactions on file"
           value={total}
           unit={kind ? `of kind ${kind}` : "all kinds"}
-          tone="gold"
+          tone="moss"
           tail={
             connection?.lastSyncAt
               ? `Last synced ${connection.lastSyncAt.toISOString().slice(0, 10)}, read-only.`

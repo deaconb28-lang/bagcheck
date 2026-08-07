@@ -15,7 +15,7 @@ const units = (value: number | null) =>
 
 /**
  * The ledger is record, not judgement — every row stays in ink. A sell is not
- * a loss, so clay never appears here, and a buy is not discipline, so gold
+ * a loss, so clay never appears here, and a buy is not discipline, so moss
  * doesn't either. The symbol carries the scan; the signed amount carries
  * direction.
  */

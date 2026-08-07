@@ -5,11 +5,11 @@
 
 /** What a single trading day says about the person. */
 export type DayState =
-  /** Inside their rules. Gold. */
+  /** Inside their rules. Moss. */
   | "kept"
-  /** Partly inside. Dimmed gold. */
+  /** Partly inside. Dimmed moss. */
   | "partial"
-  /** Exposure ran above their baseline. Violet. */
+  /** Exposure ran above their baseline. Signal. */
   | "exposed"
   /** Nothing scored that day. Track. */
   | "empty";

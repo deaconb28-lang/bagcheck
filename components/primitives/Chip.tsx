@@ -2,11 +2,11 @@ import styles from "./Chip.module.css";
 
 type ChipProps = {
   children: React.ReactNode;
-  tone?: "gold" | "violet";
+  tone?: "moss" | "signal";
 };
 
-export function Chip({ children, tone = "gold" }: ChipProps) {
-  const cls = tone === "violet" ? `${styles.chip} ${styles.violet}` : styles.chip;
+export function Chip({ children, tone = "moss" }: ChipProps) {
+  const cls = tone === "signal" ? `${styles.chip} ${styles.signal}` : styles.chip;
   return (
     <span className={cls}>
       <i className={styles.dot} aria-hidden="true">

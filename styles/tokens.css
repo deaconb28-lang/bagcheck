@@ -2,63 +2,119 @@
  * Bagcheck colour tokens — the single source of colour.
  * A palette hex anywhere else in the repo's source is a bug.
  *
- * Token names are legacy: --moss is gold, --signal is violet. Keep them.
- * Dark is :root; light is html[data-mode="light"].
+ * Two axes, and the token names now mean what they say: --moss is green
+ * (discipline), --signal is blue (exposure). Light is :root; dark is
+ * html[data-mode="dark"].
  */
 
 :root {
-  --bg: #0B0711;
-  --s1: #150F1F;
-  --ink: #EDE8F5;
-  --ink2: rgba(237, 232, 245, 0.6);
-  --ink3: rgba(237, 232, 245, 0.34);
-  --line: rgba(237, 232, 245, 0.09);
-  --line2: rgba(237, 232, 245, 0.17);
-  --track: rgba(237, 232, 245, 0.1);
-  --moss: #F2CE6B;
-  --moss-dim: rgba(242, 206, 107, 0.22);
-  --moss-tint: rgba(242, 206, 107, 0.12);
-  --on-moss: #241703;
-  --signal: #A78BFA;
-  --signal-tint: rgba(167, 139, 250, 0.12);
-  --loss: #D9756A;
-  --glass: rgba(21, 15, 31, 0.82);
-  --glass-solid: rgba(21, 15, 31, 0.86);
+  /*
+   * Iridescent white. The canvas is a pearl white pushed a few degrees
+   * green; cards rise to pure white; --iridescence is the only multi-hue
+   * wash in the system and only the page canvas may carry it.
+   */
+  --bg: #f5f9f6;
+  --s1: #ffffff;
+  --ink: #0a1512;
+  --ink2: rgba(10, 21, 18, 0.62);
+  /* .48, not the .38 the dark palette used — 10px mono eyebrows land at
+     2.5:1 on a white canvas at .38, and at 3.3:1 here. */
+  --ink3: rgba(10, 21, 18, 0.48);
+  --line: rgba(10, 21, 18, 0.1);
+  --line2: rgba(10, 21, 18, 0.18);
+  --track: rgba(10, 21, 18, 0.1);
+  /*
+   * Insets — a step *into* a card, for hover and selected states on controls
+   * that already sit on --s1. Cards are the brightest surface in light mode,
+   * so those states cannot lift; they have to sink.
+   */
+  --inset: rgba(10, 21, 18, 0.045);
+  --inset2: rgba(10, 21, 18, 0.085);
+  --moss: #1a6e47;
+  --moss-dim: rgba(26, 110, 71, 0.24);
+  --moss-tint: rgba(26, 110, 71, 0.1);
+  --on-moss: #ffffff;
+  --signal: #1b6cc4;
+  --signal-tint: rgba(27, 108, 196, 0.1);
+  --loss: #a8452f;
+  --glass: rgba(255, 255, 255, 0.82);
+  --glass-solid: rgba(255, 255, 255, 0.9);
+
+  /*
+   * The shimmer: the two brand axes blooming through the white field, so
+   * the iridescence is the palette rather than decoration. Alphas stay
+   * under .11 — data must read flat on top of it.
+   */
+  --iridescence:
+    radial-gradient(
+      120% 82% at 10% -6%,
+      rgba(26, 110, 71, 0.1),
+      rgba(26, 110, 71, 0) 62%
+    ),
+    radial-gradient(
+      104% 72% at 92% 4%,
+      rgba(27, 108, 196, 0.09),
+      rgba(27, 108, 196, 0) 60%
+    ),
+    radial-gradient(
+      96% 64% at 46% 104%,
+      rgba(64, 176, 158, 0.08),
+      rgba(64, 176, 158, 0) 58%
+    );
 
   /*
    * Dark specimen surfaces — share cards, Wrapped cards, and in-page app
-   * mocks. Aubergine-black in BOTH modes, per the brand rule; declared once
-   * and never overridden by html[data-mode="light"].
+   * mocks. Green-black in BOTH modes, per the brand rule; declared once
+   * and never overridden by html[data-mode="dark"].
    */
-  --share-bg: #0B0711;
-  --share-s1: #150F1F;
-  --share-ink: #EDE8F5;
-  --share-ink-dim: rgba(237, 232, 245, 0.48);
-  --share-line: rgba(237, 232, 245, 0.09);
-  --share-track: rgba(237, 232, 245, 0.13);
-  --share-gold: #F2CE6B;
-  --share-gold-tint: rgba(242, 206, 107, 0.12);
-  --share-violet: #A78BFA;
-  --share-violet-tint: rgba(167, 139, 250, 0.12);
-  --share-loss: #D9756A;
+  --share-bg: #080d0b;
+  --share-s1: #101714;
+  --share-ink: #e6eee9;
+  --share-ink-dim: rgba(230, 238, 233, 0.48);
+  --share-line: rgba(230, 238, 233, 0.09);
+  --share-track: rgba(230, 238, 233, 0.13);
+  --share-moss: #5fbe86;
+  --share-moss-tint: rgba(95, 190, 134, 0.12);
+  --share-signal: #5aa6f0;
+  --share-signal-tint: rgba(90, 166, 240, 0.12);
+  --share-loss: #d2705c;
 }
 
-html[data-mode="light"] {
-  --bg: #F4F1EA;
-  --s1: #FBFAF6;
-  --ink: #170F2B;
-  --ink2: rgba(23, 15, 43, 0.62);
-  --ink3: rgba(23, 15, 43, 0.38);
-  --line: rgba(23, 15, 43, 0.1);
-  --line2: rgba(23, 15, 43, 0.18);
-  --track: rgba(23, 15, 43, 0.12);
-  --moss: #9A7318;
-  --moss-dim: rgba(154, 115, 24, 0.22);
-  --moss-tint: rgba(154, 115, 24, 0.12);
-  --on-moss: #FBFAF6;
-  --signal: #6D4AD1;
-  --signal-tint: rgba(109, 74, 209, 0.12);
-  --loss: #B04A3C;
-  --glass: rgba(251, 250, 246, 0.86);
-  --glass-solid: rgba(251, 250, 246, 0.92);
+html[data-mode="dark"] {
+  --bg: #080d0b;
+  --s1: #101714;
+  --ink: #e6eee9;
+  --ink2: rgba(230, 238, 233, 0.6);
+  --ink3: rgba(230, 238, 233, 0.34);
+  --line: rgba(230, 238, 233, 0.09);
+  --line2: rgba(230, 238, 233, 0.17);
+  --track: rgba(230, 238, 233, 0.1);
+  --inset: rgba(230, 238, 233, 0.05);
+  --inset2: rgba(230, 238, 233, 0.1);
+  --moss: #5fbe86;
+  --moss-dim: rgba(95, 190, 134, 0.22);
+  --moss-tint: rgba(95, 190, 134, 0.12);
+  --on-moss: #04120b;
+  --signal: #5aa6f0;
+  --signal-tint: rgba(90, 166, 240, 0.12);
+  --loss: #d2705c;
+  --glass: rgba(16, 23, 20, 0.82);
+  --glass-solid: rgba(16, 23, 20, 0.86);
+
+  --iridescence:
+    radial-gradient(
+      120% 82% at 10% -6%,
+      rgba(95, 190, 134, 0.09),
+      rgba(95, 190, 134, 0) 62%
+    ),
+    radial-gradient(
+      104% 72% at 92% 4%,
+      rgba(90, 166, 240, 0.08),
+      rgba(90, 166, 240, 0) 60%
+    ),
+    radial-gradient(
+      96% 64% at 46% 104%,
+      rgba(64, 176, 158, 0.07),
+      rgba(64, 176, 158, 0) 58%
+    );
 }

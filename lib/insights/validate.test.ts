@@ -88,7 +88,7 @@ const FACTS: InsightFacts = {
   weekDelta: 3,
   components: { adherence: 80, consistency: 84, patience: 88, exposure: 70 },
   contributors: [
-    { name: "Held through the drawdown", value: 9, tone: "gold" },
+    { name: "Held through the drawdown", value: 9, tone: "moss" },
     { name: "Sold two winners early", value: -4, tone: "clay" },
   ],
   transactionCount: 412,

@@ -40,7 +40,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-mode="dark"
+      data-mode="light"
       className={`${display.variable} ${body.variable} ${mono.variable}`}
     >
       <body>{children}</body>

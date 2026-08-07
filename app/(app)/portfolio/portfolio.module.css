@@ -39,7 +39,7 @@
   letter-spacing: 0.1em;
 }
 
-.delta[data-tone="gold"] {
+.delta[data-tone="moss"] {
   color: var(--moss);
 }
 
@@ -121,7 +121,7 @@
   text-align: right;
 }
 
-.pnl[data-tone="gold"] {
+.pnl[data-tone="moss"] {
   color: var(--moss);
 }
 

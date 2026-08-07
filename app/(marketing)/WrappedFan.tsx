@@ -21,7 +21,7 @@ export function WrappedFan() {
           label="Bagcheck · archetype"
           value="The Holder"
           tail="long holds, quiet drawdowns, contributions on schedule"
-          accent="violet"
+          accent="signal"
           textValue
           seed={2}
         />

@@ -8,7 +8,7 @@ type StatProps = {
   eyebrow: string;
   value: number | string;
   unit?: string;
-  tone?: "ink" | "gold" | "violet";
+  tone?: "ink" | "moss" | "signal";
   tail?: string;
 };
 

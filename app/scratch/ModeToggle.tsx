@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import styles from "./ModeToggle.module.css";
 
-const MODES = ["dark", "light"] as const;
+const MODES = ["light", "dark"] as const;
 type Mode = (typeof MODES)[number];
 
 export function ModeToggle() {
-  const [mode, setMode] = useState<Mode>("dark");
+  const [mode, setMode] = useState<Mode>("light");
 
-  // The landing sets light mode on <html>; reflect whatever is active.
+  // Light is the default on <html>; reflect whatever is actually active.
   useEffect(() => {
     const current = document.documentElement.dataset.mode;
     if (current === "light" || current === "dark") {

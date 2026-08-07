@@ -97,8 +97,8 @@
   text-align: right;
 }
 
-.recurringVal[data-tone="gold"] { color: var(--moss); }
-.recurringVal[data-tone="violet"] { color: var(--signal); }
+.recurringVal[data-tone="moss"] { color: var(--moss); }
+.recurringVal[data-tone="signal"] { color: var(--signal); }
 .recurringVal[data-tone="clay"] { color: var(--loss); }
 
 .railBlock {

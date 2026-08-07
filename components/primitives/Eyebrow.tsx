@@ -1,6 +1,6 @@
 type EyebrowProps = {
   children: React.ReactNode;
-  tone?: "ink" | "gold" | "violet";
+  tone?: "ink" | "moss" | "signal";
   as?: "div" | "span";
 };
 

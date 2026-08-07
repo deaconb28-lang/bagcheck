@@ -4,8 +4,8 @@ type ShareCardProps = {
   label: string;
   value: string;
   tail: string;
-  /** Value colour — gold for behaviour, violet for archetype/comparison. */
-  accent?: "gold" | "violet";
+  /** Value colour — moss for behaviour, signal for archetype/comparison. */
+  accent?: "moss" | "signal";
   /** Render the value at display-text size instead of numeral size. */
   textValue?: boolean;
   /** Varies the deterministic day strip between cards. */
@@ -15,18 +15,18 @@ type ShareCardProps = {
 const cell = (i: number, seed: number) =>
   Math.sin(i * (1.3 + seed * 0.4)) + Math.cos(i * 0.61);
 
-/** A rendered share card — aubergine in both modes via --share-* tokens. */
+/** A rendered share card — green-black in both modes via --share-* tokens. */
 export function ShareCard({
   label,
   value,
   tail,
-  accent = "gold",
+  accent = "moss",
   textValue = false,
   seed = 0,
 }: ShareCardProps) {
   const valueCls = [
     textValue ? styles.shareVText : styles.shareV,
-    accent === "violet" ? styles.shareAccentViolet : "",
+    accent === "signal" ? styles.shareAccentSignal : "",
   ]
     .filter(Boolean)
     .join(" ");

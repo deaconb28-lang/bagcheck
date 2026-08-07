@@ -72,7 +72,7 @@ export default async function LandingPage() {
           </p>
           <DayStrip />
           <p className={styles.stripCap}>
-            Sixty-three trading days — gold stayed inside your rules, violet
+            Sixty-three trading days — green stayed inside your rules, blue
             ran above your exposure baseline.
           </p>
           <div className={styles.heroCtas}>
@@ -92,12 +92,12 @@ export default async function LandingPage() {
         <div className={`${styles.wrap} ${styles.scoreGrid}`}>
           <TodayMock />
           <div className={styles.scoreCopy}>
-            <Eyebrow tone="gold">The score</Eyebrow>
+            <Eyebrow tone="moss">The score</Eyebrow>
             <h2 className={`disp ${styles.h2}`}>One number, decomposed</h2>
             <p className={styles.sectionLede}>
               Every morning opens on a sentence about your behaviour, the
-              Discipline score, and exactly what moved it — gold where you
-              held the line, violet where exposure ran, clay where it cost
+              Discipline score, and exactly what moved it — green where you
+              held the line, blue where exposure ran, clay where it cost
               you.
             </p>
             <p className={styles.baseline}>
@@ -115,7 +115,7 @@ export default async function LandingPage() {
       <section className={styles.section}>
         <div className={`${styles.wrap} ${styles.readsIn}`}>
           <div className={styles.readsHead}>
-            <Eyebrow tone="gold">The engine</Eyebrow>
+            <Eyebrow tone="moss">The engine</Eyebrow>
             <h2 className={`disp ${styles.h2}`}>Patterns your P&amp;L hides</h2>
           </div>
           <div className={styles.corrCols}>
@@ -152,17 +152,17 @@ export default async function LandingPage() {
       <section className={styles.section}>
         <div className={`${styles.wrap} ${styles.segGrid}`}>
           <div className={styles.segCopy}>
-            <Eyebrow tone="violet">Segments</Eyebrow>
+            <Eyebrow tone="signal">Segments</Eyebrow>
             <h2 className={`disp ${styles.h2}`}>Every selloff becomes a leaderboard</h2>
             <p className={styles.sectionLede}>
               Market events turn into shared windows — everyone invested
               through the same drawdown, scored on how they handled it,
               like-for-like.
             </p>
-            <Chip tone="violet">Top 12% — March selloff</Chip>
+            <Chip tone="signal">Top 12% — March selloff</Chip>
             <p className={styles.baseline}>
               A new segment mints itself with every notable market event. You
-              are the violet mark.
+              are the blue mark.
             </p>
           </div>
           <div className={styles.segViz}>
@@ -177,7 +177,7 @@ export default async function LandingPage() {
       <section className={styles.section} id="wrapped">
         <div className={`${styles.wrap} ${styles.wrappedIn}`}>
           <div className={styles.wrappedHead}>
-            <Eyebrow tone="gold">Wrapped</Eyebrow>
+            <Eyebrow tone="moss">Wrapped</Eyebrow>
             <h2 className={`disp ${styles.h2}`}>A year of receipts</h2>
             <p className={styles.sectionLede}>
               Because your history arrives in full, your first Wrapped renders
@@ -243,7 +243,7 @@ export default async function LandingPage() {
       <section className={styles.section} id="pricing">
         <div className={`${styles.wrap} ${styles.readsIn}`}>
           <div className={styles.readsHead}>
-            <Eyebrow tone="gold">Pricing</Eyebrow>
+            <Eyebrow tone="moss">Pricing</Eyebrow>
             <h2 className={`disp ${styles.h2}`}>Sharing is never paywalled</h2>
             <p className={styles.sectionLede}>
               A free user can post every achievement they earn, at full

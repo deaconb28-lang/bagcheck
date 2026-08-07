@@ -33,7 +33,7 @@ export default function ScratchPage() {
     <main className={styles.page}>
       <header className={styles.head}>
         <div className={styles.headText}>
-          <Eyebrow tone="gold">Scratch — primitives</Eyebrow>
+          <Eyebrow tone="moss">Scratch — primitives</Eyebrow>
           <h1 className={`disp ${styles.title}`}>Six primitives, both modes</h1>
         </div>
         <ModeToggle />
@@ -44,8 +44,8 @@ export default function ScratchPage() {
         <Card tight>
           <div className={styles.stack12}>
             <Eyebrow>Q3 2026 · 63 sessions · average hold · read-only</Eyebrow>
-            <Eyebrow tone="gold">Gold — discipline</Eyebrow>
-            <Eyebrow tone="violet">Violet — exposure, percentile</Eyebrow>
+            <Eyebrow tone="moss">Moss — discipline</Eyebrow>
+            <Eyebrow tone="signal">Signal — exposure, percentile</Eyebrow>
           </div>
         </Card>
       </section>
@@ -58,7 +58,7 @@ export default function ScratchPage() {
               eyebrow="Average hold — winners"
               value={41}
               unit="days"
-              tone="gold"
+              tone="moss"
               tail="Your losers: 6. You hold what’s working almost seven times longer."
             />
           </Card>
@@ -75,7 +75,7 @@ export default function ScratchPage() {
               eyebrow="Patience percentile"
               value={94}
               unit="th"
-              tone="violet"
+              tone="signal"
               tail="Among everyone invested through the same drawdown."
             />
           </Card>
@@ -101,9 +101,9 @@ export default function ScratchPage() {
             <div className={styles.stack20}>
               <Eyebrow>What moved your score</Eyebrow>
               <div className={styles.rows}>
-                <Row name="Held through the drawdown" fill={84} value="+9" tone="gold" />
-                <Row name="Contributions on schedule" fill={62} value="+5" tone="gold" />
-                <Row name="Exposure above your baseline" fill={44} value="−2" tone="violet" />
+                <Row name="Held through the drawdown" fill={84} value="+9" tone="moss" />
+                <Row name="Contributions on schedule" fill={62} value="+5" tone="moss" />
+                <Row name="Exposure above your baseline" fill={44} value="−2" tone="signal" />
                 <Row name="Sold two winners early" fill={26} value="−4" tone="clay" />
               </div>
             </div>
@@ -136,8 +136,8 @@ export default function ScratchPage() {
         <div className={styles.grid3}>
           <Card tight>
             <div className={styles.stack12}>
-              <Eyebrow tone="violet">Distribution — your marker</Eyebrow>
-              <Distribution percentile={86} label="You are the violet mark." />
+              <Eyebrow tone="signal">Distribution — your marker</Eyebrow>
+              <Distribution percentile={86} label="You are the blue mark." />
             </div>
           </Card>
           <Card tight>
@@ -170,7 +170,7 @@ export default function ScratchPage() {
               Open the ledger
             </Button>
             <Chip>41-day streak</Chip>
-            <Chip tone="violet">Top 6% patience</Chip>
+            <Chip tone="signal">Top 6% patience</Chip>
           </div>
         </Card>
       </section>

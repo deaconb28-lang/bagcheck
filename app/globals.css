@@ -29,6 +29,22 @@ body {
   text-wrap: pretty;
 }
 
+/*
+ * The iridescence. Fixed rather than scrolled so it reads as a property of
+ * the surface the app sits on, not a graphic in the page — and painted on a
+ * pseudo-element rather than `background-attachment: fixed`, which forces a
+ * repaint per scroll frame on mobile. This is the one multi-hue fill in the
+ * system; nothing above it may carry another.
+ */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--iridescence);
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -57,11 +73,11 @@ button {
   color: var(--ink3);
 }
 
-.eyebrow[data-tone="gold"] {
+.eyebrow[data-tone="moss"] {
   color: var(--moss);
 }
 
-.eyebrow[data-tone="violet"] {
+.eyebrow[data-tone="signal"] {
   color: var(--signal);
 }
 

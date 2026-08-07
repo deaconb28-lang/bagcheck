@@ -1,14 +1,14 @@
 import styles from "./idioms.module.css";
 
 type DistributionProps = {
-  /** Where the person sits, 0–100. Drawn as the violet mark on the tail. */
+  /** Where the person sits, 0–100. Drawn as the signal mark on the tail. */
   percentile: number;
   label?: string;
 };
 
 /**
  * Everyone who lived through the same window, with the person marked.
- * Violet, because comparison against other people is always violet.
+ * Signal blue, because comparison against other people is always blue.
  */
 export function Distribution({ percentile, label }: DistributionProps) {
   const w = 200;
