@@ -1,6 +1,6 @@
 import { computeScore, inferBaseline } from "@/lib/score";
 import type { ScoreResult, TxnLite } from "@/lib/score";
-import { getCollections } from "./collections";
+import { ensureIndexes, getCollections } from "./collections";
 
 function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
@@ -12,6 +12,9 @@ function todayISO(): string {
  * connection wins; otherwise the baseline is inferred from cadence.
  */
 export async function scoreUser(userId: string, date = todayISO()): Promise<ScoreResult> {
+  // The unique {userId, date} index must exist before the upsert below,
+  // which may run before any sync has created it.
+  await ensureIndexes();
   const { connections, transactions, scores } = await getCollections();
 
   const [conn, txns] = await Promise.all([

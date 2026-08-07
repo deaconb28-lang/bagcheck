@@ -1,15 +1,7 @@
-.page {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 56px 34px 96px;
+.head {
   display: flex;
   flex-direction: column;
-  gap: 26px;
-}
-
-.h1 {
-  font-size: 29px;
-  max-width: 11ch;
+  gap: 20px;
 }
 
 .sentence {
@@ -35,7 +27,7 @@
   flex-direction: column;
   gap: 18px;
   border-top: 1px solid var(--line);
-  padding-top: 24px;
+  padding-top: 26px;
 }
 
 .rows {
@@ -51,21 +43,14 @@
   max-width: 46ch;
 }
 
-.actions {
+.railBlock {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.link {
-  font-family: var(--font-mono), monospace;
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink3);
-}
-
-.link:hover {
-  color: var(--ink);
+.railBody {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.5;
 }

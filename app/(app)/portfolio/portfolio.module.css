@@ -1,0 +1,167 @@
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.totalLine {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.total {
+  font-size: 52px;
+}
+
+.delta {
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+}
+
+.delta[data-tone="gold"] {
+  color: var(--moss);
+}
+
+.delta[data-tone="clay"] {
+  color: var(--loss);
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  border-top: 1px solid var(--line);
+  padding-top: 26px;
+}
+
+.curve {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.holdings {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.holding {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.holdingName {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.symbol {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.desc {
+  font-size: 12.5px;
+  color: var(--ink3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 28ch;
+}
+
+.holdingNums {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  font-family: var(--font-mono), monospace;
+  font-size: 11.5px;
+}
+
+.units {
+  color: var(--ink3);
+}
+
+.value {
+  color: var(--ink);
+  min-width: 72px;
+  text-align: right;
+}
+
+.pnl {
+  color: var(--ink3);
+  min-width: 56px;
+  text-align: right;
+}
+
+.pnl[data-tone="gold"] {
+  color: var(--moss);
+}
+
+.pnl[data-tone="clay"] {
+  color: var(--loss);
+}
+
+.railBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.railBody {
+  font-size: 13px;
+  color: var(--ink2);
+}
+
+.accountList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.account {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.accountName {
+  font-size: 13.5px;
+}
+
+.accountMeta {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink3);
+}
+
+@media (max-width: 560px) {
+  .holding {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .holdingNums {
+    gap: 14px;
+  }
+
+  .value,
+  .pnl {
+    min-width: 0;
+    text-align: left;
+  }
+}

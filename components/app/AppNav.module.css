@@ -1,0 +1,129 @@
+/* Left icon rail — desktop. */
+
+.rail {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 34px;
+  padding: 26px 0;
+  border-right: 1px solid var(--line);
+  width: 76px;
+  flex: 0 0 76px;
+}
+
+.railMark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  color: var(--ink);
+}
+
+.railList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.railLink {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  color: var(--ink3);
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.railLink:hover {
+  color: var(--ink2);
+  background: var(--s1);
+}
+
+.railLink[data-active] {
+  color: var(--moss);
+  background: var(--moss-tint);
+}
+
+/* Label appears on hover and on keyboard focus. */
+.railTip {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-family: var(--font-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink2);
+  background: var(--glass-solid);
+  border: 1px solid var(--line2);
+  border-radius: 8px;
+  padding: 6px 9px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 20;
+}
+
+.railLink:hover .railTip,
+.railLink:focus-visible .railTip {
+  opacity: 1;
+}
+
+/* Bottom tab bar — mobile. */
+
+.tabs {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .rail {
+    display: none;
+  }
+
+  .tabs {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .tab {
+    min-height: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: var(--ink3);
+    padding: 8px 4px;
+  }
+
+  .tab[data-active] {
+    color: var(--moss);
+  }
+
+  .tabLabel {
+    font-family: var(--font-mono), monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+}

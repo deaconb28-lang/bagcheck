@@ -19,10 +19,13 @@ async function connectAction() {
     redirect("/debug");
   }
   if (await getUserId()) {
-    redirect("/debug");
+    redirect("/today");
   }
-  await signIn("google", { redirectTo: "/debug" });
+  await signIn("google", { redirectTo: "/today" });
 }
+
+// The CTA label depends on the session, so this page is never prerendered.
+export const dynamic = "force-dynamic";
 
 export default async function LandingPage() {
   const signedIn = Boolean(await getUserId());

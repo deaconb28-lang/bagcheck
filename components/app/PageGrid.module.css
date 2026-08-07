@@ -1,0 +1,46 @@
+.grid {
+  display: grid;
+  grid-template-columns: 640px 300px;
+  gap: 40px;
+  justify-content: center;
+  align-items: start;
+  padding: 48px 34px 96px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  min-width: 0;
+}
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 48px;
+}
+
+/* No rail: keep the column in the same place rather than recentering. */
+.grid:not(:has(.rail)) {
+  grid-template-columns: 640px;
+}
+
+@media (max-width: 1180px) {
+  .grid,
+  .grid:not(:has(.rail)) {
+    grid-template-columns: minmax(0, 640px);
+  }
+
+  .rail {
+    position: static;
+  }
+}
+
+@media (max-width: 899px) {
+  .grid {
+    padding: 28px 20px 108px;
+    gap: 24px;
+  }
+}

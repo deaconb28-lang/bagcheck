@@ -1,0 +1,26 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 40px 0;
+}
+
+.title {
+  font-size: 29px;
+  max-width: 13ch;
+}
+
+.body {
+  font-size: 15px;
+  color: var(--ink2);
+  line-height: 1.55;
+  max-width: 44ch;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}

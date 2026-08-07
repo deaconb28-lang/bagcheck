@@ -9,6 +9,7 @@ import type {
 } from "@/lib/db";
 import { isSnapTradeConfigured } from "@/lib/snaptrade";
 import { Button, Eyebrow } from "@/components/primitives";
+import { ModeScope } from "@/components/app/ModeScope";
 import { ScoreButton } from "./ScoreButton";
 import { SyncButton } from "./SyncButton";
 import styles from "./debug.module.css";
@@ -94,9 +95,13 @@ export default async function DebugPage() {
 
   return (
     <main className={styles.page}>
+      <ModeScope mode="dark" />
       <header className={styles.head}>
         <Eyebrow>Bagcheck · debug · M1 ledger</Eyebrow>
         <h1 className={`disp ${styles.title}`}>Raw parsed history</h1>
+        <Button href="/today" ghost>
+          Back to the app
+        </Button>
       </header>
 
       <section className={styles.section}>
@@ -106,7 +111,9 @@ export default async function DebugPage() {
             const present = Boolean(process.env[key]);
             return (
               <div key={key} className={styles.envRow}>
-                <span className={present ? "ok" : "missing"}>{present ? "SET" : "———"}</span>
+                <span className={present ? styles.ok : styles.missing}>
+                  {present ? "SET" : "———"}
+                </span>
                 <span>{key}</span>
               </div>
             );

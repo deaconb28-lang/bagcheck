@@ -1,3 +1,5 @@
+import { ModeScope } from "@/components/app/ModeScope";
+
 export default function MarketingLayout({
   children,
 }: {
@@ -5,12 +7,14 @@ export default function MarketingLayout({
 }) {
   return (
     <>
-      {/* Marketing renders in light mode; runs before paint to avoid a flash. */}
+      {/* Set before paint so a direct load never flashes dark. */}
       <script
         dangerouslySetInnerHTML={{
           __html: 'document.documentElement.dataset.mode="light";',
         }}
       />
+      {/* Re-asserts the mode when arriving via client-side navigation. */}
+      <ModeScope mode="light" />
       {children}
     </>
   );
