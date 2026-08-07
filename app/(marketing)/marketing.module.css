@@ -72,8 +72,20 @@
 /* Hero — centered */
 
 .hero {
+  position: relative;
+  isolation: isolate;
   padding: 92px 0 104px;
   border-bottom: 1px solid var(--line);
+}
+
+/* The one gradient in the product, and only here. */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--iridescence);
 }
 
 .heroIn {
@@ -138,8 +150,8 @@
 .stripBar {
   display: block;
   width: 4px;
-  border-radius: 99px;
-  background: var(--track);
+  border-radius: 999px;
+  background: var(--line2);
 }
 
 .stripBarOn {

@@ -11,7 +11,8 @@ Reference docs (read before any UI work — the design system is authoritative o
 ## Colour
 
 - `styles/tokens.css` is the single source of colour. A palette hex anywhere else in `app/`, `components/`, `lib/`, or `styles/` is a bug. Always `var(--*)`. (`docs/` is imported reference material and exempt.)
-- Paper-and-ink, deliberately flat and matte. Canvas `--bg`, cards `--s1` white, nested panels `--sunken`, chip and track fills `--inset`.
+- Paper-and-ink, deliberately flat and matte. Canvas `--bg`, cards `--s1` white, nested panels `--sunken`, chip fills `--inset`.
+- `--track` (meter grooves, empty data cells) is darker than the handoff's chip fill on purpose: at `#F3EFE9` a track is invisible against the paper canvas, which is where the marketing idioms sit.
 - Light is `:root`; `html[data-mode="dark"]` is a derived ink variant the handoff does not specify — build against light.
 - `--moss` (deep forest) means discipline. `--signal` (slate blue) means exposure, comparison, percentile. `--loss` marks negative P&L and nothing else — a muted terracotta, because the system adds no red. Warnings, errors, and empty states stay in ink on `--sunken`.
 - **`--accent` is reserved.** It means "Bagcheck did this on its own" — the nightly score and the written daily insight. Never a hover fill, never a section heading, never decoration. `--accent` is a fill and stroke colour only; accent *text* is `--accent-deep`.
@@ -43,7 +44,7 @@ Reference docs (read before any UI work — the design system is authoritative o
 - Spacing: 30px content padding, 22px between major cards, 18px between cards in a row, 56px at the foot. Card padding 24–26 standard, 28–30 hero, 16–22 compact.
 - 1px hairlines (`--line`; `--line-light` for row dividers inside cards).
 - **Elevation is for lift only, never style**: `--lift` on every resting card, `--lift-hero` on hero panels. No glass, no blur, no backdrop-filter, no bevels, no inner shadows.
-- **No decorative gradients.** Nothing in the product is iridescent or glossy.
+- **No decorative gradients in the product.** One exception, marketing only: `--iridescence`, a faint moss/signal wash on the landing hero, painted on `.hero::before` and faded out before the section edge. It lives where the moss-filled button already does. No app surface carries a gradient.
 - 44px hit targets on mobile; interactive rows ≥40px. Err toward whitespace.
 
 ## Data idioms
