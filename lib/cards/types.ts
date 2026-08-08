@@ -2,7 +2,7 @@ import type { RoundTrip, Streak } from "@/lib/score";
 
 export type { RoundTrip, Streak };
 
-export type CardKind = "score" | "hold" | "quarter" | "streak";
+export type CardKind = "score" | "hold" | "quarter" | "streak" | "wrapped";
 
 /** The minimal score shape a card needs — keeps this layer free of Mongo. */
 export interface ScoreDocLite {

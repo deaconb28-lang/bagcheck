@@ -1,3 +1,4 @@
+import type { Binary } from "mongodb";
 import type { AccountUniversalActivity, Position } from "snaptrade-typescript-sdk";
 import type { Contributor, ScoreComponents, StyleBaseline } from "@/lib/score";
 
@@ -106,6 +107,12 @@ export interface CardDoc {
   rarity: "rare" | null;
   /** The instrument the card is about, when it is about one. */
   symbol: string | null;
+  /**
+   * Generated backdrop for Wrapped cards, stored as PNG bytes so the card
+   * looks identical on every open. Null on every other kind.
+   */
+  art: Binary | null;
+  artModel: string | null;
   mintedAt: Date;
   url: string | null;
 }

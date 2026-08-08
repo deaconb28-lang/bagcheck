@@ -11,6 +11,8 @@ export type { CardSpec, CardKind, ScoreDocLite } from "./types";
  * place rarity is decided and nothing about billing reaches them.
  */
 
+/** Wrapped is annual: it needs most of a year of scored days behind it. */
+const WRAPPED_DAYS = 180;
 /** A quarter with no sells into a losing week is scarce. */
 const RARE_QUARTER_DAYS = 60;
 /** Whoop-scale: a hold measured in years, not weeks. */
@@ -44,6 +46,19 @@ export function mintable(input: {
       tail: `discipline on ${score.date}, scored against your own baseline`,
       tone: "moss",
       rarity: score.score >= RARE_SCORE ? "rare" : null,
+      symbol: null,
+    });
+  }
+
+  if (scoredDays >= WRAPPED_DAYS) {
+    out.push({
+      kind: "wrapped",
+      label: `Bagcheck · ${new Date().getUTCFullYear()}`,
+      value: String(scoredDays),
+      tail: "scored days, and what you did on them",
+      tone: "moss",
+      // Wrapped is scarce by construction — a year of history earns it.
+      rarity: "rare",
       symbol: null,
     });
   }

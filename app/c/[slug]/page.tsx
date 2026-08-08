@@ -41,6 +41,9 @@ export default async function CardPage({ params }: Props) {
     <main className={styles.page}>
       <div className={styles.inner}>
         <article className={styles.card} data-tone={card.tone}>
+          {card.artModel ? (
+            <img className={styles.art} src={`/api/card/${slug}/art`} alt="" aria-hidden="true" />
+          ) : null}
           <div className={styles.top}>
             <span className={styles.mark}>
               <Logo symbol={card.symbol} size={30} />

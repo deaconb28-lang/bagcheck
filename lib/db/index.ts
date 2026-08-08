@@ -1,6 +1,6 @@
 export { dbName, getMongoClient, isDbConfigured } from "./client";
 export { ensureIndexes, getCollections, getDb } from "./collections";
-export { cardBySlug, cardsFor, mintCard } from "./cards";
+export { cardArt, cardBySlug, cardsFor, mintCard } from "./cards";
 export { factsFrom, getDailyInsight } from "./insights";
 export { getPulse, isValidAnswer, questionFor, savePulse } from "./pulse";
 export type { PulseQuestion } from "./pulse";

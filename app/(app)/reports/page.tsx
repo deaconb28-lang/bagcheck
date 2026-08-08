@@ -7,6 +7,7 @@ import { DayGrid, SegmentRing } from "@/components/idioms";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { PageHeader } from "@/components/app/PageHeader";
+import { ShareButton } from "@/components/app/ShareButton";
 import { SignInCta } from "@/components/app/SignInCta";
 import styles from "./reports.module.css";
 
@@ -146,9 +147,17 @@ export default async function ReportsPage() {
         <div className={styles.block}>
           <h2 className={`disp ${styles.h2}`}>The written report lands at the quarter</h2>
           <p className={styles.body}>
-            The quarterly write-up and the Wrapped archive assemble here once a full
-            quarter is behind you. You have {scores.length} of {QUARTER} days.
+            The quarterly write-up assembles here once a full quarter is behind
+            you. You have {scores.length} of {QUARTER} days.
           </p>
+          {scores.length >= 180 ? (
+            <ShareButton kind="wrapped" label="Make your Wrapped card" />
+          ) : (
+            <p className={styles.body}>
+              Wrapped needs most of a year behind it — {scores.length} of 180
+              scored days so far.
+            </p>
+          )}
         </div>
       </Card>
     </PageGrid>

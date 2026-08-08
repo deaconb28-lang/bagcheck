@@ -4,6 +4,32 @@ import { getCollections, isDbConfigured, loadAppData, mintCard } from "@/lib/db"
 import { activeStreaks, buildRoundTrips } from "@/lib/score";
 import type { TxnLite } from "@/lib/score";
 import { mintable } from "@/lib/cards";
+import { generateWrappedArt } from "@/lib/wrapped";
+
+import type { ScoreComponents } from "@/lib/score";
+
+type ScoreLike = { components: ScoreComponents } | null;
+
+/** The year in a couple of words, read from the strongest component. */
+function dominantOf(score: ScoreLike): "adherence" | "consistency" | "patience" | "exposure" {
+  if (!score) return "consistency";
+  const entries = Object.entries(score.components) as Array<[string, number]>;
+  const [key] = entries.sort((a, b) => b[1] - a[1])[0] ?? [];
+  return key === "adherence" || key === "patience" || key === "exposure" ? key : "consistency";
+}
+
+function archetypeOf(score: ScoreLike): string {
+  switch (dominantOf(score)) {
+    case "patience":
+      return "Patient accumulator";
+    case "adherence":
+      return "Rule keeper";
+    case "exposure":
+      return "Active trader";
+    default:
+      return "Steady hand";
+  }
+}
 
 /**
  * Mint a card the user has actually earned.
@@ -58,6 +84,27 @@ export async function POST(req: Request) {
     );
   }
 
-  const slug = await mintCard(userId, spec, latest?.date ?? new Date().toISOString().slice(0, 10));
-  return NextResponse.json({ slug, url: `/c/${slug}` });
+  /*
+   * Wrapped gets a generated backdrop; every other kind is the flat ink card.
+   * Generation is best-effort and never blocks the mint — a Wrapped card
+   * without art is still a Wrapped card.
+   */
+  const art =
+    spec.kind === "wrapped"
+      ? await generateWrappedArt({
+          year: new Date().getUTCFullYear(),
+          archetype: archetypeOf(latest),
+          dominant: dominantOf(latest),
+          scoredDays: scores.length,
+          longestHold: trips.reduce((m, t) => Math.max(m, t.holdDays), 0) || null,
+        })
+      : null;
+
+  const slug = await mintCard(
+    userId,
+    spec,
+    latest?.date ?? new Date().toISOString().slice(0, 10),
+    art,
+  );
+  return NextResponse.json({ slug, url: `/c/${slug}`, art: Boolean(art) });
 }

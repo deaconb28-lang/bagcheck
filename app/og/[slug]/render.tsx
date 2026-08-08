@@ -43,6 +43,8 @@ async function displayFont(): Promise<ArrayBuffer | null> {
 
 export interface CardLike {
   slug: string;
+  /** Wrapped backdrop bytes, when the card has generated art. */
+  art?: Buffer | null;
   label: string;
   value: string;
   tail: string;
@@ -99,6 +101,9 @@ export async function renderCard(card: CardLike, cells: number[]) {
   const accent = card.tone === "signal" ? SIGNAL : MOSS;
   const font = await displayFont();
   const tile = await logoTile(card.symbol, 56);
+  const art = card.art
+    ? `data:image/png;base64,${Buffer.from(card.art).toString("base64")}`
+    : null;
   // A long archetype name cannot be set at numeral size.
   const big = card.value.length <= 4;
   return new ImageResponse(
@@ -110,12 +115,22 @@ export async function renderCard(card: CardLike, cells: number[]) {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
+          position: "relative",
           background: INK,
           color: ON_INK,
           padding: "64px 72px",
           fontFamily: font ? "Outfit" : "sans-serif",
         }}
       >
+        {art ? (
+          <img
+            src={art}
+            width={1200}
+            height={630}
+            style={{ position: "absolute", top: 0, left: 0, opacity: 0.55 }}
+          />
+        ) : null}
+
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
             {tile}
