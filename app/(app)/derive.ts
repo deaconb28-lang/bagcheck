@@ -130,3 +130,25 @@ export const money = (value: number | null, currency = "USD", digits = 0) =>
 
 export const signedMoney = (value: number | null, currency = "USD") =>
   value == null ? "—" : `${value >= 0 ? "+" : "−"}${money(Math.abs(value), currency)}`;
+
+/**
+ * Sessions per ISO week, oldest first — the cadence card's series.
+ *
+ * Counts sessions that closed something, because that is what a session is
+ * in a realised-P&L ledger. A week with no closed round trip is a zero, not
+ * a gap: the point of the card is how little the rhythm moves, and dropping
+ * the quiet weeks would flatter it.
+ */
+export function weeklySessions(dailyPnl: Array<{ date: string }>): number[] {
+  const byWeek = new Map<string, number>();
+  for (const day of dailyPnl) {
+    const d = new Date(`${day.date}T00:00:00Z`);
+    if (Number.isNaN(d.getTime())) continue;
+    // Monday-anchored key, so a week is a week rather than a rolling seven.
+    const monday = new Date(d);
+    monday.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7));
+    const key = monday.toISOString().slice(0, 10);
+    byWeek.set(key, (byWeek.get(key) ?? 0) + 1);
+  }
+  return [...byWeek.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([, n]) => n);
+}

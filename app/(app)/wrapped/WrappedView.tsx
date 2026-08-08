@@ -8,6 +8,7 @@ import { ShareButton } from "@/components/app/ShareButton";
 import { Locked } from "@/components/app/Locked";
 import { StoryViewer } from "@/components/cards/StoryViewer";
 import { WrappedCard } from "@/components/cards/WrappedCard";
+import type { CardSpec } from "@/lib/cards/kinds";
 import type { StoryCard } from "@/components/cards/StoryViewer";
 import type { Tier } from "@/lib/tiers";
 import screen from "../screen.module.css";
@@ -20,8 +21,8 @@ export type WrappedViewProps = {
   archetype: Archetype;
   scoredDays: number;
   transactionCount: number;
-  /** Realised P&L per session — the receipt strip on the card. */
-  strip: number[];
+  /** Every card this history has earned, strongest statement first. */
+  cards: CardSpec[];
   winnerHold: number | null;
   loserHold: number | null;
   bestDecision: Trip;
@@ -51,7 +52,7 @@ export function WrappedView(props: WrappedViewProps) {
     archetype,
     scoredDays,
     transactionCount,
-    strip,
+    cards,
     winnerHold,
     loserHold,
     bestDecision,
@@ -173,37 +174,17 @@ export function WrappedView(props: WrappedViewProps) {
                 */}
               <div className={styles.cardSlot}>
                 <WrappedCard
-                  eyebrow={`Bagcheck · ${year}`}
-                  kicker="Your"
-                  headline={archetype.name.replace(/^The /, "")}
-                  lede={archetype.line}
-                  metricLabel="Sessions scored"
-                  value={String(scoredDays)}
-                  unit="days"
-                  chip={holdRatio ? `Winners held ${holdRatio}× longer` : null}
-                  body={{
-                    kind: "beats",
-                    beats: [
-                      {
-                        label: "Transactions read",
-                        detail: `${transactionCount.toLocaleString("en-US")}, none of them typed`,
-                      },
-                      { label: "Average hold, winners", detail: `${days(winnerHold)} days` },
-                      ...(bestDecision
-                        ? [
-                            {
-                              label: "Best single decision",
-                              detail: `${bestDecision.symbol}, ${usd(bestDecision.pnl)}`,
-                            },
-                          ]
-                        : []),
-                    ],
-                  }}
+                  eyebrow={cards[0].eyebrow}
+                  kicker={cards[0].kicker}
+                  headline={cards[0].headline}
+                  lede={cards[0].lede}
+                  body={cards[0].body}
                   slug={null}
                   provenance="Read from your brokerage. Read-only, permanently."
-                  hue={archetype.tone === "moss" ? "moss" : "azure"}
+                  hue={cards[0].hue}
+                  rarity={cards[0].rarity}
                 />
-                <ShareButton type="wrapped" label="your year" size={44} />
+                <ShareButton type={cards[0].kind} label="this card" size={44} />
               </div>
             </section>
 

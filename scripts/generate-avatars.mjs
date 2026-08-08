@@ -45,49 +45,44 @@ const MODEL = process.env.OPENAI_IMAGE_MODEL || "gpt-image-2";
 const SIZE = 256;
 
 /**
- * The margin left around the form after trimming, as a fraction of its
- * longest side.
+ * How much of the generated frame to keep, centred.
  *
  * The prompt asks for a generous margin so the model composes a centred mark
- * rather than a full-bleed texture — but that margin is the model's, and it
- * varies. Rendered at 44px inside a rounded tile it reads as a faint speck.
- * Trimming to the form and padding back to one consistent margin is what
- * makes sixteen independently-generated images sit at the same optical size.
+ * rather than a full-bleed texture. That margin is right for the generation
+ * and wrong for the render: at 44px inside a rounded tile, an avatar with a
+ * quarter of its frame empty reads as a faint speck. Keeping the middle 76%
+ * is what makes sixteen independently-generated marks sit at the same
+ * optical size.
  */
-const MARGIN = 0.14;
+const KEEP = 0.76;
 
 /**
- * Trim to the drawn form, re-pad evenly to a square, and write at SIZE.
+ * Crop to the centred form and write at SIZE.
  *
- * `extend` rather than compositing onto a created canvas: sharp applies
- * `resize()` before `composite()` in a single pipeline, so the obvious
- * version shrinks the canvas first and then fails to fit a full-size form
- * onto it. Extending the trimmed image sidesteps the ordering entirely.
+ * A plain centre crop, and deliberately not a trim-and-repad. Trimming finds
+ * the edge of the glow and pads back with a fixed colour, which never matches
+ * the model's own near-black exactly — every avatar came out with a visible
+ * rectangle seam around the form. Cropping takes only pixels the model drew,
+ * so there is no seam to match.
+ *
+ * The prompt already asks for the form to occupy the middle two thirds, so
+ * this is reading the composition it was given rather than searching for one.
  */
 async function frame(input) {
-  const trimmed = await sharp(input).trim({ threshold: 12 }).toBuffer();
-  const { width, height } = await sharp(trimmed).metadata();
-  const side = Math.max(width, height);
-  const pad = Math.round(side * MARGIN);
-  const box = side + pad * 2;
-  const left = Math.round((box - width) / 2);
-  const top = Math.round((box - height) / 2);
-
-  return sharp(trimmed)
-    .extend({
-      left,
-      right: box - width - left,
-      top,
-      bottom: box - height - top,
-      background: FIELD,
+  const { width, height } = await sharp(input).metadata();
+  const side = Math.round(Math.min(width, height) * KEEP);
+  return sharp(input)
+    .extract({
+      left: Math.round((width - side) / 2),
+      top: Math.round((height - side) / 2),
+      width: side,
+      height: side,
     })
     .resize(SIZE, SIZE, { fit: "cover" })
     .png({ compressionLevel: 9, palette: true })
     .toBuffer();
 }
 
-/** The ink field, matching --share-bg. An image carries no stylesheet. */
-const FIELD = { r: 0x17, g: 0x14, b: 0x0f };
 
 if (!process.env.OPENAI_API_KEY) {
   console.error("OPENAI_API_KEY is not set — nothing to generate with.");

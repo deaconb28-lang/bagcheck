@@ -19,6 +19,8 @@ export interface WrappedYear {
   longestHold: number | null;
   /** The card's colour family — the scene is lit to match its type. */
   hue?: "moss" | "ember" | "azure" | "violet";
+  /** The landscape this card is about. See lib/wrapped/scenes.ts. */
+  scene?: string;
 }
 
 /**
@@ -74,8 +76,16 @@ const COMPOSITION =
   "Deep saturated colour, high contrast, dramatic rim light on the peaks. " +
   "Digital matte painting, poster art, clean and graphic rather than photographic.";
 
+/**
+ * The backdrop for one card.
+ *
+ * `scene` is what the card is about — `lib/wrapped/scenes.ts` maps every kind
+ * to its own, so twelve cards do not share four pictures. `MOTION` is the
+ * fallback for a call that has a dominant component but no kind, which is
+ * every caller from before the twelve kinds existed.
+ */
 export function artPrompt(year: WrappedYear): string {
-  const subject = MOTION[year.dominant];
+  const subject = year.scene ?? MOTION[year.dominant];
   const light = LIGHT[year.hue ?? "moss"] ?? LIGHT.moss;
   const hold =
     year.longestHold && year.longestHold >= 180

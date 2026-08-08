@@ -5,7 +5,8 @@ import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { SignInCta } from "@/components/app/SignInCta";
 import { WrappedView } from "./WrappedView";
-import { archetypeOf, weekDelta } from "../derive";
+import { archetypeOf, currentStreak, weekDelta, weeklySessions } from "../derive";
+import { buildCards } from "@/lib/cards/kinds";
 
 export const metadata: Metadata = { title: "Bagcheck — Wrapped" };
 export const dynamic = "force-dynamic";
@@ -67,6 +68,39 @@ export default async function WrappedPage({
     null,
   );
 
+  const cards = buildCards({
+    year: new Date().getUTCFullYear(),
+    score: latest.score,
+    archetype: archetypeOf(latest.components as unknown as Record<string, number>),
+    components: latest.components as unknown as Record<string, number>,
+    trips,
+    holdTime: hold,
+    dailyPnl: data.derived?.dailyPnl ?? [],
+    equity: data.derived?.equitySeries ?? [],
+    scoredDays: data.scores.length,
+    transactionCount: data.transactionCount,
+    panicSells: data.scores.filter((s) =>
+      s.contributors.some((c) => c.name.toLowerCase().includes("panic")),
+    ).length,
+    streakDays: currentStreak(data.scores),
+    streakName: "Sessions inside your rules",
+    weeklySessions: weeklySessions(data.derived?.dailyPnl ?? []),
+  });
+
+  if (!cards.length) {
+    return (
+      <PageGrid>
+        <EmptyState
+          eyebrow="Bagcheck · wrapped"
+          icon="waiting"
+          title="No card earned yet"
+          body="Cards are minted from behaviour the ledger can prove. The first one appears once there is enough history behind it."
+          actions={[{ label: "Open the ledger view", href: "/debug" }]}
+        />
+      </PageGrid>
+    );
+  }
+
   return (
     <WrappedView
       year={new Date().getUTCFullYear()}
@@ -76,11 +110,11 @@ export default async function WrappedPage({
       winnerHold={hold.winnersMean}
       loserHold={hold.losersMean}
       /*
-       * The receipt strip: the last 48 sessions of realised P&L, read from
-       * the derived document. Real values — a card that showed a pattern
-       * would undo the only thing on it that shows its work.
+       * Every card the ledger has earned, built by the same twelve kinds the
+       * marketing page renders. A kind below its sample floor is absent
+       * rather than empty — see lib/cards/kinds.ts.
        */
-      strip={(data.derived?.dailyPnl ?? []).slice(-48).map((d) => d.realised)}
+      cards={cards}
       autoplay={play === "1"}
       bestDecision={best}
       longestHold={longest}

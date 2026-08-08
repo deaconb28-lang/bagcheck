@@ -107,7 +107,6 @@
 .tagLit,
 .metricLabel,
 .beatLabel,
-.chip,
 .barLabel,
 .url {
   font-family: var(--font-mono), monospace;
@@ -188,20 +187,15 @@
   max-width: 30ch;
 }
 
-.middle[data-body="chart"] .metric {
-  align-items: flex-end;
-}
-
-.middle[data-body="chart"] .chart {
-  max-width: 100%;
-  height: 17cqw;
-}
-
-.middle {
+/*
+ * The one statement, pinned to the foot of the card. Left-aligned like the
+ * headline above it — the first draft right-aligned the figure into its own
+ * column, which read as a second card stuck to the side of the first.
+ */
+.statement {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 4cqw;
   margin-top: auto;
   padding-top: 4cqw;
 }
@@ -214,7 +208,7 @@
   padding: 0 0 0 4.6cqw;
   display: grid;
   gap: 4.2cqw;
-  flex: 0 1 auto;
+  width: 100%;
 }
 
 .beats::before {
@@ -256,19 +250,9 @@
   letter-spacing: 0;
 }
 
-.metric {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  text-align: right;
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
 .metricLabel {
   font-size: 2.8cqw;
   color: var(--share-ink-dim);
-  max-width: 18ch;
 }
 
 .figure {
@@ -295,24 +279,14 @@
   color: var(--share-ink-dim);
 }
 
-.chip {
-  font-size: 2.6cqw;
-  margin-top: 3cqw;
-  padding: 2.2cqw 3.8cqw;
-  border-radius: 999px;
-  color: var(--share-ink);
-  border: 1px solid color-mix(in srgb, var(--card-lit) 55%, transparent);
-}
-
 /* The receipt. Real values, one bar per session. */
 .chart {
   display: flex;
   align-items: flex-end;
   gap: 1.3cqw;
-  height: 15cqw;
-  margin-top: 3.5cqw;
+  height: 20cqw;
+  margin-top: 4cqw;
   width: 100%;
-  max-width: 74cqw;
 }
 
 .barCol {

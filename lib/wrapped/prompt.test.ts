@@ -64,3 +64,10 @@ test("the tail reads as a sentence, with the right article", () => {
     "61 scored days as an active trader",
   );
 });
+
+test("a named scene overrides the per-component fallback", () => {
+  const withScene = artPrompt(year({ scene: "a perfectly still glacial lake" }));
+  assert.match(withScene, /a perfectly still glacial lake/);
+  // The fallback motion must not also appear — one subject per image.
+  assert.ok(!withScene.includes("sea of low cloud"));
+});

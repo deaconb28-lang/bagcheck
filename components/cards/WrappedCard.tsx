@@ -10,6 +10,11 @@ export interface CardBeat {
   detail: string;
 }
 
+export type CardBody =
+  | { kind: "figure"; label: string; value: string; unit?: string }
+  | { kind: "beats"; beats: CardBeat[] }
+  | { kind: "chart"; label: string; value: string; unit?: string; strip: number[]; labels?: string[] };
+
 export type WrappedCardProps = {
   /** Mono line at the very top. */
   eyebrow: string;
@@ -19,26 +24,17 @@ export type WrappedCardProps = {
   headline: string;
   /** Two short lines under the headline. Sentences, not labels. */
   lede: string;
-  /** What the big figure measures. */
-  metricLabel: string;
-  /** The figure itself. */
-  value: string;
-  /** Trailing unit — "/10", "%", "days". Set smaller, on the baseline. */
-  unit?: string;
-  /** The pill beside the figure — a comparison, never a benchmark. */
-  chip?: string | null;
   /**
-   * A card carries a spine of beats or a chart of sessions — never both.
+   * The one statement the card makes: a figure, a spine of beats, or a chart.
    *
-   * Enforced by the type rather than by review, and not only because both
-   * together overflow a 2:3 box at every size: one idiom per statement is
-   * the rule everywhere else in the product, and a card is the surface where
-   * breaking it is most expensive. The chart's values are real, never a
-   * pattern — it is the only part of a card that shows its work.
+   * Enforced by the type rather than by review. A card is read in a feed in
+   * about a second, and the first draft carried a figure *and* a spine *and*
+   * a chart *and* a chip — four ideas, so none of them landed, and it
+   * overflowed a 2:3 box at every size. One idiom per statement is the rule
+   * everywhere else in the product; this is the surface where breaking it
+   * costs most. Chart values are real, never a pattern.
    */
-  body:
-    | { kind: "beats"; beats: CardBeat[] }
-    | { kind: "chart"; strip: number[]; labels?: string[] };
+  body: CardBody;
   /** The card's own URL once minted. Null before it exists. */
   slug: string | null;
   /**
@@ -83,10 +79,6 @@ export function WrappedCard({
   kicker,
   headline,
   lede,
-  metricLabel,
-  value,
-  unit,
-  chip = null,
   body,
   slug,
   provenance,
@@ -129,10 +121,10 @@ export function WrappedCard({
           <p className={styles.lede}>{lede}</p>
         </div>
 
-        <div className={styles.middle} data-body={body.kind}>
+        <div className={styles.statement} data-body={body.kind}>
           {body.kind === "beats" ? (
             <ol className={styles.beats}>
-              {body.beats.slice(0, 4).map((beat) => (
+              {body.beats.slice(0, 3).map((beat) => (
                 <li key={beat.label} className={styles.beat}>
                   <span className={styles.dot} aria-hidden="true" />
                   <span className={styles.beatLabel}>{beat.label}</span>
@@ -140,33 +132,32 @@ export function WrappedCard({
                 </li>
               ))}
             </ol>
-          ) : null}
-
-          <div className={styles.metric}>
-            <span className={styles.metricLabel}>{metricLabel}</span>
-            <div className={styles.figure}>
-              <span className={styles.value}>{value}</span>
-              {unit ? <span className={styles.unit}>{unit}</span> : null}
-            </div>
-            {chip ? <span className={styles.chip}>{chip}</span> : null}
-
-            {body.kind === "chart" ? (
-              <div className={styles.chart} aria-hidden="true">
-                {series.map((v, i) => (
-                  <span key={i} className={styles.barCol}>
-                    <span
-                      className={styles.bar}
-                      data-sign={v < 0 ? "down" : "up"}
-                      style={{ height: `${Math.max(8, (Math.abs(v) / peak) * 100)}%` }}
-                    />
-                    {body.labels?.[i] ? (
-                      <span className={styles.barLabel}>{body.labels[i]}</span>
-                    ) : null}
-                  </span>
-                ))}
+          ) : (
+            <>
+              <span className={styles.metricLabel}>{body.label}</span>
+              <div className={styles.figure}>
+                <span className={styles.value}>{body.value}</span>
+                {body.unit ? <span className={styles.unit}>{body.unit}</span> : null}
               </div>
-            ) : null}
-          </div>
+            </>
+          )}
+
+          {body.kind === "chart" ? (
+            <div className={styles.chart} aria-hidden="true">
+              {series.map((v, i) => (
+                <span key={i} className={styles.barCol}>
+                  <span
+                    className={styles.bar}
+                    data-sign={v < 0 ? "down" : "up"}
+                    style={{ height: `${Math.max(6, (Math.abs(v) / peak) * 100)}%` }}
+                  />
+                  {body.labels?.[i] ? (
+                    <span className={styles.barLabel}>{body.labels[i]}</span>
+                  ) : null}
+                </span>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         {/*

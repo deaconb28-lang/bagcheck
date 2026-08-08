@@ -9,7 +9,8 @@
     "test": "tsx --test lib/**/*.test.ts",
     "avatars": "node --import tsx scripts/generate-avatars.mjs",
     "avatars:manifest": "node --import tsx scripts/avatar-manifest.mjs",
-    "avatars:sheet": "node --import tsx scripts/avatar-sheet.mjs"
+    "avatars:sheet": "node --import tsx scripts/avatar-sheet.mjs",
+    "backdrops": "node --import tsx scripts/generate-backdrops.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
