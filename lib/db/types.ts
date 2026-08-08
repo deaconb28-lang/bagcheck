@@ -178,6 +178,23 @@ export interface AvatarDoc {
 }
 
 /**
+ * One row per message actually sent.
+ *
+ * The unique index is on {userId, date}, not {userId, date, kind} — that is
+ * the point. "One notification a day" stops being a rule someone has to
+ * remember and becomes a thing the database will not let happen twice, no
+ * matter which cron fires or how many times it retries.
+ */
+export interface EmailLogDoc {
+  userId: string;
+  /** YYYY-MM-DD in UTC. */
+  date: string;
+  kind: "brief" | "recap";
+  providerId: string | null;
+  sentAt: Date;
+}
+
+/**
  * Per-user display preferences. Mode lives here rather than in localStorage
  * so the choice follows the reader to another device instead of being a
  * property of one browser.
@@ -186,6 +203,13 @@ export interface PrefsDoc {
   userId: string;
   /** New users default to dark; this only exists once they have chosen. */
   mode: "light" | "dark";
+  /**
+   * Email is opt-in and off by default. Sending someone mail they did not ask
+   * for is an outward-facing act, and the product's promise is one
+   * notification a day — not one they have to go and switch off.
+   */
+  emailDaily?: boolean;
+  emailWeekly?: boolean;
   updatedAt: Date;
 }
 

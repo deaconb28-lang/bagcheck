@@ -3,6 +3,7 @@ import { dbName, getMongoClient } from "./client";
 import type {
   AvatarDoc,
   CardDoc,
+  EmailLogDoc,
   ConnectionDoc,
   DerivedDoc,
   IconDoc,
@@ -39,6 +40,7 @@ export async function getCollections() {
     icons: db.collection<IconDoc>("icons"),
     avatars: db.collection<AvatarDoc>("avatars"),
     prefs: db.collection<PrefsDoc>("prefs"),
+    emailLog: db.collection<EmailLogDoc>("emailLog"),
     derived: db.collection<DerivedDoc>("derived"),
     syncProgress: db.collection<SyncProgressDoc>("syncProgress"),
   };
@@ -69,6 +71,9 @@ export async function ensureIndexes() {
     c.icons.createIndex({ name: 1 }, { unique: true }),
     c.avatars.createIndex({ key: 1 }, { unique: true }),
     c.prefs.createIndex({ userId: 1 }, { unique: true }),
+    // Deliberately not keyed on kind: this index is what enforces one
+    // notification a day, whichever cron gets there first.
+    c.emailLog.createIndex({ userId: 1, date: 1 }, { unique: true }),
     c.derived.createIndex({ userId: 1 }, { unique: true }),
     c.syncProgress.createIndex({ userId: 1 }, { unique: true }),
   ]);

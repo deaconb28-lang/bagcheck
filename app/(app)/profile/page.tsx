@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getUserId, isAuthConfigured, isDevIdentity, signOut } from "@/auth";
-import { isDbConfigured, loadAppData, subscriptionFor, tierFor } from "@/lib/db";
+import { getCollections, isDbConfigured, loadAppData, subscriptionFor, tierFor } from "@/lib/db";
 import { isStripeConfigured } from "@/lib/billing";
 import type { ScoreDoc } from "@/lib/db";
 import { selfPercentile } from "@/lib/score";
@@ -14,7 +14,9 @@ import { PageGrid } from "@/components/app/PageGrid";
 import { PageHeader } from "@/components/app/PageHeader";
 import { PlanCard } from "@/components/app/PlanCard";
 import { SignInCta } from "@/components/app/SignInCta";
+import { isEmailConfigured } from "@/lib/email/send";
 import { BaselinePicker } from "./BaselinePicker";
+import { EmailPrefs } from "./EmailPrefs";
 import styles from "./profile.module.css";
 
 export const metadata: Metadata = { title: "Bagcheck — profile" };
@@ -49,9 +51,10 @@ export default async function ProfilePage() {
   }
 
   const { connection, scores, transactionCount } = await loadAppData(userId, 90);
-  const [tier, subscription] = await Promise.all([
+  const [tier, subscription, emailPrefs] = await Promise.all([
     tierFor(userId),
     subscriptionFor(userId),
+    getCollections().then((c) => c.prefs.findOne({ userId })),
   ]);
   const latest = scores[0] ?? null;
   const archetype = archetypeFor(latest?.components ?? null);
@@ -183,6 +186,18 @@ export default async function ProfilePage() {
               <Button href="/api/snaptrade/connect">Connect a brokerage</Button>
             </div>
           )}
+        </div>
+      </Card>
+
+      <Card>
+        <div className={styles.block}>
+          <Eyebrow>Notifications</Eyebrow>
+          <h2 className={`disp ${styles.h2}`}>What Bagcheck sends you</h2>
+          <EmailPrefs
+            daily={Boolean(emailPrefs?.emailDaily)}
+            weekly={Boolean(emailPrefs?.emailWeekly)}
+            configured={isEmailConfigured()}
+          />
         </div>
       </Card>
     </PageGrid>

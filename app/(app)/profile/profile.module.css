@@ -173,3 +173,77 @@
     gap: 16px;
   }
 }
+
+/* Notifications: one row per thing that can arrive, and a switch that says
+   which state it is in. Status is never colour alone. */
+.emailRows {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.emailRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.emailText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.emailLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  min-height: 44px;
+  padding: 0 14px 0 10px;
+  border-radius: 999px;
+  background: var(--inset);
+  color: var(--ink3);
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.switch[aria-checked="true"] {
+  background: var(--moss-tint);
+  color: var(--moss);
+}
+
+.switch:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.knob {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.35;
+  transition: opacity 0.16s ease;
+}
+
+.switch[aria-checked="true"] .knob {
+  opacity: 1;
+}
+
+.switchWord {
+  min-width: 22px;
+}
