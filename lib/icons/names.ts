@@ -16,6 +16,7 @@
  * Adding a screen glyph means adding a line here, on purpose.
  */
 export const ICONS = {
+  /** Ledger kinds — the filter rail on Activity. */
   all: "list",
   buy: "buy",
   sell: "sell",
@@ -23,6 +24,24 @@ export const ICONS = {
   deposit: "deposit",
   withdrawal: "withdraw",
   other: "receipt",
+
+  /**
+   * Empty states. Twelve of them across the app, but only five situations:
+   * not signed in, the deployment is missing something, no brokerage, a
+   * brokerage with nothing synced, and synced without enough history yet.
+   * The glyph names the situation, not the screen — the same predicament
+   * looks the same wherever the reader meets it.
+   */
+  signin: "login",
+  setup: "settings",
+  connect: "connect",
+  sync: "sync",
+  waiting: "hourglass",
+
+  /** The three tiers, on the pricing section. */
+  free: "seedling",
+  plus: "fountain pen",
+  trader: "candlestick chart",
 } as const;
 
 export type IconName = keyof typeof ICONS;

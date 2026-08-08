@@ -19,6 +19,19 @@ test("every ledger kind the query builder emits has an icon", () => {
   }
 });
 
+test("every tier has an icon, keyed by the tier itself", () => {
+  // lib/billing/tiers.ts Tier — the pricing columns index ICONS by tier name.
+  for (const tier of ["free", "plus", "trader"]) {
+    assert.ok(isIconName(tier), `the ${tier} column would render without a glyph`);
+  }
+});
+
+test("the empty-state situations are covered", () => {
+  for (const situation of ["signin", "setup", "connect", "sync", "waiting"]) {
+    assert.ok(isIconName(situation), `${situation} empty states would render bare`);
+  }
+});
+
 test("the proxy url is built from the name alone", () => {
   assert.equal(iconSrc("buy"), "/api/icon/buy");
   for (const name of Object.keys(ICONS)) {

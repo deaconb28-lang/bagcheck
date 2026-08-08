@@ -31,6 +31,7 @@ export default async function PortfolioPage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · portfolio"
+          icon="signin"
           title="Nothing to show yet"
           body={
             userId
@@ -53,6 +54,7 @@ export default async function PortfolioPage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · portfolio"
+          icon={connection ? "sync" : "connect"}
           title={connection ? "No positions synced" : "Connect a brokerage"}
           body={
             connection

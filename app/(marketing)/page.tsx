@@ -3,6 +3,7 @@ import { getUserId, isAuthConfigured, signIn } from "@/auth";
 import { Button, Chip, Eyebrow } from "@/components/primitives";
 import { DayStrip } from "./DayStrip";
 import { ConvictionBars, DistributionWide, MiniScatter, WinRateBars } from "./Idioms";
+import { iconsEnabled } from "@/lib/icons";
 import { Mark } from "./Mark";
 import { PricingTiers } from "./PricingTiers";
 import { TodayMock } from "./TodayMock";
@@ -334,7 +335,7 @@ export default async function LandingPage() {
               no tier sells you a rare card.
             </p>
           </div>
-          <PricingTiers />
+          <PricingTiers glyphs={iconsEnabled()} />
           <p className={styles.tierFoot}>
             Rarity is earned by conduct at every tier. Sitting through a 20%
             drawdown mints the same rare card whether you pay or not.

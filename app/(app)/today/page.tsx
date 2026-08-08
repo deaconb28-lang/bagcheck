@@ -28,6 +28,7 @@ export default async function TodayPage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · today"
+          icon="signin"
           title="Sign in to see your score"
           body={
             isAuthConfigured()
@@ -47,6 +48,7 @@ export default async function TodayPage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · today"
+          icon="setup"
           title="The ledger store is not configured"
           body="Set MONGODB_URI on this deployment to store synced history and scores."
           actions={[{ label: "Open the ledger view", href: "/debug" }]}
@@ -64,6 +66,7 @@ export default async function TodayPage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · today"
+          icon={connection ? "waiting" : "connect"}
           title={connection ? "No score yet" : "Connect a brokerage"}
           body={
             connection

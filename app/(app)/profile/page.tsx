@@ -51,6 +51,7 @@ export default async function ProfilePage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · profile"
+          icon="signin"
           title="Nothing to show yet"
           body={
             userId

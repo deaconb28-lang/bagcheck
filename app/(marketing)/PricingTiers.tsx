@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { TIER_LABEL } from "@/lib/billing/tiers";
 import type { Feature, Tier } from "@/lib/billing/tiers";
-import { Eyebrow } from "@/components/primitives";
+import { Eyebrow, Icon } from "@/components/primitives";
 import styles from "./marketing.module.css";
 
 /**
@@ -114,7 +114,12 @@ const PERIODS = [
   { id: "yearly", label: "Yearly" },
 ] as const;
 
-export function PricingTiers() {
+/**
+ * `glyphs` is a prop rather than an iconsEnabled() call because this is a
+ * client component: the Noun Project key is not NEXT_PUBLIC, so asking here
+ * would always answer no. The server page asks and passes the answer down.
+ */
+export function PricingTiers({ glyphs = false }: { glyphs?: boolean }) {
   const [yearly, setYearly] = useState(false);
 
   return (
@@ -146,7 +151,10 @@ export function PricingTiers() {
           return (
             <div key={tier.tier} className={styles.tierCol}>
               <div className={styles.tierHead}>
-                <Eyebrow>{TIER_LABEL[tier.tier]}</Eyebrow>
+                <span className={styles.tierMark}>
+                  {glyphs ? <Icon name={tier.tier} size={18} /> : null}
+                  <Eyebrow>{TIER_LABEL[tier.tier]}</Eyebrow>
+                </span>
                 <div className={`num ${styles.tierPrice}`}>
                   ${price}
                   {unit ? <span className={styles.tierUnit}>{unit}</span> : null}

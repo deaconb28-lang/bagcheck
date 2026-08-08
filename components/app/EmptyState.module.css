@@ -6,6 +6,13 @@
   padding: 40px 0;
 }
 
+/* --ink3, not --meta: this sits on the canvas rather than on a white card. */
+.glyph {
+  display: flex;
+  color: var(--ink3);
+  margin-bottom: 2px;
+}
+
 .title {
   font-size: 29px;
   max-width: 13ch;

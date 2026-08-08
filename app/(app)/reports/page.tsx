@@ -24,6 +24,7 @@ export default async function ReportsPage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · reports"
+          icon="signin"
           title="Nothing to report yet"
           body={
             userId
@@ -45,6 +46,7 @@ export default async function ReportsPage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · reports"
+          icon="waiting"
           title="No scored days yet"
           body="Reports assemble from your daily scores. The first one appears once your history is synced and scored."
           actions={[{ label: "Open the ledger view", href: "/debug" }]}

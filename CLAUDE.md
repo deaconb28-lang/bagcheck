@@ -52,7 +52,9 @@ Reference docs (read before any UI work — the design system is authoritative o
 - One idiom per statement, each legible at 200px wide.
 - Full equity curves render on Portfolio only. Never four identical sparklines.
 - No decorative gradients and no emoji.
-- Icons are a closed vocabulary, not a set. `lib/icons/noun.ts` `ICONS` is the whole list, and a new glyph means a new line in it — `/api/icon` serves names, never search terms. They label a fixed taxonomy (the ledger kinds); they never decorate a heading, a button or a card.
+- Icons are a closed vocabulary, not a set. `lib/icons/names.ts` `ICONS` is the whole list, and a new glyph means a new line in it — `/api/icon` serves names, never search terms. They label a fixed taxonomy — the ledger kinds, the three tiers, and the five situations an empty state can be in — and never decorate a heading, a button or a card.
+- An empty state's icon names the *situation*, not the screen: signed out, deployment unconfigured, no brokerage, nothing synced, nothing scored yet. The same predicament looks the same on all seven screens.
+- `iconsEnabled()` is a server-side read — the key is not `NEXT_PUBLIC` and must not become one. A client component asking it always gets `false`, so a screen asks once and passes the answer down (`<PricingTiers glyphs>`).
 - The sidebar route marks in `components/app/nav.tsx` are drawn by us and stay that way. They are geometric reductions of their screens, and a fetched glyph would be a downgrade.
 - An `<Icon>` is painted as a CSS mask, never an `<img>` or inline SVG: the shape comes from the API and the colour is `currentColor`, so a glyph takes the token of the row it sits in and no palette hex enters from outside `styles/tokens.css`.
 

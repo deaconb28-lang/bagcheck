@@ -807,6 +807,15 @@
   gap: 10px;
 }
 
+/* The glyph takes --ink3 rather than the eyebrow's own colour: it labels the
+   tier, and should not read as louder than the word beside it. */
+.tierMark {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--ink3);
+}
+
 .tierWho {
   font-family: var(--font-mono), monospace;
   font-size: 11px;

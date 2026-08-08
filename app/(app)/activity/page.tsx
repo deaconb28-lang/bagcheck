@@ -28,6 +28,7 @@ export default async function ActivityPage({
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · activity"
+          icon="signin"
           title="Nothing to show yet"
           body={
             userId
@@ -56,6 +57,7 @@ export default async function ActivityPage({
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · activity"
+          icon={connection ? "sync" : "connect"}
           title={connection ? "No transactions synced" : "Connect a brokerage"}
           body={
             connection

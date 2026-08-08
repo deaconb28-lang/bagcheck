@@ -22,6 +22,7 @@ export default async function PatternsPage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · patterns"
+          icon="signin"
           title="Nothing to read yet"
           body={
             userId
@@ -51,6 +52,7 @@ export default async function PatternsPage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · patterns"
+          icon={connection ? "sync" : "connect"}
           title={connection ? "No transactions synced" : "Connect a brokerage"}
           body={
             connection
