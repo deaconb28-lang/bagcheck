@@ -16,7 +16,6 @@ import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { SignInCta } from "@/components/app/SignInCta";
 import { SyncDialog } from "@/components/app/SyncDialog";
-import { avatarsEnabled } from "@/lib/avatars/store";
 import { trialLine, trialState } from "@/lib/tiers";
 import { HomeView } from "./HomeView";
 import type { WaveDay } from "@/components/idioms";
@@ -170,7 +169,6 @@ export default async function HomePage({
         components={latest.components}
         insight={insight}
         archetype={archetypeOf(latest.components as unknown as Record<string, number>)}
-        avatarArt={avatarsEnabled()}
         wave={wave}
         waveSummary={waveSummary(wave)}
         heat={heatFromScores(data.scores)}

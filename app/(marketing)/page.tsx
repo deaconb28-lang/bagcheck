@@ -11,7 +11,6 @@ import { PricingTiers } from "./PricingTiers";
 import { TodayMock } from "./TodayMock";
 import { WrappedFan } from "./WrappedFan";
 import { TRIAL_DAYS } from "@/lib/tiers";
-import { avatarsEnabled } from "@/lib/avatars/store";
 import styles from "./marketing.module.css";
 
 /**
@@ -281,7 +280,7 @@ export default async function LandingPage() {
               the day you connect.
             </p>
           </div>
-          <WrappedFan avatarArt={avatarsEnabled()} />
+          <WrappedFan />
           <div className={styles.wrappedPoints}>
             <div className={styles.wrappedPoint}>
               <Eyebrow>Rendered server-side</Eyebrow>

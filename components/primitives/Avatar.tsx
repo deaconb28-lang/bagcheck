@@ -1,30 +1,29 @@
 import { archetypeByKey } from "@/lib/archetypes";
 import { AVATAR_VIEWBOX, emblemBody } from "@/lib/avatars/drawn";
+import { avatarSrc, hasGeneratedAvatar } from "@/lib/avatars/manifest";
 import styles from "./Avatar.module.css";
 
 /**
  * An archetype's mark.
  *
- * Two render paths, chosen server-side and never at runtime. With image
- * generation configured the avatar is the stored PNG from `/api/avatar/[key]`
- * — full-colour art, so it cannot be a mask. Without it, the emblem is drawn
- * inline in `currentColor` and `--moss`, which means it is on the first paint
- * with no request and takes the token of whatever it sits in.
+ * Two render paths, decided at build time by what is on disk. An archetype
+ * with generated art gets the static PNG from `public/archetypes` — full
+ * colour, so it cannot be a mask, and immutable, so it is cached hard.
+ * Everything else renders the drawn emblem inline in `currentColor` and
+ * `--moss`: on the first paint, with no request, taking the token of whatever
+ * it sits in.
  *
- * `art` is a prop rather than a read, for the same reason `<PricingTiers
- * glyphs>` takes one: the key is not `NEXT_PUBLIC`, so a client component
- * asking would always be told no.
+ * There is no flag and no prop to pass down. The manifest is generated from
+ * the directory, so a component asking "is there art for this?" gets the same
+ * answer on the server, in the client bundle, and in a test.
  */
 export function Avatar({
   archetype,
   size = 44,
-  art = false,
 }: {
   /** An archetype key from lib/archetypes.ts. */
   archetype: string;
   size?: number;
-  /** Whether generated art exists on this deployment — `avatarsEnabled()`. */
-  art?: boolean;
 }) {
   const meta = archetypeByKey(archetype);
   if (!meta) return null;
@@ -35,11 +34,11 @@ export function Avatar({
       style={{ width: size, height: size, borderRadius: Math.round(size * 0.28) }}
       data-tone={meta.tone}
     >
-      {art ? (
-        // eslint-disable-next-line @next/next/no-img-element -- a generated
-        // PNG at a fixed URL, sized by the caller; next/image buys nothing.
+      {hasGeneratedAvatar(archetype) ? (
+        // eslint-disable-next-line @next/next/no-img-element -- a static file
+        // at a fixed path, sized by the caller; next/image buys nothing.
         <img
-          src={`/api/avatar/${archetype}`}
+          src={avatarSrc(archetype)}
           alt=""
           width={size}
           height={size}

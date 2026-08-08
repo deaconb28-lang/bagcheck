@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "tsx --test lib/**/*.test.ts"
+    "test": "tsx --test lib/**/*.test.ts",
+    "avatars": "node --import tsx scripts/generate-avatars.mjs",
+    "avatars:manifest": "node --import tsx scripts/avatar-manifest.mjs",
+    "avatars:sheet": "node --import tsx scripts/avatar-sheet.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
@@ -24,6 +27,7 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "sharp": "^0.34.5",
     "tsx": "^4.23.9",
     "typescript": "^5"
   }

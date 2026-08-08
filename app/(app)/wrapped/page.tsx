@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getUserId } from "@/auth";
 import { isDbConfigured, loadScreen, syncClock } from "@/lib/db";
-import { avatarsEnabled } from "@/lib/avatars/store";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { SignInCta } from "@/components/app/SignInCta";
@@ -83,7 +82,6 @@ export default async function WrappedPage({
        */
       strip={(data.derived?.dailyPnl ?? []).slice(-48).map((d) => d.realised)}
       autoplay={play === "1"}
-      avatarArt={avatarsEnabled()}
       bestDecision={best}
       longestHold={longest}
       score={latest.score}

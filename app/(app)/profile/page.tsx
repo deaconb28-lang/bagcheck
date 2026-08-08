@@ -7,7 +7,6 @@ import { selfPercentile } from "@/lib/score";
 import type { StyleBaseline } from "@/lib/score";
 import { Avatar, Button, Card, Eyebrow, Stat } from "@/components/primitives";
 import { archetypeFor, strongLine } from "@/lib/archetypes";
-import { avatarsEnabled } from "@/lib/avatars/store";
 import { Distribution } from "@/components/idioms";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
@@ -132,7 +131,7 @@ export default async function ProfilePage() {
 
       <Card hero>
         <div className={styles.archBlock}>
-          <Avatar archetype={archetype.key} size={72} art={avatarsEnabled()} />
+          <Avatar archetype={archetype.key} size={72} />
           <div className={styles.block}>
             <Eyebrow>Your archetype</Eyebrow>
             <h2 className={`disp ${styles.archetype}`}>{archetype.name}</h2>

@@ -26,8 +26,6 @@ export type HomeViewProps = {
   components: ScoreComponents;
   insight: { sentence: string; tail?: string | null };
   archetype: Archetype;
-  /** Whether generated avatar art exists on this deployment. */
-  avatarArt?: boolean;
   wave: WaveDay[];
   waveSummary: WaveSummary;
   heat: HeatDay[];
@@ -78,7 +76,6 @@ export function HomeView(props: HomeViewProps) {
     components,
     insight,
     archetype,
-    avatarArt = false,
     wave,
     waveSummary: summary,
     heat,
@@ -164,7 +161,7 @@ export function HomeView(props: HomeViewProps) {
               style={{ animationDelay: "0.04s" }}
             >
               <div className={styles.archText}>
-                <Avatar archetype={archetype.key} size={52} art={avatarArt} />
+                <Avatar archetype={archetype.key} size={52} />
                 <div className={styles.archTextBody}>
                   <span className={screen.eyebrow}>Your archetype</span>
                   <div className={`disp ${styles.archName}`}>{archetype.name}</div>

@@ -7,8 +7,10 @@ import { ARCHETYPES } from "@/lib/archetypes";
  * guarantee underneath them. An archetype is an identity the app puts next to
  * someone's name; it has to render on a deployment with no image model, on
  * the first paint before anything is fetched, and identically every time. So
- * the shape is ours and always available, and the generated art in
- * `lib/avatars/generate.ts` is the enrichment that sits on top of it.
+ * the shape is ours and always available, and the generated art under
+ * `public/archetypes` is the enrichment that sits on top of it. Which
+ * archetypes have that art is `lib/avatars/manifest.ts`, generated from the
+ * directory rather than maintained by hand.
  *
  * Each emblem is the abstract form named in `ARCHETYPES[n].emblem`, so the
  * table stays the single description of what an archetype looks like.
@@ -139,22 +141,6 @@ const BODIES: Record<string, string> = {
   composed: `
     <path ${MOSS} d="M26 26h44v44H26z" />`,
 };
-
-/**
- * A standalone SVG document, for the one caller that cannot resolve custom
- * properties: `/api/avatar/[key]` serving an image when generation is off or
- * has failed. Same reason `app/og/[slug]/render.tsx` repeats palette values —
- * an image at a URL carries no stylesheet with it.
- *
- * Keep these in step with the `--share-*` tokens; the emblem is drawn on the
- * ink field in both modes, exactly like a share card.
- */
-export function drawnAvatarSvg(key: string): string {
-  const body = emblemBody(key)
-    .replace(/var\(--moss\)/g, "#4FB287")
-    .replace(/currentColor/g, "#FDFCFA");
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${AVATAR_VIEWBOX}" width="256" height="256" role="img"><rect width="96" height="96" rx="26" fill="#17140F"/>${body}</svg>`;
-}
 
 /** Every key the avatar surfaces accept — the archetype table, and nothing else. */
 export const AVATAR_KEYS = ARCHETYPES.map((a) => a.key);

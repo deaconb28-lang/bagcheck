@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { ARCHETYPES } from "@/lib/archetypes";
 import { avatarPrompt } from "./prompt";
-import { AVATAR_KEYS, drawnAvatarSvg, emblemBody } from "./drawn";
+import { AVATAR_KEYS, emblemBody } from "./drawn";
 
 test("every archetype asks for its own emblem, and no two prompts match", () => {
   const prompts = ARCHETYPES.map(avatarPrompt);
@@ -37,12 +37,4 @@ test("all sixteen emblems are drawn, and all sixteen are different", () => {
 
 test("an unknown key still draws something rather than nothing", () => {
   assert.equal(emblemBody("not-an-archetype"), emblemBody("improviser"));
-});
-
-test("the standalone SVG resolves its own colours — it carries no stylesheet", () => {
-  const svg = drawnAvatarSvg("sentinel");
-  assert.ok(svg.startsWith("<svg"));
-  assert.ok(!svg.includes("var(--"), "custom properties do not resolve in an image");
-  assert.ok(!svg.includes("currentColor"), "currentColor has no context in an image");
-  assert.ok(svg.includes("#4FB287"));
 });

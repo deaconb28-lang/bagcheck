@@ -1,7 +1,6 @@
 import type { Db } from "mongodb";
 import { dbName, getMongoClient } from "./client";
 import type {
-  AvatarDoc,
   CardDoc,
   EmailLogDoc,
   ConnectionDoc,
@@ -38,7 +37,6 @@ export async function getCollections() {
     subscriptions: db.collection<SubscriptionDoc>("subscriptions"),
     marketCache: db.collection<MarketCacheDoc>("marketCache"),
     icons: db.collection<IconDoc>("icons"),
-    avatars: db.collection<AvatarDoc>("avatars"),
     prefs: db.collection<PrefsDoc>("prefs"),
     emailLog: db.collection<EmailLogDoc>("emailLog"),
     derived: db.collection<DerivedDoc>("derived"),
@@ -69,7 +67,6 @@ export async function ensureIndexes() {
     // Mongo sweeps expired entries; nothing has to remember to.
     c.marketCache.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
     c.icons.createIndex({ name: 1 }, { unique: true }),
-    c.avatars.createIndex({ key: 1 }, { unique: true }),
     c.prefs.createIndex({ userId: 1 }, { unique: true }),
     // Deliberately not keyed on kind: this index is what enforces one
     // notification a day, whichever cron gets there first.

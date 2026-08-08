@@ -162,22 +162,6 @@ export interface IconDoc {
 }
 
 /**
- * A generated archetype avatar. Sixteen rows at most, ever.
- *
- * No TTL, like the icon store: the mark for an archetype does not change,
- * the vocabulary is closed, and every generation costs money. `prompt` is
- * kept so a regeneration can be compared against what was actually asked for.
- */
-export interface AvatarDoc {
-  /** The archetype slug — the closed key space from lib/archetypes.ts. */
-  key: string;
-  png: Binary;
-  model: string;
-  prompt: string;
-  generatedAt: Date;
-}
-
-/**
  * One row per message actually sent.
  *
  * The unique index is on {userId, date}, not {userId, date, kind} — that is

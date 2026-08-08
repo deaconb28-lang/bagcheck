@@ -5,8 +5,6 @@ import styles from "./WrappedCard.module.css";
 export type WrappedCardProps = {
   year: number;
   archetype: Archetype;
-  /** Whether generated avatar art exists on this deployment. */
-  avatarArt?: boolean;
   /** The headline figure. Set in the serif at numeral size. */
   value: string;
   /** What the figure measures — mono, above it. */
@@ -48,7 +46,6 @@ const CELLS = 48;
 export function WrappedCard({
   year,
   archetype,
-  avatarArt = false,
   value,
   eyebrow,
   tail,
@@ -85,7 +82,7 @@ export function WrappedCard({
 
       <div className={styles.body}>
         <div className={styles.identity}>
-          <Avatar archetype={archetype.key} size={44} art={avatarArt} />
+          <Avatar archetype={archetype.key} size={44} />
           <div className={styles.identityText}>
             <span className={styles.archetype}>{archetype.name}</span>
             <span className={styles.eyebrow}>{eyebrow}</span>

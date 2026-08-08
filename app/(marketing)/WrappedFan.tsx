@@ -22,7 +22,7 @@ const EXAMPLE_STRIP = Array.from({ length: 48 }, (_, i) =>
  * and the same one the minted URL unfurls as. What someone is shown before
  * signing up is the thing they get.
  */
-export function WrappedFan({ avatarArt = false }: { avatarArt?: boolean }) {
+export function WrappedFan() {
   const archetype = archetypeByKey("sentinel");
   if (!archetype) return null;
 
@@ -52,7 +52,6 @@ export function WrappedFan({ avatarArt = false }: { avatarArt?: boolean }) {
         <WrappedCard
           year={2026}
           archetype={archetype}
-          avatarArt={avatarArt}
           eyebrow="Longest hold"
           value="412"
           tail="days on one position — longer than you have held anything before."

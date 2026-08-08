@@ -18,8 +18,6 @@ type Trip = { symbol: string; holdDays: number; pnl: number } | null;
 export type WrappedViewProps = {
   year: number;
   archetype: Archetype;
-  /** Whether generated avatar art exists on this deployment. */
-  avatarArt?: boolean;
   scoredDays: number;
   transactionCount: number;
   /** Realised P&L per session — the receipt strip on the card. */
@@ -63,7 +61,6 @@ export function WrappedView(props: WrappedViewProps) {
     syncedAt,
     tier,
     autoplay = false,
-    avatarArt = false,
   } = props;
   /*
    * `autoplay` comes from the onboarding hand-off — the sync dialog links
@@ -158,7 +155,7 @@ export function WrappedView(props: WrappedViewProps) {
             <section data-reveal className={styles.hero}>
               <div className={styles.heroText}>
                 <span className={styles.heroEyebrow}>Bagcheck · {year}</span>
-                <Avatar archetype={archetype.key} size={72} art={avatarArt} />
+                <Avatar archetype={archetype.key} size={72} />
                 <h1 className={`num ${styles.heroTitle}`}>{archetype.name}</h1>
                 <p className={styles.heroLine}>{archetype.line}</p>
                 <button type="button" className={styles.play} onClick={() => setPlaying(true)}>
@@ -178,7 +175,6 @@ export function WrappedView(props: WrappedViewProps) {
                 <WrappedCard
                   year={year}
                   archetype={archetype}
-                  avatarArt={avatarArt}
                   eyebrow="Sessions scored"
                   value={String(scoredDays)}
                   tail={archetype.line}

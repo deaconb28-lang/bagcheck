@@ -493,26 +493,64 @@ sessions*"), where the template would either be stiff or wrong.
 **The evidence line is never generated.** It sits under the sentence and must
 not be able to contradict it.
 
-### A4 — Archetype `[proposed]`
+### A4 — Archetype `[shipped, and it does not call a model]`
+
+This was proposed as a model call: classify a behaviour profile into a curated
+enum of 10–14 names, and generate the line under it. It shipped as neither.
+
+The decision procedure in §1 asks whether the output space is small and
+checkable, and whether a deterministic rule would produce the same answer. For
+an archetype both answers turned out to be yes, and more sharply than the
+proposal assumed. The score has four components; each is above the strong bar
+or it is not; that is four bits and **exactly sixteen** profiles. Nothing had
+to be curated to reach a round number — `lib/archetypes.ts` is the sixteen
+corners of that cube, and a test asserts every row sits at the index its own
+`strong` list implies.
+
+The line under each name is fixed too. A generated line would drift between
+regenerations — the same behaviour reading differently in March and April —
+and an archetype is an identity people put on a share card. Sixteen sentences
+written once are more stable, cost nothing, and are checkable by the same copy
+rules a generated one would have needed anyway.
+
+**The bar is fixed at 60, not relative to the reader's own mean.** Scored
+against your own average, two people with nothing in common would carry the
+same badge, and the name would stop meaning anything.
 
 | | |
 |---|---|
-| **Provider** | Anthropic |
-| **Trigger** | Behaviour profile changes materially, or monthly, whichever is rarer |
-| **Input** | `BehaviourProfile` (§2) |
-| **Output** | `{ archetypeId: enum, line ≤140ch }` |
-| **Validator** | `archetypeId` must be in the curated set; line passes copy rules + provenance |
-| **Fallback** | Dominant-component switch, as today |
-| **Cadence** | ≤1 / user / month |
+| **Provider** | None |
+| **Trigger** | Every score read |
+| **Input** | `ScoreComponents` |
+| **Output** | One of sixteen `Archetype` rows |
+| **Cost** | Zero |
 
-**The name is selected, not written.** The output space is a curated enum of
-10–14 archetypes with fixed display names. This matters: an archetype is
-identity, and a freely-generated name would drift between regenerations —
-"The Measured" one month, "The Deliberate" the next, from the same behaviour.
-Selection from a fixed set is a classification with a trivially checkable
-output, and it still reads the whole profile instead of one component.
+### A7 — Archetype avatars `[shipped]`
 
-Only the *line* is free text, and it is validated like any other sentence.
+| | |
+|---|---|
+| **Provider** | OpenAI, `gpt-image-2` |
+| **Trigger** | A maintainer running `npm run avatars`. Never a request. |
+| **Input** | The `emblem` field of an archetype row — an abstract form, decided by us |
+| **Output** | Sixteen 256px PNGs in `public/archetypes`, committed |
+| **Fallback** | The drawn emblem in `lib/avatars/drawn.ts`, which is a finished state |
+| **Cadence** | Sixteen images, once, for the whole product |
+
+The second and last OpenAI touchpoint, and the only one that is not
+per-user — sixteen fixed assets belonging to nobody. They are **static files,
+not a store**: committed, CDN-served, reviewable in a diff, with no request-time
+generation and no database. A deployment with no OpenAI key renders the same
+set.
+
+The model is drawing a form we specified, not inventing one. The prompt is
+built from the archetype's `emblem` string, so the sixteen are distinct by
+construction rather than by whatever the model happened to draw twice, and a
+test asserts no prompt ever contains the archetype's *name* — a model given the
+word "Sentinel" draws a guard, and the whole set would stop being abstract.
+
+Every prohibition on the Wrapped backdrop applies, plus one more: an avatar
+sits beside a person's name, and a generated face there would be a claim about
+who they are.
 
 ### A5 — Wrapped narration `[proposed]`
 
@@ -570,10 +608,11 @@ Route by cadence and stakes, not by habit.
 |---|---|---|---|
 | A1 daily insight | `claude-sonnet-5` | low | Highest volume; two heavily-constrained lines |
 | A3 finding narration | `claude-sonnet-5` | low | Rare, short, tightly bounded |
-| A4 archetype | `claude-sonnet-5` | medium | Classification over a 10-dim profile |
+| ~~A4 archetype~~ | *none* | — | Shipped deterministically — sixteen corners of a four-bit cube |
 | A5 Wrapped narration | `claude-opus-5` | adaptive | Once a year, high stakes, real judgement |
 | A6 session recap | `claude-sonnet-5` | low | Per-session volume, same shape as A1 |
-| A2 backdrop | `gpt-image-2` | — | Only OpenAI touchpoint |
+| A2 backdrop | `gpt-image-2` | — | One of two OpenAI touchpoints |
+| A7 avatars | `gpt-image-2` | — | Sixteen images, once, at a maintainer's hand |
 
 A1 currently runs on `claude-opus-5`. At one call per user per day that is the
 single largest recurring model cost in the product, and it is spent on a task
@@ -638,7 +677,7 @@ and better once L2 exists, so none of them come first.
 3. **Onboarding dialog** wired to that progress document. It is specified as
    showing real progress and cannot be built honestly before step 2.
 4. **`BehaviourProfile`** in L4, with its sample floor.
-5. **A4 archetype** — curated enum + generated line. First new model call,
+5. ~~**A4 archetype**~~ — shipped without a model at all; see A4 above. Next new model call,
    smallest output space, easiest validator.
 6. **A5 Wrapped narration** — annual, highest stakes, worth the best model.
 7. **`heldBy` cohort rollup.** "Rare" means nothing without a denominator.
@@ -657,7 +696,7 @@ Nine sentences that decide any future argument.
 
 1. A model may never produce a number, a date, a symbol, or a claim of fact.
 2. Data flows up the layers only. A model's output is never a computation's input.
-3. Anthropic writes every sentence. OpenAI only draws the Wrapped backdrop.
+3. Anthropic writes every sentence. OpenAI only draws — the Wrapped backdrop and the sixteen archetype avatars, and nothing else.
 4. Generation happens at write time and is stored. A page view never depends on a model.
 5. Every generated string passes a validator that runs without a model.
 6. Every number in generated copy traces back to a computed fact, mechanically.
