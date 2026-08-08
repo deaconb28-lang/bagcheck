@@ -1322,3 +1322,464 @@
     padding-top: 0;
   }
 }
+
+
+/* ═══ v2 dark field — overrides everything above ═══ */
+/*
+ * The landing page is a single dark visual world — it does not follow the
+ * reader's mode, because it sits on one fixed piece of artwork. Rather than
+ * restyle every rule below, the page remaps the neutral tokens once here and
+ * the whole sheet follows.
+ *
+ * --moss is remapped to the lit variant because moss *text* on this ground
+ * would otherwise be unreadable; the filled button keeps the deep fill
+ * explicitly, where white text on it still clears AA.
+ */
+.page {
+  --bg: var(--field);
+  --s1: var(--field-2);
+  --sunken: rgba(253, 252, 250, 0.03);
+  --inset: rgba(253, 252, 250, 0.05);
+  --control: rgba(253, 252, 250, 0.06);
+  --track: rgba(253, 252, 250, 0.1);
+  --tile: var(--field-2);
+
+  --ink: var(--on-field);
+  --ink2: var(--on-field-2);
+  --ink3: var(--on-field-2);
+  --meta: var(--on-field-3);
+
+  --line: var(--hair);
+  --line-light: rgba(253, 252, 250, 0.07);
+  --line2: var(--hair-2);
+
+  --moss: var(--moss-lit);
+  /* The fill is the lit moss now, so what sits on it has to be ink, not
+     white — white on #4fb287 measures 2.5:1. */
+  --on-moss: var(--on-field-moss);
+  --moss-tint: rgba(79, 178, 135, 0.14);
+  --moss-line: rgba(79, 178, 135, 0.34);
+  --signal: var(--field-signal);
+  --signal-tint: rgba(123, 166, 196, 0.14);
+  --signal-line: rgba(123, 166, 196, 0.34);
+  --loss: var(--field-loss);
+  --accent: var(--field-accent);
+  --accent-deep: var(--field-accent-deep);
+  --accent-tint: rgba(22, 192, 145, 0.14);
+  --accent-line: rgba(22, 192, 145, 0.36);
+  --lift: none;
+  --lift-hero: none;
+
+  position: relative;
+  z-index: 1;
+  /*
+   * Painted, not transparent. The ridge is a fixed layer at z-0 inside this
+   * stacking context, so it still shows through — but if it ever failed to
+   * render, the ground underneath must not be paper with white text on it.
+   */
+  background: var(--field);
+  color: var(--on-field);
+}
+
+/* ── Nav ── */
+.nav {
+  position: relative;
+  z-index: 3;
+  background: transparent;
+  border-bottom: 0;
+}
+
+.navIn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 24px 40px;
+  max-width: none;
+}
+
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.navLink {
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--on-field-2);
+  border: 0;
+  background: none;
+  transition: color 0.16s ease, background 0.16s ease;
+}
+
+.navLink:hover {
+  color: var(--on-field);
+  background: rgba(253, 252, 250, 0.06);
+}
+
+.navCta {
+  margin-left: 8px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--hair-2);
+  background: none;
+  color: var(--on-field);
+  font-size: 14.5px;
+  font-weight: 600;
+  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.navCta:hover {
+  background: var(--on-field);
+  color: var(--field);
+  border-color: var(--on-field);
+}
+
+/* ── Hero ── */
+.hero {
+  position: relative;
+  display: flex;
+  /* Explicit: the rule this overrides is a centred column, where
+     align-items:center would centre the copy horizontally instead of
+     seating it against the left edge. */
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  min-height: calc(100svh - 78px);
+  padding: 70px 64px 96px;
+  background: none;
+}
+
+.hero::before {
+  content: none;
+}
+
+.heroCopy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  width: 100%;
+  max-width: 640px;
+  min-width: 0;
+  text-align: left;
+  margin: 0;
+}
+
+.h1 {
+  margin: 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 800;
+  font-size: clamp(48px, 6.4vw, 82px);
+  line-height: 0.97;
+  letter-spacing: -0.03em;
+  max-width: 11ch;
+  text-wrap: balance;
+  color: var(--on-field);
+}
+
+.lede {
+  margin: 0;
+  max-width: 46ch;
+  font-size: 17.5px;
+  line-height: 1.62;
+  color: var(--on-field-2);
+  text-wrap: pretty;
+}
+
+.heroCtas {
+  display: flex;
+  /* Same reason as .hero: the rule below is a centred column. */
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+/* The marketing exception, already documented: in-product the primary is ink. */
+.primary {
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 30px;
+  border-radius: 999px;
+  border: 0;
+  background: var(--moss-deep-fill);
+  color: var(--on-field);
+  font-weight: 600;
+  font-size: 16px;
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+
+.primary:hover {
+  background: var(--moss-deep-hover);
+  transform: translateY(-1px);
+}
+
+.secondary {
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 26px;
+  border-radius: 999px;
+  border: 1px solid var(--hair-2);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--on-field-2);
+  transition: color 0.16s ease, border-color 0.16s ease;
+}
+
+.secondary:hover {
+  color: var(--on-field);
+  border-color: var(--on-field);
+}
+
+/* ── Accordion ── hairlines only, no card, no fill. */
+.accordion {
+  margin-top: 6px;
+  border-top: 1px solid var(--hair);
+}
+
+.panel {
+  border-bottom: 1px solid var(--hair);
+}
+
+.panelHead {
+  width: 100%;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  color: var(--on-field-2);
+  font-size: 17px;
+  font-weight: 600;
+  transition: color 0.16s ease;
+}
+
+.panelHead:hover,
+.panelHead[aria-expanded="true"] {
+  color: var(--on-field);
+}
+
+.chev {
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--on-field-3);
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.panelHead[aria-expanded="true"] .chev {
+  transform: rotate(180deg);
+}
+
+.panelBody {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.34s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.panelBody[data-open] {
+  max-height: 200px;
+}
+
+.panelBody p {
+  margin: 0;
+  padding: 0 0 20px;
+  max-width: 48ch;
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--on-field-2);
+  text-wrap: pretty;
+}
+
+/* ── Wave section ── */
+.pnlSec {
+  position: relative;
+  z-index: 2;
+  padding: 96px 64px 110px;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  background: linear-gradient(
+    180deg,
+    rgba(11, 10, 8, 0.82) 0%,
+    var(--field) 16%,
+    var(--field) 100%
+  );
+  animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+.pnlHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.pnlHeadText {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.pnlEyebrow,
+.pnlCountLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--on-field-3);
+}
+
+.pnlH2 {
+  margin: 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  max-width: 16ch;
+  color: var(--on-field);
+}
+
+.pnlCounts {
+  display: flex;
+  gap: 26px;
+  flex: none;
+}
+
+.pnlCounts div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pnlCountUp,
+.pnlCountDown {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 700;
+  font-size: 30px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pnlCountUp {
+  color: var(--moss-lit);
+}
+
+.pnlCountDown {
+  color: var(--field-loss);
+}
+
+.pnl {
+  position: relative;
+  height: 210px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 2px;
+}
+
+.pnlZero {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--hair);
+}
+
+.pnlCol {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.pnlUp,
+.pnlDown {
+  height: 50%;
+  display: flex;
+  justify-content: center;
+}
+
+.pnlUp {
+  align-items: flex-end;
+}
+
+.pnlDown {
+  align-items: flex-start;
+}
+
+.pnlBar {
+  width: 9px;
+  display: block;
+  animation: grow 0.7s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+.pnlBar[data-dir="up"] {
+  border-radius: 999px 999px 0 0;
+  transform-origin: bottom;
+  background: rgba(79, 178, 135, 0.7);
+}
+
+.pnlBar[data-dir="up"][data-strong] {
+  background: var(--moss-lit);
+}
+
+.pnlBar[data-dir="down"] {
+  border-radius: 0 0 999px 999px;
+  transform-origin: top;
+  background: rgba(200, 122, 92, 0.7);
+}
+
+.pnlBar[data-dir="down"][data-strong] {
+  background: var(--field-loss);
+}
+
+.pnlCap {
+  margin: 0;
+  max-width: 74ch;
+  font-size: 16.5px;
+  line-height: 1.6;
+  color: var(--on-field-2);
+  text-wrap: pretty;
+}
+
+@keyframes grow {
+  from { transform: scaleY(0); }
+  to { transform: none; }
+}
+
+@media (max-width: 1040px) {
+  .hero { padding: 44px 28px 72px; }
+  .heroCopy { max-width: none; }
+  .navIn { padding: 20px 24px; }
+  .pnlSec { padding: 64px 28px 80px; }
+  .pnlH2 { font-size: 29px; }
+}
+

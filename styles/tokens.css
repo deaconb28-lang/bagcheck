@@ -157,6 +157,34 @@
 
   /* A tile inside a card — one step off --s1, never a bordered box. */
   --tile: #fbf8f4;
+
+  /*
+   * The marketing ink field. Darker and cooler than --ink-field, because the
+   * ridge artwork sits behind it and needs the ground to fall away. Declared
+   * once and never flipped: the landing page is a single visual world.
+   */
+  --field: #0b0a08;
+  --field-2: #111310;
+  --field-black: #050505;
+  --on-field: #fdfcfa;
+  --on-field-2: rgba(253, 252, 250, 0.62);
+  /* .42 measures 3.98:1 on the field — below AA at eyebrow sizes. */
+  --on-field-3: rgba(253, 252, 250, 0.56);
+  --hair: rgba(253, 252, 250, 0.12);
+  --hair-2: rgba(253, 252, 250, 0.2);
+  --moss-lit: #4fb287;
+  --moss-glow: #7fe0b4;
+  --field-loss: #c87a5c;
+  --on-field-moss: #14120f;
+  --field-signal: #7ba6c4;
+  --field-accent: #16c091;
+  --field-accent-deep: #3ed4aa;
+  --ridge-ground: #040604;
+  /* The hero button keeps the deep fill even though --moss is remapped to
+     the lit variant on that surface: white on deep clears AA, white on lit
+     does not. */
+  --moss-deep-fill: #1e6b4a;
+  --moss-deep-hover: #28815b;
 }
 
 /*

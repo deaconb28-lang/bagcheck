@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { getUserId } from "@/auth";
 import { getCollections, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
-import { buildRoundTrips, activeStreaks } from "@/lib/score";
-import type { TxnLite } from "@/lib/score";
+import { activeStreaks } from "@/lib/score";
 import { mintable } from "@/lib/cards";
 import { TrophyCard } from "@/components/cards/TrophyCard";
 import type { Rarity, Trophy } from "@/components/cards/TrophyCard";
@@ -92,16 +91,9 @@ export default async function CardsPage() {
   }
 
   const data = await loadScreen(userId, 400);
-  const { transactions, cards } = await getCollections();
+  const { cards } = await getCollections();
 
-  const rows = await transactions
-    .find({ userId })
-    .sort({ date: 1 })
-    .limit(6000)
-    .project<TxnLite>({ _id: 0, date: 1, type: 1, symbol: 1, units: 1, price: 1, amount: 1 })
-    .toArray();
-
-  const trips = buildRoundTrips(rows);
+  const trips = data.derived?.roundTrips ?? [];
   const latest = data.scores[0] ?? null;
 
   const panicSells = trips.filter((t) => t.holdDays < 1 && t.pnl < 0).length;
@@ -133,6 +125,7 @@ export default async function CardsPage() {
     title: spec.label.replace("Bagcheck · ", ""),
     tail: spec.tail,
     heldBy: null,
+    symbol: spec.symbol,
   }));
 
   const lockedCategories = CATEGORIES.filter((c) => !can({ tier: data.tier }, c.cap));

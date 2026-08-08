@@ -40,15 +40,15 @@ export default async function PatternsPage() {
     );
   }
 
+  const data = await loadScreen(userId, 400);
+  // The engine needs the raw rows for entry timestamps; everything else comes
+  // off the derived document.
   const { transactions } = await getCollections();
-  const [rows, data] = await Promise.all([
-    transactions
-      .find({ userId })
-      .sort({ date: 1 })
-      .project<TxnLite>({ _id: 0, date: 1, type: 1, symbol: 1, units: 1, price: 1, amount: 1 })
-      .toArray(),
-    loadScreen(userId, 400),
-  ]);
+  const rows = await transactions
+    .find({ userId })
+    .sort({ date: 1 })
+    .project<TxnLite>({ _id: 0, date: 1, type: 1, symbol: 1, units: 1, price: 1, amount: 1 })
+    .toArray();
 
   if (!rows.length) {
     return (
@@ -68,7 +68,7 @@ export default async function PatternsPage() {
     );
   }
 
-  const trips = buildRoundTrips(rows);
+  const trips = data.derived?.roundTrips ?? buildRoundTrips(rows);
   const found = findings(trips, rows);
   const missing = whatIsMissing(trips, rows);
   const clock = hasClock(rows);

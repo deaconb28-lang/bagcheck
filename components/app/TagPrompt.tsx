@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Logo } from "@/components/primitives";
 import { WHY_OPTIONS, progressLine, queueLine, tagProgress, whyKey } from "@/lib/tags";
 import type { Conviction, UntaggedEntry, Why } from "@/lib/tags";
 import { KIND_FLOOR } from "@/lib/tags";
@@ -82,6 +83,7 @@ export function TagPrompt({ queue, tagged, total }: TagPromptProps) {
   return (
     <div className={styles.wrap}>
       <div className={styles.head}>
+        <Logo symbol={entry.symbol} size={38} />
         <div className={styles.headText}>
           <span className={styles.eyebrow}>{queueLine(queue.length - index)}</span>
           <h2 className={`disp ${styles.title}`}>

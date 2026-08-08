@@ -64,6 +64,16 @@
   user-select: none;
 }
 
+.symbolMark {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--share-dim);
+}
+
 .value {
   font-size: 46px;
   color: var(--share-ink);

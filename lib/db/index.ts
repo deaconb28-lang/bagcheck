@@ -24,3 +24,5 @@ export { DEFAULT_MODE, isMode, modeFor, saveMode } from "./prefs";
 export type { Mode } from "./prefs";
 export { loadScreen, syncClock } from "./screen";
 export type { ScreenData } from "./screen";
+export { DERIVED_VERSION, getDerived, rebuildDerived } from "./derived";
+export type { DailyPnl, EquityPoint, HoldTime } from "./derived";

@@ -25,14 +25,43 @@
   overflow: hidden;
 }
 
-.fieldArt {
+/*
+ * The ridge, in CSS. Same 124deg light as the landing so the two surfaces
+ * read as one product; the bright band stays inside one percent, which is
+ * what makes it an edge rather than a wash.
+ */
+.fieldRidge {
   position: absolute;
-  inset: -10%;
-  background: url("/art/field-16x9.jpg") center / cover no-repeat;
-  opacity: 0.55;
-  filter: saturate(0.78) contrast(0.95);
-  animation: drift 52s ease-in-out infinite;
+  inset: -14%;
+  opacity: 0.5;
+  animation: drift 62s ease-in-out infinite;
   will-change: transform;
+  background-image:
+    radial-gradient(
+      58% 42% at 82% 12%,
+      rgba(127, 224, 180, 0.22) 0%, rgba(79, 178, 135, 0.08) 42%, rgba(4, 6, 4, 0) 72%
+    ),
+    linear-gradient(
+      124deg,
+      rgba(4, 6, 4, 0) 0%, rgba(4, 6, 4, 0) 40.5%,
+      rgba(154, 240, 200, 0.08) 41.2%,
+      rgba(214, 255, 236, 0.55) 42.2%,
+      rgba(120, 226, 180, 0.4) 43.4%,
+      rgba(52, 150, 108, 0.24) 46%,
+      rgba(24, 86, 60, 0.14) 52%,
+      rgba(4, 6, 4, 0) 70%
+    ),
+    linear-gradient(
+      124deg,
+      rgba(4, 6, 4, 0) 0%, rgba(4, 6, 4, 0) 57%,
+      rgba(96, 200, 154, 0.2) 57.7%, rgba(40, 124, 90, 0.12) 60%,
+      rgba(4, 6, 4, 0) 78%
+    ),
+    repeating-linear-gradient(
+      124deg,
+      rgba(180, 255, 220, 0.035) 0px, rgba(180, 255, 220, 0.035) 1px,
+      rgba(4, 6, 4, 0) 1px, rgba(4, 6, 4, 0) 7px
+    );
 }
 
 .fieldFade {
@@ -52,9 +81,8 @@
  * drifting behind the type, which is the opposite of an instrument. The
  * gesture stays — it is just barely there, which is the whole point.
  */
-:global(html[data-mode="dark"]) .fieldArt {
-  opacity: 0.14;
-  filter: saturate(0.5) contrast(0.9);
+:global(html[data-mode="dark"]) .fieldRidge {
+  opacity: 0.3;
 }
 
 :global(html[data-mode="dark"]) .fieldFade {

@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { getUserId } from "@/auth";
 import { isDbConfigured, loadScreen, syncClock } from "@/lib/db";
-import { buildRoundTrips } from "@/lib/score";
-import type { TxnLite } from "@/lib/score";
-import { getCollections } from "@/lib/db";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { SignInCta } from "@/components/app/SignInCta";
@@ -46,18 +43,14 @@ export default async function WrappedPage() {
     );
   }
 
-  const { transactions } = await getCollections();
-  const rows = await transactions
-    .find({ userId })
-    .sort({ date: 1 })
-    .limit(6000)
-    .project<TxnLite>({ _id: 0, date: 1, type: 1, symbol: 1, units: 1, price: 1, amount: 1 })
-    .toArray();
-
-  const trips = buildRoundTrips(rows);
-  const winners = trips.filter((t) => t.pnl > 0);
-  const losers = trips.filter((t) => t.pnl <= 0);
-  const mean = (xs: number[]) => (xs.length ? xs.reduce((s, x) => s + x, 0) / xs.length : null);
+  // Read, not recomputed — see lib/db/derived.ts.
+  const trips = data.derived?.roundTrips ?? [];
+  const hold = data.derived?.holdTime ?? {
+    winnersMean: null,
+    losersMean: null,
+    winners: 0,
+    losers: 0,
+  };
 
   const latest = data.scores[0];
   const best = trips.reduce<(typeof trips)[number] | null>(
@@ -75,8 +68,8 @@ export default async function WrappedPage() {
       archetype={archetypeOf(latest.components as unknown as Record<string, number>)}
       scoredDays={data.scores.length}
       transactionCount={data.transactionCount}
-      winnerHold={mean(winners.map((t) => t.holdDays))}
-      loserHold={mean(losers.map((t) => t.holdDays))}
+      winnerHold={hold.winnersMean}
+      loserHold={hold.losersMean}
       bestDecision={best}
       longestHold={longest}
       score={latest.score}

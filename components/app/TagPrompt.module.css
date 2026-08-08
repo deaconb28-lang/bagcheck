@@ -7,7 +7,7 @@
 .head {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 

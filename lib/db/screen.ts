@@ -1,5 +1,7 @@
 import { getCollections } from "./collections";
+import { getDerived } from "./derived";
 import { holdingsFrom, loadAppData } from "./queries";
+import type { DerivedDoc } from "./types";
 import { tierFor as tierForUser } from "./subscriptions";
 import { modeFor } from "./prefs";
 import type { AppData, HoldingRow } from "./queries";
@@ -15,6 +17,11 @@ import type { Tier } from "@/lib/tiers";
  */
 export interface ScreenData extends AppData {
   holdings: HoldingRow[];
+  /**
+   * Round trips, daily P&L, equity and hold times — read, not recomputed.
+   * Null only when the ledger is empty.
+   */
+  derived: DerivedDoc | null;
   tier: Tier;
   mode: Mode;
   /** Entries with a why on file, and the openings that could carry one. */
@@ -26,14 +33,27 @@ export async function loadScreen(userId: string, scoreLimit = 400): Promise<Scre
   const app = await loadAppData(userId, scoreLimit);
   const { tags, transactions } = await getCollections();
 
-  const [tier, mode, tagged, taggable] = await Promise.all([
+  const [tier, mode, tagged, taggable, derived] = await Promise.all([
     tierForUser(userId).catch(() => "free" as Tier),
     modeFor(userId),
     tags.countDocuments({ userId }),
     transactions.countDocuments({ userId, type: { $regex: /buy/i } }),
+    getDerived(userId).catch((err) => {
+      // A missing derived document degrades a chart, not a page.
+      console.error("[screen] derived unavailable", err);
+      return null;
+    }),
   ]);
 
-  return { ...app, holdings: holdingsFrom(app.snapshots), tier, mode, tagged, taggable };
+  return {
+    ...app,
+    holdings: holdingsFrom(app.snapshots),
+    derived,
+    tier,
+    mode,
+    tagged,
+    taggable,
+  };
 }
 
 /** "06:14" — the header's sync pill. Null when the ledger never synced. */

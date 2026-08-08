@@ -50,13 +50,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       />
 
       {/*
-        The field. A fixed, slowly drifting backdrop faded almost out — the
-        one warm gesture in an instrument aesthetic, and it is motion rather
-        than ornament. Committed locally: hot-linking it would break the
-        share-card renderer, which has to draw it to a canvas.
+        The field — the same ridge the landing page runs, drawn in CSS rather
+        than loaded as an image. It renders at any size, costs nothing, has no
+        CDN dependency, and can be rasterised by @vercel/og, which a JPEG
+        cannot. In-product it is suppressed hard: this is an instrument, and
+        the artwork is a gesture rather than a subject.
       */}
       <div className={styles.field} aria-hidden="true">
-        <div className={styles.fieldArt} />
+        <div className={styles.fieldRidge} />
         <div className={styles.fieldFade} />
       </div>
 

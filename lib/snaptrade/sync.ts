@@ -1,5 +1,6 @@
 import type { LoginRedirectURI } from "snaptrade-typescript-sdk";
 import { ensureIndexes, getCollections } from "@/lib/db";
+import { rebuildDerived } from "@/lib/db/derived";
 import type { ConnectionDoc } from "@/lib/db";
 import { getSnapTrade } from "./client";
 
@@ -159,6 +160,16 @@ export async function syncUser(userId: string): Promise<SyncResult> {
         })),
       },
     },
+  );
+
+  /*
+   * Rebuild the derived layer here, at the one point the ledger actually
+   * changes. Everything downstream — the wave, round trips, hold times — then
+   * reads a document instead of scanning, and a page view costs O(1).
+   * A failure is logged, not thrown: the sync itself succeeded.
+   */
+  await rebuildDerived(userId).catch((err) =>
+    console.error("[sync] derived rebuild failed", err),
   );
 
   return {

@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation";
 import { getUserId, isAuthConfigured, signIn } from "@/auth";
 import { Button, Chip, Eyebrow } from "@/components/primitives";
-import { DayStrip } from "./DayStrip";
 import { ConvictionBars, DistributionWide, MiniScatter, WinRateBars } from "./Idioms";
 import { iconsEnabled } from "@/lib/icons";
+import { Accordion } from "./Accordion";
+import { Field } from "./Field";
 import { Mark } from "./Mark";
+import { demoWave, waveCounts } from "./wave";
 import { PricingTiers } from "./PricingTiers";
 import { TodayMock } from "./TodayMock";
 import { WrappedFan } from "./WrappedFan";
@@ -31,23 +33,21 @@ export const dynamic = "force-dynamic";
 
 export default async function LandingPage() {
   const signedIn = Boolean(await getUserId());
+  const bars = demoWave();
+  const counts = waveCounts(bars);
 
   return (
     <div className={styles.page}>
+      <Field />
+
       <header className={styles.nav}>
         <div className={styles.navIn}>
           <Mark />
           <div className={styles.navRight}>
             <nav className={styles.navLinks} aria-label="Site">
-              <a className={styles.navLink} href="#score">
-                The score
-              </a>
-              <a className={styles.navLink} href="#wrapped">
-                Wrapped
-              </a>
-              <a className={styles.navLink} href="#pricing">
-                Pricing
-              </a>
+              <a className={styles.navLink} href="#score">The score</a>
+              <a className={styles.navLink} href="#wrapped">Wrapped</a>
+              <a className={styles.navLink} href="#pricing">Pricing</a>
               <form action={connectAction}>
                 <button type="submit" className={styles.navLink}>
                   {signedIn ? "Your ledger" : "Sign in"}
@@ -55,16 +55,18 @@ export default async function LandingPage() {
               </form>
             </nav>
             <form action={connectAction}>
-              <Button ghost type="submit">
+              <button type="submit" className={styles.navCta}>
                 {signedIn ? "Open Bagcheck" : "Connect a brokerage"}
-              </Button>
+              </button>
             </form>
           </div>
         </div>
       </header>
 
+      {/* One left-aligned column over the ridge. The right half of the
+          viewport is artwork and nothing else. */}
       <section className={styles.hero}>
-        <div className={styles.heroIn}>
+        <div className={styles.heroCopy}>
           <h1 className={styles.h1}>Transform how you trade.</h1>
           <p className={styles.lede}>
             It starts with seeing what you actually do. Bagcheck reads your
@@ -74,25 +76,71 @@ export default async function LandingPage() {
           </p>
           <div className={styles.heroCtas}>
             <form action={connectAction}>
-              <Button marketing type="submit">
-                {signedIn ? "Open your ledger" : "Connect a brokerage"}
-              </Button>
+              <button type="submit" className={styles.primary}>
+                {signedIn ? "Open your ledger" : "Open your ledger"}
+              </button>
             </form>
-            <p className={styles.ctaCaption}>
-              Read-only · via SnapTrade · never a price alert
-            </p>
+            <a className={styles.secondary} href="#score">See what gets scored</a>
+          </div>
+          <Accordion />
+        </div>
+      </section>
+
+      {/* The wave on its own surface. The artwork is fixed, so this slides up
+          over a still image. */}
+      <section className={styles.pnlSec} data-reveal>
+        <div className={styles.pnlHead}>
+          <div className={styles.pnlHeadText}>
+            <span className={styles.pnlEyebrow}>Sixty-three trading days</span>
+            <h2 className={styles.pnlH2}>
+              Bagcheck reads all of it and scores none of it.
+            </h2>
+          </div>
+          <div className={styles.pnlCounts}>
+            <div>
+              <span className={styles.pnlCountLabel}>Green days</span>
+              <span className={styles.pnlCountUp}>{counts.green}</span>
+            </div>
+            <div>
+              <span className={styles.pnlCountLabel}>Red days</span>
+              <span className={styles.pnlCountDown}>{counts.red}</span>
+            </div>
           </div>
         </div>
 
-        {/* The quarter itself, spanning the page. */}
-        <div className={styles.waveBlock}>
-          <DayStrip />
-          <p className={styles.stripCap}>
-            Sixty-three trading days of P&amp;L, straight from your brokerage.
-            Bagcheck reads all of it and scores none of it — the score is what
-            you did on each of these days.
-          </p>
+        <div className={styles.pnl}>
+          <div className={styles.pnlZero} aria-hidden="true" />
+          {bars.map((bar) => (
+            <div key={bar.day} className={styles.pnlCol} title={bar.label}>
+              <div className={styles.pnlUp}>
+                {bar.win ? (
+                  <i
+                    className={styles.pnlBar}
+                    data-dir="up"
+                    data-strong={bar.pct > 62 || undefined}
+                    style={{ height: `${bar.pct}%`, animationDelay: `${bar.day * 9}ms` }}
+                  />
+                ) : null}
+              </div>
+              <div className={styles.pnlDown}>
+                {!bar.win ? (
+                  <i
+                    className={styles.pnlBar}
+                    data-dir="down"
+                    data-strong={bar.pct > 62 || undefined}
+                    style={{ height: `${bar.pct}%`, animationDelay: `${bar.day * 9}ms` }}
+                  />
+                ) : null}
+              </div>
+            </div>
+          ))}
         </div>
+
+        <p className={styles.pnlCap}>
+          Sixty-three trading days of P&amp;L, straight from your brokerage.
+          Bagcheck reads all of it and scores none of it — the score is what you
+          did on each of these days.
+        </p>
       </section>
 
       <section className={styles.section} id="score">

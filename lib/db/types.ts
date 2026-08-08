@@ -1,6 +1,6 @@
 import type { Binary } from "mongodb";
 import type { AccountUniversalActivity, Position } from "snaptrade-typescript-sdk";
-import type { Contributor, ScoreComponents, StyleBaseline } from "@/lib/score";
+import type { Contributor, RoundTrip, ScoreComponents, StyleBaseline } from "@/lib/score";
 
 export interface ConnectionAccount {
   id: string;
@@ -170,4 +170,30 @@ export interface PrefsDoc {
   /** New users default to dark; this only exists once they have chosen. */
   mode: "light" | "dark";
   updatedAt: Date;
+}
+
+/**
+ * The derived layer — round trips, daily P&L, forward-filled equity and hold
+ * times, computed once per sync rather than on every page view.
+ *
+ * `version` retires every document at once after a logic change; `ledgerHash`
+ * and `transactionCount` let a read skip the rebuild when nothing moved.
+ */
+export interface DerivedDoc {
+  userId: string;
+  version: number;
+  ledgerHash: string;
+  computedAt: Date;
+  transactionCount: number;
+  roundTrips: RoundTrip[];
+  dailyPnl: Array<{ date: string; realised: number }>;
+  equitySeries: Array<{ date: string; value: number; interpolated: boolean }>;
+  holdTime: {
+    winnersMean: number | null;
+    losersMean: number | null;
+    winners: number;
+    losers: number;
+  };
+  /** Names whose FIFO-implied units disagree with the snapshot. Never in statistics. */
+  excludedSymbols: string[];
 }

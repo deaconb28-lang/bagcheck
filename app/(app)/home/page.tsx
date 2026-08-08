@@ -16,10 +16,10 @@ import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { SignInCta } from "@/components/app/SignInCta";
 import { HomeView } from "./HomeView";
+import type { WaveDay } from "@/components/idioms";
 import {
   archetypeOf,
   currentStreak,
-  dailyPnl,
   heatFromScores,
   longestStreak,
   waveSummary,
@@ -117,13 +117,14 @@ export default async function HomePage() {
     ),
   ]);
 
-  const allTransactions = await transactions
-    .find({ userId })
-    .sort({ date: -1 })
-    .limit(4000)
-    .toArray();
-
-  const wave = dailyPnl(allTransactions);
+  /*
+   * The wave is read, not computed. This used to pull four thousand rows on
+   * every navigation; the derived document holds the same series, rebuilt
+   * only when the ledger actually moves.
+   */
+  const wave: WaveDay[] = (data.derived?.dailyPnl ?? [])
+    .slice(-63)
+    .map((d) => ({ date: d.date, amount: d.realised }));
   const queue = untaggedQueue(
     recent.map((r) => ({
       externalId: r.externalId,

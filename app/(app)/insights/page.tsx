@@ -2,14 +2,11 @@ import type { Metadata } from "next";
 import { getUserId } from "@/auth";
 import {
   factsFrom,
-  getCollections,
   getDailyInsight,
   isDbConfigured,
   loadScreen,
   syncClock,
 } from "@/lib/db";
-import { buildRoundTrips } from "@/lib/score";
-import type { TxnLite } from "@/lib/score";
 import { Locked } from "@/components/app/Locked";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
@@ -61,20 +58,8 @@ export default async function InsightsPage() {
     );
   }
 
-  const { transactions } = await getCollections();
-  const rows = await transactions
-    .find({ userId })
-    .sort({ date: 1 })
-    .limit(6000)
-    .project<TxnLite>({ _id: 0, date: 1, type: 1, symbol: 1, units: 1, price: 1, amount: 1 })
-    .toArray();
-
-  const trips = buildRoundTrips(rows);
-  const winners = trips.filter((t) => t.pnl > 0);
-  const losers = trips.filter((t) => t.pnl <= 0);
-  const mean = (xs: number[]) => (xs.length ? xs.reduce((s, x) => s + x, 0) / xs.length : null);
-  const wHold = mean(winners.map((t) => t.holdDays));
-  const lHold = mean(losers.map((t) => t.holdDays));
+  const wHold = data.derived?.holdTime.winnersMean ?? null;
+  const lHold = data.derived?.holdTime.losersMean ?? null;
 
   const insight = await getDailyInsight(
     userId,

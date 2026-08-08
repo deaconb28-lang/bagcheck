@@ -3,6 +3,7 @@ import { dbName, getMongoClient } from "./client";
 import type {
   CardDoc,
   ConnectionDoc,
+  DerivedDoc,
   IconDoc,
   InsightDoc,
   MarketCacheDoc,
@@ -35,6 +36,7 @@ export async function getCollections() {
     marketCache: db.collection<MarketCacheDoc>("marketCache"),
     icons: db.collection<IconDoc>("icons"),
     prefs: db.collection<PrefsDoc>("prefs"),
+    derived: db.collection<DerivedDoc>("derived"),
   };
 }
 
@@ -62,5 +64,6 @@ export async function ensureIndexes() {
     c.marketCache.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
     c.icons.createIndex({ name: 1 }, { unique: true }),
     c.prefs.createIndex({ userId: 1 }, { unique: true }),
+    c.derived.createIndex({ userId: 1 }, { unique: true }),
   ]);
 }

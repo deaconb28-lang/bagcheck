@@ -58,6 +58,8 @@ Reference docs (read before any UI work — the design system is authoritative o
 
 - One idiom per statement, each legible at 200px wide.
 - Full equity curves render on `/dna` only. Never four identical sparklines.
+- Screens read `lib/db/derived.ts`, they do not scan. Round trips, daily P&L, equity and hold times are materialised once per sync — four screens each rebuilding every round trip per navigation is a timeout waiting for a big enough ledger. Bump `DERIVED_VERSION` when that file changes meaning.
+- A name whose FIFO-implied units disagree with the position snapshot is excluded from statistics, never silently averaged in. The position still renders; only the inference stops.
 - No decorative gradients and no emoji.
 - Icons are a closed vocabulary, not a set. `lib/icons/names.ts` `ICONS` is the whole list, and a new glyph means a new line in it — `/api/icon` serves names, never search terms. They label a fixed taxonomy — the ledger kinds, the three tiers, and the five situations an empty state can be in — and never decorate a heading, a button or a card.
 - An empty state's icon names the *situation*, not the screen: signed out, deployment unconfigured, no brokerage, nothing synced, nothing scored yet. The same predicament looks the same on all seven screens.

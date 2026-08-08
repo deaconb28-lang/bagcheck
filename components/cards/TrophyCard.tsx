@@ -1,4 +1,5 @@
 import { ShareButton } from "@/components/app/ShareButton";
+import { Logo } from "@/components/primitives";
 import { TIER_LABEL, tierFor } from "@/lib/tiers";
 import type { Capability } from "@/lib/tiers";
 import styles from "./TrophyCard.module.css";
@@ -17,6 +18,8 @@ export type Trophy = {
   tail: string;
   /** Share of members holding this card. Rarity means nothing without one. */
   heldBy: number | null;
+  /** The instrument the card is about, when it is about one. */
+  symbol?: string | null;
 };
 
 type TrophyCardProps =
@@ -45,6 +48,12 @@ export function TrophyCard(props: TrophyCardProps) {
       </div>
 
       <div className={styles.body} data-blur={locked || undefined}>
+        {trophy.symbol ? (
+          <span className={styles.symbolMark}>
+            <Logo symbol={trophy.symbol} size={26} />
+            <span>{trophy.symbol}</span>
+          </span>
+        ) : null}
         <div className={`num ${styles.value}`}>{trophy.value}</div>
         <div className={styles.title}>{trophy.title}</div>
         <p className={styles.tail}>{trophy.tail}</p>
