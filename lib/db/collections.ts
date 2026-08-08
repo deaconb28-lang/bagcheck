@@ -3,6 +3,7 @@ import { dbName, getMongoClient } from "./client";
 import type {
   CardDoc,
   ConnectionDoc,
+  IconDoc,
   InsightDoc,
   MarketCacheDoc,
   PositionSnapshotDoc,
@@ -31,6 +32,7 @@ export async function getCollections() {
     cards: db.collection<CardDoc>("cards"),
     subscriptions: db.collection<SubscriptionDoc>("subscriptions"),
     marketCache: db.collection<MarketCacheDoc>("marketCache"),
+    icons: db.collection<IconDoc>("icons"),
   };
 }
 
@@ -54,5 +56,6 @@ export async function ensureIndexes() {
     c.marketCache.createIndex({ key: 1 }, { unique: true }),
     // Mongo sweeps expired entries; nothing has to remember to.
     c.marketCache.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
+    c.icons.createIndex({ name: 1 }, { unique: true }),
   ]);
 }

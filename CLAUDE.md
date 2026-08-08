@@ -51,7 +51,10 @@ Reference docs (read before any UI work — the design system is authoritative o
 
 - One idiom per statement, each legible at 200px wide.
 - Full equity curves render on Portfolio only. Never four identical sparklines.
-- No decorative gradients, no emoji, no icon sets.
+- No decorative gradients and no emoji.
+- Icons are a closed vocabulary, not a set. `lib/icons/noun.ts` `ICONS` is the whole list, and a new glyph means a new line in it — `/api/icon` serves names, never search terms. They label a fixed taxonomy (the ledger kinds); they never decorate a heading, a button or a card.
+- The sidebar route marks in `components/app/nav.tsx` are drawn by us and stay that way. They are geometric reductions of their screens, and a fetched glyph would be a downgrade.
+- An `<Icon>` is painted as a CSS mask, never an `<img>` or inline SVG: the shape comes from the API and the colour is `currentColor`, so a glyph takes the token of the row it sits in and no palette hex enters from outside `styles/tokens.css`.
 
 ## Stat card grammar
 
@@ -88,6 +91,7 @@ Reference docs (read before any UI work — the design system is authoritative o
 - Wrapped art is generated once at mint and stored — never on read. A share card must look identical on every open, and a page view must not depend on an image model being up. Generation failing is not an error: the card renders on the flat ink field.
 - The art prompt (`lib/wrapped/prompt.ts`) is pure and tested. It forbids text, numerals, logos, people and objects, and asks for a quiet centre — the card's own type is set in Outfit by us, and a model drawing a number would be both wrong and unfixable.
 - Company marks come from logo.dev through `/api/logo/[symbol]`, never a direct URL: the token stays server-side and the route always answers with an image, so no component handles a broken one. Unknown tickers get a drawn monogram in the palette.
+- Icons come from The Noun Project through `/api/icon/[name]`, signed with two-legged OAuth 1.0a in `lib/icons/noun.ts` (pure and tested; the secret never leaves the server). Fetched once and stored in Mongo with no TTL — an icon does not change, every call costs quota, and their terms forbid redistribution, so the route must never accept a search term. Third-party SVG is sanitized before it is stored. Icons are CC-BY: `/legal/icons` names the creators, and it reads the store rather than calling the API.
 - Market data (Finnhub, `lib/market`) backchecks the brokerage and never becomes an event. A quote may only correct a mark the last sync left stale — never replace a mark from today, and never surface a move on its own. There is no price alert and no place to write one. `resolveMark` also refuses a quote that disagrees with the broker by more than half: that is a symbol resolving to a different instrument, not a correction.
 - Anything a screen shows from market data says so, in mono, via `provenanceLine`. The brokerage stays the account of record: names fill a gap the broker left empty and never overwrite one it gave.
 - `lib/market/marks.ts` and `holdings.ts` are pure and tested; `client.ts` owns the network. Calls go through `cached()` — a shared Mongo collection swept by a TTL index, keyed by request and not by user, because the rate limit is per key. Fan-out is bounded by `pooled()`. Every failure path returns the brokerage's own numbers rather than an error.

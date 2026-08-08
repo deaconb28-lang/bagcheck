@@ -193,6 +193,15 @@
   color: var(--ink);
 }
 
+/* The icon inherits the row's colour, so it darkens with the label on
+   hover and on the selected state without a rule of its own. */
+.filterName {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
 .filterCount {
   font-family: var(--font-mono), monospace;
   font-size: 10px;

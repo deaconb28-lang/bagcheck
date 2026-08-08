@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getUserId } from "@/auth";
 import { isDbConfigured, loadActivity, loadAppData } from "@/lib/db";
-import { Card, Eyebrow, Stat } from "@/components/primitives";
+import { iconsEnabled, isIconName } from "@/lib/icons";
+import { Card, Eyebrow, Icon, Stat } from "@/components/primitives";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { PageHeader } from "@/components/app/PageHeader";
@@ -67,6 +68,10 @@ export default async function ActivityPage({
     );
   }
 
+  // Asked once, here, rather than inside <Icon>: an empty glyph column reads
+  // worse than none, and this screen was designed before there were any.
+  const glyphs = iconsEnabled();
+
   const pages = Math.ceil(total / PAGE);
   const href = (p: number) =>
     `/activity?${new URLSearchParams({ ...(kind ? { kind } : {}), ...(p ? { page: String(p) } : {}) })}`;
@@ -95,7 +100,11 @@ export default async function ActivityPage({
               className={styles.filter}
               data-active={!kind || undefined}
             >
-              All <span className={styles.filterCount}>{kinds.reduce((s, k) => s + k.count, 0)}</span>
+              <span className={styles.filterName}>
+                {glyphs ? <Icon name="all" /> : null}
+                All
+              </span>
+              <span className={styles.filterCount}>{kinds.reduce((s, k) => s + k.count, 0)}</span>
             </Link>
             {kinds.map((k) => (
               <Link
@@ -104,7 +113,11 @@ export default async function ActivityPage({
                 className={styles.filter}
                 data-active={kind === k.kind || undefined}
               >
-                {k.kind} <span className={styles.filterCount}>{k.count}</span>
+                <span className={styles.filterName}>
+                  {glyphs && isIconName(k.kind) ? <Icon name={k.kind} /> : null}
+                  {k.kind}
+                </span>
+                <span className={styles.filterCount}>{k.count}</span>
               </Link>
             ))}
           </div>

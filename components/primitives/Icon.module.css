@@ -1,0 +1,20 @@
+/*
+ * The shape is fetched; the colour is ours. A mask paints currentColor
+ * through the glyph, so an icon inherits the token its row already uses and
+ * nothing from outside styles/tokens.css can put a colour on the page.
+ */
+.icon {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: var(--size, 16px);
+  height: var(--size, 16px);
+  background: currentColor;
+  -webkit-mask-image: var(--icon);
+  mask-image: var(--icon);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}

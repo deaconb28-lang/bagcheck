@@ -146,3 +146,16 @@ export interface MarketCacheDoc {
   fetchedAt: Date;
   expiresAt: Date;
 }
+
+/**
+ * Icons already fetched from The Noun Project. No TTL: an icon does not
+ * change, the vocabulary is fixed and small, and every call costs quota —
+ * so this is the store, not a cache in front of one.
+ */
+export interface IconDoc {
+  name: string;
+  svg: string;
+  /** The CC-BY credit line, rendered on /legal/icons. */
+  credit: string;
+  nounId: string | null;
+}
