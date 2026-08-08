@@ -1,16 +1,14 @@
 import { WrappedCard } from "@/components/cards/WrappedCard";
-import { archetypeByKey } from "@/lib/archetypes";
-import { ShareCard } from "./ShareCard";
 import styles from "./marketing.module.css";
 
 /*
- * The strip on the centre card is a fixed series, generated once here rather
- * than sampled from anyone. It is marked "Example" on the card for exactly
- * that reason: the whole argument of this section is that Bagcheck's numbers
- * come from a brokerage, so an illustration must say that it is one.
+ * A fixed series, generated once here rather than sampled from anyone. The
+ * card says "Example" on its face for exactly that reason: the whole argument
+ * of this section is that Bagcheck's numbers come from a brokerage, so an
+ * illustration has to say that it is one.
  */
-const EXAMPLE_STRIP = Array.from({ length: 48 }, (_, i) =>
-  Math.round((Math.sin(i * 0.7) * 1.6 + Math.cos(i * 0.31) - 0.25) * 140),
+const EXAMPLE_STRIP = Array.from({ length: 12 }, (_, i) =>
+  Math.round((Math.sin(i * 0.62) * 1.4 + Math.cos(i * 0.29) + i * 0.22 - 0.4) * 140),
 );
 
 /**
@@ -18,45 +16,88 @@ const EXAMPLE_STRIP = Array.from({ length: 48 }, (_, i) =>
  * literal. The centre card is the rare one, and it sits on top because
  * scarcity here is a fact about the behaviour, not a purchase.
  *
- * The centre is the real `<WrappedCard>`, the same component the app renders
- * and the same one the minted URL unfurls as. What someone is shown before
+ * All three are the real `<WrappedCard>`, the same component the app renders
+ * and the same one a minted URL unfurls as. What someone is shown before
  * signing up is the thing they get.
+ *
+ * One hue each, and each card carries a spine or a chart, never both.
  */
 export function WrappedFan() {
-  const archetype = archetypeByKey("sentinel");
-  if (!archetype) return null;
-
   return (
     <div className={styles.fanWrap}>
       <div className={`${styles.fanCard} ${styles.fanLeft}`}>
-        <ShareCard
-          label="Bagcheck · Q3 report"
+        <WrappedCard
+          eyebrow="Bagcheck · Q3"
+          kicker="Zero"
+          headline="Panic"
+          lede="A quarter that gave you three chances to sell low."
+          metricLabel="Panic sells"
           value="0"
-          tail="panic sells in a quarter that gave you three chances"
-          seed={1}
+          chip="Across 61 scored sessions"
+          body={{
+            kind: "beats",
+            beats: [
+              { label: "March", detail: "Held through 14%" },
+              { label: "June", detail: "Held through 9%" },
+              { label: "August", detail: "Held through 11%" },
+            ],
+          }}
           slug="q3-no-panic"
+          footLabel="Read from your brokerage"
+          footDetail="Read-only. No trade was placed."
+          backdrop="/cards/moss-consistency.png"
+          hue="moss"
+          example
         />
       </div>
+
       <div className={`${styles.fanCard} ${styles.fanRight}`}>
-        <ShareCard
-          label="Bagcheck · archetype"
-          value="The Holder"
-          tail="long holds, quiet drawdowns, contributions on schedule"
-          accent="signal"
-          textValue
-          seed={2}
-          slug="archetype-holder"
+        <WrappedCard
+          eyebrow="Bagcheck · archetype"
+          kicker="The"
+          headline="Sentinel"
+          lede="You wait for your own setup, then wait again after taking it."
+          metricLabel="Health, end of year"
+          value="82"
+          unit="/100"
+          chip="Adherence and patience above 60"
+          body={{
+            kind: "beats",
+            beats: [
+              { label: "Adherence", detail: "78 — the plan has not drifted" },
+              { label: "Patience", detail: "84 — winners held 3× longer" },
+              { label: "Exposure", detail: "51 — inside your own band" },
+            ],
+          }}
+          slug="archetype-sentinel"
+          footLabel="Read from your brokerage"
+          footDetail="Read-only. No trade was placed."
+          backdrop="/cards/azure-adherence.png"
+          hue="azure"
+          example
         />
       </div>
+
       <div className={`${styles.fanCard} ${styles.fanCenter}`}>
         <WrappedCard
-          year={2026}
-          archetype={archetype}
-          eyebrow="Longest hold"
+          eyebrow="Bagcheck · 2026"
+          kicker="Longest"
+          headline="Hold"
+          lede="Four hundred and twelve days on one position."
+          metricLabel="Days held"
           value="412"
-          tail="days on one position — longer than you have held anything before."
-          strip={EXAMPLE_STRIP}
+          unit="days"
+          chip="Longest of your 37 round trips"
+          body={{
+            kind: "chart",
+            strip: EXAMPLE_STRIP,
+            labels: ["S", "O", "N", "D", "J", "F", "M", "A", "M", "J", "J", "A"],
+          }}
           slug="412-days"
+          footLabel="Read from your brokerage"
+          footDetail="Read-only. No trade was placed."
+          backdrop="/cards/ember-exposure.png"
+          hue="ember"
           rarity="rare"
           example
         />

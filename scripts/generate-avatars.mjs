@@ -44,6 +44,37 @@ const MODEL = process.env.OPENAI_IMAGE_MODEL || "gpt-image-2";
 /** 3.5× the 72px the avatar renders at largest. Retina has headroom. */
 const SIZE = 256;
 
+/**
+ * The margin left around the form after trimming, as a fraction of its
+ * longest side.
+ *
+ * The prompt asks for a generous margin so the model composes a centred mark
+ * rather than a full-bleed texture — but that margin is the model's, and it
+ * varies. Rendered at 44px inside a rounded tile it reads as a faint speck.
+ * Trimming to the form and padding back to one consistent margin is what
+ * makes sixteen independently-generated images sit at the same optical size.
+ */
+const MARGIN = 0.14;
+
+/** Trim to the drawn form, re-pad evenly, and write at SIZE. */
+async function frame(input) {
+  const trimmed = await sharp(input).trim({ threshold: 12 }).toBuffer();
+  const meta = await sharp(trimmed).metadata();
+  const side = Math.max(meta.width, meta.height);
+  const pad = Math.round(side * MARGIN);
+  const box = side + pad * 2;
+  return sharp({
+    create: { width: box, height: box, channels: 3, background: FIELD },
+  })
+    .composite([{ input: trimmed, gravity: "center" }])
+    .resize(SIZE, SIZE, { fit: "cover" })
+    .png({ compressionLevel: 9, palette: true })
+    .toBuffer();
+}
+
+/** The ink field, matching --share-bg. An image carries no stylesheet. */
+const FIELD = { r: 0x17, g: 0x14, b: 0x0f };
+
 if (!process.env.OPENAI_API_KEY) {
   console.error("OPENAI_API_KEY is not set — nothing to generate with.");
   process.exit(1);
@@ -91,10 +122,7 @@ for (const archetype of targets) {
     const b64 = json.data?.[0]?.b64_json;
     if (!b64) throw new Error("response carried no image data");
 
-    const png = await sharp(Buffer.from(b64, "base64"))
-      .resize(SIZE, SIZE, { fit: "cover" })
-      .png({ compressionLevel: 9, palette: true })
-      .toBuffer();
+    const png = await frame(Buffer.from(b64, "base64"));
     writeFileSync(path, png);
     made += 1;
     console.log(

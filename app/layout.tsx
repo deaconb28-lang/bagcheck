@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono, Playfair_Display, Public_Sans } from "next/font/google";
+import { Anton, JetBrains_Mono, Playfair_Display, Public_Sans } from "next/font/google";
 import "../styles/tokens.css";
 import "./globals.css";
 
@@ -30,6 +30,25 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
+/*
+ * Poster face — share cards only, and nowhere else in the product.
+ *
+ * The three-family rule is about the *app*, where a fourth face is how a
+ * system starts to smear. A share card is not in the app: it is minted to
+ * leave, and it competes in a feed against everything else in that feed. A
+ * high-contrast serif set at 58px loses that fight; a condensed grotesque at
+ * 120px does not.
+ *
+ * Enforced by scope rather than by discipline — the variable is only read
+ * inside components/cards and app/og.
+ */
+const poster = Anton({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-poster",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Bagcheck",
   description: "Fitness tracking for your investment portfolio.",
@@ -44,7 +63,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-mode="light"
-      className={`${display.variable} ${body.variable} ${mono.variable}`}
+      className={`${display.variable} ${body.variable} ${mono.variable} ${poster.variable}`}
     >
       <body>{children}</body>
     </html>

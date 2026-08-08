@@ -9,16 +9,21 @@ const year = (o: Partial<WrappedYear> = {}): WrappedYear => ({
 
 test("the prompt forbids everything that would break the system", () => {
   const p = artPrompt(year()).toLowerCase();
-  for (const rule of ["no text", "no logos", "no people", "abstract", "flat and matte"]) {
+  for (const rule of ["no text", "no logos", "no people", "landscape only"]) {
     assert.ok(p.includes(rule), `prompt must state "${rule}"`);
   }
 });
 
-test("the prompt never asks for a chart or a number", () => {
+test("the prompt never asks for a glyph, a chart or a number", () => {
   const p = artPrompt(year());
-  // The card's own numerals are set in Outfit by us; the model drawing any
-  // would be both wrong and unfixable after the fact.
-  assert.match(p, /No text, letters, numbers/);
+  /*
+   * The card's own numerals are set by us. A model drawing "9.4" produces a
+   * figure nobody can correct after the fact, on an artefact whose entire
+   * claim is that its numbers came from a brokerage — so this assertion is
+   * the load-bearing one in the file.
+   */
+  assert.match(p, /no text, letters, numbers, words, digits or symbols anywhere/i);
+  assert.match(p, /No logos, charts, graphs, bars, arrows/);
 });
 
 test("each dominant component asks for a different motion", () => {
@@ -35,8 +40,21 @@ test("a long hold changes the composition, a short one does not", () => {
   assert.equal(artPrompt(year({ longestHold: 20 })), artPrompt(year({ longestHold: null })));
 });
 
-test("the prompt keeps the centre clear for type", () => {
-  assert.match(artPrompt(year()), /centre and lower half must stay quiet/);
+test("the prompt keeps the top clear for the headline", () => {
+  // Stated as composition, not as a request for room: a model follows "the
+  // top third is empty sky" and ignores "leave space for a headline".
+  assert.match(artPrompt(year()), /top third is empty, near-black sky/);
+  assert.match(artPrompt(year()), /2:3 portrait/);
+});
+
+test("each hue asks for its own light, so scene and type read as one object", () => {
+  const seen = new Set(
+    (["moss", "ember", "azure", "violet"] as const).map((hue) => artPrompt(year({ hue }))),
+  );
+  assert.equal(seen.size, 4);
+  assert.match(artPrompt(year({ hue: "ember" })), /blazing orange sun/);
+  // An unknown hue falls back rather than dropping the light clause entirely.
+  assert.match(artPrompt(year({ hue: undefined })), /emerald-green sun/);
 });
 
 test("the tail reads as a sentence, with the right article", () => {

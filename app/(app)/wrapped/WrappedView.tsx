@@ -173,13 +173,36 @@ export function WrappedView(props: WrappedViewProps) {
                 */}
               <div className={styles.cardSlot}>
                 <WrappedCard
-                  year={year}
-                  archetype={archetype}
-                  eyebrow="Sessions scored"
+                  eyebrow={`Bagcheck · ${year}`}
+                  kicker="Your"
+                  headline={archetype.name.replace(/^The /, "")}
+                  lede={archetype.line}
+                  metricLabel="Sessions scored"
                   value={String(scoredDays)}
-                  tail={archetype.line}
-                  strip={strip}
+                  unit="days"
+                  chip={holdRatio ? `Winners held ${holdRatio}× longer` : null}
+                  body={{
+                    kind: "beats",
+                    beats: [
+                      {
+                        label: "Transactions read",
+                        detail: `${transactionCount.toLocaleString("en-US")}, none of them typed`,
+                      },
+                      { label: "Average hold, winners", detail: `${days(winnerHold)} days` },
+                      ...(bestDecision
+                        ? [
+                            {
+                              label: "Best single decision",
+                              detail: `${bestDecision.symbol}, ${usd(bestDecision.pnl)}`,
+                            },
+                          ]
+                        : []),
+                    ],
+                  }}
                   slug={null}
+                  footLabel="Read from your brokerage"
+                  footDetail="Read-only. No trade was placed."
+                  hue={archetype.tone === "moss" ? "moss" : "azure"}
                 />
                 <ShareButton type="wrapped" label="your year" size={44} />
               </div>

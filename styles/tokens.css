@@ -144,6 +144,44 @@
   --on-share-moss: #14120f;
 
   /*
+   * ─── Share-card palettes ──────────────────────────────────────────────
+   *
+   * The one place gradients and saturation are allowed, and the reason is
+   * scope: everything above this block paints the *app*, which is an
+   * instrument and stays flat and matte. A share card is not in the app. It
+   * is minted to leave, and it lands in a feed next to everything else in
+   * that feed — a card that whispers there is a card nobody opens.
+   *
+   * Four hue families, one per card, never two in one card. Each is a deep
+   * field, a lit accent, and the ink that sits on it. They are mode-invariant
+   * like every other --share-* value.
+   *
+   * A card picks its family from what the card is about, not from taste:
+   * moss for discipline, ember for a streak or a scarce card, azure for
+   * exposure and comparison, violet for the annual Wrapped.
+   */
+  --card-moss-deep: #0a1a13;
+  --card-moss-mid: #12694a;
+  --card-moss-lit: #57d69d;
+
+  --card-ember-deep: #1a0c05;
+  --card-ember-mid: #8a3208;
+  --card-ember-lit: #ff9b45;
+
+  --card-azure-deep: #050f1c;
+  --card-azure-mid: #0f4b8a;
+  --card-azure-lit: #62b0f5;
+
+  --card-violet-deep: #0d0718;
+  --card-violet-mid: #4a2699;
+  --card-violet-lit: #b48bff;
+
+  /* Set per card by a data-hue attribute; the card itself only reads these. */
+  --card-deep: var(--card-moss-deep);
+  --card-mid: var(--card-moss-mid);
+  --card-lit: var(--card-moss-lit);
+
+  /*
    * Heatmap ramp — day cells, contribution grids, hour grids. Five steps from
    * the empty cell to full moss, so a grid reads as one measurement rather
    * than five colours. --h0 is a filled empty, not --track: a heat grid sits

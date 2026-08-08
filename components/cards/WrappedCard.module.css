@@ -1,37 +1,98 @@
 /*
- * The Wrapped card. Ink field in both modes — a card is minted to leave the
- * app, so it does not follow the reader's mode.
+ * The Wrapped card — the one surface in the product that is not the
+ * instrument. Full-bleed, saturated, portrait, poster type.
+ *
+ * Everything here is scoped to this file and app/og. The app above it stays
+ * flat and matte; a card that whispers in a feed is a card nobody opens.
  */
 .card {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 28px 28px 24px;
+  aspect-ratio: 2 / 3;
+  width: 100%;
   border-radius: 30px;
   overflow: hidden;
-  background: var(--share-bg);
+  isolation: isolate;
+  background: var(--card-deep);
   color: var(--share-ink);
   container-type: inline-size;
 }
 
-/* The generated backdrop sits far back: the type is the card, the art is the
-   field it is set on. */
-.backdrop {
+.card[data-hue="moss"] {
+  --card-deep: var(--card-moss-deep);
+  --card-mid: var(--card-moss-mid);
+  --card-lit: var(--card-moss-lit);
+}
+
+.card[data-hue="ember"] {
+  --card-deep: var(--card-ember-deep);
+  --card-mid: var(--card-ember-mid);
+  --card-lit: var(--card-ember-lit);
+}
+
+.card[data-hue="azure"] {
+  --card-deep: var(--card-azure-deep);
+  --card-mid: var(--card-azure-mid);
+  --card-lit: var(--card-azure-lit);
+}
+
+.card[data-hue="violet"] {
+  --card-deep: var(--card-violet-deep);
+  --card-mid: var(--card-violet-mid);
+  --card-lit: var(--card-violet-lit);
+}
+
+/* The generated scene sits in the lower half, where the type is not. */
+.scene {
   position: absolute;
   inset: 0;
+  z-index: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.55;
+  object-position: center bottom;
 }
 
-.top,
-.body,
-.strip,
-.foot {
-  position: relative;
+/*
+ * The wash is what makes the type readable over any scene the model returns.
+ * Dark and opaque at the top where the headline sits, clearing toward the
+ * bottom where the art is the subject. Without it, headline contrast fails
+ * against a bright horizon — and the horizon is exactly where these scenes
+ * put their light.
+ */
+.wash {
+  position: absolute;
+  inset: 0;
   z-index: 1;
+  background:
+    linear-gradient(
+      to bottom,
+      var(--card-deep) 0%,
+      color-mix(in srgb, var(--card-deep) 88%, transparent) 34%,
+      color-mix(in srgb, var(--card-deep) 30%, transparent) 62%,
+      color-mix(in srgb, var(--card-deep) 78%, transparent) 100%
+    ),
+    radial-gradient(
+      120% 70% at 78% 74%,
+      color-mix(in srgb, var(--card-mid) 62%, transparent) 0%,
+      transparent 68%
+    );
+}
+
+/* A card with no scene still has to be a card, not an empty rectangle. */
+.card:not(:has(.scene)) .wash {
+  background:
+    linear-gradient(160deg, var(--card-deep) 0%, var(--card-mid) 72%, var(--card-deep) 100%),
+    radial-gradient(90% 55% at 76% 82%, color-mix(in srgb, var(--card-lit) 34%, transparent) 0%, transparent 70%);
+}
+
+.inner {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 7cqw 7cqw 6cqw;
+  gap: 0;
 }
 
 .top {
@@ -41,137 +102,291 @@
   gap: 12px;
 }
 
-.topRight {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.k,
 .eyebrow,
-.example,
-.rarity,
-.url,
-.verified {
+.tag,
+.tagLit,
+.metricLabel,
+.beatLabel,
+.chip,
+.barLabel,
+.footLabel,
+.url {
   font-family: var(--font-mono), monospace;
-  font-size: 10px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
-.k {
-  color: var(--share-dim);
+.eyebrow {
+  font-size: 3.1cqw;
+  color: var(--card-lit);
 }
 
-/* Scarcity is carried by the word, never by a colour — see the trophy rule. */
-.rarity {
+.tags {
+  display: flex;
+  gap: 8px;
+}
+
+.tag,
+.tagLit {
+  font-size: 2.6cqw;
+  letter-spacing: 0.16em;
+  border-radius: 999px;
+  padding: 1.4cqw 2.8cqw;
+  background: var(--share-fill);
+  color: var(--share-ink-dim);
+}
+
+.tagLit {
+  color: var(--card-lit);
+  background: color-mix(in srgb, var(--card-lit) 16%, transparent);
+}
+
+.rule {
+  display: block;
+  width: 17cqw;
+  height: 0.9cqw;
+  border-radius: 999px;
+  background: var(--card-lit);
+  margin: 4cqw 0 4cqw;
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+}
+
+/* The poster face, and the only place in the product it appears. */
+.kicker,
+.headline {
+  font-family: var(--font-poster), sans-serif;
+  font-weight: 400;
+  line-height: 0.86;
+  text-transform: uppercase;
+}
+
+.kicker {
+  font-size: 9cqw;
+  letter-spacing: 0.01em;
+  color: var(--card-lit);
+}
+
+.headline {
+  font-size: 20cqw;
+  letter-spacing: -0.005em;
+  margin: 0.5cqw 0 0;
   color: var(--share-ink);
-  background: var(--share-fill);
-  border-radius: 999px;
-  padding: 5px 10px;
+  /* Long archetype names have to fit the card, not overflow it. */
+  overflow-wrap: anywhere;
 }
 
-/* Says plainly that the figures are not anyone's record. A fill rather than
-   a hairline: the only strokes that survive are the semantic chip borders,
-   and "example" is not one of the tones. */
-.example {
-  color: var(--share-dim);
-  background: var(--share-fill);
-  border-radius: 999px;
-  padding: 5px 10px;
+.lede {
+  font-family: var(--font-body), sans-serif;
+  font-size: 3.8cqw;
+  line-height: 1.45;
+  color: var(--share-ink-dim);
+  text-wrap: pretty;
+  margin: 3cqw 0 0;
+  max-width: 30ch;
 }
 
-.body {
+.middle[data-body="chart"] .metric {
+  align-items: flex-end;
+}
+
+.middle[data-body="chart"] .chart {
+  max-width: 100%;
+  height: 17cqw;
+}
+
+.middle {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4cqw;
+  margin-top: auto;
+  padding-top: 4cqw;
+}
+
+/* The spine: four beats, each on its own dot. */
+.beats {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 4.6cqw;
+  display: grid;
+  gap: 4.2cqw;
+  flex: 0 1 auto;
+}
+
+.beats::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: color-mix(in srgb, var(--share-ink) 22%, transparent);
+}
+
+.beat {
+  display: grid;
+  gap: 1px;
+}
+
+.dot {
+  position: absolute;
+  left: 0;
+  width: 1.9cqw;
+  height: 1.9cqw;
+  margin-top: 1.4cqw;
+  border-radius: 999px;
+  background: var(--card-lit);
+}
+
+.beatLabel {
+  font-size: 2.8cqw;
+  color: var(--card-lit);
+}
+
+.beatDetail {
+  font-family: var(--font-body), sans-serif;
+  font-size: 3.6cqw;
+  line-height: 1.35;
+  color: var(--share-ink);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.metric {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-.identity {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.identityText {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: flex-end;
+  text-align: right;
+  flex: 1 1 auto;
   min-width: 0;
 }
 
-.archetype {
-  font-family: var(--font-display), serif;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--share-ink);
+.metricLabel {
+  font-size: 2.8cqw;
+  color: var(--share-ink-dim);
+  max-width: 18ch;
 }
 
-.eyebrow {
-  color: var(--share-dim);
+.figure {
+  display: flex;
+  align-items: baseline;
+  gap: 1cqw;
+  margin-top: 2cqw;
 }
 
 .value {
-  font-size: 72px;
-  font-weight: 800;
-  line-height: 0.94;
-  letter-spacing: -0.022em;
-  color: var(--share-moss);
+  font-family: var(--font-poster), sans-serif;
+  font-weight: 400;
+  font-size: 17cqw;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  color: var(--card-lit);
+  font-variant-numeric: tabular-nums;
 }
 
-.tail {
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--share-dim);
-  text-wrap: pretty;
-  margin: 0;
+.unit {
+  font-family: var(--font-poster), sans-serif;
+  font-size: 5.6cqw;
+  line-height: 1;
+  color: var(--share-ink-dim);
 }
 
-/* One cell per session behind the number. Three states, no gradient. */
-.strip {
+.chip {
+  font-size: 2.6cqw;
+  margin-top: 3cqw;
+  padding: 2.2cqw 3.8cqw;
+  border-radius: 999px;
+  color: var(--share-ink);
+  border: 1px solid color-mix(in srgb, var(--card-lit) 55%, transparent);
+}
+
+/* The receipt. Real values, one bar per session. */
+.chart {
   display: flex;
   align-items: flex-end;
-  gap: 3px;
-  height: 34px;
+  gap: 1.3cqw;
+  height: 15cqw;
+  margin-top: 3.5cqw;
+  width: 100%;
+  max-width: 74cqw;
 }
 
-.cell {
+.barCol {
   flex: 1;
   min-width: 0;
-  border-radius: 2px;
-  background: var(--share-track);
-  height: max(3px, var(--h));
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 1.4cqw;
 }
 
-.cell[data-state="up"] {
-  background: var(--share-moss);
+.bar {
+  display: block;
+  width: 100%;
+  border-radius: 3px 3px 1px 1px;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--card-lit) 40%, transparent),
+    var(--card-lit)
+  );
 }
 
-.cell[data-state="down"] {
-  background: var(--share-loss);
+/* Negative sessions read in the loss tone and nowhere else. */
+.bar[data-sign="down"] {
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--share-loss) 40%, transparent),
+    var(--share-loss)
+  );
 }
 
-.cell[data-state="flat"] {
-  height: 3px;
+.barLabel {
+  font-size: 2.2cqw;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: var(--share-ink-dim);
 }
 
 .foot {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 1.2cqw;
+  margin-top: 4cqw;
+  padding: 3cqw 4cqw;
+  border-radius: 5cqw;
+  background: color-mix(in srgb, var(--share-ink) 7%, transparent);
+}
+
+.footRow {
+  display: flex;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
-  padding-top: 16px;
-  border-top: 1px solid var(--share-line);
+  gap: 3cqw;
 }
 
-.url,
-.verified {
-  color: var(--share-dim);
+.footLabel {
+  font-size: 2.6cqw;
+  color: var(--card-lit);
+  white-space: nowrap;
 }
 
-@container (max-width: 360px) {
-  .value {
-    font-size: 54px;
-  }
+.footDetail {
+  font-family: var(--font-body), sans-serif;
+  font-size: 3.3cqw;
+  line-height: 1.35;
+  color: var(--share-ink);
+}
+
+.url {
+  font-size: 2.4cqw;
+  letter-spacing: 0.08em;
+  color: var(--share-ink-dim);
+  flex: none;
+  white-space: nowrap;
 }

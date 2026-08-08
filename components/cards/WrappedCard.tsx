@@ -1,28 +1,55 @@
-import { Avatar } from "@/components/primitives";
 import type { Archetype } from "@/lib/archetypes";
 import styles from "./WrappedCard.module.css";
 
+export type CardHue = "moss" | "ember" | "azure" | "violet";
+
+export interface CardBeat {
+  /** Mono label — what the row is. */
+  label: string;
+  /** One short phrase under it. */
+  detail: string;
+}
+
 export type WrappedCardProps = {
-  year: number;
-  archetype: Archetype;
-  /** The headline figure. Set in the serif at numeral size. */
-  value: string;
-  /** What the figure measures — mono, above it. */
+  /** Mono line at the very top. */
   eyebrow: string;
-  /** One line under the figure, carrying a specific comparison. */
-  tail: string;
+  /** Small word above the headline — "MOST", "YOUR", "THE". */
+  kicker: string;
+  /** The headline. One word, set enormous. */
+  headline: string;
+  /** Two short lines under the headline. Sentences, not labels. */
+  lede: string;
+  /** What the big figure measures. */
+  metricLabel: string;
+  /** The figure itself. */
+  value: string;
+  /** Trailing unit — "/10", "%", "days". Set smaller, on the baseline. */
+  unit?: string;
+  /** The pill beside the figure — a comparison, never a benchmark. */
+  chip?: string | null;
   /**
-   * The receipt: one cell per session behind the number. Real values, never a
-   * pattern — the strip is the only part of a share card that shows its work,
-   * so a decorative one would undo the point of the card.
+   * A card carries a spine of beats or a chart of sessions — never both.
+   *
+   * Enforced by the type rather than by review, and not only because both
+   * together overflow a 2:3 box at every size: one idiom per statement is
+   * the rule everywhere else in the product, and a card is the surface where
+   * breaking it is most expensive. The chart's values are real, never a
+   * pattern — it is the only part of a card that shows its work.
    */
-  strip: number[];
+  body:
+    | { kind: "beats"; beats: CardBeat[] }
+    | { kind: "chart"; strip: number[]; labels?: string[] };
   /** The card's own URL once minted. Null before it exists. */
   slug: string | null;
-  /** Generated backdrop, when the card has been minted with one. */
+  /** Footer line, left of the URL. */
+  footLabel: string;
+  footDetail: string;
+  /** Generated backdrop. The scene only — every word here is set by us. */
   backdrop?: string | null;
-  /** Earned by behaviour — a 20% drawdown held, not a purchase. */
+  hue?: CardHue;
+  /** Earned by behaviour, never bought. */
   rarity?: "rare" | null;
+  archetype?: Archetype;
   /**
    * Marks the card as an illustration rather than a record. Set on the
    * marketing page, where the figures are not anyone's. Never set in-app.
@@ -30,83 +57,132 @@ export type WrappedCardProps = {
   example?: boolean;
 };
 
-const CELLS = 48;
+const BARS = 12;
 
 /**
- * The Wrapped card, as it actually renders.
+ * The Wrapped card.
  *
- * One component for the in-app card and the one on the marketing page, so the
- * thing people are shown before signing up is the thing they get. The layout
- * matches `app/og/[slug]/render.tsx`, which is what the URL unfurls as —
- * Satori cannot share this stylesheet, so the two are kept in step by hand.
+ * **The model draws the scene. We set every word and every number.** That
+ * split is not a style choice — a generated "9.4" is a figure nobody can
+ * correct after the fact, on an artefact whose entire claim is that its
+ * numbers came from a brokerage. So the backdrop is art and the type is
+ * HTML, and `lib/wrapped/prompt.ts` forbids the model from drawing a glyph.
  *
- * It stays on the ink field in both modes via the `--share-*` tokens: a card
- * is minted to leave the app, and it should look the same wherever it lands.
+ * Portrait 2:3, because that is the shape a story and a feed post both want.
+ * Full-bleed, saturated, and set in a condensed poster face — a share card is
+ * the one surface that is not the instrument, and a card that whispers in a
+ * feed is a card nobody opens.
+ *
+ * One hue per card, drawn from the `--card-*` families. Never two.
  */
 export function WrappedCard({
-  year,
-  archetype,
-  value,
   eyebrow,
-  tail,
-  strip,
+  kicker,
+  headline,
+  lede,
+  metricLabel,
+  value,
+  unit,
+  chip = null,
+  body,
   slug,
+  footLabel,
+  footDetail,
   backdrop = null,
+  hue = "moss",
   rarity = null,
   example = false,
 }: WrappedCardProps) {
   /*
    * Scaled against the largest absolute move in the window, so a quiet month
-   * and a violent one both fill the strip. Three states and no gradient:
-   * a session was up, down, or flat.
+   * and a violent one both fill the chart. A floor of 8% keeps a flat session
+   * visible as a session rather than as nothing.
    */
-  const peak = Math.max(1, ...strip.map((v) => Math.abs(v)));
-  const cells = Array.from({ length: CELLS }, (_, i) => strip[i] ?? 0);
+  const series = body.kind === "chart" ? body.strip.slice(-BARS) : [];
+  const peak = Math.max(1, ...series.map(Math.abs));
 
   return (
-    <div className={styles.card}>
+    <article className={styles.card} data-hue={hue}>
       {backdrop ? (
-        // eslint-disable-next-line @next/next/no-img-element -- stored PNG at
-        // a fixed URL, sized by the card; next/image buys nothing here.
-        <img src={backdrop} alt="" className={styles.backdrop} />
+        // eslint-disable-next-line @next/next/no-img-element -- a stored PNG
+        // at a fixed URL, sized by the card; next/image buys nothing here.
+        <img src={backdrop} alt="" className={styles.scene} />
       ) : null}
+      <div className={styles.wash} aria-hidden="true" />
 
-      <div className={styles.top}>
-        <span className={styles.k}>Bagcheck · {year}</span>
-        <div className={styles.topRight}>
-          {example ? <span className={styles.example}>Example</span> : null}
-          {/* Rarity is carried by the word, never by a colour. */}
-          {rarity ? <span className={styles.rarity}>Scarce</span> : null}
+      <div className={styles.inner}>
+        <header className={styles.top}>
+          <span className={styles.eyebrow}>{eyebrow}</span>
+          <div className={styles.tags}>
+            {example ? <span className={styles.tag}>Example</span> : null}
+            {/* Scarcity is carried by the word, never by a colour. */}
+            {rarity ? <span className={styles.tagLit}>Scarce</span> : null}
+          </div>
+        </header>
+        <span className={styles.rule} aria-hidden="true" />
+
+        <div className={styles.title}>
+          <span className={styles.kicker}>{kicker}</span>
+          <h1 className={styles.headline}>{headline}</h1>
+          <p className={styles.lede}>{lede}</p>
         </div>
-      </div>
 
-      <div className={styles.body}>
-        <div className={styles.identity}>
-          <Avatar archetype={archetype.key} size={44} />
-          <div className={styles.identityText}>
-            <span className={styles.archetype}>{archetype.name}</span>
-            <span className={styles.eyebrow}>{eyebrow}</span>
+        <div className={styles.middle} data-body={body.kind}>
+          {body.kind === "beats" ? (
+            <ol className={styles.beats}>
+              {body.beats.slice(0, 4).map((beat) => (
+                <li key={beat.label} className={styles.beat}>
+                  <span className={styles.dot} aria-hidden="true" />
+                  <span className={styles.beatLabel}>{beat.label}</span>
+                  <span className={styles.beatDetail}>{beat.detail}</span>
+                </li>
+              ))}
+            </ol>
+          ) : null}
+
+          <div className={styles.metric}>
+            <span className={styles.metricLabel}>{metricLabel}</span>
+            <div className={styles.figure}>
+              <span className={styles.value}>{value}</span>
+              {unit ? <span className={styles.unit}>{unit}</span> : null}
+            </div>
+            {chip ? <span className={styles.chip}>{chip}</span> : null}
+
+            {body.kind === "chart" ? (
+              <div className={styles.chart} aria-hidden="true">
+                {series.map((v, i) => (
+                  <span key={i} className={styles.barCol}>
+                    <span
+                      className={styles.bar}
+                      data-sign={v < 0 ? "down" : "up"}
+                      style={{ height: `${Math.max(8, (Math.abs(v) / peak) * 100)}%` }}
+                    />
+                    {body.labels?.[i] ? (
+                      <span className={styles.barLabel}>{body.labels[i]}</span>
+                    ) : null}
+                  </span>
+                ))}
+              </div>
+            ) : null}
           </div>
         </div>
-        <div className={`num ${styles.value}`}>{value}</div>
-        <p className={styles.tail}>{tail}</p>
-      </div>
 
-      <div className={styles.strip} aria-hidden="true">
-        {cells.map((v, i) => (
-          <i
-            key={i}
-            className={styles.cell}
-            data-state={v > 0 ? "up" : v < 0 ? "down" : "flat"}
-            style={{ "--h": `${Math.round((Math.abs(v) / peak) * 100)}%` } as React.CSSProperties}
-          />
-        ))}
+        <footer className={styles.foot}>
+          {/*
+            * Two rows, not two columns. Side by side, the provenance line and
+            * the URL compete for the same 60% of the card and both truncate —
+            * and a card whose provenance line is cut off is a card that has
+            * stopped making its own argument.
+            */}
+          <div className={styles.footRow}>
+            <span className={styles.footLabel}>{footLabel}</span>
+            <span className={styles.url}>
+              {slug ? `bagcheck.app/c/${slug}` : "minted when you share"}
+            </span>
+          </div>
+          <span className={styles.footDetail}>{footDetail}</span>
+        </footer>
       </div>
-
-      <div className={styles.foot}>
-        <span className={styles.url}>{slug ? `bagcheck.app/c/${slug}` : "minted when you share"}</span>
-        <span className={styles.verified}>read-only</span>
-      </div>
-    </div>
+    </article>
   );
 }

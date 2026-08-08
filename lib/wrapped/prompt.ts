@@ -17,6 +17,8 @@ export interface WrappedYear {
   scoredDays: number;
   /** Longest hold in days, when there is one worth naming. */
   longestHold: number | null;
+  /** The card's colour family — the scene is lit to match its type. */
+  hue?: "moss" | "ember" | "azure" | "violet";
 }
 
 /**
@@ -24,10 +26,25 @@ export interface WrappedYear {
  * the behaviour it came from rather than being interchangeable wallpaper.
  */
 const MOTION: Record<WrappedYear["dominant"], string> = {
-  adherence: "long parallel strata, very evenly spaced, almost geological",
-  consistency: "a slow repeating wave with an unusually regular period",
-  patience: "wide still bands, like sediment settled over a long time",
-  exposure: "layered ridges that crowd together toward one edge",
+  adherence:
+    "a vast mountain range in even parallel ridges receding to the horizon, seen head-on",
+  consistency:
+    "a long range of rolling peaks in a steady repeating rhythm, one after another to the horizon",
+  patience:
+    "a single enormous summit above a still sea of low cloud, everything below it quiet",
+  exposure:
+    "a dense crowd of jagged peaks pressing together toward one side of the frame",
+};
+
+/**
+ * Where the light comes from. Each hue family gets its own, so a card's
+ * scene and its type read as one object rather than as art with a UI on top.
+ */
+const LIGHT: Record<string, string> = {
+  moss: "a low emerald-green sun breaking behind the peaks, cool jade sky above",
+  ember: "a blazing orange sun low behind the peaks, deep red-black sky above",
+  azure: "a cold blue dawn behind the peaks, deep navy sky above",
+  violet: "a violet and magenta sunrise behind the peaks, deep indigo sky above",
 };
 
 /**
@@ -35,35 +52,41 @@ const MOTION: Record<WrappedYear["dominant"], string> = {
  * plain prohibitions because that is what image models actually respect.
  */
 const CONSTRAINTS = [
-  "No text, letters, numbers, words or symbols of any kind.",
-  "No logos, charts, graphs, arrows, coins, currency or financial iconography.",
-  "No people, faces, hands, animals or recognisable objects.",
-  "Fully abstract. Flat and matte, with no gloss, glare, bevel, metal or 3D shading.",
-  "No harsh white highlights and no pure black; keep the whole image dark and even.",
+  "Absolutely no text, letters, numbers, words, digits or symbols anywhere in the image.",
+  "No logos, charts, graphs, bars, arrows, coins, currency or financial iconography.",
+  "No people, faces, hands, animals, buildings, roads or vehicles.",
+  "Landscape only: rock, sky, cloud, light.",
 ].join(" ");
 
 /**
  * The palette, stated in words. These match the --share-* tokens the card is
  * drawn on, so the art sits under the type instead of fighting it.
  */
-const PALETTE =
-  "Very dark warm near-black background, close to #17140F. " +
-  "Muted sage green (#4FB287) and dusty slate blue (#7BA6C4) used sparingly, " +
-  "at low saturation and low contrast, like dye seen through dark glass.";
+/**
+ * The scene has to be dark where the type sits and bright where it does not.
+ * Stated as composition rather than as colour, because a model follows "the
+ * top third is empty sky" and ignores "leave room for a headline".
+ */
+const COMPOSITION =
+  "Cinematic vertical composition, 2:3 portrait. " +
+  "The top third is empty, near-black sky with nothing in it. " +
+  "The horizon and the light sit in the lower half. " +
+  "Deep saturated colour, high contrast, dramatic rim light on the peaks. " +
+  "Digital matte painting, poster art, clean and graphic rather than photographic.";
 
 export function artPrompt(year: WrappedYear): string {
   const subject = MOTION[year.dominant];
+  const light = LIGHT[year.hue ?? "moss"] ?? LIGHT.moss;
   const hold =
     year.longestHold && year.longestHold >= 180
-      ? " The composition should feel unhurried and horizontal, holding one shape for a long time."
+      ? "The scene should feel still and unhurried, one shape held for a long time."
       : "";
 
   return [
-    `An abstract dark texture for the background of a card: ${subject}.`,
-    hold.trim(),
-    PALETTE,
-    "Soft grain, like matte paper stock or a risograph print.",
-    "The centre and lower half must stay quiet and uncluttered, because text will be placed over them.",
+    `A dramatic landscape for the lower half of a poster: ${subject}.`,
+    `${light}.`,
+    hold,
+    COMPOSITION,
     CONSTRAINTS,
   ]
     .filter(Boolean)
