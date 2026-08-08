@@ -44,6 +44,7 @@ export function mintable(input: {
       tail: `discipline on ${score.date}, scored against your own baseline`,
       tone: "moss",
       rarity: score.score >= RARE_SCORE ? "rare" : null,
+      symbol: null,
     });
   }
 
@@ -60,6 +61,7 @@ export function mintable(input: {
       tail: `days holding ${longest.symbol} — your longest yet`,
       tone: "moss",
       rarity: d >= RARE_HOLD_DAYS ? "rare" : null,
+      symbol: longest.symbol,
     });
   }
 
@@ -71,6 +73,7 @@ export function mintable(input: {
       tail: `panic sells across ${scoredDays} scored days`,
       tone: "moss",
       rarity: "rare",
+      symbol: null,
     });
   }
 
@@ -86,6 +89,7 @@ export function mintable(input: {
       tail: `${best.name} and counting`,
       tone: "moss",
       rarity: best.days >= RARE_STREAK_DAYS ? "rare" : null,
+      symbol: null,
     });
   }
 

@@ -1,4 +1,5 @@
 import type { ActivityRow } from "@/lib/db";
+import { Logo } from "@/components/primitives";
 import styles from "./activity.module.css";
 
 const money = (value: number | null, currency: string | null) =>
@@ -27,8 +28,11 @@ export function LedgerRow({ row }: { row: ActivityRow }) {
         <span className={styles.type}>{row.type ?? "—"}</span>
       </div>
       <div className={styles.mid}>
-        <span className={styles.symbol}>{row.symbol ?? "—"}</span>
-        {row.description ? <span className={styles.desc}>{row.description}</span> : null}
+        <Logo symbol={row.symbol} size={26} />
+        <div className={styles.midText}>
+          <span className={styles.symbol}>{row.symbol ?? "—"}</span>
+          {row.description ? <span className={styles.desc}>{row.description}</span> : null}
+        </div>
       </div>
       <div className={styles.right}>
         {/* Three aligned columns on desktop; units and price fold under the

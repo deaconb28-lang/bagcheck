@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cardBySlug, isDbConfigured } from "@/lib/db";
 import { stripCells } from "@/lib/cards";
-import { Button } from "@/components/primitives";
+import { Button, Logo } from "@/components/primitives";
 import styles from "./card.module.css";
 
 export const dynamic = "force-dynamic";
@@ -42,7 +42,10 @@ export default async function CardPage({ params }: Props) {
       <div className={styles.inner}>
         <article className={styles.card} data-tone={card.tone}>
           <div className={styles.top}>
-            <span className={styles.label}>{card.label}</span>
+            <span className={styles.mark}>
+              <Logo symbol={card.symbol} size={30} />
+              <span className={styles.label}>{card.label}</span>
+            </span>
             {card.rarity ? <span className={styles.rarity}>{card.rarity}</span> : null}
           </div>
           <div className={styles.body}>

@@ -48,6 +48,13 @@
 
 .holdingName {
   display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.holdingText {
+  display: flex;
   flex-direction: column;
   gap: 4px;
   min-width: 0;

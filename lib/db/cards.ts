@@ -30,6 +30,7 @@ export async function mintCard(
     tail: spec.tail,
     tone: spec.tone,
     rarity: spec.rarity,
+    symbol: spec.symbol,
     mintedAt: new Date(),
     url: null,
   });
@@ -59,6 +60,7 @@ export async function cardBySlug(slug: string): Promise<Omit<
         tail: 1,
         tone: 1,
         rarity: 1,
+        symbol: 1,
         mintedAt: 1,
       },
     },

@@ -32,6 +32,19 @@
   gap: 12px;
 }
 
+.mark {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+/* On the ink field the tile needs its own light ground, not the card's. */
+.mark img {
+  background: var(--share-ink);
+  border-color: var(--share-line);
+}
+
 .label,
 .url,
 .verified,

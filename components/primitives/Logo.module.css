@@ -1,0 +1,11 @@
+/*
+ * The tile. A hairline keeps a white logo from dissolving into a white card,
+ * and object-fit stops a non-square mark from stretching.
+ */
+.logo {
+  flex: none;
+  border-radius: 8px;
+  object-fit: contain;
+  background: var(--s1);
+  border: 1px solid var(--line);
+}

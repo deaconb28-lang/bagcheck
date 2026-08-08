@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getUserId } from "@/auth";
 import { holdingsFrom, isDbConfigured, loadAppData } from "@/lib/db";
-import { Card, Eyebrow, Stat } from "@/components/primitives";
+import { Card, Eyebrow, Logo, Stat } from "@/components/primitives";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { PageHeader } from "@/components/app/PageHeader";
@@ -154,10 +154,13 @@ export default async function PortfolioPage() {
             {holdings.map((holding) => (
               <div key={holding.symbol} className={styles.holding}>
                 <div className={styles.holdingName}>
-                  <span className={styles.symbol}>{holding.symbol}</span>
-                  {holding.description ? (
-                    <span className={styles.desc}>{holding.description}</span>
-                  ) : null}
+                  <Logo symbol={holding.symbol} size={30} />
+                  <div className={styles.holdingText}>
+                    <span className={styles.symbol}>{holding.symbol}</span>
+                    {holding.description ? (
+                      <span className={styles.desc}>{holding.description}</span>
+                    ) : null}
+                  </div>
                 </div>
                 <div className={styles.holdingNums}>
                   <span className={styles.units}>

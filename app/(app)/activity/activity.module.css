@@ -73,6 +73,13 @@
 
 .mid {
   display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.midText {
+  display: flex;
   flex-direction: column;
   gap: 3px;
   min-width: 0;

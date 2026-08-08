@@ -104,6 +104,8 @@ export interface CardDoc {
   tail: string;
   tone: "moss" | "signal";
   rarity: "rare" | null;
+  /** The instrument the card is about, when it is about one. */
+  symbol: string | null;
   mintedAt: Date;
   url: string | null;
 }

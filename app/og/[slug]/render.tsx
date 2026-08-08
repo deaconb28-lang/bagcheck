@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { fetchLogoPng, monogram, normalizeSymbol, TILE, toneIndex } from "@/lib/logos";
 
 export const runtime = "nodejs";
 
@@ -47,12 +48,57 @@ export interface CardLike {
   tail: string;
   tone: "moss" | "signal";
   rarity: "rare" | null;
+  symbol?: string | null;
+}
+
+/**
+ * The instrument's mark for the image. Satori cannot fetch a relative URL, so
+ * the bytes are inlined — and when there is no logo the tile is drawn in JSX
+ * rather than as an SVG data URI, which Satori supports only partially.
+ */
+async function logoTile(symbol: string | null | undefined, size: number) {
+  const ticker = normalizeSymbol(symbol);
+  if (!ticker) return null;
+
+  const png = await fetchLogoPng(ticker, 128);
+  if (png) {
+    const src = `data:image/png;base64,${Buffer.from(png).toString("base64")}`;
+    return (
+      <img
+        src={src}
+        width={size}
+        height={size}
+        style={{ borderRadius: size * 0.22, objectFit: "contain" }}
+      />
+    );
+  }
+
+  const { bg, fg } = TILE[toneIndex(ticker, TILE.length)];
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: size,
+        height: size,
+        borderRadius: size * 0.22,
+        background: bg,
+        color: fg,
+        fontSize: size * 0.36,
+        fontWeight: 800,
+      }}
+    >
+      {monogram(ticker)}
+    </div>
+  );
 }
 
 /** The card image. Shared by the route and by visual checks. */
 export async function renderCard(card: CardLike, cells: number[]) {
   const accent = card.tone === "signal" ? SIGNAL : MOSS;
   const font = await displayFont();
+  const tile = await logoTile(card.symbol, 56);
   // A long archetype name cannot be set at numeral size.
   const big = card.value.length <= 4;
   return new ImageResponse(
@@ -71,8 +117,11 @@ export async function renderCard(card: CardLike, cells: number[]) {
         }}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ fontSize: 24, letterSpacing: 3, color: DIM, textTransform: "uppercase" }}>
-            {card.label}
+          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+            {tile}
+            <div style={{ fontSize: 24, letterSpacing: 3, color: DIM, textTransform: "uppercase" }}>
+              {card.label}
+            </div>
           </div>
           {card.rarity ? (
             <div

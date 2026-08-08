@@ -28,11 +28,18 @@ test("a year-long hold is rare and a six-week hold is not", () => {
 
   const long = mintable({ ...base, trips: [trip({ holdDays: 412 })] });
   assert.equal(long[0].rarity, "rare");
+  // The card is about an instrument, so it carries one for its mark.
+  assert.equal(long[0].symbol, "VTI");
   assert.match(long[0].tail, /412|days holding/);
 });
 
 test("a hold too short to be interesting mints nothing", () => {
   assert.deepEqual(mintable({ ...base, trips: [trip({ holdDays: 9 })] }), []);
+});
+
+test("cards that are not about an instrument carry no symbol", () => {
+  const score = mintable({ ...base, score: { date: "2026-08-06", score: 80 } });
+  assert.equal(score[0].symbol, null);
 });
 
 test("the zero-panic quarter needs a real quarter behind it", () => {

@@ -19,4 +19,6 @@ export interface CardSpec {
   tone: "moss" | "signal";
   /** Set only when the behaviour behind the card is scarce. */
   rarity: "rare" | null;
+  /** The instrument the card is about, when it is about one. */
+  symbol: string | null;
 }
