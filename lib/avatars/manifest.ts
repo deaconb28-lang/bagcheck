@@ -8,7 +8,21 @@
 
 export const GENERATED_AVATARS: ReadonlySet<string> = new Set([
   "improviser",
+  "sized",
+  "patient",
+  "anchor",
+  "metronome",
+  "regular",
+  "tide",
+  "keel",
+  "measured",
+  "governor",
   "sentinel",
+  "bulwark",
+  "clockwork",
+  "engineer",
+  "steward",
+  "composed",
 ]);
 
 export function hasGeneratedAvatar(key: string): boolean {
