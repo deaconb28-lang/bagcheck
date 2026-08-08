@@ -136,9 +136,17 @@ give the full retrospective, then gate the ongoing service.
    single largest line and they publish that discounts exist.
 4. **Disconnect at 60 days dormant, reconnect on return.** Straightforward,
    invisible to active users, and worth 2.4 points of break-even.
-5. **Model reverse-trial against the current free tier.** Fourteen days of
-   full access, then Plus or disconnect. This is a product decision, not an
-   engineering one, and it is the one that decides whether the business works.
+5. ~~**Model reverse-trial against the current free tier.**~~ Shipped, in its
+   product half — `lib/tiers.ts`, `TRIAL_DAYS = 14`. Fourteen days of full
+   access from the moment a brokerage connects (not from signup: an account
+   with no ledger has nothing to unlock), then everything paid locks and
+   Bagcheck stays free. It states a date, once, where the plan is described —
+   no countdown, no banner, no nag.
+
+   The **cost** half is the part that moves the model and is still a decision:
+   the 5.2% row above assumes a non-converting user *disconnects* at the end
+   of the window. Today they keep the connection and keep costing $1/month.
+   Wiring the disconnect is what turns 10.9% into 5.2%.
 6. **Instrument share-card attribution** before deciding what a free user is
    worth. Right now that number is a belief, and the whole free-tier argument
    rests on it.

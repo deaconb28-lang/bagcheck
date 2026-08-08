@@ -1,20 +1,36 @@
 import { getCollections } from "./collections";
 import { tierFromStatus, type Tier } from "@/lib/billing/tiers";
+import { effectiveTier, trialState } from "@/lib/tiers";
+import type { TrialState } from "@/lib/tiers";
 import type { SubscriptionDoc } from "./types";
 
 /**
  * The tier the app should act on: what Stripe last told us, downgraded to
- * free unless the subscription is currently live. Reads never trust a stored
- * tier on its own.
+ * free unless the subscription is currently live, then raised to the trial
+ * tier while the reverse trial is running. Reads never trust a stored tier on
+ * its own, and a paid plan always beats a trial.
+ *
+ * The trial clock starts at the brokerage connection rather than at signup,
+ * because an account with no ledger has nothing to unlock.
  */
 export async function tierFor(userId: string): Promise<Tier> {
-  const { subscriptions } = await getCollections();
-  const doc = await subscriptions.findOne(
+  const { subscriptions, connections } = await getCollections();
+  const [doc, connection] = await Promise.all([
+    subscriptions.findOne({ userId }, { projection: { _id: 0, tier: 1, status: 1 } }),
+    connections.findOne({ userId }, { projection: { _id: 0, createdAt: 1 } }),
+  ]);
+  const paid = doc ? tierFromStatus(doc.tier, doc.status) : "free";
+  return effectiveTier(paid, trialState(connection?.createdAt ?? null, new Date()));
+}
+
+/** The trial window itself, for the one line the plan card is allowed to say. */
+export async function trialFor(userId: string): Promise<TrialState> {
+  const { connections } = await getCollections();
+  const connection = await connections.findOne(
     { userId },
-    { projection: { _id: 0, tier: 1, status: 1 } },
+    { projection: { _id: 0, createdAt: 1 } },
   );
-  if (!doc) return "free";
-  return tierFromStatus(doc.tier, doc.status);
+  return trialState(connection?.createdAt ?? null, new Date());
 }
 
 export async function subscriptionFor(userId: string): Promise<SubscriptionDoc | null> {

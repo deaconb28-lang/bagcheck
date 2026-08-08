@@ -10,6 +10,7 @@ import { demoWave, waveCounts } from "./wave";
 import { PricingTiers } from "./PricingTiers";
 import { TodayMock } from "./TodayMock";
 import { WrappedFan } from "./WrappedFan";
+import { TRIAL_DAYS } from "@/lib/tiers";
 import { avatarsEnabled } from "@/lib/avatars/store";
 import styles from "./marketing.module.css";
 
@@ -386,7 +387,10 @@ export default async function LandingPage() {
           </div>
           <PricingTiers glyphs={iconsEnabled()} />
           <p className={styles.tierFoot}>
-            Rarity is earned by conduct at every tier. Sitting through a 20%
+            Everyone gets {TRIAL_DAYS} days of the full product from the moment
+            a brokerage connects — the whole thing, not a sample of it. When
+            the window closes Bagcheck stays free and the paid formats lock.
+            Rarity is earned by conduct at every tier: sitting through a 20%
             drawdown mints the same rare card whether you pay or not.
           </p>
         </div>

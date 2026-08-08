@@ -139,6 +139,18 @@
   margin: 0;
 }
 
+/* Mono, because it is a date and a fact about the account — not a sentence
+   about the reader's behaviour. */
+.trial {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  line-height: 1.7;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--meta);
+  margin: -14px 0 0;
+}
+
 .actions {
   display: flex;
   gap: 12px;

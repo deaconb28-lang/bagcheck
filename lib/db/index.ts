@@ -7,7 +7,7 @@ export type { PulseQuestion } from "./pulse";
 export { holdingsFrom, loadActivity, loadAppData, loadShellConnection } from "./queries";
 export type { ActivityPage, ActivityRow, AppData, HoldingRow } from "./queries";
 export { scoreUser } from "./scoring";
-export { saveSubscription, subscriptionFor, tierFor, userIdForCustomer } from "./subscriptions";
+export { saveSubscription, subscriptionFor, tierFor, trialFor, userIdForCustomer } from "./subscriptions";
 export type {
   AvatarDoc,
   CardDoc,

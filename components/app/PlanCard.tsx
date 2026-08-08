@@ -12,6 +12,13 @@ type Props = {
   renewsOn: string | null;
   cancelAtPeriodEnd: boolean;
   configured: boolean;
+  /**
+   * The one line the reverse trial is allowed to say — a date, never a
+   * countdown. Null when there is no trial to describe.
+   */
+  trialLine?: string | null;
+  /** True while the trial is what is granting access. */
+  onTrial?: boolean;
 };
 
 const UPGRADES: Array<{ tier: Exclude<Tier, "free">; price: string; who: string }> = [
@@ -19,7 +26,15 @@ const UPGRADES: Array<{ tier: Exclude<Tier, "free">; price: string; who: string 
   { tier: "trader", price: "$29/mo", who: "Cadence and proof" },
 ];
 
-export function PlanCard({ tier, hasCustomer, renewsOn, cancelAtPeriodEnd, configured }: Props) {
+export function PlanCard({
+  tier,
+  hasCustomer,
+  renewsOn,
+  cancelAtPeriodEnd,
+  configured,
+  trialLine = null,
+  onTrial = false,
+}: Props) {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,12 +66,16 @@ export function PlanCard({ tier, hasCustomer, renewsOn, cancelAtPeriodEnd, confi
       <div className={styles.head}>
         <Eyebrow>Plan</Eyebrow>
         <Chip tone={tier === "free" ? "neutral" : "moss"}>{TIER_LABEL[tier]}</Chip>
+        {/* The state is carried by the word, not by the chip's colour. */}
+        {onTrial ? <Chip tone="neutral">Full access</Chip> : null}
       </div>
 
       <p className={styles.body}>
         Every card your behaviour earns is yours to post on any tier, rare ones
         included. Paid tiers add formats.
       </p>
+
+      {trialLine ? <p className={styles.meta}>{trialLine}</p> : null}
 
       {renewsOn ? (
         <p className={styles.meta}>

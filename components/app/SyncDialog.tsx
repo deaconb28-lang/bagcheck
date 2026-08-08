@@ -35,7 +35,14 @@ const IDLE: SyncProgress = {
  * of your own history, read in under two minutes, with the Wrapped viewer one
  * tap away.
  */
-export function SyncDialog({ today }: { today: string }) {
+export function SyncDialog({
+  today,
+  trialLine = null,
+}: {
+  today: string;
+  /** The reverse-trial line, stated once at the moment it starts. */
+  trialLine?: string | null;
+}) {
   const [progress, setProgress] = useState<SyncProgress>(IDLE);
   const [dismissed, setDismissed] = useState(false);
   const started = useRef(false);
@@ -136,6 +143,12 @@ export function SyncDialog({ today }: { today: string }) {
               ? arrivalLine(progress, today)
               : "Read-only, permanently. Bagcheck never places a trade."}
         </p>
+
+        {/*
+          * The trial, stated once, at the only moment it is genuinely news.
+          * It never appears again as a banner and never counts down.
+          */}
+        {done && trialLine ? <p className={styles.trial}>{trialLine}</p> : null}
 
         {done || failed ? (
           <div className={styles.actions}>

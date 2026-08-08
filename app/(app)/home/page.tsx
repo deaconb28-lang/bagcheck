@@ -17,6 +17,7 @@ import { PageGrid } from "@/components/app/PageGrid";
 import { SignInCta } from "@/components/app/SignInCta";
 import { SyncDialog } from "@/components/app/SyncDialog";
 import { avatarsEnabled } from "@/lib/avatars/store";
+import { trialLine, trialState } from "@/lib/tiers";
 import { HomeView } from "./HomeView";
 import type { WaveDay } from "@/components/idioms";
 import {
@@ -46,7 +47,10 @@ export default async function HomePage({
    */
   const syncDialog =
     connected === "1" && userId ? (
-      <SyncDialog today={new Date().toISOString().slice(0, 10)} />
+      <SyncDialog
+        today={new Date().toISOString().slice(0, 10)}
+        trialLine={trialLine(trialState(new Date(), new Date()))}
+      />
     ) : null;
 
   if (!userId) {

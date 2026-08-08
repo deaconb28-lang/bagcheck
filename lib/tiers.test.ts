@@ -8,6 +8,10 @@ import {
   readiness,
   tierFor,
   tierFromStatus,
+  effectiveTier,
+  trialLine,
+  trialState,
+  TRIAL_TIER,
 } from "./tiers";
 import type { Capability, Tier } from "./tiers";
 
@@ -75,4 +79,44 @@ test("every tier label is a word a chip can carry", () => {
   for (const tier of ["free", "plus", "trader"] as Tier[]) {
     assert.ok(capabilities(tier).length >= 0);
   }
+});
+
+test("the trial starts at the brokerage connection, not at signup", () => {
+  assert.deepEqual(trialState(null, new Date("2026-08-08")), {
+    active: false,
+    endsOn: null,
+    expired: false,
+  });
+});
+
+test("fourteen days of full access, then it is over", () => {
+  const connected = new Date("2026-08-01T10:00:00Z");
+  assert.equal(trialState(connected, new Date("2026-08-08T10:00:00Z")).active, true);
+  assert.equal(trialState(connected, new Date("2026-08-15T09:59:00Z")).active, true);
+  const after = trialState(connected, new Date("2026-08-15T10:01:00Z"));
+  assert.equal(after.active, false);
+  assert.equal(after.expired, true);
+  assert.equal(after.endsOn, "2026-08-15");
+});
+
+test("a paid plan always wins over the trial", () => {
+  const active = trialState(new Date("2026-08-01"), new Date("2026-08-02"));
+  assert.equal(effectiveTier("plus", active), "plus");
+  assert.equal(effectiveTier("free", active), TRIAL_TIER);
+});
+
+test("an expired trial falls back to free, not to the trial tier", () => {
+  const done = trialState(new Date("2026-01-01"), new Date("2026-08-08"));
+  assert.equal(effectiveTier("free", done), "free");
+});
+
+test("the trial line states a date and never a countdown", () => {
+  const active = trialLine(trialState(new Date("2026-08-01"), new Date("2026-08-02")));
+  assert.ok(active?.includes("2026-08-15"));
+  for (const line of [active, trialLine(trialState(new Date("2026-01-01"), new Date("2026-08-08")))]) {
+    assert.ok(line);
+    assert.ok(!/\b(\d+ days? (left|remaining)|hurry|expires soon|last chance)\b/i.test(line));
+    assert.ok(!line.includes("!"));
+  }
+  assert.equal(trialLine(trialState(null, new Date("2026-08-08"))), null);
 });
