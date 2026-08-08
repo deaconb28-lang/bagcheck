@@ -7,6 +7,7 @@ Reference docs (read before any UI work — the design system is authoritative o
 - `docs/design-system/` — the Kylani v0.8 handoff. `README.md` is the spec; the two `.dc.html` files are the rendered reference. **This is the visual authority.**
 - `docs/bagcheck-feature-architecture.md` — product layers. Its brand addendum is superseded by the design system above.
 - `docs/bagcheck-build-instructions.md` — stack, project shape, milestones
+- `docs/bagcheck-ai-architecture.md` — **authoritative on the AI boundary**: the five tiers, the decision procedure before any model call, the SnapTrade→Mongo→screen layers, the fact-pack contract, and the six touchpoints that earn a model. Read it before adding one.
 
 ## Colour
 
