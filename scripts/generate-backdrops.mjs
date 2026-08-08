@@ -55,7 +55,7 @@ let skipped = 0;
 const kinds = Object.keys(SCENE).filter((k) => !only.length || only.includes(k));
 
 for (const kind of kinds) {
-  const path = join(OUT, `${kind}.png`);
+  const path = join(OUT, `${kind}.jpg`);
   if (!force && existsSync(path)) {
     console.log(`· ${kind.padEnd(14)} already drawn`);
     skipped += 1;
@@ -96,7 +96,13 @@ for (const kind of kinds) {
 
     const png = await sharp(Buffer.from(b64, "base64"))
       .resize(W, H, { fit: "cover" })
-      .png({ compressionLevel: 9 })
+      /*
+       * JPEG, not PNG. These are photographic gradients with no transparency:
+       * the first pass wrote 13MB of PNG for twelve of them, which is a repo
+       * carrying a CDN's worth of binary. Satori decodes JPEG, so the OG
+       * renderer is unaffected.
+       */
+      .jpeg({ quality: 82, mozjpeg: true })
       .toBuffer();
     writeFileSync(path, png);
     made += 1;

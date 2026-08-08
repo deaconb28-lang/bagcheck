@@ -8,7 +8,7 @@ import styles from "./marketing.module.css";
  * read as four cards printed three times each — the eye takes the picture
  * before the headline.
  */
-const backdrop = (kind: string) => `/cards/${kind}.png`;
+const backdrop = (kind: string) => `/cards/${kind}.jpg`;
 
 /**
  * Three earned cards, dealt like a hand — the collectible mechanic made
