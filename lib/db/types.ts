@@ -134,3 +134,15 @@ export interface SubscriptionDoc {
   cancelAtPeriodEnd: boolean;
   updatedAt: Date;
 }
+
+/**
+ * Shared market-data cache. Keyed by request, not by user: the rate limit is
+ * per API key, so two people holding the same name should cost one call.
+ * Swept by a TTL index on expiresAt.
+ */
+export interface MarketCacheDoc {
+  key: string;
+  value: unknown;
+  fetchedAt: Date;
+  expiresAt: Date;
+}

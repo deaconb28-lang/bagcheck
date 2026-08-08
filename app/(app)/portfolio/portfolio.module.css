@@ -32,6 +32,16 @@
   flex-direction: column;
 }
 
+/*
+ * Where the numbers above came from. Mono, on white, so --meta holds its
+ * 4.5:1 floor here.
+ */
+.provenance {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  color: var(--meta);
+}
+
 .holding:last-child {
   border-bottom: 0;
   padding-bottom: 0;

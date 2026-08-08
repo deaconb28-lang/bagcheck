@@ -4,6 +4,7 @@ import type {
   CardDoc,
   ConnectionDoc,
   InsightDoc,
+  MarketCacheDoc,
   PositionSnapshotDoc,
   PulseDoc,
   ScoreDoc,
@@ -29,6 +30,7 @@ export async function getCollections() {
     insights: db.collection<InsightDoc>("insights"),
     cards: db.collection<CardDoc>("cards"),
     subscriptions: db.collection<SubscriptionDoc>("subscriptions"),
+    marketCache: db.collection<MarketCacheDoc>("marketCache"),
   };
 }
 
@@ -49,5 +51,8 @@ export async function ensureIndexes() {
     c.cards.createIndex({ slug: 1 }, { unique: true }),
     c.subscriptions.createIndex({ userId: 1 }, { unique: true }),
     c.subscriptions.createIndex({ stripeCustomerId: 1 }),
+    c.marketCache.createIndex({ key: 1 }, { unique: true }),
+    // Mongo sweeps expired entries; nothing has to remember to.
+    c.marketCache.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
   ]);
 }

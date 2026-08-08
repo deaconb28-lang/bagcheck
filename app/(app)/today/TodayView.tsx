@@ -1,4 +1,4 @@
-import { Card, Chip, Eyebrow, Row } from "@/components/primitives";
+import { Card, Chip, Eyebrow, Logo, Row } from "@/components/primitives";
 import { DayGrid } from "@/components/idioms";
 import { PageGrid } from "@/components/app/PageGrid";
 import { PageHeader } from "@/components/app/PageHeader";
@@ -24,7 +24,24 @@ export type TodayViewProps = {
   lastSync: string | null;
   /** Null once the day's pulse is answered. */
   pulse: { question: string; options: readonly string[] } | null;
+  /** Reporting dates for names already held. A schedule, never a signal. */
+  reporting: Array<{ symbol: string; date: string; hour: string | null }>;
 };
+
+/** Finnhub's session codes, spelled out. Anything else is left unsaid. */
+const SESSION: Record<string, string> = {
+  bmo: "before open",
+  amc: "after close",
+  dmh: "during hours",
+};
+
+function formatDay(date: string): string {
+  return new Date(`${date}T12:00:00Z`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
 
 function formatDate(date: string): string {
   return new Date(`${date}T12:00:00Z`).toLocaleDateString("en-US", {
@@ -54,6 +71,7 @@ export function TodayView(props: TodayViewProps) {
     accountCount,
     lastSync,
     pulse,
+    reporting,
   } = props;
 
   const rail = (
@@ -79,6 +97,30 @@ export function TodayView(props: TodayViewProps) {
           </p>
         </div>
       </Card>
+      {reporting.length ? (
+        <Card tight>
+          <div className={styles.railBlock}>
+            <Eyebrow>Reporting soon</Eyebrow>
+            <ul className={styles.reporting}>
+              {reporting.slice(0, 5).map((event) => (
+                <li key={`${event.symbol}-${event.date}`} className={styles.report}>
+                  <span className={styles.reportName}>
+                    <Logo symbol={event.symbol} size={22} />
+                    {event.symbol}
+                  </span>
+                  <span className={styles.reportWhen}>
+                    {formatDay(event.date)}
+                    {event.hour && SESSION[event.hour] ? ` · ${SESSION[event.hour]}` : ""}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className={styles.railBody}>
+              Dates these companies have set, for names already in your ledger.
+            </p>
+          </div>
+        </Card>
+      ) : null}
     </>
   );
 

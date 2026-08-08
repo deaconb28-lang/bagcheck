@@ -85,3 +85,39 @@
   color: var(--ink2);
   line-height: 1.6;
 }
+
+.reporting {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.report {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.report:last-child {
+  border-bottom: 0;
+}
+
+.reportName {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.reportWhen {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  color: var(--meta);
+  white-space: nowrap;
+}

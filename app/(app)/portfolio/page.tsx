@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getUserId } from "@/auth";
 import { holdingsFrom, isDbConfigured, loadAppData } from "@/lib/db";
+import { isMarketConfigured, refreshHoldings } from "@/lib/market";
 import { Card, Eyebrow, Logo, Stat } from "@/components/primitives";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
@@ -45,9 +46,9 @@ export default async function PortfolioPage() {
   }
 
   const { connection, snapshots, transactionCount } = await loadAppData(userId, 1);
-  const holdings = holdingsFrom(snapshots);
+  const stored = holdingsFrom(snapshots);
 
-  if (!holdings.length) {
+  if (!stored.length) {
     return (
       <PageGrid>
         <EmptyState
@@ -63,6 +64,17 @@ export default async function PortfolioPage() {
       </PageGrid>
     );
   }
+
+  // The snapshot the marks came from — staleness is a fact about that day,
+  // not about when the connection last ran.
+  const snapshotDate = snapshots.reduce<string | null>(
+    (latest, snap) => (!latest || snap.date > latest ? snap.date : latest),
+    null,
+  );
+  const today = new Date().toISOString().slice(0, 10);
+  const { rows: holdings, provenance } = isMarketConfigured()
+    ? await refreshHoldings(stored, snapshotDate, today)
+    : { rows: stored, provenance: `Brokerage synced ${snapshotDate ?? "never"}` };
 
   const totalValue = holdings.reduce((sum, h) => sum + (h.value ?? 0), 0);
   const totalCost = holdings.reduce((sum, h) => sum + (h.cost ?? 0), 0);
@@ -120,9 +132,9 @@ export default async function PortfolioPage() {
     <PageGrid rail={rail}>
       <PageHeader
         title="Portfolio"
-        subtitle={`${holdings.length} ${holdings.length === 1 ? "position" : "positions"} · last synced ${
-          connection?.lastSyncAt ? connection.lastSyncAt.toISOString().slice(0, 10) : "never"
-        }`}
+        subtitle={`${holdings.length} ${holdings.length === 1 ? "position" : "positions"} across ${
+          connection?.accounts.length ?? 0
+        } ${connection?.accounts.length === 1 ? "account" : "accounts"}`}
       />
 
       <Card hero>
@@ -179,6 +191,7 @@ export default async function PortfolioPage() {
               </div>
             ))}
           </div>
+          <p className={styles.provenance}>{provenance}</p>
         </div>
       </Card>
     </PageGrid>

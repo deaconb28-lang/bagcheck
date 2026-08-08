@@ -4,10 +4,13 @@ import {
   factsFrom,
   getDailyInsight,
   getPulse,
+  holdingsFrom,
   isDbConfigured,
   loadAppData,
   questionFor,
 } from "@/lib/db";
+import { normalizeSymbol } from "@/lib/logos";
+import { earningsFor, isMarketConfigured } from "@/lib/market";
 import { activeStreaks, disciplineSegments } from "@/lib/score";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
@@ -52,7 +55,7 @@ export default async function TodayPage() {
     );
   }
 
-  const { connection, scores, transactionCount } = await loadAppData(userId, 63);
+  const { connection, scores, snapshots, transactionCount } = await loadAppData(userId, 63);
   const latest = scores[0] ?? null;
   const previous = scores[1] ?? null;
 
@@ -78,12 +81,19 @@ export default async function TodayPage() {
   const weekStart = week.length > 1 ? week[week.length - 1] : null;
   const weekDelta = weekStart ? latest.score - weekStart.score : null;
 
-  const [insight, pulse] = await Promise.all([
+  // Names already held, for the reporting calendar. A scheduled date is a
+  // fact about the company, not a prompt to do anything about it.
+  const held = holdingsFrom(snapshots)
+    .map((holding) => normalizeSymbol(holding.symbol))
+    .filter((symbol): symbol is string => symbol != null);
+
+  const [insight, pulse, reporting] = await Promise.all([
     getDailyInsight(
       userId,
       factsFrom(latest, previous, weekStart, transactionCount, connection?.accounts.length ?? 0),
     ),
     getPulse(userId, latest.date),
+    isMarketConfigured() ? earningsFor(held) : Promise.resolve([]),
   ]);
 
   const streaks = activeStreaks(scores);
@@ -104,6 +114,7 @@ export default async function TodayPage() {
       accountCount={connection?.accounts.length ?? 0}
       lastSync={connection?.lastSyncAt ? connection.lastSyncAt.toISOString().slice(0, 10) : null}
       pulse={pulse ? null : { question: question.question, options: question.options }}
+      reporting={reporting}
     />
   );
 }
