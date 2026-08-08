@@ -4,6 +4,7 @@ import { Button, Chip, Eyebrow } from "@/components/primitives";
 import { DayStrip } from "./DayStrip";
 import { ConvictionBars, DistributionWide, MiniScatter, WinRateBars } from "./Idioms";
 import { Mark } from "./Mark";
+import { PricingTiers } from "./PricingTiers";
 import { TodayMock } from "./TodayMock";
 import { WrappedFan } from "./WrappedFan";
 import styles from "./marketing.module.css";
@@ -333,48 +334,7 @@ export default async function LandingPage() {
               no tier sells you a rare card.
             </p>
           </div>
-          <div className={styles.tierCols}>
-            <div className={styles.tierCol}>
-              <div className={styles.tierHead}>
-                <Eyebrow>Free</Eyebrow>
-                <div className={`num ${styles.tierPrice}`}>$0</div>
-                <p className={styles.tierWho}>Anyone with a brokerage</p>
-              </div>
-              <ul className={styles.tierList}>
-                <li>The Discipline score and what moved it</li>
-                <li>Streaks, Wrapped, and event segments</li>
-                <li>Every rare card your behaviour earns</li>
-              </ul>
-            </div>
-            <div className={styles.tierCol}>
-              <div className={styles.tierHead}>
-                <Eyebrow>Plus</Eyebrow>
-                <div className={`num ${styles.tierPrice}`}>
-                  $9<span className={styles.tierUnit}>/mo</span>
-                </div>
-                <p className={styles.tierWho}>People who write about investing</p>
-              </div>
-              <ul className={styles.tierList}>
-                <li>Report carousels and correlation cards</li>
-                <li>Publication-grade exports and embeds</li>
-                <li>A live score badge for your site</li>
-              </ul>
-            </div>
-            <div className={styles.tierCol}>
-              <div className={styles.tierHead}>
-                <Eyebrow>Trader</Eyebrow>
-                <div className={`num ${styles.tierPrice}`}>
-                  $29<span className={styles.tierUnit}>/mo</span>
-                </div>
-                <p className={styles.tierWho}>Active day and swing traders</p>
-              </div>
-              <ul className={styles.tierList}>
-                <li>Daily session recap cards</li>
-                <li>Motion exports for video</li>
-                <li>A verified public track record</li>
-              </ul>
-            </div>
-          </div>
+          <PricingTiers />
           <p className={styles.tierFoot}>
             Rarity is earned by conduct at every tier. Sitting through a 20%
             drawdown mints the same rare card whether you pay or not.
