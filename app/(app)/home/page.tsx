@@ -15,6 +15,7 @@ import type { UntaggedEntry } from "@/lib/tags";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { SignInCta } from "@/components/app/SignInCta";
+import { SyncDialog } from "@/components/app/SyncDialog";
 import { HomeView } from "./HomeView";
 import type { WaveDay } from "@/components/idioms";
 import {
@@ -29,8 +30,23 @@ import {
 export const metadata: Metadata = { title: "Bagcheck — home" };
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ connected?: string }>;
+}) {
   const userId = await getUserId();
+  const { connected } = await searchParams;
+  /*
+   * The brokerage callback lands here with ?connected=1 and nothing synced
+   * yet, so the dialog is what starts the sync as well as what reports it.
+   * It renders over whichever branch below is showing — usually the "no score
+   * yet" empty state, which is exactly what it is about to fill in.
+   */
+  const syncDialog =
+    connected === "1" && userId ? (
+      <SyncDialog today={new Date().toISOString().slice(0, 10)} />
+    ) : null;
 
   if (!userId) {
     return (
@@ -83,6 +99,7 @@ export default async function HomePage() {
           }
           actions={[{ label: "Open the ledger view", href: "/debug" }]}
         />
+        {syncDialog}
       </PageGrid>
     );
   }
@@ -140,27 +157,30 @@ export default async function HomePage() {
   const question = questionFor(latest.date);
 
   return (
-    <HomeView
-      score={latest.score}
-      delta={weekDelta(data.scores)}
-      components={latest.components}
-      insight={insight}
-      archetype={archetypeOf(latest.components as unknown as Record<string, number>)}
-      wave={wave}
-      waveSummary={waveSummary(wave)}
-      heat={heatFromScores(data.scores)}
-      streak={currentStreak(data.scores)}
-      longest={longestStreak(data.scores)}
-      scoredDays={data.scores.length}
-      queue={queue}
-      tagged={data.tagged}
-      taggable={data.taggable}
-      tier={data.tier}
-      syncedAt={syncClock(data.connection?.lastSyncAt)}
-      accountCount={data.connection?.accounts.length ?? 0}
-      transactionCount={data.transactionCount}
-      pulse={pulse ? null : { question: question.question, options: question.options }}
-      date={latest.date}
-    />
+    <>
+      {syncDialog}
+      <HomeView
+        score={latest.score}
+        delta={weekDelta(data.scores)}
+        components={latest.components}
+        insight={insight}
+        archetype={archetypeOf(latest.components as unknown as Record<string, number>)}
+        wave={wave}
+        waveSummary={waveSummary(wave)}
+        heat={heatFromScores(data.scores)}
+        streak={currentStreak(data.scores)}
+        longest={longestStreak(data.scores)}
+        scoredDays={data.scores.length}
+        queue={queue}
+        tagged={data.tagged}
+        taggable={data.taggable}
+        tier={data.tier}
+        syncedAt={syncClock(data.connection?.lastSyncAt)}
+        accountCount={data.connection?.accounts.length ?? 0}
+        transactionCount={data.transactionCount}
+        pulse={pulse ? null : { question: question.question, options: question.options }}
+        date={latest.date}
+      />
+    </>
   );
 }

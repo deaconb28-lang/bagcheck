@@ -1,6 +1,7 @@
 import type { Binary } from "mongodb";
 import type { AccountUniversalActivity, Position } from "snaptrade-typescript-sdk";
 import type { Contributor, RoundTrip, ScoreComponents, StyleBaseline } from "@/lib/score";
+import type { SyncPhase, SyncStatus } from "@/lib/snaptrade/progress";
 
 export interface ConnectionAccount {
   id: string;
@@ -170,6 +171,30 @@ export interface PrefsDoc {
   /** New users default to dark; this only exists once they have chosen. */
   mode: "light" | "dark";
   updatedAt: Date;
+}
+
+/**
+ * Live progress for one sync run, so the onboarding dialog can show real
+ * counts instead of a spinner and an estimate. One document per user,
+ * overwritten by each run — this is a status board, not a log.
+ *
+ * The sync writes it as it goes and the dialog polls it; the two never share
+ * a process, which is the whole reason it is in Mongo rather than in memory.
+ */
+export interface SyncProgressDoc {
+  userId: string;
+  /** The phase the run reached. Retained on failure so the dialog can say where. */
+  phase: SyncPhase;
+  status: SyncStatus;
+  error: string | null;
+  accountsTotal: number;
+  accountsDone: number;
+  positions: number;
+  transactions: number;
+  earliestDate: string | null;
+  startedAt: Date;
+  finishedAt: Date | null;
+  elapsedMs: number | null;
 }
 
 /**

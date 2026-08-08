@@ -17,6 +17,7 @@ export type {
   PulseDoc,
   ScoreDoc,
   SubscriptionDoc,
+  SyncProgressDoc,
   TagDoc,
   TransactionDoc,
 } from "./types";
@@ -25,4 +26,5 @@ export type { Mode } from "./prefs";
 export { loadScreen, syncClock } from "./screen";
 export type { ScreenData } from "./screen";
 export { DERIVED_VERSION, getDerived, rebuildDerived } from "./derived";
+export { getSyncProgress } from "./sync-progress";
 export type { DailyPnl, EquityPoint, HoldTime } from "./derived";

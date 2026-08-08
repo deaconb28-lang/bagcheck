@@ -1,6 +1,7 @@
 import type { LoginRedirectURI } from "snaptrade-typescript-sdk";
 import { ensureIndexes, getCollections } from "@/lib/db";
 import { rebuildDerived } from "@/lib/db/derived";
+import { beginSync, failSync, finishSync, markPhase } from "@/lib/db/sync-progress";
 import type { ConnectionDoc } from "@/lib/db";
 import { getSnapTrade } from "./client";
 
@@ -62,7 +63,18 @@ export interface SyncResult {
  * upsert on {userId, externalId} so re-syncs are idempotent.
  */
 export async function syncUser(userId: string): Promise<SyncResult> {
+  const startedAt = Date.now();
   await ensureIndexes();
+  await beginSync(userId);
+  try {
+    return await runSync(userId, startedAt);
+  } catch (err) {
+    await failSync(userId, err instanceof Error ? err.message : String(err));
+    throw err;
+  }
+}
+
+async function runSync(userId: string, startedAt: number): Promise<SyncResult> {
   const { connections, transactions, positionSnapshots } = await getCollections();
 
   const conn = await connections.findOne({ userId });
@@ -80,8 +92,19 @@ export async function syncUser(userId: string): Promise<SyncResult> {
   let positionsCount = 0;
   let activitiesCount = 0;
   let skippedActivities = 0;
+  let earliestDate: string | null = null;
 
-  for (const account of accounts) {
+  /*
+   * Positions first for every account, then history for every account.
+   *
+   * The two loops used to be one, interleaved per account. Splitting them
+   * costs nothing — the same calls in a different order — and it is what lets
+   * the onboarding dialog say "positions, then history" truthfully instead of
+   * showing two meters that both crawl at once.
+   */
+  await markPhase(userId, "positions", { accountsTotal: accounts.length, accountsDone: 0 });
+
+  for (const [index, account] of accounts.entries()) {
     const posRes = await snaptrade.accountInformation.getUserAccountPositions({
       ...creds,
       accountId: account.id,
@@ -93,7 +116,12 @@ export async function syncUser(userId: string): Promise<SyncResult> {
       { $set: { userId, accountId: account.id, date, takenAt: new Date(), positions } },
       { upsert: true },
     );
+    await markPhase(userId, "positions", { accountsDone: index + 1, positions: positionsCount });
+  }
 
+  await markPhase(userId, "history", { accountsDone: 0 });
+
+  for (const [index, account] of accounts.entries()) {
     // Full history, paginated per account.
     for (let offset = 0; ; offset += ACTIVITY_PAGE_SIZE) {
       const actRes = await snaptrade.accountInformation.getAccountActivities({
@@ -111,6 +139,10 @@ export async function syncUser(userId: string): Promise<SyncResult> {
           skippedActivities += 1;
           continue;
         }
+        const tradeDate = activity.trade_date ?? null;
+        if (tradeDate && (earliestDate === null || tradeDate < earliestDate)) {
+          earliestDate = tradeDate;
+        }
         ops.push({
           updateOne: {
             filter: { userId, externalId: activity.id },
@@ -119,7 +151,7 @@ export async function syncUser(userId: string): Promise<SyncResult> {
                 userId,
                 externalId: activity.id,
                 accountId: account.id,
-                date: activity.trade_date ?? null,
+                date: tradeDate,
                 settledAt: activity.settlement_date ?? null,
                 type: activity.type ?? null,
                 symbol:
@@ -145,6 +177,16 @@ export async function syncUser(userId: string): Promise<SyncResult> {
       }
       if (page.length < ACTIVITY_PAGE_SIZE) break;
     }
+    await markPhase(userId, "history", {
+      accountsDone: index + 1,
+      transactions: activitiesCount,
+      /*
+       * Trade dates are ISO strings, so the lexicographic minimum is the
+       * chronological one. Kept as the string the broker sent rather than a
+       * parsed Date, because the closing line only ever renders it.
+       */
+      earliestDate: earliestDate?.slice(0, 10) ?? null,
+    });
   }
 
   await connections.updateOne(
@@ -168,9 +210,11 @@ export async function syncUser(userId: string): Promise<SyncResult> {
    * reads a document instead of scanning, and a page view costs O(1).
    * A failure is logged, not thrown: the sync itself succeeded.
    */
+  await markPhase(userId, "derive");
   await rebuildDerived(userId).catch((err) =>
     console.error("[sync] derived rebuild failed", err),
   );
+  await finishSync(userId, startedAt);
 
   return {
     date,

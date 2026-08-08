@@ -10,7 +10,12 @@ import { archetypeOf, weekDelta } from "../derive";
 export const metadata: Metadata = { title: "Bagcheck — Wrapped" };
 export const dynamic = "force-dynamic";
 
-export default async function WrappedPage() {
+export default async function WrappedPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ play?: string }>;
+}) {
+  const { play } = await searchParams;
   const userId = await getUserId();
   if (!userId || !isDbConfigured()) {
     return (
@@ -70,6 +75,7 @@ export default async function WrappedPage() {
       transactionCount={data.transactionCount}
       winnerHold={hold.winnersMean}
       loserHold={hold.losersMean}
+      autoplay={play === "1"}
       bestDecision={best}
       longestHold={longest}
       score={latest.score}

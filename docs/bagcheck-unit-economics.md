@@ -31,28 +31,38 @@ tier as designed do not currently coexist.**
 
 | Component | Cost | Share |
 |---|---|---|
-| SnapTrade connection | $1.00 | **83%** |
-| Daily insight (Sonnet 5, cached prompt) | $0.19 | 15% |
+| SnapTrade connection | $1.00 | **79%** |
+| Daily insight (Sonnet 5, ~700 in / ~400 out, 30×) | $0.24 | 19% |
 | Wrapped backdrop (amortised) | $0.02 | 2% |
-| **Total** | **$1.21** | |
+| **Total** | **$1.26** | |
 
-The daily insight is not the problem. **The brokerage connection is 83% of
+The daily insight is not the problem. **The brokerage connection is 79% of
 marginal cost, and it is charged on free users exactly as on paying ones.**
 
-Routing the insight from Opus to Sonnet with prompt caching saves $0.22/user/
-month — real money at scale ($11k/year at 50k users), but it moves break-even
-by about one percentage point. It is worth doing and it is not the lever.
+Routing the insight from Opus 5 to Sonnet 5 saves $0.16/user/month — $8,100 a
+month at 50k users, and it moves break-even by 1.3 points. It is shipped, and
+it is not the lever.
+
+> **The prompt is not cached, and that is not an oversight.** The system
+> prompt measures ~1.3k characters, about 450 tokens on Sonnet 5's tokenizer.
+> Sonnet 5's minimum cacheable prefix is **1024 tokens**, so a `cache_control`
+> marker there does not error — it silently caches nothing. Two further
+> reasons it would not pay off at any length: only the system half of the ~700
+> input tokens is stable, and the default cache lives five minutes against one
+> call per user per day. An earlier draft of this document priced a cached
+> prefix at $0.19 and carried that saving into every table below. It has been
+> removed.
 
 ## 3. One month, at three scales
 
-Insight on Sonnet 5 with the system prompt cached; 80/20 Plus/Trader mix;
-net-of-Stripe ARPPU $12.32.
+Insight on Sonnet 5, uncached; 80/20 Plus/Trader mix; net-of-Stripe ARPPU
+$12.32.
 
 | Users | Variable | Fixed | **Total / month** | Break-even conversion | Payers needed |
 |---:|---:|---:|---:|---:|---:|
-| 1,000 | $1,207 | $210 | **$1,417** | 11.5% | 115 |
-| 10,000 | $12,063 | $790 | **$12,853** | 10.4% | 1,044 |
-| 50,000 | $60,315 | $1,950 | **$62,265** | 10.1% | 5,053 |
+| 1,000 | $1,263 | $210 | **$1,473** | 12.0% | 120 |
+| 10,000 | $12,630 | $790 | **$13,420** | 10.9% | 1,090 |
+| 50,000 | $63,150 | $1,950 | **$65,100** | 10.6% | 5,283 |
 
 Fixed costs barely matter — they are 1.5–6% of the bill. This is a
 **variable-cost business**, and it does not get cheaper per user with scale
@@ -66,26 +76,29 @@ and 12.2% break-even.
 At 10,000 users and **3% conversion** — a good outcome for consumer freemium:
 
 - Revenue: 300 × $12.32 = **$3,696**
-- Cost: **$12,853**
-- **Loss: $9,157/month**, which is **$0.94 per free user per month**
+- Cost: **$13,420**
+- **Loss: $9,724/month**, which is **$1.00 per free user per month**
 
 That is the actual question in front of the business: *is a free Bagcheck user
-worth $0.94 a month in acquisition value?* Given that Layer 5 — share cards —
+worth a dollar a month in acquisition value?* Given that Layer 5 — share cards —
 is explicitly the acquisition engine, the answer is not automatically no. But
 it has to be measured, not assumed, and it has to be bounded.
 
 ## 5. The levers, ranked by effect
 
+Every row is computed by the `levers` block in `costs.mjs` rather than typed
+in by hand.
+
 | Lever | Break-even at 10k | Notes |
 |---|---:|---|
-| Nothing changes | 10.4% | |
-| Insight → Sonnet + caching | 10.4% | Already in the table. Saves $2,200/mo at 50k. Do it anyway. |
-| **Disconnect dormant users at 60 days** | **8.0%** | SnapTrade bills *connected* users. Reconnect on return. |
-| **Trial-then-connect (14 days free, then pay or disconnect)** | **~5–6%** | Caps a non-converting user at ~$0.50 total, not $1/month forever. |
-| **SnapTrade volume rate at $0.50** | **6.4%** | They advertise volume discounts. One conversation. |
-| Raise to $12 / $39 | 7.7% | ARPPU net rises to $16.59. |
+| Nothing changes | 10.9% | Insight on Sonnet 5, $1.26/user. |
+| *Reference: insight left on Opus 5* | *12.2%* | *$1.43/user. This is what shipping Sonnet bought.* |
+| **Disconnect dormant users at 60 days** | **8.5%** | At 30% dormant. SnapTrade bills *connected* users; reconnect on return. |
+| **Trial-then-connect (14 days free, then pay or disconnect)** | **5.2%** | At 70% never staying connected. Caps a non-converting user at ~$0.50 total, not $1/month forever. |
+| **SnapTrade volume rate at $0.50** | **6.8%** | They advertise volume discounts. One conversation. |
+| Raise to $12 / $39 | 8.1% | ARPPU net rises to $16.60. |
 | Annual billing | ~neutral | Saves $3/yr in Stripe fees, costs $22/yr in discount. Do it for retention and cash, not margin. |
-| Dormancy + volume rate + $12 entry | **~3.6%** | Three modest moves, and the model works. |
+| Dormancy + volume rate + $12 entry | **4.2%** | Three modest moves, and the model works. |
 
 **The strongest single move is trial-then-connect**, because it preserves the
 thing the whole acquisition thesis rests on — *"your first screen is your own
@@ -107,7 +120,7 @@ is exactly what the landing page promises you will not get.
 | Free trial requiring a card | 40–60% of trials |
 
 Bagcheck's current shape is consumer freemium, so 2–5% is the honest planning
-number and 10.4% is not reachable by better marketing. **Reverse-trial is the
+number and 10.9% is not reachable by better marketing. **Reverse-trial is the
 shape that matches both the cost structure and the product's own promise** —
 give the full retrospective, then gate the ongoing service.
 
@@ -115,8 +128,10 @@ give the full retrospective, then gate the ongoing service.
 
 1. **Fix the Finnhub licence.** $100/month, and it is not optional for a
    monetized app.
-2. **Route the daily insight to Sonnet 5 and cache the system prompt.** Saves
-   ~$2,200/month at 50k users for a few lines of code.
+2. ~~**Route the daily insight to Sonnet 5.**~~ Done — `lib/insights/generate.ts`.
+   Worth $8,100/month at 50k users and 1.3 points of break-even. Caching the
+   system prompt was the other half of this recommendation and is not
+   available; see the note in §2.
 3. **Ask SnapTrade for volume pricing** before launch, not after. It is the
    single largest line and they publish that discounts exist.
 4. **Disconnect at 60 days dormant, reconnect on return.** Straightforward,

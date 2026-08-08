@@ -12,6 +12,7 @@ import type {
   PulseDoc,
   ScoreDoc,
   SubscriptionDoc,
+  SyncProgressDoc,
   TagDoc,
   TransactionDoc,
 } from "./types";
@@ -37,6 +38,7 @@ export async function getCollections() {
     icons: db.collection<IconDoc>("icons"),
     prefs: db.collection<PrefsDoc>("prefs"),
     derived: db.collection<DerivedDoc>("derived"),
+    syncProgress: db.collection<SyncProgressDoc>("syncProgress"),
   };
 }
 
@@ -65,5 +67,6 @@ export async function ensureIndexes() {
     c.icons.createIndex({ name: 1 }, { unique: true }),
     c.prefs.createIndex({ userId: 1 }, { unique: true }),
     c.derived.createIndex({ userId: 1 }, { unique: true }),
+    c.syncProgress.createIndex({ userId: 1 }, { unique: true }),
   ]);
 }

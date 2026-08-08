@@ -1,0 +1,157 @@
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: var(--scrim);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.panel {
+  width: 520px;
+  max-width: 100%;
+  max-height: 92svh;
+  overflow-y: auto;
+  background: var(--s1);
+  border-radius: 34px;
+  padding: 38px 36px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  flex: none;
+  border-radius: 22px;
+  background: var(--sunken);
+  color: var(--ink);
+}
+
+/* The one moving part. Reduced motion holds the mark still — the checklist
+   below it is what actually reports progress. */
+.mark[data-spinning] svg {
+  animation: spin 1.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark[data-spinning] svg {
+    animation: none;
+  }
+}
+
+.headText {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.eyebrow,
+.stepLabel,
+.stepDetail {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.title {
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: -0.016em;
+  color: var(--ink);
+}
+
+.steps {
+  display: grid;
+  gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.step {
+  display: grid;
+  gap: 8px;
+}
+
+.stepHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.stepLabel {
+  color: var(--ink);
+}
+
+.step[data-state="waiting"] .stepLabel {
+  color: var(--meta);
+}
+
+.track {
+  display: block;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+/* Moss, because a completed step is the discipline signal this screen is
+   about — the reader is watching their own record arrive. */
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--moss);
+  transform-origin: left;
+  transition: transform 0.6s ease-out;
+}
+
+.step[data-state="failed"] .fill {
+  background: var(--ink3);
+}
+
+.foot {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink3);
+  text-wrap: pretty;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 560px) {
+  .panel {
+    padding: 32px 24px 24px;
+    border-radius: 30px;
+  }
+
+  .title {
+    font-size: 23px;
+  }
+}

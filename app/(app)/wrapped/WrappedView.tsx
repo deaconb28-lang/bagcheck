@@ -25,6 +25,8 @@ export type WrappedViewProps = {
   delta: number | null;
   syncedAt: string | null;
   tier: Tier;
+  /** Open the story viewer on mount — set by the onboarding hand-off. */
+  autoplay?: boolean;
 };
 
 const days = (n: number | null) => (n == null ? "—" : n < 10 ? n.toFixed(1) : n.toFixed(0));
@@ -52,8 +54,14 @@ export function WrappedView(props: WrappedViewProps) {
     delta,
     syncedAt,
     tier,
+    autoplay = false,
   } = props;
-  const [playing, setPlaying] = useState(false);
+  /*
+   * `autoplay` comes from the onboarding hand-off — the sync dialog links
+   * here with ?play=1, so the first thing a new user sees after their history
+   * lands is their own year, not a screen they have to find the button on.
+   */
+  const [playing, setPlaying] = useState(autoplay);
 
   const holdRatio =
     winnerHold && loserHold && loserHold > 0.5 ? (winnerHold / loserHold).toFixed(1) : null;
