@@ -1,0 +1,22 @@
+/*
+ * The emblem sits on the ink field in both modes, like a share card — an
+ * archetype is an identity that travels, and it should look the same wherever
+ * it lands.
+ */
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  overflow: hidden;
+  /* --share-s1, not --share-bg: on a share card the two would be the same
+     fill and the mark would have no field to sit on. */
+  background: var(--share-s1);
+  color: var(--share-ink);
+}
+
+.art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

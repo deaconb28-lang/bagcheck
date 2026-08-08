@@ -1,5 +1,8 @@
+import { archetypeFor } from "@/lib/archetypes";
+import type { Archetype } from "@/lib/archetypes";
 import type { HeatDay } from "@/components/idioms";
 import type { ScoreDoc, TransactionDoc } from "@/lib/db";
+import type { ScoreComponents } from "@/lib/score";
 import type { WaveDay } from "@/components/idioms";
 
 /**
@@ -96,39 +99,17 @@ export function longestStreak(scores: ScoreDoc[], floor = 64): number {
 }
 
 /**
- * The archetype, from the strongest component. Named rather than scored: the
- * point of an identity is that it is a word you would say out loud.
+ * The archetype. Delegates to the sixteen-corner table in `lib/archetypes.ts`
+ * — this used to name four, from whichever single component happened to be
+ * highest, which meant two people with completely different records shared a
+ * name whenever they happened to peak in the same place.
+ *
+ * Kept as a screen-level helper because every screen already imports from
+ * here, and because the cast is the awkward part: score components arrive
+ * from Mongo as a loose record.
  */
-export function archetypeOf(components: Record<string, number> | null): {
-  name: string;
-  line: string;
-} {
-  if (!components) {
-    return { name: "Unscored", line: "Not enough history to name a pattern yet." };
-  }
-  const [key] = Object.entries(components).sort((a, b) => b[1] - a[1])[0] ?? ["consistency"];
-  switch (key) {
-    case "patience":
-      return {
-        name: "The Patient",
-        line: "You hold through the part that makes most people sell.",
-      };
-    case "adherence":
-      return {
-        name: "The Measured",
-        line: "Exposure stays inside your own band, and it has not drifted.",
-      };
-    case "exposure":
-      return {
-        name: "The Active",
-        line: "You run a high-cadence book and you run it deliberately.",
-      };
-    default:
-      return {
-        name: "The Steady",
-        line: "Sizing and cadence barely move, week over week.",
-      };
-  }
+export function archetypeOf(components: Record<string, number> | null): Archetype {
+  return archetypeFor((components ?? null) as ScoreComponents | null);
 }
 
 /** Weekly delta against the oldest score in the last seven scored days. */

@@ -42,10 +42,28 @@
 
 .archText {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: flex-start;
+  gap: 16px;
   flex: 1 1 300px;
   min-width: 260px;
+}
+
+.archTextBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+/* Which components put you in this archetype — mono, because it is a count
+   against a fixed bar, not a sentence. */
+.archStrong {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--meta);
+  margin-top: 4px;
 }
 
 .archName {

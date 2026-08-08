@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { Avatar } from "@/components/primitives";
+import { strongLine } from "@/lib/archetypes";
+import type { Archetype } from "@/lib/archetypes";
 import { HeatGrid, ScoreRing, WaveChart } from "@/components/idioms";
 import type { HeatDay, WaveDay } from "@/components/idioms";
 import { Locked } from "@/components/app/Locked";
@@ -22,7 +25,9 @@ export type HomeViewProps = {
   delta: number | null;
   components: ScoreComponents;
   insight: { sentence: string; tail?: string | null };
-  archetype: { name: string; line: string };
+  archetype: Archetype;
+  /** Whether generated avatar art exists on this deployment. */
+  avatarArt?: boolean;
   wave: WaveDay[];
   waveSummary: WaveSummary;
   heat: HeatDay[];
@@ -73,6 +78,7 @@ export function HomeView(props: HomeViewProps) {
     components,
     insight,
     archetype,
+    avatarArt = false,
     wave,
     waveSummary: summary,
     heat,
@@ -158,9 +164,13 @@ export function HomeView(props: HomeViewProps) {
               style={{ animationDelay: "0.04s" }}
             >
               <div className={styles.archText}>
-                <span className={screen.eyebrow}>Your archetype</span>
-                <div className={`disp ${styles.archName}`}>{archetype.name}</div>
-                <p className={screen.tail}>{archetype.line}</p>
+                <Avatar archetype={archetype.key} size={52} art={avatarArt} />
+                <div className={styles.archTextBody}>
+                  <span className={screen.eyebrow}>Your archetype</span>
+                  <div className={`disp ${styles.archName}`}>{archetype.name}</div>
+                  <p className={screen.tail}>{archetype.line}</p>
+                  <span className={styles.archStrong}>{strongLine(archetype)}</span>
+                </div>
               </div>
               <div className={styles.archBars}>
                 {(Object.entries(components) as Array<[string, number]>).map(([name, value], i) => (

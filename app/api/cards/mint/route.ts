@@ -5,6 +5,7 @@ import { activeStreaks, buildRoundTrips } from "@/lib/score";
 import type { TxnLite } from "@/lib/score";
 import { mintable } from "@/lib/cards";
 import { generateWrappedArt } from "@/lib/wrapped";
+import { archetypeFor } from "@/lib/archetypes";
 
 import type { ScoreComponents } from "@/lib/score";
 
@@ -16,19 +17,6 @@ function dominantOf(score: ScoreLike): "adherence" | "consistency" | "patience" 
   const entries = Object.entries(score.components) as Array<[string, number]>;
   const [key] = entries.sort((a, b) => b[1] - a[1])[0] ?? [];
   return key === "adherence" || key === "patience" || key === "exposure" ? key : "consistency";
-}
-
-function archetypeOf(score: ScoreLike): string {
-  switch (dominantOf(score)) {
-    case "patience":
-      return "Patient accumulator";
-    case "adherence":
-      return "Rule keeper";
-    case "exposure":
-      return "Active trader";
-    default:
-      return "Steady hand";
-  }
 }
 
 /**
@@ -93,7 +81,7 @@ export async function POST(req: Request) {
     spec.kind === "wrapped"
       ? await generateWrappedArt({
           year: new Date().getUTCFullYear(),
-          archetype: archetypeOf(latest),
+          archetype: archetypeFor(latest?.components ?? null).name,
           dominant: dominantOf(latest),
           scoredDays: scores.length,
           longestHold: trips.reduce((m, t) => Math.max(m, t.holdDays), 0) || null,

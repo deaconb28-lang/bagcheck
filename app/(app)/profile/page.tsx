@@ -5,7 +5,9 @@ import { isStripeConfigured } from "@/lib/billing";
 import type { ScoreDoc } from "@/lib/db";
 import { selfPercentile } from "@/lib/score";
 import type { StyleBaseline } from "@/lib/score";
-import { Button, Card, Eyebrow, Stat } from "@/components/primitives";
+import { Avatar, Button, Card, Eyebrow, Stat } from "@/components/primitives";
+import { archetypeFor, strongLine } from "@/lib/archetypes";
+import { avatarsEnabled } from "@/lib/avatars/store";
 import { Distribution } from "@/components/idioms";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
@@ -17,26 +19,6 @@ import styles from "./profile.module.css";
 
 export const metadata: Metadata = { title: "Bagcheck — profile" };
 export const dynamic = "force-dynamic";
-
-/** Archetype reads the strongest component — descriptive, never a grade. */
-function archetypeFor(doc: ScoreDoc | null): { name: string; note: string } {
-  if (!doc) {
-    return { name: "Unread", note: "Not enough history to name a pattern yet." };
-  }
-  const [key] = (Object.entries(doc.components) as Array<[string, number]>).sort(
-    (a, b) => b[1] - a[1],
-  )[0];
-  switch (key) {
-    case "patience":
-      return { name: "The Holder", note: "Your hold times carry the score." };
-    case "consistency":
-      return { name: "The Metronome", note: "Your cadence barely moves." };
-    case "adherence":
-      return { name: "The Rule-Keeper", note: "Contributions and rules stay intact." };
-    default:
-      return { name: "The Measured", note: "Your exposure stays inside your own band." };
-  }
-}
 
 async function signOutAction() {
   "use server";
@@ -72,7 +54,7 @@ export default async function ProfilePage() {
     subscriptionFor(userId),
   ]);
   const latest = scores[0] ?? null;
-  const archetype = archetypeFor(latest);
+  const archetype = archetypeFor(latest?.components ?? null);
   const baseline: StyleBaseline = connection?.styleBaseline ?? latest?.baseline ?? "long-term";
   const best = scores.reduce<ScoreDoc | null>(
     (top, doc) => (!top || doc.score > top.score ? doc : top),
@@ -142,10 +124,14 @@ export default async function ProfilePage() {
       />
 
       <Card hero>
-        <div className={styles.block}>
-          <Eyebrow>Your archetype</Eyebrow>
-          <h2 className={`disp ${styles.archetype}`}>{archetype.name}</h2>
-          <p className={styles.body}>{archetype.note}</p>
+        <div className={styles.archBlock}>
+          <Avatar archetype={archetype.key} size={72} art={avatarsEnabled()} />
+          <div className={styles.block}>
+            <Eyebrow>Your archetype</Eyebrow>
+            <h2 className={`disp ${styles.archetype}`}>{archetype.name}</h2>
+            <p className={styles.body}>{archetype.line}</p>
+            <span className={styles.archStrong}>{strongLine(archetype)}</span>
+          </div>
         </div>
       </Card>
 

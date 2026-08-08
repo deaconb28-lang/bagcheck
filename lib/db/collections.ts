@@ -1,6 +1,7 @@
 import type { Db } from "mongodb";
 import { dbName, getMongoClient } from "./client";
 import type {
+  AvatarDoc,
   CardDoc,
   ConnectionDoc,
   DerivedDoc,
@@ -36,6 +37,7 @@ export async function getCollections() {
     subscriptions: db.collection<SubscriptionDoc>("subscriptions"),
     marketCache: db.collection<MarketCacheDoc>("marketCache"),
     icons: db.collection<IconDoc>("icons"),
+    avatars: db.collection<AvatarDoc>("avatars"),
     prefs: db.collection<PrefsDoc>("prefs"),
     derived: db.collection<DerivedDoc>("derived"),
     syncProgress: db.collection<SyncProgressDoc>("syncProgress"),
@@ -65,6 +67,7 @@ export async function ensureIndexes() {
     // Mongo sweeps expired entries; nothing has to remember to.
     c.marketCache.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
     c.icons.createIndex({ name: 1 }, { unique: true }),
+    c.avatars.createIndex({ key: 1 }, { unique: true }),
     c.prefs.createIndex({ userId: 1 }, { unique: true }),
     c.derived.createIndex({ userId: 1 }, { unique: true }),
     c.syncProgress.createIndex({ userId: 1 }, { unique: true }),

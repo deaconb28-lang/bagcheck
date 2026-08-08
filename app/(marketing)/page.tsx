@@ -10,6 +10,7 @@ import { demoWave, waveCounts } from "./wave";
 import { PricingTiers } from "./PricingTiers";
 import { TodayMock } from "./TodayMock";
 import { WrappedFan } from "./WrappedFan";
+import { avatarsEnabled } from "@/lib/avatars/store";
 import styles from "./marketing.module.css";
 
 /**
@@ -279,7 +280,7 @@ export default async function LandingPage() {
               the day you connect.
             </p>
           </div>
-          <WrappedFan />
+          <WrappedFan avatarArt={avatarsEnabled()} />
           <div className={styles.wrappedPoints}>
             <div className={styles.wrappedPoint}>
               <Eyebrow>Rendered server-side</Eyebrow>

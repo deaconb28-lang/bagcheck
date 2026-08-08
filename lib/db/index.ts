@@ -9,6 +9,7 @@ export type { ActivityPage, ActivityRow, AppData, HoldingRow } from "./queries";
 export { scoreUser } from "./scoring";
 export { saveSubscription, subscriptionFor, tierFor, userIdForCustomer } from "./subscriptions";
 export type {
+  AvatarDoc,
   CardDoc,
   ConnectionAccount,
   ConnectionDoc,

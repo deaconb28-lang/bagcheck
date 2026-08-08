@@ -150,3 +150,26 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* The archetype hero: the mark, then the name and what put you in it. */
+.archBlock {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.archStrong {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--meta);
+  margin-top: 4px;
+}
+
+@media (max-width: 560px) {
+  .archBlock {
+    flex-direction: column;
+    gap: 16px;
+  }
+}

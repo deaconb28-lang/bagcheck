@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { Avatar } from "@/components/primitives";
+import type { Archetype } from "@/lib/archetypes";
 import { ScreenHeader } from "@/components/app/ScreenHeader";
 import { ShareButton } from "@/components/app/ShareButton";
 import { Locked } from "@/components/app/Locked";
 import { StoryViewer } from "@/components/cards/StoryViewer";
+import { WrappedCard } from "@/components/cards/WrappedCard";
 import type { StoryCard } from "@/components/cards/StoryViewer";
 import type { Tier } from "@/lib/tiers";
 import screen from "../screen.module.css";
@@ -14,9 +17,13 @@ type Trip = { symbol: string; holdDays: number; pnl: number } | null;
 
 export type WrappedViewProps = {
   year: number;
-  archetype: { name: string; line: string };
+  archetype: Archetype;
+  /** Whether generated avatar art exists on this deployment. */
+  avatarArt?: boolean;
   scoredDays: number;
   transactionCount: number;
+  /** Realised P&L per session — the receipt strip on the card. */
+  strip: number[];
   winnerHold: number | null;
   loserHold: number | null;
   bestDecision: Trip;
@@ -46,6 +53,7 @@ export function WrappedView(props: WrappedViewProps) {
     archetype,
     scoredDays,
     transactionCount,
+    strip,
     winnerHold,
     loserHold,
     bestDecision,
@@ -55,6 +63,7 @@ export function WrappedView(props: WrappedViewProps) {
     syncedAt,
     tier,
     autoplay = false,
+    avatarArt = false,
   } = props;
   /*
    * `autoplay` comes from the onboarding hand-off — the sync dialog links
@@ -131,11 +140,6 @@ export function WrappedView(props: WrappedViewProps) {
     { eyebrow: `Your ${year}`, value: archetype.name, tail: archetype.line, tone: "signal" },
   ];
 
-  const fan = [
-    { eyebrow: "Sessions scored", value: String(scoredDays), tone: "moss" },
-    { eyebrow: "Health", value: String(score), tone: "ink" },
-    { eyebrow: "Archetype", value: archetype.name.replace("The ", ""), tone: "signal" },
-  ];
 
   return (
     <>
@@ -154,6 +158,7 @@ export function WrappedView(props: WrappedViewProps) {
             <section data-reveal className={styles.hero}>
               <div className={styles.heroText}>
                 <span className={styles.heroEyebrow}>Bagcheck · {year}</span>
+                <Avatar archetype={archetype.key} size={72} art={avatarArt} />
                 <h1 className={`num ${styles.heroTitle}`}>{archetype.name}</h1>
                 <p className={styles.heroLine}>{archetype.line}</p>
                 <button type="button" className={styles.play} onClick={() => setPlaying(true)}>
@@ -164,15 +169,23 @@ export function WrappedView(props: WrappedViewProps) {
                 </button>
               </div>
 
-              <div className={styles.fan}>
-                {fan.map((card, i) => (
-                  <div key={card.eyebrow} className={styles.fanCard} data-i={i}>
-                    <span className={styles.fanEyebrow}>{card.eyebrow}</span>
-                    <span className={`num ${styles.fanValue}`} data-tone={card.tone}>
-                      {card.value}
-                    </span>
-                  </div>
-                ))}
+              {/*
+                * The real card, not a preview of one. Same component the
+                * marketing page renders, and the same figures that go on the
+                * minted URL — what someone is shown here is what they post.
+                */}
+              <div className={styles.cardSlot}>
+                <WrappedCard
+                  year={year}
+                  archetype={archetype}
+                  avatarArt={avatarArt}
+                  eyebrow="Sessions scored"
+                  value={String(scoredDays)}
+                  tail={archetype.line}
+                  strip={strip}
+                  slug={null}
+                />
+                <ShareButton type="wrapped" label="your year" size={44} />
               </div>
             </section>
 
