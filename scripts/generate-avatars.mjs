@@ -56,17 +56,31 @@ const SIZE = 256;
  */
 const MARGIN = 0.14;
 
-/** Trim to the drawn form, re-pad evenly, and write at SIZE. */
+/**
+ * Trim to the drawn form, re-pad evenly to a square, and write at SIZE.
+ *
+ * `extend` rather than compositing onto a created canvas: sharp applies
+ * `resize()` before `composite()` in a single pipeline, so the obvious
+ * version shrinks the canvas first and then fails to fit a full-size form
+ * onto it. Extending the trimmed image sidesteps the ordering entirely.
+ */
 async function frame(input) {
   const trimmed = await sharp(input).trim({ threshold: 12 }).toBuffer();
-  const meta = await sharp(trimmed).metadata();
-  const side = Math.max(meta.width, meta.height);
+  const { width, height } = await sharp(trimmed).metadata();
+  const side = Math.max(width, height);
   const pad = Math.round(side * MARGIN);
   const box = side + pad * 2;
-  return sharp({
-    create: { width: box, height: box, channels: 3, background: FIELD },
-  })
-    .composite([{ input: trimmed, gravity: "center" }])
+  const left = Math.round((box - width) / 2);
+  const top = Math.round((box - height) / 2);
+
+  return sharp(trimmed)
+    .extend({
+      left,
+      right: box - width - left,
+      top,
+      bottom: box - height - top,
+      background: FIELD,
+    })
     .resize(SIZE, SIZE, { fit: "cover" })
     .png({ compressionLevel: 9, palette: true })
     .toBuffer();

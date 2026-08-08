@@ -41,9 +41,12 @@ export type WrappedCardProps = {
     | { kind: "chart"; strip: number[]; labels?: string[] };
   /** The card's own URL once minted. Null before it exists. */
   slug: string | null;
-  /** Footer line, left of the URL. */
-  footLabel: string;
-  footDetail: string;
+  /**
+   * The provenance line. One sentence, because the footer band is one line
+   * plus the URL — a label and a sentence side by side both truncate, and
+   * they were saying the same thing twice.
+   */
+  provenance: string;
   /** Generated backdrop. The scene only — every word here is set by us. */
   backdrop?: string | null;
   hue?: CardHue;
@@ -86,8 +89,7 @@ export function WrappedCard({
   chip = null,
   body,
   slug,
-  footLabel,
-  footDetail,
+  provenance,
   backdrop = null,
   hue = "moss",
   rarity = null,
@@ -167,20 +169,17 @@ export function WrappedCard({
           </div>
         </div>
 
+        {/*
+          * Two rows, not two columns. Side by side, the provenance line and
+          * the URL compete for the same half of the card and both truncate —
+          * and a card whose URL is cut off has broken the only loop it exists
+          * to run.
+          */}
         <footer className={styles.foot}>
-          {/*
-            * Two rows, not two columns. Side by side, the provenance line and
-            * the URL compete for the same 60% of the card and both truncate —
-            * and a card whose provenance line is cut off is a card that has
-            * stopped making its own argument.
-            */}
-          <div className={styles.footRow}>
-            <span className={styles.footLabel}>{footLabel}</span>
-            <span className={styles.url}>
-              {slug ? `bagcheck.app/c/${slug}` : "minted when you share"}
-            </span>
-          </div>
-          <span className={styles.footDetail}>{footDetail}</span>
+          <span className={styles.footDetail}>{provenance}</span>
+          <span className={styles.url}>
+            {slug ? `bagcheck.app/c/${slug}` : "minted when you share"}
+          </span>
         </footer>
       </div>
     </article>

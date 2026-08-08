@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { ARCHETYPES } from "@/lib/archetypes";
-import { avatarPrompt } from "./prompt";
+import { avatarHue, avatarPrompt } from "./prompt";
 import { AVATAR_KEYS, emblemBody } from "./drawn";
 
 test("every archetype asks for its own emblem, and no two prompts match", () => {
@@ -14,8 +14,26 @@ test("every archetype asks for its own emblem, and no two prompts match", () => 
 
 test("the prompt forbids everything that would break the system", () => {
   const prompt = avatarPrompt(ARCHETYPES[0]);
-  for (const banned of ["No text", "No logos", "No people", "no gloss"]) {
+  for (const banned of ["no text, letters, numbers", "No logos", "No people", "No border"]) {
     assert.ok(prompt.includes(banned), banned);
+  }
+});
+
+test("the hue carries the same reading the name does", () => {
+  // More components above the bar burns brighter. The colour is not assigned
+  // for variety — it is the archetype saying the same thing twice.
+  const hueOf = (key: string) => avatarHue(ARCHETYPES.find((a) => a.key === key)!);
+  assert.equal(hueOf("improviser"), "violet");
+  assert.equal(hueOf("patient"), "azure");
+  assert.equal(hueOf("anchor"), "moss");
+  assert.equal(hueOf("composed"), "ember");
+});
+
+test("every prompt asks for exactly one light, and it is a named family", () => {
+  for (const archetype of ARCHETYPES) {
+    const prompt = avatarPrompt(archetype);
+    const lights = ["#57D69D", "#FF9B45", "#62B0F5", "#B48BFF"].filter((h) => prompt.includes(h));
+    assert.equal(lights.length, 1, archetype.name);
   }
 });
 

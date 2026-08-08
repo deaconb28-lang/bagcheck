@@ -109,7 +109,6 @@
 .beatLabel,
 .chip,
 .barLabel,
-.footLabel,
 .url {
   font-family: var(--font-mono), monospace;
   letter-spacing: 0.18em;
@@ -361,19 +360,6 @@
   padding: 3cqw 4cqw;
   border-radius: 5cqw;
   background: color-mix(in srgb, var(--share-ink) 7%, transparent);
-}
-
-.footRow {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 3cqw;
-}
-
-.footLabel {
-  font-size: 2.6cqw;
-  color: var(--card-lit);
-  white-space: nowrap;
 }
 
 .footDetail {

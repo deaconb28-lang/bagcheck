@@ -43,8 +43,7 @@ export function WrappedFan() {
             ],
           }}
           slug="q3-no-panic"
-          footLabel="Read from your brokerage"
-          footDetail="Read-only. No trade was placed."
+          provenance="Read from your brokerage. Read-only, permanently."
           backdrop="/cards/moss-consistency.png"
           hue="moss"
           example
@@ -70,8 +69,7 @@ export function WrappedFan() {
             ],
           }}
           slug="archetype-sentinel"
-          footLabel="Read from your brokerage"
-          footDetail="Read-only. No trade was placed."
+          provenance="Read from your brokerage. Read-only, permanently."
           backdrop="/cards/azure-adherence.png"
           hue="azure"
           example
@@ -94,8 +92,7 @@ export function WrappedFan() {
             labels: ["S", "O", "N", "D", "J", "F", "M", "A", "M", "J", "J", "A"],
           }}
           slug="412-days"
-          footLabel="Read from your brokerage"
-          footDetail="Read-only. No trade was placed."
+          provenance="Read from your brokerage. Read-only, permanently."
           backdrop="/cards/ember-exposure.png"
           hue="ember"
           rarity="rare"

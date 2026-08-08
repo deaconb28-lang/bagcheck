@@ -200,8 +200,7 @@ export function WrappedView(props: WrappedViewProps) {
                     ],
                   }}
                   slug={null}
-                  footLabel="Read from your brokerage"
-                  footDetail="Read-only. No trade was placed."
+                  provenance="Read from your brokerage. Read-only, permanently."
                   hue={archetype.tone === "moss" ? "moss" : "azure"}
                 />
                 <ShareButton type="wrapped" label="your year" size={44} />
