@@ -7,6 +7,7 @@ import type {
   PositionSnapshotDoc,
   PulseDoc,
   ScoreDoc,
+  SubscriptionDoc,
   TagDoc,
   TransactionDoc,
 } from "./types";
@@ -27,6 +28,7 @@ export async function getCollections() {
     tags: db.collection<TagDoc>("tags"),
     insights: db.collection<InsightDoc>("insights"),
     cards: db.collection<CardDoc>("cards"),
+    subscriptions: db.collection<SubscriptionDoc>("subscriptions"),
   };
 }
 
@@ -45,5 +47,7 @@ export async function ensureIndexes() {
     c.insights.createIndex({ userId: 1, date: 1, kind: 1 }, { unique: true }),
     c.cards.createIndex({ userId: 1, date: 1 }),
     c.cards.createIndex({ slug: 1 }, { unique: true }),
+    c.subscriptions.createIndex({ userId: 1 }, { unique: true }),
+    c.subscriptions.createIndex({ stripeCustomerId: 1 }),
   ]);
 }

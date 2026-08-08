@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getUserId, isAuthConfigured, isDevIdentity, signOut } from "@/auth";
-import { isDbConfigured, loadAppData } from "@/lib/db";
+import { isDbConfigured, loadAppData, subscriptionFor, tierFor } from "@/lib/db";
+import { isStripeConfigured } from "@/lib/billing";
 import type { ScoreDoc } from "@/lib/db";
 import { selfPercentile } from "@/lib/score";
 import type { StyleBaseline } from "@/lib/score";
@@ -9,6 +10,7 @@ import { Distribution } from "@/components/idioms";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { PageHeader } from "@/components/app/PageHeader";
+import { PlanCard } from "@/components/app/PlanCard";
 import { SignInCta } from "@/components/app/SignInCta";
 import { BaselinePicker } from "./BaselinePicker";
 import styles from "./profile.module.css";
@@ -64,6 +66,10 @@ export default async function ProfilePage() {
   }
 
   const { connection, scores, transactionCount } = await loadAppData(userId, 90);
+  const [tier, subscription] = await Promise.all([
+    tierFor(userId),
+    subscriptionFor(userId),
+  ]);
   const latest = scores[0] ?? null;
   const archetype = archetypeFor(latest);
   const baseline: StyleBaseline = connection?.styleBaseline ?? latest?.baseline ?? "long-term";
@@ -73,8 +79,21 @@ export default async function ProfilePage() {
   );
   const percentile = latest ? selfPercentile(scores, latest.score) : null;
 
+  const renewsOn = subscription?.currentPeriodEnd
+    ? subscription.currentPeriodEnd.toISOString().slice(0, 10)
+    : null;
+
   const rail = (
     <>
+      <Card tight>
+        <PlanCard
+          tier={tier}
+          hasCustomer={Boolean(subscription?.stripeCustomerId)}
+          renewsOn={renewsOn}
+          cancelAtPeriodEnd={Boolean(subscription?.cancelAtPeriodEnd)}
+          configured={isStripeConfigured()}
+        />
+      </Card>
       <Card tight>
         <Stat
           eyebrow="Days scored"

@@ -82,6 +82,7 @@ Reference docs (read before any UI work — the design system is authoritative o
 
 - Next.js App Router. Server components by default; `'use client'` only where interaction requires it.
 - `lib/score`, `lib/engine` and `lib/cards` are pure functions — no I/O.
+- Billing gates *formats* only. `lib/billing/tiers.ts` has no `Feature` member for minting or rarity, so there is no way to write that gate — sharing is never paywalled, and `canMintCards()` takes no tier on purpose. Stripe is the source of truth; `tierFor()` downgrades to free unless the status is live.
 - Share cards are public by slug: `cardBySlug` takes no userId and projects only what a card renders. The slug is 96 bits of randomness, because it is the card's entire access model.
 - `app/og/[slug]/render.tsx` is the one file allowed to repeat palette hexes — Satori renders with no stylesheet and no custom properties. Keep the values in step with the `--share-*` tokens, and give every multi-child element an explicit `display`.
 - Engine findings are descriptive and self-silencing: below their sample floor they return `null` rather than report a coincidence, and the evidence line must never contradict the sentence it sits under.

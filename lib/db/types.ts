@@ -107,3 +107,21 @@ export interface CardDoc {
   mintedAt: Date;
   url: string | null;
 }
+
+/**
+ * Billing state, mirrored from Stripe. Stripe is the source of truth; this
+ * is a cache so the app shell can read a tier without a network call on
+ * every page.
+ */
+export interface SubscriptionDoc {
+  userId: string;
+  /** The tier the price maps to, before status is considered. */
+  tier: "free" | "plus" | "trader";
+  /** Stripe's subscription status verbatim. */
+  status: string | null;
+  stripeCustomerId: string;
+  stripeSubscriptionId: string | null;
+  currentPeriodEnd: Date | null;
+  cancelAtPeriodEnd: boolean;
+  updatedAt: Date;
+}

@@ -16,7 +16,8 @@
     "next-auth": "^5.0.0-beta.32",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "snaptrade-typescript-sdk": "^11.0.4"
+    "snaptrade-typescript-sdk": "^11.0.4",
+    "stripe": "^22.4.0"
   },
   "devDependencies": {
     "@types/node": "^22",
