@@ -1,0 +1,163 @@
+/* The hero stays on the ink field in both modes — Wrapped is a share
+   surface, and a share surface does not follow the reader's mode. */
+.hero {
+  background: var(--share-bg);
+  border-radius: 34px;
+  padding: 40px;
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  flex-wrap: wrap;
+  color: var(--share-ink);
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  overflow: hidden;
+}
+
+.heroText {
+  flex: 1 1 320px;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.heroEyebrow,
+.fanEyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--share-dim);
+}
+
+.heroTitle {
+  font-size: 58px;
+  line-height: 1;
+}
+
+.heroLine {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--share-dim);
+  max-width: 34ch;
+}
+
+.play {
+  align-self: flex-start;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: var(--share-moss);
+  color: var(--on-share-moss);
+  font-weight: 600;
+  font-size: 14px;
+  transition: transform 0.16s ease;
+}
+
+.play:hover {
+  transform: translateY(-1px);
+}
+
+.fan {
+  flex: 1 1 300px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  min-width: 0;
+}
+
+/* Eyebrow and figure only. At any overlap that reads as a fan, a tail would
+   sit under the next card. */
+.fanCard {
+  flex: 1 1 0;
+  min-width: 0;
+  background: var(--share-s1);
+  border-radius: 22px;
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.fanCard[data-i="0"] {
+  transform: rotate(-4deg);
+}
+
+.fanCard[data-i="1"] {
+  transform: translateY(-12px);
+}
+
+.fanCard[data-i="2"] {
+  transform: rotate(4deg);
+}
+
+.fanCard:hover {
+  transform: translateY(-6px);
+}
+
+.fanValue {
+  font-size: 30px;
+  color: var(--share-ink);
+}
+
+.fanValue[data-tone="moss"] {
+  color: var(--share-moss);
+}
+
+.fanValue[data-tone="signal"] {
+  color: var(--share-signal);
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+.statValue {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 38px;
+  flex-wrap: wrap;
+}
+
+.unit {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.carousel {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.carouselCard {
+  aspect-ratio: 4 / 5;
+  border-radius: 20px;
+  background: var(--sunken);
+}
+
+@media (max-width: 899px) {
+  .hero {
+    padding: 26px;
+    border-radius: 28px;
+  }
+
+  .heroTitle {
+    font-size: 40px;
+  }
+
+  .carousel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

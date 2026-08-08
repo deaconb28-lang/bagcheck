@@ -1,0 +1,145 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.headText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 240px;
+}
+
+.eyebrow,
+.facts,
+.meterHead,
+.dot {
+  font-family: var(--font-mono), monospace;
+}
+
+.eyebrow {
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.facts {
+  font-size: 11px;
+  color: var(--meta);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.conviction {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Signal, because conviction is a comparison — 5 against 2 is the finding. */
+.dot {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  border: 1px solid var(--line2);
+  background: transparent;
+  color: var(--ink3);
+  transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+}
+
+.dot[aria-pressed="true"] {
+  background: var(--signal-tint);
+  border-color: var(--signal-line);
+  color: var(--signal);
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* A reason is not good or bad, so the selected state is ink, not moss. */
+.chip {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  border: 1px solid var(--line2);
+  background: transparent;
+  color: var(--ink3);
+  transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+}
+
+.chip:hover {
+  color: var(--ink);
+}
+
+.chip[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+}
+
+.meterBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line-light);
+}
+
+.meterHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--meta);
+  white-space: nowrap;
+}
+
+.track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+/* Progress toward a threshold is neither discipline nor exposure — it is
+   size. Greyscale, per the colour rule. */
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--ink3);
+  transform-origin: left;
+  animation: grow 0.9s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+.note {
+  font-size: 13.5px;
+  color: var(--ink3);
+  line-height: 1.55;
+}

@@ -135,12 +135,34 @@
   --share-signal: #7ba6c4;
   --share-signal-tint: rgba(123, 166, 196, 0.14);
   --share-loss: #c87a5c;
+  /* The mock's shorthand for the dim ink-field text. Same value. */
+  --share-dim: var(--share-ink-dim);
+  /* Ghost controls on the ink field, and the dark ink that sits on a moss
+     fill there. Mode-invariant, like everything else --share-*. */
+  --share-fill: rgba(253, 252, 250, 0.08);
+  --share-fill-hover: rgba(253, 252, 250, 0.16);
+  --on-share-moss: #14120f;
+
+  /*
+   * Heatmap ramp — day cells, contribution grids, hour grids. Five steps from
+   * the empty cell to full moss, so a grid reads as one measurement rather
+   * than five colours. --h0 is a filled empty, not --track: a heat grid sits
+   * on a panel, and --track is tuned for a groove on the canvas.
+   */
+  --h0: #ece6dc;
+  --h1: #cfe3d7;
+  --h2: #9ecab4;
+  --h3: #5aa886;
+  --h4: #1e6b4a;
+
+  /* A tile inside a card — one step off --s1, never a bordered box. */
+  --tile: #fbf8f4;
 }
 
 /*
- * The handoff specifies no dark mode. This is a coherent ink-field variant so
- * the mode toggle keeps working; it is derived from the ink surfaces above
- * rather than being part of the system.
+ * Dark is a first-class mode, not a derived variant: both ship, new users
+ * default to it, and the choice persists on the user document so it follows
+ * them across devices rather than living in one browser's localStorage.
  */
 html[data-mode="dark"] {
   --ink-field: #fdfcfa;
@@ -187,4 +209,12 @@ html[data-mode="dark"] {
 
   --lift: none;
   --lift-hero: none;
+
+  --h0: rgba(253, 252, 250, 0.055);
+  --h1: rgba(79, 178, 135, 0.22);
+  --h2: rgba(79, 178, 135, 0.42);
+  --h3: rgba(79, 178, 135, 0.66);
+  --h4: #4fb287;
+
+  --tile: #262119;
 }

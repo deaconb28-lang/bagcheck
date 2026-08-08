@@ -1,0 +1,183 @@
+.heroPanel {
+  display: grid;
+  grid-template-columns: 246px minmax(300px, 1fr);
+  gap: 44px;
+  align-items: center;
+}
+
+.heroText {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.heroChips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sentence {
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.24;
+  max-width: 22ch;
+  color: var(--ink);
+}
+
+.componentGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(78px, 1fr));
+  gap: 20px;
+}
+
+.archetype {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 28px;
+}
+
+.archText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 300px;
+  min-width: 260px;
+}
+
+.archName {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.014em;
+}
+
+.archBars {
+  flex: 1 1 260px;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.archRow {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) 28px;
+  align-items: center;
+  gap: 12px;
+}
+
+.archLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.archValue {
+  text-align: right;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  color: var(--ink3);
+}
+
+.openDna,
+.railLink {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: var(--control);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  flex: none;
+  transition: background 0.16s ease;
+}
+
+.openDna:hover,
+.railLink:hover {
+  background: var(--line2);
+}
+
+.railLink {
+  align-self: flex-start;
+  border-radius: 14px;
+}
+
+.pnlRow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* The figure stays ink. A total is a fact, not a verdict — moss and clay are
+   spent on the bars, where the sign is the whole statement. */
+.pnlFigure {
+  font-size: 34px;
+  letter-spacing: -0.017em;
+  color: var(--ink);
+}
+
+.pnlNote {
+  font-family: var(--font-mono), monospace;
+  font-size: 11.5px;
+  color: var(--meta);
+}
+
+.waveStats {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.waveStat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.waveStatValue {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.recap {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.recapValue {
+  font-size: 30px;
+}
+
+@media (max-width: 899px) {
+  .heroPanel {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    justify-items: center;
+    text-align: left;
+  }
+
+  .sentence {
+    font-size: 23px;
+  }
+
+  .archetype {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .recap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

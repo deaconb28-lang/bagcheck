@@ -1,46 +1,26 @@
-.block {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.h2 {
-  font-size: 17px;
-  letter-spacing: -0.015em;
-}
-
-/* The sentence is the hero of the card — the buyer's own behaviour, stated. */
-.finding {
-  font-size: 18px;
-  line-height: 1.5;
-  letter-spacing: -0.005em;
+.claim {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  max-width: 34ch;
   color: var(--ink);
-  max-width: 40ch;
-  text-wrap: pretty;
 }
 
-/* Colour carries the axis; the sentence already carries the meaning. */
-.finding[data-tone="moss"] {
-  color: var(--moss);
-}
-
-.finding[data-tone="signal"] {
-  color: var(--signal);
-}
-
-.finding[data-tone="clay"] {
-  color: var(--loss);
-}
-
+/* The evidence sits under the sentence it supports, and must never
+   contradict it — the engine's job, but this is where it shows. */
 .evidence {
   font-family: var(--font-mono), monospace;
-  font-size: 11.5px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
   color: var(--meta);
 }
 
-.body {
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--ink2);
-  max-width: 58ch;
+.decay {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.decayValue {
+  font-size: 44px;
 }

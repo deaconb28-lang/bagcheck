@@ -1,7 +1,7 @@
 import { auth, getUserId, isAuthConfigured } from "@/auth";
 import { isDbConfigured, loadShellConnection } from "@/lib/db";
-import { Sidebar, TabBar, type ShellUser } from "@/components/app/AppNav";
-import { ModeScope } from "@/components/app/ModeScope";
+import { DEFAULT_MODE, modeFor } from "@/lib/db/prefs";
+import { AppRail, MobileTabs, type ShellUser } from "@/components/app/AppRail";
 import styles from "./app.module.css";
 
 function initialsOf(name: string): string {
@@ -10,7 +10,6 @@ function initialsOf(name: string): string {
   return name.slice(0, 2).toUpperCase();
 }
 
-/** The chip at the foot of the sidebar. Null when nobody is signed in. */
 async function shellUser(): Promise<ShellUser | null> {
   const userId = await getUserId();
   if (!userId) return null;
@@ -31,13 +30,39 @@ async function shellUser(): Promise<ShellUser | null> {
 }
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const user = await shellUser();
+  const userId = await getUserId();
+  const [user, mode] = await Promise.all([
+    shellUser(),
+    userId && isDbConfigured() ? modeFor(userId) : Promise.resolve(DEFAULT_MODE),
+  ]);
+
   return (
-    <div className={styles.shell}>
-      <ModeScope mode="light" />
-      <Sidebar user={user} />
+    <div className={styles.shell} data-surface>
+      {/*
+        Set before paint rather than in an effect: the mode lives on the user
+        document, so the server already knows it, and a client effect would
+        show one frame of the wrong mode on every navigation into the app.
+      */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `document.documentElement.dataset.mode=${JSON.stringify(mode)}`,
+        }}
+      />
+
+      {/*
+        The field. A fixed, slowly drifting backdrop faded almost out — the
+        one warm gesture in an instrument aesthetic, and it is motion rather
+        than ornament. Committed locally: hot-linking it would break the
+        share-card renderer, which has to draw it to a canvas.
+      */}
+      <div className={styles.field} aria-hidden="true">
+        <div className={styles.fieldArt} />
+        <div className={styles.fieldFade} />
+      </div>
+
+      <AppRail user={user} />
       <div className={styles.canvas}>{children}</div>
-      <TabBar />
+      <MobileTabs />
     </div>
   );
 }

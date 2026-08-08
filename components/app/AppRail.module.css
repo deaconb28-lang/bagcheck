@@ -1,0 +1,138 @@
+/*
+ * The rail is a fill and a hairline, nothing else. No border on the buttons,
+ * no resting shadow — a surface is a fill, and the active state is the only
+ * thing carrying colour.
+ */
+.rail {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 100vh;
+  height: 100svh;
+  width: 76px;
+  flex: none;
+  background: var(--sunken);
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 24px 0 20px;
+}
+
+.mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: var(--moss);
+  display: grid;
+  place-items: center;
+  margin-bottom: 14px;
+  flex: none;
+}
+
+.item {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  color: var(--ink3);
+  flex: none;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.item:hover {
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+/* Moss here is not decoration: the rail marks where you are in a product
+   whose whole subject is discipline, and the active route is that signal. */
+.item[data-active] {
+  background: var(--moss-tint);
+  color: var(--moss);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: var(--signal-tint);
+  border: 1px solid var(--signal-line);
+  color: var(--signal);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: -0.008em;
+  flex: none;
+  transition: transform 0.18s ease;
+}
+
+.avatar:hover {
+  transform: scale(1.06);
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Bottom tabs — mobile */
+
+.tabs {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .rail {
+    display: none;
+  }
+
+  .tabs {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    background: var(--sunken);
+    border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .tab {
+    min-height: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--ink3);
+    padding: 10px 4px;
+    transition: color 0.18s ease;
+  }
+
+  .tab[data-active] {
+    color: var(--moss);
+  }
+
+  .tabLabel {
+    font-family: var(--font-mono), monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+}

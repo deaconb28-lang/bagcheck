@@ -7,6 +7,7 @@ import type {
   InsightDoc,
   MarketCacheDoc,
   PositionSnapshotDoc,
+  PrefsDoc,
   PulseDoc,
   ScoreDoc,
   SubscriptionDoc,
@@ -33,6 +34,7 @@ export async function getCollections() {
     subscriptions: db.collection<SubscriptionDoc>("subscriptions"),
     marketCache: db.collection<MarketCacheDoc>("marketCache"),
     icons: db.collection<IconDoc>("icons"),
+    prefs: db.collection<PrefsDoc>("prefs"),
   };
 }
 
@@ -48,6 +50,8 @@ export async function ensureIndexes() {
     c.scores.createIndex({ userId: 1, date: 1 }, { unique: true }),
     c.pulses.createIndex({ userId: 1, date: 1 }, { unique: true }),
     c.tags.createIndex({ userId: 1, date: 1 }),
+    // One tag per entry — the prompt upserts, so this is what makes it idempotent.
+    c.tags.createIndex({ userId: 1, transactionId: 1 }, { unique: true }),
     c.insights.createIndex({ userId: 1, date: 1, kind: 1 }, { unique: true }),
     c.cards.createIndex({ userId: 1, date: 1 }),
     c.cards.createIndex({ slug: 1 }, { unique: true }),
@@ -57,5 +61,6 @@ export async function ensureIndexes() {
     // Mongo sweeps expired entries; nothing has to remember to.
     c.marketCache.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
     c.icons.createIndex({ name: 1 }, { unique: true }),
+    c.prefs.createIndex({ userId: 1 }, { unique: true }),
   ]);
 }

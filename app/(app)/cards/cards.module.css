@@ -1,0 +1,42 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  max-width: 1360px;
+}
+
+.statBar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 24px;
+  background: var(--s1);
+  border-radius: 30px;
+  padding: 28px 32px;
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+.note {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink3);
+  max-width: 62ch;
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+@media (max-width: 899px) {
+  .statBar {
+    padding: 22px;
+    border-radius: 26px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}

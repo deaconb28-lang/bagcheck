@@ -1,0 +1,109 @@
+.card {
+  background: var(--share-bg);
+  border-radius: 28px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 260px;
+  color: var(--share-ink);
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.card:hover {
+  transform: translateY(-6px) rotate(-0.7deg);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/*
+ * Rarity is a word. The colour steps are scarcity tiers, not decoration —
+ * and "Scarce" reads as scarce even in greyscale, which is the test.
+ */
+.rarity,
+.year,
+.held {
+  font-family: var(--font-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.rarity {
+  color: var(--share-dim);
+}
+
+.rarity[data-rarity="rare"] {
+  color: var(--share-signal);
+}
+
+.rarity[data-rarity="scarce"] {
+  color: var(--share-moss);
+}
+
+.year,
+.held {
+  color: var(--share-dim);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.body[data-blur] {
+  filter: blur(4px);
+  opacity: 0.4;
+  user-select: none;
+}
+
+.value {
+  font-size: 46px;
+  color: var(--share-ink);
+}
+
+.title {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.008em;
+}
+
+.tail {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--share-dim);
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--share-line);
+}
+
+.unlock {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  border-radius: 12px;
+  background: var(--share-fill);
+  color: var(--share-ink);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.16s ease;
+}
+
+.unlock:hover {
+  background: var(--share-fill-hover);
+}

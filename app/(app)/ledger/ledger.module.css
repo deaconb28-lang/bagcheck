@@ -1,0 +1,212 @@
+.preview {
+  background: var(--share-bg);
+  border-radius: 26px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  color: var(--share-ink);
+}
+
+.previewStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 20px;
+}
+
+.previewStat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.previewLabel,
+.previewFoot,
+.verified {
+  font-family: var(--font-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--share-dim);
+}
+
+.previewValue {
+  font-size: 30px;
+  color: var(--share-ink);
+}
+
+.previewValue[data-tone="moss"] {
+  color: var(--share-moss);
+}
+
+.miniWave {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.miniWave i {
+  flex: 1;
+  border-radius: 3px;
+  min-width: 0;
+}
+
+.miniWave i[data-dir="up"] {
+  background: var(--share-moss);
+  align-self: flex-end;
+}
+
+.miniWave i[data-dir="down"] {
+  background: var(--share-loss);
+  align-self: flex-start;
+}
+
+.previewFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--share-line);
+}
+
+.verified {
+  color: var(--share-moss);
+}
+
+.toggles {
+  display: flex;
+  flex-direction: column;
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 56px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.toggleRow:last-child {
+  border-bottom: 0;
+}
+
+.toggleText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.toggleName {
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.toggleNote {
+  font-size: 12.5px;
+  color: var(--ink3);
+}
+
+.gate {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--signal);
+  background: var(--signal-tint);
+  border: 1px solid var(--signal-line);
+  border-radius: 999px;
+  padding: 4px 12px;
+  white-space: nowrap;
+}
+
+.switch {
+  width: 48px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--track);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 3px;
+  flex: none;
+  transition: background 0.16s ease;
+}
+
+.switch[aria-checked="true"] {
+  background: var(--moss);
+  justify-content: flex-end;
+}
+
+.switch:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.switch i {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--s1);
+  display: block;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 44px 22px minmax(0, 1fr) 44px auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.kind,
+.date,
+.amt {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+/* The ledger is record, not judgement — the kind chip carries the scan and
+   nothing here is coloured by whether it went well. */
+.kind {
+  padding: 3px 6px;
+  border-radius: 8px;
+  background: var(--control);
+  color: var(--ink3);
+  text-align: center;
+}
+
+.sym {
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.date {
+  color: var(--meta);
+}
+
+.amt {
+  font-size: 11px;
+  color: var(--ink);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}

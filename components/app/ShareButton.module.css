@@ -1,0 +1,26 @@
+.button {
+  width: var(--size, 32px);
+  height: var(--size, 32px);
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: var(--ink3);
+  background: var(--control);
+  flex: none;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+
+.button:hover {
+  background: var(--line2);
+  color: var(--ink);
+}
+
+.button[data-on-ink] {
+  background: var(--share-fill);
+  color: var(--share-dim);
+}
+
+.button[data-on-ink]:hover {
+  background: var(--share-fill-hover);
+  color: var(--share-ink);
+}

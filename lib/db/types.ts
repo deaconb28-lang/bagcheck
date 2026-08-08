@@ -159,3 +159,15 @@ export interface IconDoc {
   credit: string;
   nounId: string | null;
 }
+
+/**
+ * Per-user display preferences. Mode lives here rather than in localStorage
+ * so the choice follows the reader to another device instead of being a
+ * property of one browser.
+ */
+export interface PrefsDoc {
+  userId: string;
+  /** New users default to dark; this only exists once they have chosen. */
+  mode: "light" | "dark";
+  updatedAt: Date;
+}

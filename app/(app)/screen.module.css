@@ -1,0 +1,221 @@
+/*
+ * The shared screen frame. Every route is: sticky header, then a column and
+ * a sticky rail. Cards are fills — no border, no resting shadow — and the
+ * spacing is what replaces them, so the block rhythm is not negotiable.
+ */
+.body {
+  flex: 1;
+  padding: 16px var(--pad-page, 48px) 120px;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  align-items: flex-start;
+  max-width: 1360px;
+}
+
+.column {
+  flex: 100 1 620px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-block, 46px);
+  min-width: 0;
+}
+
+.rail {
+  flex: 1 1 336px;
+  min-width: 300px;
+  position: sticky;
+  top: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.panel {
+  background: var(--s1);
+  border-radius: 30px;
+  padding: var(--pad-panel, 32px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+.hero {
+  border-radius: 34px;
+  padding: calc(var(--pad-panel, 32px) + 8px);
+}
+
+.sunken {
+  background: var(--sunken);
+  border-radius: 26px;
+  padding: 24px;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.headText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.eyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.h2 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* label -> number -> unit -> why. The one card object the whole surface
+   inherits; four small filled boxes inside a big box is the tell. */
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.statValue {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.statMeter {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.statFill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--moss);
+  transform-origin: left;
+  animation: grow 0.8s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+.statFill[data-tone="signal"] {
+  background: var(--signal);
+}
+
+.statTail {
+  font-size: 12.5px;
+  color: var(--ink3);
+  font-variant-numeric: tabular-nums;
+}
+
+.body p,
+.tail {
+  color: var(--ink3);
+}
+
+.tail {
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.divider {
+  padding-top: 16px;
+  border-top: 1px solid var(--line-light);
+}
+
+.chips {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--control);
+  font-size: 13.5px;
+  color: var(--ink3);
+  white-space: nowrap;
+}
+
+.chip[data-tone="moss"] {
+  background: var(--moss-tint);
+  border: 1px solid var(--moss-line);
+  color: var(--moss);
+}
+
+.chip[data-tone="accent"] {
+  background: var(--accent-tint);
+  border: 1px solid var(--accent-line);
+  color: var(--accent-deep);
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+}
+
+.chip[data-tone="signal"] {
+  background: var(--signal-tint);
+  border: 1px solid var(--signal-line);
+  color: var(--signal);
+}
+
+.chipNum {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+@media (max-width: 899px) {
+  .body {
+    padding: 8px 20px 40px;
+  }
+
+  .grid {
+    gap: 28px;
+  }
+
+  .column {
+    flex: 1 1 100%;
+    gap: 28px;
+  }
+
+  .rail {
+    position: static;
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .panel {
+    border-radius: 26px;
+    padding: 22px;
+  }
+
+  .hero {
+    border-radius: 28px;
+    padding: 24px;
+  }
+}

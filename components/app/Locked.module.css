@@ -1,0 +1,91 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.tier {
+  display: inline-flex;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tier[data-tier="plus"] {
+  background: var(--moss-tint);
+  border: 1px solid var(--moss-line);
+  color: var(--moss);
+}
+
+.tier[data-tier="trader"] {
+  background: var(--signal-tint);
+  border: 1px solid var(--signal-line);
+  color: var(--signal);
+}
+
+.blurred {
+  filter: blur(5px);
+  opacity: 0.42;
+  pointer-events: none;
+  user-select: none;
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Readiness is the honest half of a lock: "you already have enough data for
+   this" is a different sentence from a feature list. */
+.ready {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.ready[data-ready] {
+  color: var(--moss);
+}
+
+.unlock {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 18px;
+  border-radius: 14px;
+  background: var(--control);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 13.5px;
+  transition: background 0.16s ease;
+}
+
+.unlock:hover {
+  background: var(--line2);
+}

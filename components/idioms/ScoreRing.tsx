@@ -1,0 +1,64 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import styles from "./ScoreRing.module.css";
+
+type ScoreRingProps = {
+  score: number;
+  size?: number;
+  label?: string;
+};
+
+/**
+ * The score, as an arc.
+ *
+ * Rendered at the full-circle offset and then transitioned to the real one in
+ * an effect, so CSS does the sweep. The static state has to be correct if the
+ * effect never runs — under reduced motion the offset is set immediately and
+ * the transition is suppressed, so the ring is simply right.
+ */
+export function ScoreRing({ score, size = 246, label = "Health" }: ScoreRingProps) {
+  const stroke = Math.round(size * 0.053);
+  const r = size / 2 - stroke / 2 - 8;
+  const circumference = 2 * Math.PI * r;
+  const [drawn, setDrawn] = useState(false);
+
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setDrawn(true);
+      return;
+    }
+    const id = requestAnimationFrame(() => setDrawn(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  const pct = Math.max(0, Math.min(100, score)) / 100;
+  const offset = drawn ? circumference * (1 - pct) : circumference;
+
+  return (
+    <div className={styles.wrap} style={{ "--size": `${size}px` } as React.CSSProperties}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className={styles.svg} aria-hidden="true">
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--track)" strokeWidth={stroke} />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke="var(--moss)"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={circumference.toFixed(1)}
+          strokeDashoffset={offset.toFixed(1)}
+          className={styles.arc}
+        />
+      </svg>
+      <div className={styles.inner}>
+        <div className={`num ${styles.value}`} style={{ fontSize: Math.round(size * 0.358) }}>
+          {score}
+        </div>
+        <div className={styles.label}>{label}</div>
+      </div>
+    </div>
+  );
+}

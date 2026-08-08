@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Outfit, Public_Sans } from "next/font/google";
+import { JetBrains_Mono, Playfair_Display, Public_Sans } from "next/font/google";
 import "../styles/tokens.css";
 import "./globals.css";
 
-// Display — headings, score numerals, the wordmark. Always negatively
-// tracked; the tracking scale by size lives in globals.css.
-const display = Outfit({
+// Display — figures, hero display, card titles. Never a sentence, never a
+// label, never under 17px. Tracked −.008 to −.022em, tightening with size;
+// the scale by size lives in globals.css.
+const display = Playfair_Display({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["600", "700", "800", "900"],
   variable: "--font-display",
   display: "swap",
 });
@@ -19,11 +20,12 @@ const body = Public_Sans({
   display: "swap",
 });
 
-// Machine facts only: timestamps, counts, metadata, caps micro-labels.
-// Never body copy, never headings.
-const mono = IBM_Plex_Mono({
+// Labels, eyebrows, timestamps, counts, comparatives. Never body copy,
+// never headings. The moment a metric label renders in the body face the
+// system starts to smear.
+const mono = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400", "500", "600"],
   variable: "--font-mono",
   display: "swap",
 });

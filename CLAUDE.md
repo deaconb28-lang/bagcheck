@@ -13,49 +13,55 @@ Reference docs (read before any UI work — the design system is authoritative o
 - `styles/tokens.css` is the single source of colour. A palette hex anywhere else in `app/`, `components/`, `lib/`, or `styles/` is a bug. Always `var(--*)`. (`docs/` is imported reference material and exempt.)
 - Paper-and-ink, deliberately flat and matte. Canvas `--bg`, cards `--s1` white, nested panels `--sunken`, chip fills `--inset`.
 - `--track` (meter grooves, empty data cells) is darker than the handoff's chip fill on purpose: at `#F3EFE9` a track is invisible against the paper canvas, which is where the marketing idioms sit.
-- Light is `:root`; `html[data-mode="dark"]` is a derived ink variant the handoff does not specify — build against light.
+- Both modes ship and dark is first-class, not derived. New users default to dark; the choice persists on the user document (`lib/db/prefs.ts`), never in localStorage, so it follows them across devices. The app layout sets `data-mode` before paint — a client effect shows one frame of the wrong mode on every navigation.
 - `--moss` (deep forest) means discipline. `--signal` (slate blue) means exposure, comparison, percentile. `--loss` marks negative P&L and nothing else — a muted terracotta, because the system adds no red. Warnings, errors, and empty states stay in ink on `--sunken`.
 - **`--accent` is reserved.** It means "Bagcheck did this on its own" — the nightly score and the written daily insight. Never a hover fill, never a section heading, never decoration. `--accent` is a fill and stroke colour only; accent *text* is `--accent-deep`.
 - Ink owns the primary action inside the app (`<Button>`). A moss-filled button (`<Button marketing>`) appears only on marketing surfaces, so the colour keeps its meaning in-product.
-- One accent per surface — never two saturated fills competing in one view; the secondary drops to `--ink2`.
+- One accent per surface — never two saturated fills competing in one view.
+- The accents never decorate. `--moss` appears only where the metric is a discipline signal: the Health score and its ring, the component meters, sessions inside your rules, the streak, positive P&L. Not on a progress meter, not on a selected chip, not on an icon tile. `--signal` appears only for exposure, comparison or percentile — if it is being reached for as "a nice highlight", that is a bug. `--loss` appears only on a negative number, literally never otherwise. Holdings weight bars are `--ink3`, because weight is neither discipline nor exposure — it is size. A mood chip's selected state is `--ink`, because a mood is not good or bad. Rarity on a trophy card is carried by the word "Scarce", not by a green label.
 - Status is never encoded by colour alone: every state carries a word.
 - Share cards and Wrapped viewers stay on the ink field in both modes, via the `--share-*` tokens.
 - Tone props follow the tokens: `moss`, `signal`, `clay`, `accent`, `neutral`, `ink`. Contributor tones are persisted in Mongo, so read them through `contributorTone()` — pre-existing documents still carry the old `gold`/`violet` spellings.
 
-## Type
+## Type — three roles, three jobs, no fourth family
 
-- **Outfit** for display, weights 700/800: headings, score numerals, the wordmark. Always negatively tracked, and the tracking tightens with size — −.015em at 16–17px, −.02em at 18–21px, −.025em at 22–25px, −.035em at 38px+. `font-variant-numeric:tabular-nums`. Headlines capped at 9–11ch. No width axis; the negative tracking is the gesture.
-- **Public Sans** for UI and body, 400/500/600: every sentence, label, button, input. Body 15px/1.7, `text-wrap:pretty`.
-- **IBM Plex Mono** for machine facts only, 400/500: timestamps, counts, metadata, uppercase micro-labels at 10.5px/.09em. Never body copy, never headings.
+- **Playfair Display** 700/800 owns figures, hero display and card titles. Never a sentence, never a label, never under 17px. Tracked −.008 to −.022em, tightening with size — a high-contrast serif needs far less negative tracking than a grotesque, so these are not the old Outfit values scaled. `font-variant-numeric:tabular-nums`.
+- **Public Sans** 400/500/600 owns anything that is a sentence, plus buttons and inputs. Never a metric label, never a timestamp. Body 15px/1.7, `text-wrap:pretty`.
+- **JetBrains Mono** 400/500/600 owns labels, eyebrows, timestamps, counts and comparatives. Never body copy, never a heading. The moment a metric label renders in Public Sans the system starts to smear.
+- Hierarchy comes from size contrast, not new elements. Every card is the same three moves: the number huge in the serif, the label tiny in mono, the tail a quiet Public Sans line. If a card reads flat, widen the gap between number and label — do not add a weight, a colour or an element.
+- Three text colours and only three: `--ink` for figures and headlines, `--ink3` for sentences and tails, `--meta` for mono metadata. `--ink2` is retired from components.
 - Mono metadata takes `--meta`. It departs from the handoff's `#857E74`, which measures 4.01:1 on white and 3.63:1 on the canvas — below AA at the sizes metadata is set in. `--meta` clears 4.5:1 on every surface Bagcheck uses.
-- Never Roboto, never Inter, and never a serif for display.
+- Never Roboto, never Inter, and never a fourth family. Variety is the thing that breaks this.
 
 ## Screen structure
 
-- Every app screen is `<PageHeader>` floating on the canvas, then `<Card>`s in the 640px column. Sections are cards, not `border-top` rules on the canvas — that is what keeps metadata on white, where it is legible.
-- `<PageHeader>` takes a conversational title and a mono subtitle of machine facts. Header metadata is `--ink3`, not `--meta`.
-- One `<Card hero>` per screen at most. Row dividers inside a card are `--line-light`, and the last row drops its border.
+- Every screen is score-first: `<ScreenHeader>` sticky at the top, then a hero number and its decomposition. Nothing above the fold is prose.
+- `<ScreenHeader>` carries a conversational title over a mono line of machine facts, then the score chip, the sync pill, the tier chip and the one upgrade button. The score rides the header on every route so the number never leaves the screen.
+- Seven routes: `/home`, `/dna`, `/wrapped`, `/patterns`, `/insights`, `/ledger`, `/cards`. `/today`, `/portfolio`, `/activity` and `/reports` are permanent redirects into them and stay that way — they are in every bookmark and every link minted before the rename. `/profile` is settings, reachable from the avatar, and is not a tab.
+- One hero panel per screen. Row dividers inside a panel are `--line-light`, and the last row drops its border.
 
 ## Layout and surfaces
 
-- 244px ink sidebar (wordmark, ledger context, labelled nav, user chip pinned at the foot — the nav list is the scrolling region). 640px reading column, 320px right rail. Below 900px: single column, bottom tab bar. The content column never stretches.
+- 76px icon rail (`components/app/AppRail.tsx`), `--sunken`, sticky full height, seven 46px glyph buttons with native `title` tooltips — do not build a tooltip system. Mode toggle and avatar at the foot. Below 900px it becomes a five-tab bottom bar; Patterns and Ledger reach the phone through links on Home, because seven 48px targets across 390px is a tab bar you mis-tap.
+- Content grid is a 620px-min column and a 336px rail sticky at `top:96px`, capped at 1360px. Below 900px the rail folds into the scroll in the same order.
 - Flex and grid with `gap` only. No margin-spaced inline siblings. Fixed-count grids use `minmax(0, 1fr)`.
-- Radii: 22 hero, 20 standard, 18 nested, 16 compact, 14 rows, 11 controls, 10 buttons, 999 pills.
-- Spacing: 30px content padding, 22px between major cards, 18px between cards in a row, 56px at the foot. Card padding 24–26 standard, 28–30 hero, 16–22 compact.
-- 1px hairlines (`--line`; `--line-light` for row dividers inside cards).
-- **Elevation is for lift only, never style**: `--lift` on every resting card, `--lift-hero` on hero panels. No glass, no blur, no backdrop-filter, no bevels, no inner shadows.
-- **No decorative gradients in the product.** One exception, marketing only: `--iridescence`, a faint moss/signal wash on the landing hero, painted on `.hero::before` and faded out before the section edge. It lives where the moss-filled button already does. No app surface carries a gradient.
+- Radii: 34 hero, 30 standard, 28 card-in-grid, 26 nested, 22 tiles, 18 rows, 14 buttons, 12 controls, 999 pills.
+- Everything sits on a 4px base — 4/8/12/16/20/24/32/40/48. An off-grid value is a bug, not a taste call. Block rhythm: 46px between blocks in a column, 40px column-to-rail, 48px page padding, 32–38px panel padding, 120px at the foot.
+- **No borders and no resting elevation on surfaces.** A surface is a *fill*: canvas `--bg`, panel `--s1`, inset `--sunken`, ink field `--share-bg`. Hairlines survive in exactly two places — row dividers inside a list, and the rule above a panel's footer. Semantic chip borders (`--moss-line`, `--signal-line`, `--accent-line`, `--loss-line`) survive because they carry meaning. Nothing else gets a stroke, and whitespace is what replaces them: shrink the spacing back and the layout collapses into a list.
+- **A stat is not a box.** Eyebrow, number, 3px meter, tail, laid out as a plain column in a `gap` grid. Four small filled rectangles inside a big one is the tell.
+- No glass, no blur as style, no backdrop-filter, no bevels, no inner shadows. `filter: blur()` appears only on a locked tile.
+- The one gradient in the app is the fade over the drifting field in `app/(app)/app.module.css`, and its whole job is to push the artwork almost out of sight. Dark needs far more suppression than light — at the light opacity the same image reads as smoke behind the type.
 - 44px hit targets on mobile; interactive rows ≥40px. Err toward whitespace.
 
 ## Data idioms
 
 - One idiom per statement, each legible at 200px wide.
-- Full equity curves render on Portfolio only. Never four identical sparklines.
+- Full equity curves render on `/dna` only. Never four identical sparklines.
 - No decorative gradients and no emoji.
 - Icons are a closed vocabulary, not a set. `lib/icons/names.ts` `ICONS` is the whole list, and a new glyph means a new line in it — `/api/icon` serves names, never search terms. They label a fixed taxonomy — the ledger kinds, the three tiers, and the five situations an empty state can be in — and never decorate a heading, a button or a card.
 - An empty state's icon names the *situation*, not the screen: signed out, deployment unconfigured, no brokerage, nothing synced, nothing scored yet. The same predicament looks the same on all seven screens.
 - `iconsEnabled()` is a server-side read — the key is not `NEXT_PUBLIC` and must not become one. A client component asking it always gets `false`, so a screen asks once and passes the answer down (`<PricingTiers glyphs>`).
-- The sidebar route marks in `components/app/nav.tsx` are drawn by us and stay that way. They are geometric reductions of their screens, and a fetched glyph would be a downgrade.
+- The rail's route glyphs in `components/app/routes.tsx` are drawn inline by us and stay that way. They are chrome — they must be on the first paint of every screen and take `currentColor` so the active state is one background swap. A fetched glyph would be a downgrade and a dependency.
 - An `<Icon>` is painted as a CSS mask, never an `<img>` or inline SVG: the shape comes from the API and the colour is `currentColor`, so a glyph takes the token of the row it sits in and no palette hex enters from outside `styles/tokens.css`.
 
 ## Stat card grammar
@@ -66,8 +72,15 @@ Reference docs (read before any UI work — the design system is authoritative o
 
 ## Motion
 
+Motion is the one warm gesture in an instrument aesthetic. The softening happens in time rather than in ornament — do not add a decorative element to compensate.
+
 - Global transition on buttons and inputs: `background, border-color, color, box-shadow` at .16s ease.
-- **Nothing animates on load.** The handoff allows one orchestrated moment in the whole app; screens do not stagger in.
+- **Scroll-driven reveals, not a load stagger.** Sections carry `data-reveal` and the `rise` keyframe; one rule in `globals.css` retargets them onto the scroll position where the browser supports it. Content above the fold is past its range at load, so it is simply there.
+- Meters use `scaleX` at 800ms staggered 70ms; wave bars use `scaleY` staggered 8ms per bar so the chart draws left to right.
+- The ring renders at the full-circle `stroke-dashoffset` and gets its real offset in an effect, so CSS transitions it. **The static state must be correct if the effect never runs** — under reduced motion the offset is set immediately.
+- A mode change crossfades over .42s via `[data-surface] *`. Flipping light/dark should feel like a dimmer, not a repaint. It also means a contrast probe taken sooner than that measures mid-flight colours.
+- Hover: rail items −1px, trophy cards −6px with −.7deg, heat cells scale 1.35, the mode toggle rotates 45°. Panels do **not** lift on hover — with borders gone there is nothing to lift.
+- Everything honours `prefers-reduced-motion`, and JS tweens check `matchMedia` before starting.
 - Marketing may use scroll-driven motion (`animation-timeline: view()` / `scroll()`), always behind `@supports` and `prefers-reduced-motion`, and always so the static state is the finished design. Never write a hover rule against a property a scroll animation also writes — `fill: both` wins and the hover silently dies.
 - Ease-out, nothing over 500ms.
 - Count-ups run on `setInterval`. The real value is the default render — if the tween never starts, the number on screen must still be correct.
@@ -87,7 +100,10 @@ Reference docs (read before any UI work — the design system is authoritative o
 
 - Next.js App Router. Server components by default; `'use client'` only where interaction requires it.
 - `lib/score`, `lib/engine` and `lib/cards` are pure functions — no I/O.
-- Billing gates *formats* only. `lib/billing/tiers.ts` has no `Feature` member for minting or rarity, so there is no way to write that gate — sharing is never paywalled, and `canMintCards()` takes no tier on purpose. Stripe is the source of truth; `tierFor()` downgrades to free unless the status is live.
+- Gating lives in `lib/tiers.ts` and nowhere else: components ask `can(user, capability)`, and no component reads `user.tier` directly. `Capability` has no member for minting, sharing or rarity, so those gates cannot be written — sharing is never paywalled, and `canMintCards()`/`canShareCards()` take no tier on purpose. Paid tiers unlock *categories and formats*. Stripe is the source of truth; `tierFromStatus()` downgrades to free unless the status is live. (`lib/billing/tiers.ts` still backs the marketing pricing table and the Stripe mirror.)
+- Monetization is present, never blocking. A locked tile occupies the slot its unlocked twin would, blurred, with the tier named — never a modal wall in front of a screen the user asked for. Every lock carries **readiness computed from real sample counts** (`Ready now` / `38 tags to go`); never fake a Ready. No countdown, no discount banner, no trial nag.
+- **A locked card's share button is absent, not disabled.** Never show a user an affordance that then refuses them.
+- `<ShareButton>` is the one share affordance and it mints through `/api/cards/mint`: the client names a kind and never supplies contents, so a crafted request cannot mint a card claiming a number that never happened. What comes back is a 96-bit slug, which is the card's whole access model. `/card/[type]/[id]` is the typed URL and 301s to `/c/[slug]`, where the OpenGraph tags live — two dynamic names cannot share a path segment, which is why there is no `/og/[type]/[id]`.
 - Share cards are public by slug: `cardBySlug` takes no userId and projects only what a card renders. The slug is 96 bits of randomness, because it is the card's entire access model.
 - Two model providers, with a hard split: **Anthropic writes every sentence** in the product (the daily insight), **OpenAI only draws the Wrapped backdrop**. No generated prose comes from OpenAI and no generated imagery comes from Anthropic.
 - Wrapped art is generated once at mint and stored — never on read. A share card must look identical on every open, and a page view must not depend on an image model being up. Generation failing is not an error: the card renders on the flat ink field.
@@ -99,4 +115,6 @@ Reference docs (read before any UI work — the design system is authoritative o
 - `lib/market/marks.ts` and `holdings.ts` are pure and tested; `client.ts` owns the network. Calls go through `cached()` — a shared Mongo collection swept by a TTL index, keyed by request and not by user, because the rate limit is per key. Fan-out is bounded by `pooled()`. Every failure path returns the brokerage's own numbers rather than an error.
 - `app/og/[slug]/render.tsx` and `lib/logos/fetch.ts` are the files allowed to repeat palette hexes — Satori renders with no stylesheet and no custom properties. Keep the values in step with the `--share-*` tokens, and give every multi-child element an explicit `display`.
 - Engine findings are descriptive and self-silencing: below their sample floor they return `null` rather than report a coincidence, and the evidence line must never contradict the sentence it sits under.
-- Screens are assembled from `components/primitives`; new visual patterns start there, not inline.
+- Screens are assembled from `components/primitives`, `components/idioms`, `components/app` and `components/cards`; new visual patterns start there, not inline.
+- The tag loop (`lib/tags.ts`, `<TagPrompt>`) is the only input a brokerage cannot supply and every correlation is downstream of it, which is why it sits second on Home rather than in settings. Two taps, no text field — a free-text reason cannot be grouped, and a reason that cannot be grouped cannot become a finding. `TagDoc` persists the reason lower-cased, so go through `whyKey()`/`whyLabel()` rather than comparing strings.
+- Screen derivations live in `app/(app)/derive.ts` and are pure. Nothing there invents a figure: where the ledger cannot answer, the function returns an empty result rather than a plausible one.

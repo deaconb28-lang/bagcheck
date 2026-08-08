@@ -1,0 +1,142 @@
+.head {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 28px var(--pad-page, 48px) 20px;
+  background: var(--bg);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.title {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
+  color: var(--meta);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.scorePill,
+.sync,
+.tier {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  background: var(--s1);
+  white-space: nowrap;
+  flex: none;
+}
+
+.scorePill {
+  padding: 4px 16px 4px 4px;
+  transition: background 0.16s ease;
+}
+
+.scorePill:hover {
+  background: var(--moss-tint);
+}
+
+.scoreDot {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--moss-tint);
+  border: 1px solid var(--moss-line);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 800;
+  font-size: 12.5px;
+  color: var(--moss);
+}
+
+.scoreLabel,
+.sync span:last-child,
+.tier {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink3);
+}
+
+.sync {
+  padding: 8px 12px 8px 8px;
+}
+
+/* The accent, earned: a sync is work the product did on its own. */
+.syncDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-tint);
+  flex: none;
+}
+
+.tier {
+  padding: 8px 12px;
+  background: var(--control);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+}
+
+/* The one commerce action in the app. */
+.upgrade {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--moss);
+  color: var(--on-moss);
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  flex: none;
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+
+.upgrade:hover {
+  background: var(--moss-hover);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 899px) {
+  .head {
+    padding: 20px 20px 16px;
+    gap: 12px;
+  }
+
+  .sync,
+  .tier {
+    display: none;
+  }
+
+  .upgrade {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+}

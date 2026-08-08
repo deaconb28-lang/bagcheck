@@ -48,12 +48,23 @@ button {
 }
 
 /*
- * Shared type classes — the three voices.
+ * Shared type classes — three faces, three jobs, no fourth family.
  *
- * Display is Outfit, always negatively tracked, and the tracking tightens
- * with size: -.015em at 16-17px, -.02em at 18-21px, -.025em at 22-25px,
- * -.035em at 38px+. `.disp` carries the mid setting; the size steps below
- * override it so a headline and a score are both correct.
+ *   display (Playfair)  figures, hero display, card titles.
+ *                       Never a sentence, never a label, never under 17px.
+ *   body (Public Sans)  anything that is a sentence, buttons, inputs.
+ *                       Never a metric label, never a timestamp.
+ *   mono (JetBrains)    labels, eyebrows, timestamps, counts, comparatives.
+ *                       Never body copy, never a heading.
+ *
+ * The serif tracks -.008 to -.022em, tightening with size; a high-contrast
+ * display face needs far less negative tracking than a grotesque, so these
+ * are not the Outfit values scaled — they are re-tuned for Playfair.
+ *
+ * Hierarchy comes from size contrast, not from new elements: the number huge
+ * in the serif, the label tiny in mono, the tail a quiet body line. If a card
+ * reads flat, widen the gap between number and label rather than adding a
+ * weight, a colour or an element.
  */
 
 .eyebrow {
@@ -79,27 +90,104 @@ button {
 }
 
 .disp {
-  font-family: var(--font-display), sans-serif;
+  font-family: var(--font-display), Georgia, serif;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.012em;
   font-variant-numeric: tabular-nums;
-  line-height: 1.2;
+  line-height: 1.24;
 }
 
 .disp[data-size="s"] {
-  letter-spacing: -0.015em;
+  letter-spacing: -0.008em;
 }
 
 .disp[data-size="l"] {
-  letter-spacing: -0.025em;
+  letter-spacing: -0.017em;
 }
 
 .num {
-  font-family: var(--font-display), sans-serif;
+  font-family: var(--font-display), Georgia, serif;
   font-weight: 800;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   line-height: 1;
+}
+
+/*
+ * Motion is part of the product now, and it is still quiet.
+ *
+ * Sections carry data-reveal and the `rise` keyframe with a small delay, so
+ * the static fallback is a plain staggered entrance. The rule below retargets
+ * every one of them onto the scroll position where the browser supports it:
+ * content above the fold is already past its range at load, so it is simply
+ * there, and everything below rises as it is reached.
+ */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes bar {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: scale(1.12) translate3d(-1.5%, -1%, 0);
+  }
+  50% {
+    transform: scale(1.2) translate3d(1.5%, 1.5%, 0);
+  }
+  100% {
+    transform: scale(1.12) translate3d(-1.5%, -1%, 0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal] {
+      animation-timeline: view() !important;
+      animation-range: entry 2% cover 24% !important;
+      animation-delay: 0s !important;
+    }
+  }
+}
+
+/*
+ * A mode change should read as a dimmer, not a repaint. Inline transitions on
+ * buttons and inputs win over this, so only the surfaces fade.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  [data-surface] * {
+    transition: background-color 0.42s ease, color 0.42s ease,
+      border-color 0.42s ease;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
