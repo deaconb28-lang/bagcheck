@@ -1,18 +1,18 @@
 import type { RoundTrip, Streak } from "@/lib/score";
 
 export type { RoundTrip, Streak };
+export type { CardKind } from "./kinds";
 
-export type CardKind = "score" | "hold" | "quarter" | "streak" | "wrapped";
-
-/** The minimal score shape a card needs — keeps this layer free of Mongo. */
-export interface ScoreDocLite {
-  date: string;
-  score: number;
-}
-
-/** A card, fully described and ready to render. No I/O reaches this. */
-export interface CardSpec {
-  kind: CardKind;
+/**
+ * A card as it is *stored* and as a stranger reads it.
+ *
+ * Deliberately smaller than `CardSpec` in `./kinds`: the layout, the hue
+ * family and the four art quantities are how a card was made, not what it
+ * says, and the public page draws none of them. What survives into Mongo is
+ * the label, the figure, the sentence and the tone.
+ */
+export interface StoredCard {
+  kind: import("./kinds").CardKind;
   label: string;
   value: string;
   tail: string;

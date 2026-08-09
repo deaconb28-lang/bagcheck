@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getUserId } from "@/auth";
-import { isDbConfigured, loadScreen, syncClock } from "@/lib/db";
+import { getCollections, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { SignInCta } from "@/components/app/SignInCta";
@@ -87,6 +87,19 @@ export default async function WrappedPage({
     weeklySessions: weeklySessions(data.derived?.dailyPnl ?? []),
   });
 
+  /*
+   * The hero card's slug, if this user has already minted it — that is what
+   * points the card at its own generated art rather than at nothing.
+   */
+  const { cards: cardDocs } = await getCollections();
+  const mintedSlug =
+    (
+      await cardDocs.findOne(
+        { userId, type: cards[0]?.kind },
+        { sort: { mintedAt: -1 }, projection: { _id: 0, slug: 1 } },
+      )
+    )?.slug ?? null;
+
   if (!cards.length) {
     return (
       <PageGrid>
@@ -115,6 +128,7 @@ export default async function WrappedPage({
        * rather than empty — see lib/cards/kinds.ts.
        */
       cards={cards}
+      mintedSlug={mintedSlug}
       autoplay={play === "1"}
       bestDecision={best}
       longestHold={longest}

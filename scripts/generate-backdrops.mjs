@@ -21,7 +21,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 import { SCENE } from "../lib/wrapped/scenes.ts";
-import { artPrompt } from "../lib/wrapped/prompt.ts";
+import { artPromptFor } from "../lib/wrapped/brief.ts";
 import { buildCards } from "../lib/cards/kinds.ts";
 import { exampleLedger } from "../app/(marketing)/exampleLedger.ts";
 
@@ -46,7 +46,7 @@ const only = process.argv.slice(2).filter((a) => !a.startsWith("--"));
  * second list here — one example ledger earns all twelve, and reading the hue
  * off those cards means this script cannot drift from what renders.
  */
-const HUE = Object.fromEntries(buildCards(exampleLedger(2026)).map((c) => [c.kind, c.hue]));
+const CARDS = Object.fromEntries(buildCards(exampleLedger(2026)).map((c) => [c.kind, c]));
 
 mkdirSync(OUT, { recursive: true });
 
@@ -63,14 +63,21 @@ for (const kind of kinds) {
   }
 
   const started = Date.now();
-  const prompt = artPrompt({
-    year: 2026,
-    archetype: "",
-    dominant: "consistency",
-    scoredDays: 0,
-    longestHold: null,
-    hue: HUE[kind] ?? "moss",
+  /*
+   * The same brief the mint builds, from the example ledger's real figures —
+   * so what the landing page shows is what the pipeline actually draws for a
+   * person with those numbers, not a separate set of stock pictures.
+   */
+  const card = CARDS[kind];
+  if (!card) {
+    console.error(`✗ ${kind.padEnd(14)} the example ledger does not earn this card`);
+    continue;
+  }
+  const prompt = artPromptFor({
+    kind,
+    hue: card.hue,
     scene: SCENE[kind],
+    shape: card.art,
   });
 
   try {
@@ -107,7 +114,7 @@ for (const kind of kinds) {
     writeFileSync(path, png);
     made += 1;
     console.log(
-      `✓ ${kind.padEnd(14)} ${(HUE[kind] ?? "moss").padEnd(7)} ${(png.length / 1024).toFixed(0)}kB  ${((Date.now() - started) / 1000).toFixed(0)}s`,
+      `✓ ${kind.padEnd(14)} ${card.hue.padEnd(7)} ${(png.length / 1024).toFixed(0)}kB  ${((Date.now() - started) / 1000).toFixed(0)}s`,
     );
   } catch (err) {
     // One failure should not cost the other eleven; a kind with no file

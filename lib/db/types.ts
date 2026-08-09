@@ -162,6 +162,23 @@ export interface IconDoc {
 }
 
 /**
+ * Generated card art, keyed by its *brief* rather than by user or by slug.
+ *
+ * `briefKey` bands the four measured quantities that shape a picture, so two
+ * people whose cards genuinely look alike share one image and one bill, and a
+ * card whose numbers moved into a new band draws a new one. No TTL: the same
+ * brief must always produce the same picture, or a re-mint would silently
+ * change a card someone already posted.
+ */
+export interface CardArtDoc {
+  key: string;
+  png: Binary;
+  model: string;
+  prompt: string;
+  drawnAt: Date;
+}
+
+/**
  * One row per message actually sent.
  *
  * The unique index is on {userId, date}, not {userId, date, kind} — that is

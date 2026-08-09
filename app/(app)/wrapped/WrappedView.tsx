@@ -23,6 +23,8 @@ export type WrappedViewProps = {
   transactionCount: number;
   /** Every card this history has earned, strongest statement first. */
   cards: CardSpec[];
+  /** Slug of the hero card if it has already been minted, so its art shows. */
+  mintedSlug?: string | null;
   winnerHold: number | null;
   loserHold: number | null;
   bestDecision: Trip;
@@ -53,6 +55,7 @@ export function WrappedView(props: WrappedViewProps) {
     scoredDays,
     transactionCount,
     cards,
+    mintedSlug = null,
     winnerHold,
     loserHold,
     bestDecision,
@@ -179,7 +182,14 @@ export function WrappedView(props: WrappedViewProps) {
                   headline={cards[0].headline}
                   lede={cards[0].lede}
                   body={cards[0].body}
-                  slug={null}
+                  slug={mintedSlug ?? null}
+                  /*
+                   * The art the mint drew from *these* numbers. Before the
+                   * card is minted there is none, and the flat hue field is
+                   * the honest state — not a stock picture standing in for
+                   * one this ledger has not earned.
+                   */
+                  backdrop={mintedSlug ? `/api/card/${mintedSlug}/art` : null}
                   provenance="Read from your brokerage. Read-only, permanently."
                   hue={cards[0].hue}
             layout={cards[0].layout}

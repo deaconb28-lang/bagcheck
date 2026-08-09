@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { getUserId } from "@/auth";
 import { getCollections, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
-import { activeStreaks } from "@/lib/score";
-import { mintable } from "@/lib/cards";
+import { buildCards } from "@/lib/cards";
 import { TrophyCard } from "@/components/cards/TrophyCard";
 import type { Rarity, Trophy } from "@/components/cards/TrophyCard";
 import { EmptyState } from "@/components/app/EmptyState";
@@ -11,7 +10,7 @@ import { ScreenHeader } from "@/components/app/ScreenHeader";
 import { SignInCta } from "@/components/app/SignInCta";
 import { can } from "@/lib/tiers";
 import type { Capability } from "@/lib/tiers";
-import { weekDelta } from "../derive";
+import { archetypeOf, currentStreak, weekDelta, weeklySessions } from "../derive";
 import screen from "../screen.module.css";
 import styles from "./cards.module.css";
 
@@ -96,13 +95,34 @@ export default async function CardsPage() {
   const trips = data.derived?.roundTrips ?? [];
   const latest = data.scores[0] ?? null;
 
-  const panicSells = trips.filter((t) => t.holdDays < 1 && t.pnl < 0).length;
-  const earned = mintable({
-    score: latest ? { date: latest.date, score: latest.score } : null,
+  /*
+   * The same twelve the Wrapped screen and the mint route build, from the
+   * same derived document. There used to be a second, older set of five here
+   * with its own thresholds, so this screen and the card someone actually
+   * minted could disagree about what they had earned.
+   */
+  const earned = buildCards({
+    year: new Date().getUTCFullYear(),
+    score: latest?.score ?? null,
+    archetype: archetypeOf((latest?.components as unknown as Record<string, number>) ?? null),
+    components: (latest?.components as unknown as Record<string, number>) ?? null,
     trips,
-    streaks: activeStreaks(data.scores),
+    holdTime: data.derived?.holdTime ?? {
+      winnersMean: null,
+      losersMean: null,
+      winners: 0,
+      losers: 0,
+    },
+    dailyPnl: data.derived?.dailyPnl ?? [],
+    equity: data.derived?.equitySeries ?? [],
     scoredDays: data.scores.length,
-    panicSells,
+    transactionCount: data.transactionCount,
+    panicSells: data.scores.filter((s) =>
+      s.contributors.some((c) => c.name.toLowerCase().includes("panic")),
+    ).length,
+    streakDays: currentStreak(data.scores),
+    streakName: "Sessions inside your rules",
+    weeklySessions: weeklySessions(data.derived?.dailyPnl ?? []),
   });
 
   // Slugs for anything already minted, so an existing card shares its own URL
@@ -121,9 +141,12 @@ export default async function CardsPage() {
     type: spec.kind,
     rarity: spec.rarity === "rare" ? "scarce" : (RARITY[spec.kind] ?? "common"),
     year: latest?.date.slice(0, 4) ?? String(new Date().getUTCFullYear()),
-    value: spec.value,
-    title: spec.label.replace("Bagcheck · ", ""),
-    tail: spec.tail,
+    value:
+      spec.body.kind === "figure" || spec.body.kind === "chart"
+        ? spec.body.value
+        : spec.headline,
+    title: spec.eyebrow.replace("Bagcheck · ", ""),
+    tail: spec.lede,
     heldBy: null,
     symbol: spec.symbol,
   }));

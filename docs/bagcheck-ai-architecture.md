@@ -525,6 +525,54 @@ same badge, and the name would stop meaning anything.
 | **Output** | One of sixteen `Archetype` rows |
 | **Cost** | Zero |
 
+### A2 — Card art `[shipped, and it is per-person]`
+
+| | |
+|---|---|
+| **Provider** | OpenAI, `gpt-image-2` |
+| **Trigger** | A mint, for any of the twelve kinds |
+| **Input** | `CardSpec.art` — four measured quantities from that person's ledger |
+| **Output** | One 2:3 PNG, stored on the card |
+| **Fallback** | The flat hue field, which is a complete card |
+| **Cadence** | Once per distinct *brief*, shared across users |
+
+The first build of this was wrong in a way worth recording, because the
+mistake is easy to make again: it generated art for the `wrapped` kind only,
+and the other eleven cards were drawn on **twelve static backdrops committed
+to the repo — identical for every user**. That is not generated art. It is
+stock photography with a nightly job attached, and it quietly voided the one
+claim the surface exists to make.
+
+What ships now: `lib/wrapped/brief.ts` turns four quantities measured from the
+ledger into the composition.
+
+| Quantity | Read from | Moves |
+|---|---|---|
+| **magnitude** | the figure against its own rarity threshold | how massive and close the form is |
+| **direction** | whether the series ends above or below where it began | where the light comes from |
+| **texture** | mean absolute step between neighbours, scaled | how smooth or shattered the surface is |
+| **density** | how many observations stand behind the number | how many forms are in view |
+
+A 412-day hold draws a colossal peak; a 34-day hold draws a modest one. A
+violent P&L year draws shattered rock; a steady cadence draws even strata. Two
+people who are both The Sentinel get the same *scene* — the scene belongs to
+the card kind — and a different mountain.
+
+**The model still never draws a glyph, and this is the load-bearing rule.**
+The four quantities shape the composition and are never rendered as pixels. A
+generated "412" is a figure nobody can correct after the fact, on an artefact
+whose whole claim is that its numbers came from a brokerage; image models
+garble digits besides. A test asserts no prompt ever contains a figure from
+the card it is drawing, and the first constraint in every prompt forbids text,
+digits and symbols outright. The type is composited over the art by us in
+`app/og/[slug]/render.tsx`.
+
+**Cached by brief, not by user.** `briefKey` bands the four quantities, so two
+people whose cards genuinely look alike share one image and one bill, and a
+card whose numbers moved into a new band draws a new one. At ~$0.04 a picture
+across twelve kinds, minting fresh for every user would have been the largest
+line in the cost model.
+
 ### A7 — Archetype avatars `[shipped]`
 
 | | |
@@ -611,7 +659,7 @@ Route by cadence and stakes, not by habit.
 | ~~A4 archetype~~ | *none* | — | Shipped deterministically — sixteen corners of a four-bit cube |
 | A5 Wrapped narration | `claude-opus-5` | adaptive | Once a year, high stakes, real judgement |
 | A6 session recap | `claude-sonnet-5` | low | Per-session volume, same shape as A1 |
-| A2 backdrop | `gpt-image-2` | — | One of two OpenAI touchpoints |
+| A2 card art | `gpt-image-2` | — | Per-person, at mint, cached by brief |
 | A7 avatars | `gpt-image-2` | — | Sixteen images, once, at a maintainer's hand |
 
 A1 currently runs on `claude-opus-5`. At one call per user per day that is the

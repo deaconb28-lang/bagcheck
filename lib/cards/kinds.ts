@@ -1,5 +1,6 @@
 import type { Archetype } from "@/lib/archetypes";
 import type { RoundTrip } from "@/lib/score";
+import { directionOf, textureOf, unit, type ArtShape } from "@/lib/wrapped/brief";
 
 /**
  * The twelve share cards, and what each one is made of.
@@ -78,6 +79,14 @@ export interface CardSpec {
   body: CardBody;
   hue: CardHue;
   layout: CardLayout;
+  /**
+   * The four measured quantities that shape this card's generated art.
+   *
+   * Computed here, from the same figures the card states, so the picture and
+   * the number cannot drift apart — and so `lib/wrapped/brief.ts` never has
+   * to reach back into the ledger to draw anything.
+   */
+  art: ArtShape;
   rarity: "rare" | null;
   /** The instrument the card is about, when it is about one. */
   symbol: string | null;
@@ -198,6 +207,13 @@ function archetypeCard(i: CardInput): CardSpec | null {
           detail: `${Math.round(i.components![key] ?? 0)} out of 100`,
         })),
     },
+    art: {
+      // How much of the profile clears the bar, how uneven the four are.
+      magnitude: i.archetype.strong.length / 4,
+      direction: i.archetype.strong.length >= 2 ? "up" : "flat",
+      texture: textureOf(order.map((k) => i.components![k] ?? 0)),
+      density: 4,
+    },
     layout: "poster",
     hue: i.archetype.strong.length >= 3 ? "ember" : i.archetype.strong.length ? "moss" : "violet",
     rarity: i.archetype.strong.length === 4 ? "rare" : null,
@@ -215,6 +231,13 @@ function healthCard(i: CardInput): CardSpec | null {
     headline: "Score",
     lede: "Scored against your own baseline, not against a model investor.",
     body: { kind: "figure", label: "Health today", value: String(i.score), unit: "/100" },
+    art: {
+      // 60 is the bar a component has to clear; 100 is the ceiling.
+      magnitude: unit((i.score - 40) / 60),
+      direction: i.score >= 60 ? "up" : "down",
+      texture: i.components ? textureOf(Object.values(i.components)) : 0.3,
+      density: i.scoredDays,
+    },
     layout: "numeral",
     hue: "moss",
     rarity: i.score >= RARE.health ? "rare" : null,
@@ -237,6 +260,13 @@ function longestHoldCard(i: CardInput): CardSpec | null {
     headline: "Hold",
     lede: `${held} days on ${longest.symbol}. Longer than you have held anything else.`,
     body: { kind: "figure", label: "Days held", value: String(held), unit: "days" },
+    art: {
+      // A year is where a hold stops being long and becomes remarkable.
+      magnitude: unit(held / RARE.hold),
+      direction: longest.pnl >= 0 ? "up" : "down",
+      texture: 0.15,
+      density: i.trips.length,
+    },
     layout: "numeral",
     hue: "ember",
     rarity: held >= RARE.hold ? "rare" : null,
@@ -267,6 +297,12 @@ function holdRatioCard(i: CardInput): CardSpec | null {
         { label: "Losers", detail: `${days(losersMean)} days, across ${losers}` },
       ],
     },
+    art: {
+      magnitude: unit((runs ? ratio : 1 / ratio) / RARE.holdRatio),
+      direction: runs ? "up" : "down",
+      texture: 0.4,
+      density: winners + losers,
+    },
     layout: "ledger",
     hue: runs ? "moss" : "azure",
     rarity: ratio >= RARE.holdRatio ? "rare" : null,
@@ -284,6 +320,13 @@ function noPanicCard(i: CardInput): CardSpec | null {
     headline: "Panic",
     lede: `Not one panic sell across ${i.scoredDays} scored sessions.`,
     body: { kind: "figure", label: "Panic sells", value: "0" },
+    art: {
+      // The longer the span with nothing sold in a panic, the stiller it is.
+      magnitude: unit(i.scoredDays / 250),
+      direction: "flat",
+      texture: 0,
+      density: i.scoredDays,
+    },
     layout: "stamp",
     hue: "moss",
     // Scarce by construction: a quarter without one is unusual.
@@ -302,6 +345,12 @@ function streakCard(i: CardInput): CardSpec | null {
     headline: "Streak",
     lede: `${i.streakName}, and it has not broken.`,
     body: { kind: "figure", label: "Consecutive sessions", value: String(i.streakDays), unit: "days" },
+    art: {
+      magnitude: unit(i.streakDays / RARE.streak),
+      direction: "up",
+      texture: 0.1,
+      density: i.streakDays,
+    },
     layout: "poster",
     hue: "ember",
     rarity: i.streakDays >= RARE.streak ? "rare" : null,
@@ -323,6 +372,13 @@ function bestDecisionCard(i: CardInput): CardSpec | null {
     headline: "Call",
     lede: `${best.symbol}, held ${days(best.holdDays)} days and closed.`,
     body: { kind: "figure", label: "Realised", value: money(best.pnl) },
+    art: {
+      // Against the largest trip in the book, so the scale is the person's own.
+      magnitude: unit(best.pnl / Math.max(...i.trips.map((t) => Math.abs(t.pnl)), 1)),
+      direction: "up",
+      texture: 0.3,
+      density: i.trips.length,
+    },
     layout: "editorial",
     hue: "moss",
     rarity: null,
@@ -350,6 +406,12 @@ function drawdownHeldCard(i: CardInput): CardSpec | null {
     headline: "Through",
     lede: "The deepest your account fell from its own high, and you stayed in it.",
     body: { kind: "figure", label: "Peak to trough", value: `−${worst.toFixed(0)}`, unit: "%" },
+    art: {
+      magnitude: unit(worst / (RARE.drawdown * 2)),
+      direction: "down",
+      texture: textureOf(i.equity.map((p) => p.value)),
+      density: i.equity.length,
+    },
     layout: "stamp",
     hue: "azure",
     rarity: worst >= RARE.drawdown ? "rare" : null,
@@ -374,6 +436,13 @@ function cadenceCard(i: CardInput): CardSpec | null {
       label: "Sessions per week",
       value: mean.toFixed(1),
       strip: weeks,
+    },
+    art: {
+      magnitude: unit(mean / 10),
+      direction: directionOf(weeks),
+      // A rhythm that holds is smooth; one that lurches is not.
+      texture: textureOf(weeks),
+      density: weeks.reduce((a, b) => a + b, 0),
     },
     layout: "ledger",
     hue: "azure",
@@ -407,6 +476,12 @@ function monthlyPnlCard(i: CardInput): CardSpec | null {
       strip: months.map(([, v]) => v),
       labels: months.map(([m]) => MONTHS[Number(m.slice(5, 7)) - 1] ?? ""),
     },
+    art: {
+      magnitude: unit(green / months.length),
+      direction: total > 0 ? "up" : total < 0 ? "down" : "flat",
+      texture: textureOf(months.map(([, v]) => v)),
+      density: months.length,
+    },
     layout: "chartfirst",
     hue: total >= 0 ? "moss" : "azure",
     rarity: null,
@@ -438,6 +513,12 @@ function equityCard(i: CardInput): CardSpec | null {
        */
       strip: points.map((v) => v - Math.min(...points)),
     },
+    art: {
+      magnitude: unit(Math.abs(last - first) / Math.max(Math.abs(first), 1)),
+      direction: directionOf(points),
+      texture: textureOf(points),
+      density: i.equity.length,
+    },
     layout: "chartfirst",
     hue: last >= first ? "moss" : "azure",
     rarity: null,
@@ -461,6 +542,12 @@ function wrappedCard(i: CardInput): CardSpec | null {
         { label: "Round trips closed", detail: String(i.trips.length) },
         { label: "Reading as", detail: i.archetype.name },
       ],
+    },
+    art: {
+      magnitude: unit(i.scoredDays / 260),
+      direction: "up",
+      texture: textureOf(i.dailyPnl.map((d) => d.realised)),
+      density: i.transactionCount,
     },
     layout: "editorial",
     hue: "violet",

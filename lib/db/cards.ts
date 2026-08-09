@@ -2,7 +2,7 @@ import { randomBytes } from "node:crypto";
 import { Binary } from "mongodb";
 import { getCollections } from "./collections";
 import type { CardDoc } from "./types";
-import type { CardSpec } from "@/lib/cards";
+import type { StoredCard } from "@/lib/cards";
 
 /**
  * The slug is the card's whole access model: a card page is public so it can
@@ -16,7 +16,7 @@ function newSlug(kind: string): string {
 /** Mint a card from a spec. Returns the slug the card lives at. */
 export async function mintCard(
   userId: string,
-  spec: CardSpec,
+  spec: StoredCard,
   date: string,
   art?: { png: Buffer; model: string } | null,
 ): Promise<string> {
