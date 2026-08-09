@@ -171,6 +171,7 @@ export default async function HomePage({
         archetype={archetypeOf(latest.components as unknown as Record<string, number>)}
         wave={wave}
         waveSummary={waveSummary(wave)}
+        findings={data.derived?.findings ?? []}
         heat={heatFromScores(data.scores)}
         streak={currentStreak(data.scores)}
         longest={longestStreak(data.scores)}

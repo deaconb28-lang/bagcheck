@@ -127,6 +127,7 @@ export function segmentReading(
     sentence,
     evidence: `${window.start} → ${window.end}${window.recovered ? "" : " · still open"} · ${adds} adds · ${heldThrough} held through · ${lossSells} loss sells`,
     tone: lossSells === 0 && heldThrough > 0 ? "moss" : lossSells > 0 ? "clay" : "signal",
+    impact: closedInside.length ? realised : null,
   };
 }
 

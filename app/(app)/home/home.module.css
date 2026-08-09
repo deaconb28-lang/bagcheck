@@ -1,56 +1,112 @@
+/* V2: the hero is a centred lockup — ring, voice, sentence, decomposition. */
 .heroPanel {
-  display: grid;
-  grid-template-columns: 246px minmax(300px, 1fr);
-  gap: 44px;
   align-items: center;
-}
-
-.heroText {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  min-width: 0;
+  text-align: center;
+  gap: 24px;
 }
 
 .heroChips {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   flex-wrap: wrap;
 }
 
 .sentence {
-  font-size: 27px;
+  font-size: 28px;
   font-weight: 700;
-  line-height: 1.24;
-  max-width: 22ch;
+  line-height: 1.22;
+  max-width: 24ch;
+  margin-inline: auto;
   color: var(--ink);
 }
 
 .componentGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(78px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
+  width: 100%;
+  padding-top: 8px;
 }
 
-.archetype {
-  flex-direction: row;
-  flex-wrap: wrap;
+/*
+ * Where the money went — each finding is a centred lockup: the realised
+ * figure huge, the sentence under it, the evidence in mono. Rows divide
+ * with the light line, and the last one drops its border.
+ */
+.leaks {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.leakRow {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 28px;
+  text-align: center;
+  gap: 6px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.leakRow:last-child {
+  border-bottom: 0;
+  padding-bottom: 4px;
+}
+
+.leakRow:first-child {
+  padding-top: 4px;
+}
+
+.leakFigure {
+  font-size: 30px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.leakText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.leakSentence {
+  font-size: 14.5px;
+  color: var(--ink3);
+  max-width: 52ch;
+  line-height: 1.5;
+}
+
+.leakEvidence {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+/* V2: identity is a centred lockup too — mark, name, then the meters. */
+.archetype {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 24px;
 }
 
 .archText {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   gap: 16px;
-  flex: 1 1 300px;
-  min-width: 260px;
 }
 
 .archTextBody {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 4px;
   min-width: 0;
 }
@@ -74,8 +130,8 @@
 }
 
 .archBars {
-  flex: 1 1 260px;
-  min-width: 240px;
+  width: 100%;
+  max-width: 460px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -101,6 +157,13 @@
   font-family: var(--font-mono), monospace;
   font-size: 11px;
   color: var(--ink3);
+}
+
+.archActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .openDna,
@@ -132,6 +195,7 @@
 .pnlRow {
   display: flex;
   align-items: baseline;
+  justify-content: center;
   gap: 10px;
   flex-wrap: wrap;
 }
@@ -154,11 +218,13 @@
   display: flex;
   gap: 28px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .waveStat {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 4px;
 }
 
@@ -180,10 +246,7 @@
 
 @media (max-width: 899px) {
   .heroPanel {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 28px;
-    justify-items: center;
-    text-align: left;
+    gap: 22px;
   }
 
   .sentence {
@@ -193,19 +256,6 @@
   /* Four stats read as a 2×2, not three-and-a-straggler. */
   .componentGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .archetype {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  /* In a column, a flex-basis set for row layout becomes height — 300px of
-     empty panel between the name and the meters. */
-  .archText,
-  .archBars {
-    flex: none;
-    min-width: 0;
   }
 
   .recap {

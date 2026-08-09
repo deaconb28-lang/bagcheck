@@ -1,6 +1,8 @@
 /*
- * The shared screen frame. Every route is: sticky header, then a column and
- * a sticky rail. On the dark field a panel is a fill plus a 1px edge —
+ * The shared screen frame, v2: sticky header, then ONE centred column.
+ * The two-column dashboard read as a console; a single centred feed reads
+ * as an instrument you hold. Everything a rail used to carry folds into the
+ * flow, in order. On the black field a panel is a fill plus a 1px edge —
  * without the edge it dissolves into the canvas, with more it wireframes.
  * The block rhythm is not negotiable.
  */
@@ -11,25 +13,22 @@
 
 .grid {
   display: flex;
-  flex-wrap: wrap;
-  gap: 40px;
-  align-items: flex-start;
-  max-width: 1360px;
+  flex-direction: column;
+  gap: var(--gap-block, 46px);
+  align-items: stretch;
+  max-width: 760px;
+  margin-inline: auto;
 }
 
 .column {
-  flex: 100 1 620px;
   display: flex;
   flex-direction: column;
   gap: var(--gap-block, 46px);
   min-width: 0;
 }
 
+/* The rail is now simply the tail of the flow. */
 .rail {
-  flex: 1 1 336px;
-  min-width: 300px;
-  position: sticky;
-  top: 96px;
   display: flex;
   flex-direction: column;
   gap: 22px;
@@ -75,9 +74,12 @@
   padding: 24px;
 }
 
+/* Centred lockups: the eyebrow-title stack centres; a trailing control
+   (share button) rides beside it rather than pushing it off-axis. */
 .head {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
   gap: 16px;
   flex-wrap: wrap;
 }
@@ -85,13 +87,17 @@
 .headText {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 4px;
-  flex: 1;
+  flex: 0 1 auto;
+  max-width: 100%;
   min-width: 0;
 }
 
+/* In a centred head the spacer no longer pushes — it just breathes. */
 .spacer {
-  flex: 1;
+  flex: 0 0 4px;
 }
 
 .eyebrow {
@@ -112,8 +118,14 @@
 .stat {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 12px;
   min-width: 0;
+}
+
+.stat > * {
+  width: 100%;
 }
 
 .statValue {
@@ -159,6 +171,7 @@
 .tail {
   font-size: 13.5px;
   line-height: 1.55;
+  text-align: center;
 }
 
 .divider {
@@ -170,6 +183,7 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .chip {

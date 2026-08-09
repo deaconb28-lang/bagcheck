@@ -20,6 +20,13 @@ export interface Finding {
   evidence: string;
   /** Which axis this belongs to, for colour. */
   tone: "moss" | "signal" | "clay";
+  /**
+   * Realised P&L of the pattern's bucket, in dollars — what the habit
+   * actually made or cost, straight off the round trips. Null where no
+   * honest dollar exists (a ratio has no bucket). This is what lets a
+   * screen answer "so what is this worth" without inventing a projection.
+   */
+  impact: number | null;
 }
 
 /** Below this a "pattern" is noise, and printing it would be a lie. */
@@ -63,11 +70,17 @@ export function entryHour(trips: RoundTrip[], txns: TxnLite[]): Finding | null {
 
   const late: number[] = [];
   const early: number[] = [];
+  let latePnl = 0;
   for (const trip of trips) {
     const h = openHour.get(`${trip.symbol}|${trip.openDate}`);
     if (h == null || !trip.notional) continue;
     const ret = (trip.pnl / trip.notional) * 100;
-    (h >= 18 ? late : early).push(ret); // 18:00 UTC ≈ 2pm ET
+    if (h >= 18) {
+      late.push(ret); // 18:00 UTC ≈ 2pm ET
+      latePnl += trip.pnl;
+    } else {
+      early.push(ret);
+    }
   }
   if (late.length < MIN_SAMPLE || early.length < MIN_SAMPLE) return null;
 
@@ -85,6 +98,7 @@ export function entryHour(trips: RoundTrip[], txns: TxnLite[]): Finding | null {
         : "Positions you open after 2pm return less than the ones you open earlier.",
     evidence: `${late.length} late · ${pct(lateMean)} avg · ${early.length} early · ${pct(earlyMean)} avg`,
     tone: lateMean < 0 ? "clay" : "signal",
+    impact: latePnl,
   };
 }
 
@@ -99,12 +113,13 @@ export function sessionSize(trips: RoundTrip[], txns: TxnLite[]): Finding | null
   }
   if (!perDay.size) return null;
 
-  let busyWins = 0, busy = 0, quietWins = 0, quiet = 0;
+  let busyWins = 0, busy = 0, quietWins = 0, quiet = 0, busyPnl = 0;
   for (const trip of trips) {
     const n = perDay.get(trip.openDate) ?? 0;
     if (!n) continue;
     if (n >= 6) {
       busy += 1;
+      busyPnl += trip.pnl;
       if (trip.pnl > 0) busyWins += 1;
     } else {
       quiet += 1;
@@ -124,6 +139,7 @@ export function sessionSize(trips: RoundTrip[], txns: TxnLite[]): Finding | null
     sentence: `Your win rate falls ${drop.toFixed(0)} points on sessions with six or more trades.`,
     evidence: `${busy} trades on busy days · ${busyRate.toFixed(0)}% · ${quiet} on quiet days · ${quietRate.toFixed(0)}%`,
     tone: "signal",
+    impact: busyPnl,
   };
 }
 
@@ -158,6 +174,7 @@ export function exitSpeed(trips: RoundTrip[]): Finding | null {
       : `You sell winners ${ratio.toFixed(1)}× faster than losers.`,
     evidence: `${winners.length} winners · ${days(w)}d avg · ${losers.length} losers · ${days(l)}d avg`,
     tone: holdsWinners ? "moss" : "clay",
+    impact: null, // a ratio has no bucket of realised dollars to sum
   };
 }
 
@@ -166,6 +183,7 @@ export function reEntry(trips: RoundTrip[]): Finding | null {
   const byClose = [...trips].sort((a, b) => a.closeDate.localeCompare(b.closeDate));
   let quick = 0;
   let losses = 0;
+  let quickPnl = 0;
   for (const trip of byClose) {
     if (trip.pnl >= 0) continue;
     losses += 1;
@@ -177,7 +195,10 @@ export function reEntry(trips: RoundTrip[]): Finding | null {
       (Date.parse(`${next.openDate}T00:00:00Z`) -
         Date.parse(`${trip.closeDate}T00:00:00Z`)) /
       86_400_000;
-    if (gap >= 0 && gap <= 3) quick += 1;
+    if (gap >= 0 && gap <= 3) {
+      quick += 1;
+      quickPnl += next.pnl; // what the hurried second try actually returned
+    }
   }
   if (losses < MIN_SAMPLE || quick < 3) return null;
 
@@ -188,6 +209,7 @@ export function reEntry(trips: RoundTrip[]): Finding | null {
     sentence: `You were back in the same name within three days on ${rate.toFixed(0)}% of your losing exits.`,
     evidence: `${quick} of ${losses} losing exits`,
     tone: "signal",
+    impact: quickPnl,
   };
 }
 

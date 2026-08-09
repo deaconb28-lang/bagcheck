@@ -50,9 +50,12 @@ export function joinTags(trips: RoundTrip[], opens: TaggedOpen[]): JoinedTrip[] 
  */
 export function byConviction(trips: RoundTrip[], opens: TaggedOpen[]): Finding | null {
   const joined = joinTags(trips, opens);
-  const high = joined.filter((j) => j.conviction >= 4).map((j) => ret(j.trip));
-  const low = joined.filter((j) => j.conviction <= 2).map((j) => ret(j.trip));
+  const highTrips = joined.filter((j) => j.conviction >= 4);
+  const lowTrips = joined.filter((j) => j.conviction <= 2);
+  const high = highTrips.map((j) => ret(j.trip));
+  const low = lowTrips.map((j) => ret(j.trip));
   if (high.length < MIN_SAMPLE || low.length < MIN_SAMPLE) return null;
+  const lowPnl = lowTrips.reduce((s, j) => s + j.trip.pnl, 0);
 
   const h = mean(high);
   const l = mean(low);
@@ -66,6 +69,7 @@ export function byConviction(trips: RoundTrip[], opens: TaggedOpen[]): Finding |
       sentence: `Your high-conviction entries returned ${(h / l).toFixed(1)}× your low-conviction entries.`,
       evidence,
       tone: "moss",
+      impact: null, // both sides made money; there is no cost bucket to sum
     };
   }
   if (h - l >= 2.5) {
@@ -75,6 +79,7 @@ export function byConviction(trips: RoundTrip[], opens: TaggedOpen[]): Finding |
       sentence: `High-conviction entries returned ${pct(h)} on average; low-conviction ${pct(l)}.`,
       evidence,
       tone: "moss",
+      impact: lowPnl < 0 ? lowPnl : null,
     };
   }
   if (l - h >= 2.5) {
@@ -84,6 +89,7 @@ export function byConviction(trips: RoundTrip[], opens: TaggedOpen[]): Finding |
       sentence: "Your low-conviction entries have outperformed your high-conviction ones.",
       evidence,
       tone: h < 0 ? "clay" : "signal",
+      impact: h < 0 ? highTrips.reduce((s, j) => s + j.trip.pnl, 0) : null,
     };
   }
   return null;
@@ -107,6 +113,8 @@ export function byReason(
     byWhy.set(j.why, xs);
   }
 
+  const pnlByWhy = new Map<WhyKey, number>();
+  for (const j of joined) pnlByWhy.set(j.why, (pnlByWhy.get(j.why) ?? 0) + j.trip.pnl);
   const eligible = [...byWhy.entries()]
     .filter(([why, xs]) => (kindCounts[why] ?? 0) >= KIND_FLOOR && xs.length >= MIN_SAMPLE)
     .map(([why, xs]) => ({ why, mean: mean(xs), n: xs.length }))
@@ -123,6 +131,7 @@ export function byReason(
     sentence: `Entries tagged "${best.why}" returned ${pct(best.mean)} on average; "${worst.why}" returned ${pct(worst.mean)}.`,
     evidence: `${best.n} ${best.why} · ${worst.n} ${worst.why}`,
     tone: worst.mean < 0 ? "clay" : "signal",
+    impact: (pnlByWhy.get(worst.why) ?? 0) < 0 ? pnlByWhy.get(worst.why)! : null,
   };
 }
 
@@ -149,6 +158,7 @@ export function revenge(
     sentence: `Entries tagged revenge returned ${pct(m)} on average.`,
     evidence: `${joined.length} closed revenge entries`,
     tone: "clay",
+    impact: joined.reduce((s, j) => s + j.trip.pnl, 0),
   };
 }
 

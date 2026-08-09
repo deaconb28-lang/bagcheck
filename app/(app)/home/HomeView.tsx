@@ -14,6 +14,7 @@ import type { Tier } from "@/lib/tiers";
 import { CORRELATION_FLOOR } from "@/lib/tags";
 import type { UntaggedEntry } from "@/lib/tags";
 import type { ScoreComponents } from "@/lib/score";
+import type { Finding } from "@/lib/engine";
 import type { WaveSummary } from "../derive";
 import { signedMoney } from "../derive";
 import screen from "../screen.module.css";
@@ -28,6 +29,8 @@ export type HomeViewProps = {
   archetype: Archetype;
   wave: WaveDay[];
   waveSummary: WaveSummary;
+  /** Ledger findings with dollar impacts, straight off the derived doc. */
+  findings: Finding[];
   heat: HeatDay[];
   streak: number;
   longest: number;
@@ -63,6 +66,20 @@ function greeting(): string {
   return h < 12 ? "Morning" : h < 18 ? "Afternoon" : "Evening";
 }
 
+/** The header pill's numbers: how many patterns speak, and the worst one. */
+function leakSummary(findings: Finding[]): { count: number; worst: number | null } | null {
+  if (!findings.length) return null;
+  const impacts = findings.map((f) => f.impact).filter((n): n is number => n != null && n < 0);
+  return { count: findings.length, worst: impacts.length ? Math.min(...impacts) : null };
+}
+
+/** Leaks first (most negative), then the rest in engine order. */
+function moneyOrder(findings: Finding[]): Finding[] {
+  return [...findings].sort(
+    (a, b) => (a.impact ?? Number.POSITIVE_INFINITY) - (b.impact ?? Number.POSITIVE_INFINITY),
+  );
+}
+
 /**
  * Home. Score first, tag prompt second, then the record.
  *
@@ -79,6 +96,7 @@ export function HomeView(props: HomeViewProps) {
     archetype,
     wave,
     waveSummary: summary,
+    findings,
     heat,
     streak,
     longest,
@@ -104,55 +122,101 @@ export function HomeView(props: HomeViewProps) {
         delta={delta}
         syncedAt={syncedAt}
         age={age}
+        streak={streak}
+        leak={leakSummary(findings)}
         tier={tier}
       />
 
       <div className={screen.body}>
         <div className={screen.grid}>
           <div className={screen.column}>
-            {/* 1 — the score and its decomposition. Nothing above the fold is prose. */}
+            {/* 1 — the score, centred. Nothing above the fold is prose. */}
             <section data-reveal className={`${screen.panel} ${screen.hero} ${styles.heroPanel}`}>
               <ScoreRing score={score} />
 
-              <div className={styles.heroText}>
-                <div className={styles.heroChips}>
-                  <span className={screen.chip} data-tone="accent">
-                    Written by Bagcheck
+              <div className={styles.heroChips}>
+                <span className={screen.chip} data-tone="accent">
+                  Written by Bagcheck
+                </span>
+                {delta != null && delta !== 0 ? (
+                  <span className={screen.chip}>
+                    {delta > 0 ? "+" : "−"}
+                    {Math.abs(delta)} this week
                   </span>
-                  {delta != null && delta !== 0 ? (
-                    <span className={screen.chip}>
-                      {delta > 0 ? "+" : "−"}
-                      {Math.abs(delta)} this week
-                    </span>
-                  ) : null}
-                  <div className={screen.spacer} />
-                  <ShareButton type="health" label="your score" />
-                </div>
+                ) : null}
+                <ShareButton type="health" label="your score" />
+              </div>
 
-                <p className={`disp ${styles.sentence}`}>{insight.sentence}</p>
+              <p className={`disp ${styles.sentence}`}>{insight.sentence}</p>
 
-                <div className={styles.componentGrid}>
-                  {(Object.entries(components) as Array<[string, number]>).map(
-                    ([name, value], i) => (
-                      <div key={name} className={screen.stat}>
-                        <span className={screen.eyebrow}>{name}</span>
-                        <div className={`num ${screen.statValue}`}>{value}</div>
-                        <div className={screen.statMeter}>
-                          <i
-                            className={screen.statFill}
-                            data-tone={COMPONENT_TONE[name] ?? "moss"}
-                            style={{ width: `${value}%`, animationDelay: `${i * 80}ms` }}
-                          />
-                        </div>
-                        <span className={screen.statTail}>{COMPARISON[name] ?? ""}</span>
+              <div className={styles.componentGrid}>
+                {(Object.entries(components) as Array<[string, number]>).map(
+                  ([name, value], i) => (
+                    <div key={name} className={screen.stat}>
+                      <span className={screen.eyebrow}>{name}</span>
+                      <div className={`num ${screen.statValue}`}>{value}</div>
+                      <div className={screen.statMeter}>
+                        <i
+                          className={screen.statFill}
+                          data-tone={COMPONENT_TONE[name] ?? "moss"}
+                          style={{ width: `${value}%`, animationDelay: `${i * 80}ms` }}
+                        />
                       </div>
-                    ),
-                  )}
-                </div>
+                      <span className={screen.statTail}>{COMPARISON[name] ?? ""}</span>
+                    </div>
+                  ),
+                )}
               </div>
             </section>
 
-            {/* 2 — the loop the engine runs on. */}
+            {/*
+              * 2 — where the money went. The engine's findings denominated in
+              * realised dollars, leaks first: the panel that says why any of
+              * this is worth reading. Absent until something clears a floor —
+              * a money panel with invented numbers would poison everything
+              * around it.
+              */}
+            {findings.length ? (
+              <section data-reveal className={screen.panel} style={{ animationDelay: "0.02s" }}>
+                <div className={screen.head}>
+                  <div className={screen.headText}>
+                    <span className={screen.eyebrow}>Where the money went</span>
+                    <div className={`disp ${screen.h2}`}>
+                      What your habits are worth, in realised P&amp;L
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.leaks}>
+                  {moneyOrder(findings)
+                    .slice(0, 3)
+                    .map((finding) => (
+                      <div key={finding.key} className={styles.leakRow}>
+                        <span className={`num ${styles.leakFigure}`}>
+                          {finding.impact != null ? signedMoney(finding.impact) : "—"}
+                        </span>
+                        <span className={styles.leakText}>
+                          <span className={styles.leakSentence}>{finding.sentence}</span>
+                          <span className={styles.leakEvidence}>{finding.evidence}</span>
+                        </span>
+                      </div>
+                    ))}
+                </div>
+
+                <div className={screen.chips}>
+                  <Link href="/patterns" className={screen.chip}>
+                    Open Patterns
+                  </Link>
+                </div>
+                <p className={screen.tail}>
+                  Every figure is realised P&amp;L from your own brokerage — what the
+                  habit actually returned, never a projection.
+                </p>
+              </section>
+            ) : null}
+
+            {/* 3 — the loop the engine runs on: two taps here become the
+                next dollar figure above. */}
             <section data-reveal className={screen.panel} style={{ animationDelay: "0.03s" }}>
               <TagPrompt queue={queue} tagged={tagged} total={Math.max(taggable, tagged)} />
             </section>
@@ -187,10 +251,12 @@ export function HomeView(props: HomeViewProps) {
                   </div>
                 ))}
               </div>
-              <Link href="/dna" className={styles.openDna}>
-                Open DNA
-              </Link>
-              <ShareButton type="archetype" label="your archetype" size={44} />
+              <div className={styles.archActions}>
+                <Link href="/dna" className={styles.openDna}>
+                  Open DNA
+                </Link>
+                <ShareButton type="archetype" label="your archetype" size={44} />
+              </div>
             </section>
 
             {/* 4 — P&L, mirrored. */}

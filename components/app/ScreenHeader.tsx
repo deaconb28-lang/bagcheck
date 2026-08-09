@@ -16,6 +16,15 @@ export type ScreenHeaderProps = {
   syncedAt?: string | null;
   /** Investor Age — how old the conduct reads. Null before a first score. */
   age?: number | null;
+  /** Consecutive sessions inside the rules. Hidden at 0 or unknown. */
+  streak?: number | null;
+  /**
+   * What the engine currently has on file: how many patterns are speaking
+   * and the worst one's realised dollars. The single most actionable number
+   * in the product, so it rides the chrome. Null when nothing has cleared a
+   * floor — the pill is absent, never a zero.
+   */
+  leak?: { count: number; worst: number | null } | null;
   tier: Tier;
 };
 
@@ -34,6 +43,8 @@ export function ScreenHeader({
   delta = null,
   syncedAt = null,
   age = null,
+  streak = null,
+  leak = null,
   tier,
 }: ScreenHeaderProps) {
   return (
@@ -50,6 +61,30 @@ export function ScreenHeader({
           <span className={styles.scoreDot}>{score}</span>
           <span className={styles.scoreLabel}>
             Health{delta != null && delta !== 0 ? ` ${delta > 0 ? "+" : "−"}${Math.abs(delta)}` : ""}
+          </span>
+        </Link>
+      ) : null}
+
+      {streak != null && streak > 0 ? (
+        <div className={styles.streakPill} title="Consecutive sessions inside your rules">
+          <span className={styles.streakNum}>{streak}</span>
+          <span className={styles.ageLabel}>day streak</span>
+        </div>
+      ) : null}
+
+      {/* The engine's read, denominated in dollars — why the app pays rent. */}
+      {leak && leak.count > 0 ? (
+        <Link
+          href="/patterns"
+          className={styles.leakPill}
+          title="Patterns the engine has on file — open Patterns"
+        >
+          <span className={styles.leakNum}>{leak.count}</span>
+          <span className={styles.ageLabel}>
+            {leak.count === 1 ? "pattern" : "patterns"}
+            {leak.worst != null && leak.worst < 0
+              ? ` · −$${Math.abs(Math.round(leak.worst)).toLocaleString("en-US")}`
+              : ""}
           </span>
         </Link>
       ) : null}

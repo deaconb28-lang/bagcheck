@@ -241,4 +241,18 @@ export interface DerivedDoc {
   };
   /** Names whose FIFO-implied units disagree with the snapshot. Never in statistics. */
   excludedSymbols: string[];
+  /**
+   * Ledger-only engine findings plus event windows, with dollar impacts —
+   * computed once per sync so Home can answer "where did the money go"
+   * without scanning. Tag-joined findings are not here: tags move without a
+   * sync, so Patterns computes those live.
+   */
+  findings: Array<{
+    key: string;
+    tag: string;
+    sentence: string;
+    evidence: string;
+    tone: "moss" | "signal" | "clay";
+    impact: number | null;
+  }>;
 }

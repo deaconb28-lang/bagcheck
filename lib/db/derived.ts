@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { getCollections } from "./collections";
 import { buildRoundTrips } from "@/lib/score";
 import type { RoundTrip, TxnLite } from "@/lib/score";
+import { eventSegments, findings } from "@/lib/engine";
 import type { DerivedDoc } from "./types";
 
 /**
@@ -19,7 +20,7 @@ import type { DerivedDoc } from "./types";
  */
 
 /** Bump when anything in this file changes shape or meaning. */
-export const DERIVED_VERSION = 1;
+export const DERIVED_VERSION = 2;
 
 export interface DailyPnl {
   date: string;
@@ -165,16 +166,19 @@ export function buildDerived(input: BuildInput): Omit<DerivedDoc, "userId" | "co
   // do not reconcile produces hold times and P&L that never happened.
   const clean = input.rows.filter((r) => !r.symbol || !excluded.has(r.symbol));
   const roundTrips = buildRoundTrips(clean);
+  const equitySeries = equityFrom(input.snapshots, input.today);
 
   return {
     version: DERIVED_VERSION,
     ledgerHash: ledgerHash(input.rows, input.snapshots.map((s) => s.date)),
     roundTrips,
     dailyPnl: dailyPnlFrom(input.rows),
-    equitySeries: equityFrom(input.snapshots, input.today),
+    equitySeries,
     holdTime: holdTimeFrom(roundTrips),
     excludedSymbols,
     transactionCount: input.rows.length,
+    // The ledger-only findings, with dollar impacts, ready for any screen.
+    findings: [...findings(roundTrips, clean), ...eventSegments(equitySeries, roundTrips, clean)],
   };
 }
 

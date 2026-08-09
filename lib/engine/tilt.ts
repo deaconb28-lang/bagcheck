@@ -53,6 +53,7 @@ export function sizingAfterLoss(trips: RoundTrip[], txns: TxnLite[]): Finding | 
       sentence: `The session after a red day, your average buy runs ${ratio.toFixed(1)}× your usual size.`,
       evidence,
       tone: "signal",
+      impact: null, // sizing is exposure, not a realised bucket
     };
   }
   if (ratio <= 0.74) {
@@ -62,6 +63,7 @@ export function sizingAfterLoss(trips: RoundTrip[], txns: TxnLite[]): Finding | 
       sentence: `You size down after a red day — buys run ${(1 / ratio).toFixed(1)}× smaller than usual.`,
       evidence,
       tone: "moss",
+      impact: null,
     };
   }
   return null;
@@ -100,6 +102,7 @@ export function tradeDrift(txns: TxnLite[], today: string): Finding | null {
     sentence: `You traded ${week} times this week — ${(week / weeklyPace).toFixed(1)}× your twelve-week pace.`,
     evidence: `${week} this week · ${weeklyPace.toFixed(1)}/wk baseline`,
     tone: "signal",
+    impact: null,
   };
 }
 

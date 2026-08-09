@@ -47,6 +47,8 @@
 
 .scorePill,
 .agePill,
+.streakPill,
+.leakPill,
 .sync,
 .tier {
   display: flex;
@@ -94,6 +96,53 @@
   letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--ink3);
+}
+
+/* Streak — an active run is live data, so it carries the ember grade. */
+.streakPill {
+  padding: 4px 14px 4px 4px;
+}
+
+.streakNum {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--ember-tint);
+  border: 1px solid var(--ember-line);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: -0.02em;
+  color: var(--ember);
+}
+
+/* The engine's read in dollars — the most actionable pill in the chrome. */
+.leakPill {
+  padding: 4px 14px 4px 4px;
+  transition: border-color 0.16s ease;
+}
+
+.leakPill:hover {
+  border-color: var(--line2-hover);
+}
+
+.leakNum {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--inset);
+  border: 1px solid var(--line2);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
 }
 
 /* Investor Age — the product's own reading, so it wears the reserved violet. */
@@ -164,6 +213,12 @@
   transform: translateY(-1px);
 }
 
+@media (max-width: 1280px) {
+  .streakPill {
+    display: none;
+  }
+}
+
 @media (max-width: 1080px) {
   .agePill {
     display: none;
@@ -177,7 +232,8 @@
   }
 
   .sync,
-  .tier {
+  .tier,
+  .leakPill {
     display: none;
   }
 

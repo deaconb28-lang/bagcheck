@@ -154,6 +154,17 @@ export default async function PatternsPage() {
         delta={weekDelta(data.scores)}
         syncedAt={syncClock(data.connection?.lastSyncAt)}
         age={data.investorAge}
+        leak={
+          found.length + segments.length > 0
+            ? {
+                count: found.length + segments.length,
+                worst: [...found, ...segments]
+                  .map((f) => f.impact)
+                  .filter((n): n is number => n != null && n < 0)
+                  .reduce<number | null>((min, n) => (min == null || n < min ? n : min), null),
+              }
+            : null
+        }
         tier={data.tier}
       />
 
