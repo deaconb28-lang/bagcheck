@@ -68,6 +68,14 @@ export type WrappedCardProps = {
    * it. A card about a position wears that company's mark and ticker.
    */
   symbol?: string | null;
+  /**
+   * Fill the container instead of holding 2:3.
+   *
+   * The story player is 9:16 and a 2:3 card inside it leaves dead bands top
+   * and bottom — so in the player the card *is* the slide rather than sitting
+   * on one.
+   */
+  fill?: boolean;
   /** Earned by behaviour, never bought. */
   rarity?: "rare" | null;
   archetype?: Archetype;
@@ -108,6 +116,7 @@ export function WrappedCard({
   hue = "moss",
   layout = "poster",
   symbol = null,
+  fill = false,
   rarity = null,
   example = false,
 }: WrappedCardProps) {
@@ -120,7 +129,7 @@ export function WrappedCard({
   const peak = Math.max(1, ...series.map(Math.abs));
 
   return (
-    <article className={styles.card} data-hue={hue} data-layout={layout}>
+    <article className={styles.card} data-hue={hue} data-layout={layout} data-fill={fill || undefined}>
       {backdrop && layout !== "ledger" ? (
         // eslint-disable-next-line @next/next/no-img-element -- a stored PNG
         // at a fixed URL, sized by the card; next/image buys nothing here.

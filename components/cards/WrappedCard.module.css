@@ -9,12 +9,37 @@
   position: relative;
   aspect-ratio: 2 / 3;
   width: 100%;
+  /* Anywhere the card renders as itself, it stops before it becomes a poster
+     nobody asked for. A 2:3 card at a 1000px column is not a share card. */
+  max-width: 420px;
   border-radius: 30px;
   overflow: hidden;
   isolation: isolate;
   background: var(--card-deep);
   color: var(--share-ink);
   container-type: inline-size;
+}
+
+/* In the story player the card is the whole slide, so it drops both. */
+.card[data-fill] {
+  aspect-ratio: auto;
+  max-width: none;
+  height: 100%;
+  border-radius: 0;
+}
+
+/*
+ * The player supplies its own chrome — a share button, a counter and a close
+ * — in the same place the card puts its footer. Two footers stacked is what
+ * the first build shipped, and they overlapped. The card's URL line is also
+ * redundant inside a player whose share button is right there.
+ */
+.card[data-fill] .foot {
+  display: none;
+}
+
+.card[data-fill] .inner {
+  padding: 34px 30px 104px;
 }
 
 .card[data-hue="moss"] {

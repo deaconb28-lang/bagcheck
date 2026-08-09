@@ -1,58 +1,98 @@
-/* The hero stays on the ink field in both modes — Wrapped is a share
-   surface, and a share surface does not follow the reader's mode. */
-.hero {
-  background: var(--share-bg);
+/*
+ * Wrapped is the one screen that is not the instrument. It opens on a poster
+ * whose only job is to be pressed, and the deck sits under it.
+ */
+.poster {
+  position: relative;
+  min-height: 62vh;
   border-radius: 34px;
-  padding: 40px;
+  overflow: hidden;
+  isolation: isolate;
   display: flex;
-  gap: 40px;
-  align-items: center;
-  flex-wrap: wrap;
+  align-items: flex-end;
+  background: var(--share-bg);
   color: var(--share-ink);
   animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
-  overflow: hidden;
 }
 
-.heroText {
-  flex: 1 1 320px;
-  min-width: 280px;
+.posterArt {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+}
+
+/*
+ * Dark where the type is and clear where the picture is the subject. Without
+ * it the headline fails contrast against the horizon, and the horizon is
+ * exactly where these scenes put their light.
+ */
+.posterWash {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to top,
+    var(--share-bg) 6%,
+    color-mix(in srgb, var(--share-bg) 82%, transparent) 38%,
+    color-mix(in srgb, var(--share-bg) 20%, transparent) 72%,
+    color-mix(in srgb, var(--share-bg) 55%, transparent) 100%
+  );
+}
+
+.posterBody {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 14px;
+  padding: 44px;
+  width: 100%;
 }
 
-.heroEyebrow {
+.heroEyebrow,
+.posterMeta {
   font-family: var(--font-mono), monospace;
-  font-size: 10px;
+  font-size: 10.5px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--share-dim);
 }
 
 .heroTitle {
-  font-size: 58px;
-  line-height: 1;
+  font-size: clamp(44px, 7vw, 76px);
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+  margin: 4px 0 0;
 }
 
 .heroLine {
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.55;
   color: var(--share-dim);
-  max-width: 34ch;
+  max-width: 38ch;
+  text-wrap: pretty;
 }
 
+/* The one action on the screen, and it looks like one. */
 .play {
-  align-self: flex-start;
-  min-height: 44px;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 22px;
+  gap: 12px;
+  min-height: 52px;
+  margin-top: 10px;
+  padding: 0 24px 0 8px;
   border-radius: 999px;
-  background: var(--share-moss);
-  color: var(--on-share-moss);
+  background: var(--share-ink);
+  color: var(--share-bg);
+  font-family: var(--font-body), sans-serif;
+  font-size: 15px;
   font-weight: 600;
-  font-size: 14px;
+  cursor: pointer;
   transition: transform 0.16s ease;
 }
 
@@ -60,62 +100,45 @@
   transform: translateY(-1px);
 }
 
-/* The real card, and the one control that acts on it. */
-.cardSlot {
-  flex: 1 1 340px;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
+.playMark {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: var(--share-bg);
+  color: var(--share-ink);
 }
 
-.statGrid {
+@media (prefers-reduced-motion: reduce) {
+  .play:hover {
+    transform: none;
+  }
+}
+
+/* The deck. Card-sized, never column-sized. */
+.deck {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 28px;
+  margin-top: 46px;
   animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }
 
-.statValue {
+.deckItem {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-size: 38px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
 }
 
-.unit {
-  font-family: var(--font-mono), monospace;
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--meta);
-}
-
-.carousel {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.carouselCard {
-  aspect-ratio: 4 / 5;
-  border-radius: 20px;
-  background: var(--sunken);
-}
-
-@media (max-width: 899px) {
-  .hero {
-    padding: 26px;
-    border-radius: 28px;
+@media (max-width: 700px) {
+  .posterBody {
+    padding: 28px 24px 32px;
   }
 
-  .heroTitle {
-    font-size: 40px;
-  }
-
-  .carousel {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .poster {
+    min-height: 70vh;
   }
 }
