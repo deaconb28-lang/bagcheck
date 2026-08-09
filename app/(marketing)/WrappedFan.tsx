@@ -47,6 +47,7 @@ export function WrappedFan() {
             slug={card.kind === "longestHold" ? "412-days" : card.kind}
             provenance="Read from your brokerage. Read-only, permanently."
             backdrop={backdrop(card.kind)}
+            symbol={card.symbol}
             hue={card.hue}
             layout={card.layout}
             rarity={card.rarity}

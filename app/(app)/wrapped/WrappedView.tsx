@@ -183,13 +183,8 @@ export function WrappedView(props: WrappedViewProps) {
                   lede={cards[0].lede}
                   body={cards[0].body}
                   slug={mintedSlug ?? null}
-                  /*
-                   * The art the mint drew from *these* numbers. Before the
-                   * card is minted there is none, and the flat hue field is
-                   * the honest state — not a stock picture standing in for
-                   * one this ledger has not earned.
-                   */
-                  backdrop={mintedSlug ? `/api/card/${mintedSlug}/art` : null}
+                  symbol={cards[0].symbol}
+                  backdrop={`/cards/${cards[0].kind}.jpg`}
                   provenance="Read from your brokerage. Read-only, permanently."
                   hue={cards[0].hue}
             layout={cards[0].layout}

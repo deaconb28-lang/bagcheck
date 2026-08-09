@@ -1,4 +1,5 @@
 import type { Archetype } from "@/lib/archetypes";
+import { Logo } from "@/components/primitives";
 import styles from "./WrappedCard.module.css";
 
 export type CardHue = "moss" | "ember" | "azure" | "violet";
@@ -59,6 +60,14 @@ export type WrappedCardProps = {
    * in one template is a series, and a series is what people scroll past.
    */
   layout?: CardLayout;
+  /**
+   * The instrument the card is about, when it is about one.
+   *
+   * This is the Spotify move made literal: the artwork is fixed and shared,
+   * and what makes the card *yours* is your figure and your company set over
+   * it. A card about a position wears that company's mark and ticker.
+   */
+  symbol?: string | null;
   /** Earned by behaviour, never bought. */
   rarity?: "rare" | null;
   archetype?: Archetype;
@@ -98,6 +107,7 @@ export function WrappedCard({
   backdrop = null,
   hue = "moss",
   layout = "poster",
+  symbol = null,
   rarity = null,
   example = false,
 }: WrappedCardProps) {
@@ -120,7 +130,10 @@ export function WrappedCard({
 
       <div className={styles.inner}>
         <header className={styles.top}>
-          <span className={styles.eyebrow}>{eyebrow}</span>
+          <span className={styles.eyebrow}>
+            {symbol ? <Logo symbol={symbol} size={22} /> : null}
+            {eyebrow}
+          </span>
           <div className={styles.tags}>
             {example ? <span className={styles.tag}>Example</span> : null}
             {/* Scarcity is carried by the word, never by a colour. */}

@@ -525,16 +525,16 @@ same badge, and the name would stop meaning anything.
 | **Output** | One of sixteen `Archetype` rows |
 | **Cost** | Zero |
 
-### A2 — Card art `[shipped, and it is per-person]`
+### A2 — Card art `[shipped, and it is twelve fixed images]`
 
 | | |
 |---|---|
 | **Provider** | OpenAI, `gpt-image-2` |
-| **Trigger** | A mint, for any of the twelve kinds |
-| **Input** | `CardSpec.art` — four measured quantities from that person's ledger |
-| **Output** | One 2:3 PNG, stored on the card |
+| **Trigger** | A maintainer running `npm run backdrops`. Never a request. |
+| **Input** | `CardSpec.art` — four measured quantities from a representative ledger |
+| **Output** | Twelve 2:3 JPEGs in `public/cards`, committed |
 | **Fallback** | The flat hue field, which is a complete card |
-| **Cadence** | Once per distinct *brief*, shared across users |
+| **Cadence** | Twelve images, once, for the whole product |
 
 The first build of this was wrong in a way worth recording, because the
 mistake is easy to make again: it generated art for the `wrapped` kind only,
@@ -543,8 +543,20 @@ to the repo — identical for every user**. That is not generated art. It is
 stock photography with a nightly job attached, and it quietly voided the one
 claim the surface exists to make.
 
-What ships now: `lib/wrapped/brief.ts` turns four quantities measured from the
-ledger into the composition.
+What ships now is the Wrapped model rather than a private painting per user:
+**twelve fixed images, one per card kind**, authored once by `npm run
+backdrops` and committed. Nothing generates at request time. A template is
+designed once and worn by millions, and what makes a card someone's own is
+composited over it in type — their figure, their sentence and their company.
+
+Generating per person was the first attempt and it was wrong on cost and on
+latency both: about thirty-five seconds and an image bill at every mint, for
+a picture nobody but its owner would ever see.
+
+`lib/wrapped/brief.ts` still turns four quantities measured from a ledger into
+the composition — it is how each of the twelve was *authored*, from a
+representative ledger, so the scene for a kind matches what that kind is
+about.
 
 | Quantity | Read from | Moves |
 |---|---|---|
@@ -659,7 +671,7 @@ Route by cadence and stakes, not by habit.
 | ~~A4 archetype~~ | *none* | — | Shipped deterministically — sixteen corners of a four-bit cube |
 | A5 Wrapped narration | `claude-opus-5` | adaptive | Once a year, high stakes, real judgement |
 | A6 session recap | `claude-sonnet-5` | low | Per-session volume, same shape as A1 |
-| A2 card art | `gpt-image-2` | — | Per-person, at mint, cached by brief |
+| A2 card art | `gpt-image-2` | — | Twelve fixed images, once, at a maintainer's hand |
 | A7 avatars | `gpt-image-2` | — | Sixteen images, once, at a maintainer's hand |
 
 A1 currently runs on `claude-opus-5`. At one call per user per day that is the

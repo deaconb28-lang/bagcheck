@@ -1,7 +1,6 @@
 import type { Db } from "mongodb";
 import { dbName, getMongoClient } from "./client";
 import type {
-  CardArtDoc,
   CardDoc,
   EmailLogDoc,
   ConnectionDoc,
@@ -35,7 +34,6 @@ export async function getCollections() {
     tags: db.collection<TagDoc>("tags"),
     insights: db.collection<InsightDoc>("insights"),
     cards: db.collection<CardDoc>("cards"),
-    cardArtCache: db.collection<CardArtDoc>("cardArtCache"),
     subscriptions: db.collection<SubscriptionDoc>("subscriptions"),
     marketCache: db.collection<MarketCacheDoc>("marketCache"),
     icons: db.collection<IconDoc>("icons"),
@@ -63,7 +61,6 @@ export async function ensureIndexes() {
     c.insights.createIndex({ userId: 1, date: 1, kind: 1 }, { unique: true }),
     c.cards.createIndex({ userId: 1, date: 1 }),
     c.cards.createIndex({ slug: 1 }, { unique: true }),
-    c.cardArtCache.createIndex({ key: 1 }, { unique: true }),
     c.subscriptions.createIndex({ userId: 1 }, { unique: true }),
     c.subscriptions.createIndex({ stripeCustomerId: 1 }),
     c.marketCache.createIndex({ key: 1 }, { unique: true }),

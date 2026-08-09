@@ -41,8 +41,14 @@ export default async function CardPage({ params }: Props) {
     <main className={styles.page}>
       <div className={styles.inner}>
         <article className={styles.card} data-tone={card.tone}>
-          {card.artModel ? (
-            <img className={styles.art} src={`/api/card/${slug}/art`} alt="" aria-hidden="true" />
+          {/*
+            * The kind's fixed artwork — the same one every card of this kind
+            * wears, the way a Wrapped template is designed once and worn by
+            * millions. What is this person's own is the figure and the
+            * company set over it.
+            */}
+          {card.type ? (
+            <img className={styles.art} src={`/cards/${card.type}.jpg`} alt="" aria-hidden="true" />
           ) : null}
           <div className={styles.top}>
             <span className={styles.mark}>

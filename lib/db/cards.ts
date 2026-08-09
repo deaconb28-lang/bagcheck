@@ -1,5 +1,4 @@
 import { randomBytes } from "node:crypto";
-import { Binary } from "mongodb";
 import { getCollections } from "./collections";
 import type { CardDoc } from "./types";
 import type { StoredCard } from "@/lib/cards";
@@ -18,7 +17,6 @@ export async function mintCard(
   userId: string,
   spec: StoredCard,
   date: string,
-  art?: { png: Buffer; model: string } | null,
 ): Promise<string> {
   const { cards } = await getCollections();
   const slug = newSlug(spec.kind);
@@ -33,8 +31,6 @@ export async function mintCard(
     tone: spec.tone,
     rarity: spec.rarity,
     symbol: spec.symbol,
-    art: art ? new Binary(art.png) : null,
-    artModel: art?.model ?? null,
     mintedAt: new Date(),
     url: null,
   });
@@ -48,7 +44,7 @@ export async function mintCard(
  */
 export async function cardBySlug(slug: string): Promise<Omit<
   CardDoc,
-  "userId" | "url" | "art"
+  "userId" | "url"
 > | null> {
   const { cards } = await getCollections();
   return cards.findOne(
@@ -65,7 +61,6 @@ export async function cardBySlug(slug: string): Promise<Omit<
         tone: 1,
         rarity: 1,
         symbol: 1,
-        artModel: 1,
         mintedAt: 1,
       },
     },
@@ -83,15 +78,3 @@ export async function cardsFor(userId: string, limit = 12) {
     .toArray();
 }
 
-/**
- * The Wrapped backdrop, served separately from the page.
- *
- * Kept out of cardBySlug on purpose: a megabyte of PNG has no business
- * travelling inside the HTML payload of every card view.
- */
-export async function cardArt(slug: string): Promise<Buffer | null> {
-  const { cards } = await getCollections();
-  const doc = await cards.findOne({ slug }, { projection: { _id: 0, art: 1 } });
-  const art = doc?.art;
-  return art ? Buffer.from(art.buffer) : null;
-}

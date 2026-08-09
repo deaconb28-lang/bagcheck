@@ -3,17 +3,8 @@ import { getUserId } from "@/auth";
 import { getCollections, getDerived, isDbConfigured, loadAppData, mintCard } from "@/lib/db";
 import { buildCards } from "@/lib/cards/kinds";
 import type { CardSpec } from "@/lib/cards/kinds";
-import { generateCardArt } from "@/lib/wrapped";
 import { archetypeFor } from "@/lib/archetypes";
 import { currentStreak, weeklySessions } from "@/app/(app)/derive";
-
-/*
- * Drawing takes about thirty-five seconds, and the mint waits for it: a card
- * that appears without its picture and grows one later is a card someone
- * screenshots in the wrong state. The cache in `generateCardArt` means only
- * the first person with a given shaped card pays that wait.
- */
-export const maxDuration = 60;
 
 /**
  * Mint a card the user has actually earned.
@@ -89,23 +80,22 @@ export async function POST(req: Request) {
   }
 
   /*
-   * Art drawn from this card's own numbers — every kind, not just Wrapped,
-   * and not one of twelve stock pictures. `spec.art` carries the four
-   * measured quantities `lib/wrapped/brief.ts` composes into a prompt, so a
-   * 412-day hold and a 34-day hold ask for visibly different mountains.
+   * No art is generated here, and none is stored on the card.
    *
-   * Best-effort and never blocking: a card without art is the flat hue field,
-   * which is a complete card.
+   * The artwork is twelve fixed images authored once and committed to
+   * `public/cards`, and every card of a kind uses its own — the way a Wrapped
+   * template is designed once and worn by millions. What makes a card *yours*
+   * is composited over it in type: the figure, the sentence, and the company
+   * the card is about. Minting is therefore instant and free, rather than a
+   * thirty-five second wait and an image bill per person.
    */
-  const art = await generateCardArt(spec);
 
   const slug = await mintCard(
     userId,
     stored(spec),
     latest?.date ?? new Date().toISOString().slice(0, 10),
-    art,
   );
-  return NextResponse.json({ slug, url: `/c/${slug}`, art: Boolean(art) });
+  return NextResponse.json({ slug, url: `/c/${slug}` });
 }
 
 /**

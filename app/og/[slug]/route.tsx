@@ -1,4 +1,4 @@
-import { cardArt, cardBySlug, isDbConfigured } from "@/lib/db";
+import { cardBySlug, isDbConfigured } from "@/lib/db";
 import { stripCells } from "@/lib/cards";
 import { renderCard } from "./render";
 import type { ShareFormat } from "@/lib/cards/share";
@@ -21,7 +21,5 @@ export async function GET(
   const format: ShareFormat = asked === "feed" || asked === "story" ? asked : "unfurl";
   const card = isDbConfigured() ? await cardBySlug(slug) : null;
   if (!card) return new Response("Not found", { status: 404 });
-  // Only Wrapped has a backdrop, so only Wrapped pays for the extra read.
-  const art = card.artModel ? await cardArt(slug) : null;
-  return renderCard({ ...card, art }, stripCells(card.slug), format);
+  return renderCard(card, stripCells(card.slug), format);
 }

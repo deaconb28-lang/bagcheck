@@ -534,14 +534,24 @@ function wrappedCard(i: CardInput): CardSpec | null {
     eyebrow: `Bagcheck · ${i.year}`,
     kicker: "Your",
     headline: String(i.year),
-    lede: `${i.scoredDays} scored sessions, and what you did on every one.`,
+    lede: `${i.scoredDays} scored sessions across ${NUM.format(i.transactionCount)} transactions.`,
+    /*
+     * The three names you actually closed the most of, ranked — the same move
+     * Wrapped makes when it leads with your artists rather than your minutes.
+     * Falls back to the year's own counts when nothing has been closed.
+     */
     body: {
       kind: "beats",
-      beats: [
-        { label: "Transactions read", detail: `${NUM.format(i.transactionCount)}, none of them typed` },
-        { label: "Round trips closed", detail: String(i.trips.length) },
-        { label: "Reading as", detail: i.archetype.name },
-      ],
+      beats: topSymbols(i.trips, 3).length
+        ? topSymbols(i.trips, 3).map((s, n) => ({
+            label: `#${n + 1} ${s.symbol}`,
+            detail: `${s.count} round ${s.count === 1 ? "trip" : "trips"}, ${days(s.holdDays)} days held`,
+          }))
+        : [
+            { label: "Transactions read", detail: `${NUM.format(i.transactionCount)}, none of them typed` },
+            { label: "Round trips closed", detail: String(i.trips.length) },
+            { label: "Reading as", detail: i.archetype.name },
+          ],
     },
     art: {
       magnitude: unit(i.scoredDays / 260),
@@ -553,8 +563,32 @@ function wrappedCard(i: CardInput): CardSpec | null {
     hue: "violet",
     // Scarce by construction — a year of history is what earns it.
     rarity: "rare",
-    symbol: null,
+    symbol: topSymbols(i.trips, 1)[0]?.symbol ?? null,
   };
+}
+
+/**
+ * The names you closed the most round trips in, ranked.
+ *
+ * By count and then by total time held, not by P&L — this is "what you spent
+ * the year on", which is the question Wrapped answers, and ranking it by
+ * profit would turn a retrospective into a leaderboard.
+ */
+export function topSymbols(
+  trips: RoundTrip[],
+  limit: number,
+): Array<{ symbol: string; count: number; holdDays: number }> {
+  const by = new Map<string, { symbol: string; count: number; holdDays: number }>();
+  for (const trip of trips) {
+    if (!trip.symbol) continue;
+    const row = by.get(trip.symbol) ?? { symbol: trip.symbol, count: 0, holdDays: 0 };
+    row.count += 1;
+    row.holdDays += trip.holdDays;
+    by.set(trip.symbol, row);
+  }
+  return [...by.values()]
+    .sort((a, b) => b.count - a.count || b.holdDays - a.holdDays)
+    .slice(0, limit);
 }
 
 /** Evenly spaced points from a longer series, keeping both ends. */

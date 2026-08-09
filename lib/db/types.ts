@@ -1,4 +1,3 @@
-import type { Binary } from "mongodb";
 import type { AccountUniversalActivity, Position } from "snaptrade-typescript-sdk";
 import type { Contributor, RoundTrip, ScoreComponents, StyleBaseline } from "@/lib/score";
 import type { SyncPhase, SyncStatus } from "@/lib/snaptrade/progress";
@@ -106,14 +105,11 @@ export interface CardDoc {
   tail: string;
   tone: "moss" | "signal";
   rarity: "rare" | null;
-  /** The instrument the card is about, when it is about one. */
-  symbol: string | null;
   /**
-   * Generated backdrop for Wrapped cards, stored as PNG bytes so the card
-   * looks identical on every open. Null on every other kind.
+   * The instrument the card is about, when it is about one — the company
+   * whose mark and ticker the card wears.
    */
-  art: Binary | null;
-  artModel: string | null;
+  symbol: string | null;
   mintedAt: Date;
   url: string | null;
 }
@@ -159,23 +155,6 @@ export interface IconDoc {
   /** The CC-BY credit line, rendered on /legal/icons. */
   credit: string;
   nounId: string | null;
-}
-
-/**
- * Generated card art, keyed by its *brief* rather than by user or by slug.
- *
- * `briefKey` bands the four measured quantities that shape a picture, so two
- * people whose cards genuinely look alike share one image and one bill, and a
- * card whose numbers moved into a new band draws a new one. No TTL: the same
- * brief must always produce the same picture, or a re-mint would silently
- * change a card someone already posted.
- */
-export interface CardArtDoc {
-  key: string;
-  png: Binary;
-  model: string;
-  prompt: string;
-  drawnAt: Date;
 }
 
 /**

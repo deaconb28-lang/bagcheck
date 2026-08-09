@@ -114,9 +114,19 @@
   text-transform: uppercase;
 }
 
+/* The company's mark rides in the eyebrow when the card is about one. */
 .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 2.4cqw;
   font-size: 3.1cqw;
   color: var(--card-lit);
+}
+
+.eyebrow img {
+  width: 5.6cqw;
+  height: 5.6cqw;
+  border-radius: 1.4cqw;
 }
 
 .tags {

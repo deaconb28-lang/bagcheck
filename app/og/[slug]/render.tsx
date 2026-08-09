@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { FORMAT_SIZE, type ShareFormat } from "@/lib/cards/share";
 import { fetchLogoPng, monogram, normalizeSymbol, TILE, toneIndex } from "@/lib/logos";
@@ -44,8 +46,8 @@ async function displayFont(): Promise<ArrayBuffer | null> {
 
 export interface CardLike {
   slug: string;
-  /** Wrapped backdrop bytes, when the card has generated art. */
-  art?: Buffer | null;
+  /** The card kind — which of the twelve fixed backdrops it wears. */
+  type: string;
   label: string;
   value: string;
   tail: string;
@@ -97,6 +99,27 @@ async function logoTile(symbol: string | null | undefined, size: number) {
   );
 }
 
+/**
+ * The fixed backdrop for a card kind, as a data URI.
+ *
+ * Cached in the module: twelve files, read once per process rather than once
+ * per unfurl. A missing file is not an error — the card renders on the flat
+ * ink field, which is a complete card.
+ */
+const artCache = new Map<string, string | null>();
+async function fixedArt(kind: string): Promise<string | null> {
+  if (artCache.has(kind)) return artCache.get(kind) ?? null;
+  let uri: string | null = null;
+  try {
+    const bytes = await readFile(join(process.cwd(), "public", "cards", `${kind}.jpg`));
+    uri = `data:image/jpeg;base64,${bytes.toString("base64")}`;
+  } catch {
+    uri = null;
+  }
+  artCache.set(kind, uri);
+  return uri;
+}
+
 /** The card image. Shared by the route and by visual checks. */
 /**
  * Three frames from one composition.
@@ -126,9 +149,14 @@ export async function renderCard(
   const accent = card.tone === "signal" ? SIGNAL : MOSS;
   const font = await displayFont();
   const tile = await logoTile(card.symbol, Math.round(56 * (w / CONTENT[format])));
-  const art = card.art
-    ? `data:image/png;base64,${Buffer.from(card.art).toString("base64")}`
-    : null;
+  /*
+   * The kind's fixed artwork, read off disk and inlined — Satori has no
+   * network. Twelve images authored once and committed, one per kind: a
+   * Wrapped template is designed once and worn by millions, and what makes a
+   * card yours is the figure and the company set over it, not a private
+   * painting nobody else will ever see.
+   */
+  const art = await fixedArt(card.type);
   // A long archetype name cannot be set at numeral size.
   const big = card.value.length <= 4;
   return new ImageResponse(
