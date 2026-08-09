@@ -4,115 +4,120 @@
  *
  * ── The system ────────────────────────────────────────────────────────────
  *
- * One dark luminous field. The share cards found the product's real language
- * — deep warm black, four hue families with light behind them, poster-scale
- * figures — and the app now speaks it too, because the strongest thing an
- * app with a share economy can do is look like its own cards. This is the
- * Whoop move: the product *is* the artefact people post.
+ * Black and white. One pure-black field, one white ink, and a neutral grey
+ * ramp between them — the instrument reduced to its readout. Hierarchy is
+ * carried by lightness, weight and size, never by hue: the score is the
+ * whitest thing on screen, comparisons sit a step down, losses recede into
+ * grey. High contrast and negative space do the work colour used to do.
  *
  * There is no light mode. A fitness tracker for money is a night instrument;
  * a second mode doubles the polish cost and halves the identity.
  *
- * Four hue families, each with a fixed meaning. Colour is never variety:
- *   moss   #57D69D  discipline — the score, the ring, sessions inside rules
- *   azure  #62B0F5  exposure, comparison, percentile        (token: --signal)
- *   ember  #FF9B45  streaks, PRs, scarcity — anything with heat behind it
- *   violet #B48BFF  Bagcheck's own voice — the insight, Wrapped, identity
- *                                                           (token: --accent)
- * Loss is its own warm red, on negative P&L and literally nowhere else.
+ * The old hue families survive as *lightness grades* with their meanings
+ * intact. Colour was never variety; now it is not even colour:
+ *   moss    #FFFFFF  discipline — the score, the ring, sessions inside rules
+ *   signal  #ABABAB  exposure, comparison, percentile — a step quieter
+ *   ember   #D9D9D9  streaks, PRs, scarcity — lit, but not the lead
+ *   accent  #FFFFFF  Bagcheck's own voice — distinguished by the strongest
+ *                    edge and fill in the system, never by a hue
+ * Loss is recessed grey, on negative P&L and literally nowhere else — the
+ * sign and the word carry the meaning, the dimness carries the mood.
  *
- * Glow is legal here and rationed: it marks *live data* — the score ring,
- * the sync dot, an active streak — never chrome, never a heading. A panel
- * carries a 1px inside edge at low alpha; on a dark field edges are what
- * borders were not on paper.
+ * Glow is legal here and rationed: white light marks *live data* — the score
+ * ring, the sync dot, an active streak — never chrome, never a heading. A
+ * panel carries a 1px inside edge at low alpha; on a black field edges are
+ * what borders were not on paper.
  */
 
 :root {
   /* ── Field ── */
-  --bg: #0b0a09;
-  --s1: #15130f;
-  --sunken: #0e0d0a;
-  --inset: #1d1a15;
-  --tile: #1a1712;
-  --track: rgba(244, 240, 232, 0.09);
-  --control: rgba(244, 240, 232, 0.07);
+  --bg: #000000;
+  --s1: #0d0d0d;
+  --sunken: #050505;
+  --inset: #171717;
+  --tile: #121212;
+  --track: rgba(255, 255, 255, 0.09);
+  --control: rgba(255, 255, 255, 0.07);
 
   /* ── Ink ── */
-  --ink: #f4f0e8;
-  --ink2: #d9d3c8;
-  --ink3: #b9b2a6;
-  --meta: #97907f;
+  --ink: #fafafa;
+  --ink2: #d6d6d6;
+  --ink3: #b0b0b0;
+  --meta: #8c8c8c;
 
   /* ── Edges. Panels get --edge; rows inside a list get --line-light. ── */
-  --edge: rgba(244, 240, 232, 0.07);
-  --line: rgba(244, 240, 232, 0.1);
-  --line-light: rgba(244, 240, 232, 0.06);
-  --line2: rgba(244, 240, 232, 0.16);
-  --line2-hover: rgba(244, 240, 232, 0.26);
+  --edge: rgba(255, 255, 255, 0.08);
+  --line: rgba(255, 255, 255, 0.1);
+  --line-light: rgba(255, 255, 255, 0.06);
+  --line2: rgba(255, 255, 255, 0.16);
+  --line2-hover: rgba(255, 255, 255, 0.26);
 
   /*
-   * The old "ink field" — now simply the brightest fill. The primary action
-   * inside the app is warm white on dark: quiet, expensive, unmissable.
+   * The brightest fill. The primary action is pure white on black — the
+   * inversion is the monochrome system's strongest gesture, so it is spent
+   * on exactly one thing per screen.
    */
-  --ink-field: #f4f0e8;
+  --ink-field: #ffffff;
   --ink-field-hover: #ffffff;
-  --on-ink: #0b0a09;
-  --on-ink-muted: #b4ada3;
-  --on-ink-faint: #9c948a;
-  --on-ink-body: #e6e1da;
-  --ink-fill: rgba(244, 240, 232, 0.06);
-  --ink-fill-active: rgba(244, 240, 232, 0.1);
-  --ink-line: rgba(244, 240, 232, 0.09);
+  --on-ink: #000000;
+  --on-ink-muted: #a6a6a6;
+  --on-ink-faint: #8f8f8f;
+  --on-ink-body: #e8e8e8;
+  --ink-fill: rgba(255, 255, 255, 0.06);
+  --ink-fill-active: rgba(255, 255, 255, 0.1);
+  --ink-line: rgba(255, 255, 255, 0.09);
 
-  /* ── Moss — discipline ── */
-  --moss: #57d69d;
-  --moss-hover: #74e0af;
-  --moss-deep: #2e8c63;
-  --moss-tint: rgba(87, 214, 157, 0.12);
-  --moss-line: rgba(87, 214, 157, 0.34);
-  --moss-dim: rgba(87, 214, 157, 0.38);
-  --on-moss: #0b0a09;
+  /* ── Moss — discipline. The full white. ── */
+  --moss: #ffffff;
+  --moss-hover: #ffffff;
+  --moss-deep: #bfbfbf;
+  --moss-tint: rgba(255, 255, 255, 0.1);
+  --moss-line: rgba(255, 255, 255, 0.32);
+  --moss-dim: rgba(255, 255, 255, 0.38);
+  --on-moss: #000000;
 
-  /* ── Azure — exposure, comparison, percentile ── */
-  --signal: #62b0f5;
-  --signal-tint: rgba(98, 176, 245, 0.12);
-  --signal-line: rgba(98, 176, 245, 0.34);
+  /* ── Signal — exposure, comparison, percentile. A step down. ── */
+  --signal: #ababab;
+  --signal-tint: rgba(255, 255, 255, 0.07);
+  --signal-line: rgba(255, 255, 255, 0.22);
 
-  /* ── Ember — streaks, PRs, scarcity ── */
-  --ember: #ff9b45;
-  --ember-tint: rgba(255, 155, 69, 0.12);
-  --ember-line: rgba(255, 155, 69, 0.36);
+  /* ── Ember — streaks, PRs, scarcity. Lit, not lead. ── */
+  --ember: #d9d9d9;
+  --ember-tint: rgba(255, 255, 255, 0.09);
+  --ember-line: rgba(255, 255, 255, 0.28);
 
-  /* ── Loss — negative P&L, nothing else ── */
-  --loss: #ef8666;
-  --loss-tint: rgba(239, 134, 102, 0.12);
-  --loss-line: rgba(239, 134, 102, 0.34);
+  /* ── Loss — negative P&L, nothing else. Recessed, never highlighted. ── */
+  --loss: #7d7d7d;
+  --loss-tint: rgba(255, 255, 255, 0.05);
+  --loss-line: rgba(255, 255, 255, 0.18);
 
   /*
-   * ── Violet — the accent, still reserved ──
-   * One colour means "Bagcheck did this on its own": the nightly score
-   * arriving, the written daily insight, Wrapped. Never a hover fill, never
-   * decoration. Accent text on the dark field is the lit value itself.
+   * ── The accent, still reserved ──
+   * One treatment means "Bagcheck did this on its own": the nightly score
+   * arriving, the written daily insight, Wrapped. In monochrome the voice is
+   * not a hue — it is the strongest edge and densest tint in the system.
+   * Never a hover fill, never decoration.
    */
-  --accent: #b48bff;
-  --accent-deep: #c9a9ff;
-  --accent-tint: rgba(180, 139, 255, 0.12);
-  --accent-line: rgba(180, 139, 255, 0.36);
-  --accent-wash: rgba(180, 139, 255, 0.06);
+  --accent: #ffffff;
+  --accent-deep: #ffffff;
+  --accent-tint: rgba(255, 255, 255, 0.12);
+  --accent-line: rgba(255, 255, 255, 0.42);
+  --accent-wash: rgba(255, 255, 255, 0.05);
 
   /*
    * ── Glow — rationed to live data ──
-   * A glow is a box-shadow with negative spread so it hugs its source.
+   * A glow is a box-shadow with negative spread so it hugs its source. All
+   * light is white now; what varies is how much of it a meaning earns.
    * The halo variants are background washes for a hero panel's key metric.
    */
-  --glow-moss: 0 0 34px -4px rgba(87, 214, 157, 0.45);
-  --glow-ember: 0 0 34px -4px rgba(255, 155, 69, 0.45);
-  --glow-azure: 0 0 34px -4px rgba(98, 176, 245, 0.45);
-  --glow-accent: 0 0 34px -4px rgba(180, 139, 255, 0.45);
-  --halo-moss: radial-gradient(58% 52% at 50% 30%, rgba(87, 214, 157, 0.13), transparent 72%);
-  --halo-ember: radial-gradient(58% 52% at 50% 30%, rgba(255, 155, 69, 0.13), transparent 72%);
-  --halo-azure: radial-gradient(58% 52% at 50% 30%, rgba(98, 176, 245, 0.13), transparent 72%);
-  --halo-accent: radial-gradient(58% 52% at 50% 30%, rgba(180, 139, 255, 0.13), transparent 72%);
+  --glow-moss: 0 0 34px -4px rgba(255, 255, 255, 0.32);
+  --glow-ember: 0 0 34px -4px rgba(255, 255, 255, 0.2);
+  --glow-azure: 0 0 34px -4px rgba(255, 255, 255, 0.2);
+  --glow-accent: 0 0 34px -4px rgba(255, 255, 255, 0.32);
+  --halo-moss: radial-gradient(58% 52% at 50% 30%, rgba(255, 255, 255, 0.08), transparent 72%);
+  --halo-ember: radial-gradient(58% 52% at 50% 30%, rgba(255, 255, 255, 0.06), transparent 72%);
+  --halo-azure: radial-gradient(58% 52% at 50% 30%, rgba(255, 255, 255, 0.06), transparent 72%);
+  --halo-accent: radial-gradient(58% 52% at 50% 30%, rgba(255, 255, 255, 0.08), transparent 72%);
 
   /* Elevation: dark fields lift with darkness, not with grey. */
   --lift: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -171,14 +176,14 @@
   --card-lit: var(--card-moss-lit);
 
   /*
-   * Heatmap ramp — five steps from a filled empty to full moss, so a grid
+   * Heatmap ramp — five steps from a filled empty to full white, so a grid
    * reads as one measurement rather than five colours.
    */
-  --h0: rgba(244, 240, 232, 0.06);
-  --h1: #21402f;
-  --h2: #2e6347;
-  --h3: #3fa873;
-  --h4: #57d69d;
+  --h0: rgba(255, 255, 255, 0.06);
+  --h1: #2b2b2b;
+  --h2: #575757;
+  --h3: #a3a3a3;
+  --h4: #ffffff;
 
   /*
    * ── Marketing field ──

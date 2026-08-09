@@ -13,18 +13,18 @@ Reference docs (read before any UI work — the design system is authoritative o
 ## Colour
 
 - `styles/tokens.css` is the single source of colour. A palette hex anywhere else in `app/`, `components/`, `lib/`, or `styles/` is a bug. Always `var(--*)`; when a value needs alpha, `color-mix(in srgb, var(--token) N%, transparent)`. (`docs/` is imported reference material and exempt.)
-- **One dark luminous field. There is no light mode.** The share cards found the product's language — deep warm black, hue families with light behind them — and the app speaks it, because the strongest thing an app with a share economy can do is look like its own cards. The `data-mode` attribute survives in the DOM but selects nothing.
-- Canvas `--bg`, panel `--s1`, rail `--sunken`, chip fill `--inset`, tile `--tile`. **A panel is a fill plus a 1px `--edge`** — on a dark field the edge is what whitespace was on paper. Rows inside a list divide with `--line-light`; controls outline with `--line2`.
-- Four hue families with fixed meanings, shared with the share cards. Colour is never variety:
-  - `--moss` #57D69D — discipline. The score and its ring, sessions inside your rules, the streak count, positive P&L.
-  - `--signal` (azure #62B0F5) — exposure, comparison, percentile. Also the Plus tier's mark.
-  - `--ember` #FF9B45 — streaks, PRs, scarcity, heat. Also the Trader tier's mark.
-  - `--accent` (violet #B48BFF) — **reserved: Bagcheck's own voice.** The written daily insight, the nightly score arriving, Wrapped identity, Investor Age. Never a hover fill, never decoration. Accent text on the field is `--accent-deep` (the lighter value — dark inverts the old relationship).
-  - `--loss` — negative P&L and literally nothing else.
-- **Glow is rationed to live data.** `--glow-*` box-shadows and `--halo-*` washes mark a key metric that is measured and current — the score ring, the sync dot, an active streak. One halo per surface (`.hero` takes `data-halo`). Never chrome, never a heading, never a hover state.
-- The brightest object in a view is the primary action: warm-white `--ink-field` fill. Moss stays data-only in-product; a moss-filled button exists only on marketing surfaces.
-- Status is never encoded by colour alone: every state carries a word.
-- Share cards keep the `--share-*` and `--card-*` families — they are the parents of the app palette, unchanged.
+- **Black and white. One pure-black field, white ink, a neutral grey ramp. There is no light mode.** The app is the instrument reduced to its readout: hierarchy is carried by lightness, weight and size, never by hue. High contrast and negative space do the work colour used to do (the ui-ux-pro-max reading: Exaggerated Minimalism on an OLED field). The `data-mode` attribute survives in the DOM but selects nothing.
+- Canvas `--bg` (#000), panel `--s1`, rail `--sunken`, chip fill `--inset`, tile `--tile`. **A panel is a fill plus a 1px `--edge`** — on a black field the edge is what whitespace was on paper. Rows inside a list divide with `--line-light`; controls outline with `--line2`. Depth is edges and inversion, never shadow, never bevel.
+- The old hue families survive as **lightness grades with their meanings intact** — the token names have not changed, so components keep reading the same vars:
+  - `--moss` (#FFFFFF, the full white) — discipline. The score and its ring, sessions inside your rules, the streak count, positive P&L. The score is the whitest thing on any screen.
+  - `--signal` (#ABABAB) — exposure, comparison, percentile, a deliberate step down. Also the Plus tier's mark.
+  - `--ember` (#D9D9D9) — streaks, PRs, scarcity. Lit, but never the lead.
+  - `--accent` (#FFFFFF with the strongest `--accent-line` edge and densest tint) — **reserved: Bagcheck's own voice.** The written daily insight, the nightly score arriving, Wrapped identity, Investor Age. In monochrome the voice is a treatment, not a hue: the hardest edge in the system. Never a hover fill, never decoration.
+  - `--loss` (#7D7D7D, recessed) — negative P&L and literally nothing else. The minus sign and the word carry the meaning; the dimness carries the mood. Losses recede, gains glow.
+- **Glow is rationed to live data.** All light is white; what varies is how much a meaning earns. `--glow-*` box-shadows and `--halo-*` washes mark a key metric that is measured and current — the score ring, the sync dot, an active streak. One halo per surface (`.hero` takes `data-halo`). Never chrome, never a heading, never a hover state.
+- The brightest object in a view is the primary action: pure-white `--ink-field` fill on black — the inversion is the strongest gesture in a monochrome system, so it is spent on exactly one thing per screen.
+- Status is never encoded by colour alone: every state carries a word. In monochrome this rule stops being a safeguard and becomes the system.
+- Share cards keep the `--share-*` and `--card-*` families and their hue art — a card is an artefact with its own palette, and colourful cards inside a monochrome app is the editorial contrast, not a leak. The marketing field keeps its aurora for the same reason.
 - Tone props follow the tokens: `moss`, `signal`, `ember`, `clay`, `accent`, `neutral`, `ink`. Contributor tones are persisted in Mongo, so read them through `contributorTone()` — pre-existing documents still carry the old `gold`/`violet` spellings.
 
 ## Type — one voice for the instrument, voices for the cards

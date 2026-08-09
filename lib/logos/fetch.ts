@@ -70,12 +70,12 @@ export async function fetchLogoPng(
  * Logo.module.css: same six entries, same order.
  */
 export const TILE = [
-  { bg: "#E9F2EC", fg: "#1E6B4A" },
-  { bg: "#EDF3F7", fg: "#3E6B8A" },
-  { bg: "#F3EFE9", fg: "#4A453E" },
-  { bg: "#F7ECE6", fg: "#9A4A2C" },
-  { bg: "#E3F6EE", fg: "#0A7A59" },
-  { bg: "#EFE9E1", fg: "#6E6760" },
+  { bg: "#1A1A1A", fg: "#FAFAFA" },
+  { bg: "#141414", fg: "#D6D6D6" },
+  { bg: "#1F1F1F", fg: "#FFFFFF" },
+  { bg: "#171717", fg: "#C2C2C2" },
+  { bg: "#101010", fg: "#E8E8E8" },
+  { bg: "#1C1C1C", fg: "#B0B0B0" },
 ];
 
 /**

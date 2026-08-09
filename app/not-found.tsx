@@ -7,11 +7,11 @@ export default function NotFound() {
       <Eyebrow>Bagcheck</Eyebrow>
       <h1 className={`disp ${styles.title}`}>That page does not exist</h1>
       <p className={styles.body}>
-        The link may be out of date. Today, Portfolio, Reports, and Profile are
-        the four screens.
+        The link may be out of date. Everything starts from Home — the score,
+        your DNA, Wrapped and the ledger are all one tap from there.
       </p>
       <div className={styles.actions}>
-        <Button href="/today">Go to Today</Button>
+        <Button href="/home">Go to Home</Button>
         <Button href="/" ghost>
           Landing page
         </Button>
