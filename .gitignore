@@ -11,6 +11,7 @@ out/
 npm-debug.log*
 .vercel
 .scratch/
+__pycache__/
 
 # The avatar contact sheet is a review artefact, not a product asset.
 public/archetypes/_sheet.png
