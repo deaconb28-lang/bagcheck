@@ -48,6 +48,7 @@ export function WrappedFan() {
             provenance="Read from your brokerage. Read-only, permanently."
             backdrop={backdrop(card.kind)}
             hue={card.hue}
+            layout={card.layout}
             rarity={card.rarity}
             example
           />

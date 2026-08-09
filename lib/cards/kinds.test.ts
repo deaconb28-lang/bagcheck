@@ -141,3 +141,24 @@ test("a chart card ships as many labels as bars, or none at all", () => {
     assert.equal(card.body.labels.length, card.body.strip.length, card.kind);
   }
 });
+
+test("the twelve are spread across all six templates, never one series", () => {
+  const layouts = buildCards(full()).map((c) => c.layout);
+  assert.equal(new Set(layouts).size, 6);
+  // No template may carry more than a quarter of the set — twelve cards in
+  // one layout is a series, and a series is what people scroll past.
+  for (const layout of new Set(layouts)) {
+    assert.ok(layouts.filter((l) => l === layout).length <= 3, layout);
+  }
+});
+
+test("a layout suits the body it is given", () => {
+  for (const card of buildCards(full())) {
+    // The figure fills these two, so they cannot be handed a spine or a chart.
+    if (card.layout === "numeral" || card.layout === "stamp") {
+      assert.equal(card.body.kind, "figure", card.kind);
+    }
+    // chartfirst leads with the series; it has to have one.
+    if (card.layout === "chartfirst") assert.equal(card.body.kind, "chart", card.kind);
+  }
+});

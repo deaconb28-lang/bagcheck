@@ -182,6 +182,7 @@ export function WrappedView(props: WrappedViewProps) {
                   slug={null}
                   provenance="Read from your brokerage. Read-only, permanently."
                   hue={cards[0].hue}
+            layout={cards[0].layout}
                   rarity={cards[0].rarity}
                 />
                 <ShareButton type={cards[0].kind} label="this card" size={44} />

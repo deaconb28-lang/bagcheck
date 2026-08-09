@@ -2,6 +2,13 @@ import type { Archetype } from "@/lib/archetypes";
 import styles from "./WrappedCard.module.css";
 
 export type CardHue = "moss" | "ember" | "azure" | "violet";
+export type CardLayout =
+  | "poster"
+  | "numeral"
+  | "stamp"
+  | "editorial"
+  | "ledger"
+  | "chartfirst";
 
 export interface CardBeat {
   /** Mono label — what the row is. */
@@ -46,6 +53,12 @@ export type WrappedCardProps = {
   /** Generated backdrop. The scene only — every word here is set by us. */
   backdrop?: string | null;
   hue?: CardHue;
+  /**
+   * Which of the six templates this card is set in. Assigned per kind in
+   * `lib/cards/kinds.ts`, never chosen here and never random — twelve cards
+   * in one template is a series, and a series is what people scroll past.
+   */
+  layout?: CardLayout;
   /** Earned by behaviour, never bought. */
   rarity?: "rare" | null;
   archetype?: Archetype;
@@ -84,6 +97,7 @@ export function WrappedCard({
   provenance,
   backdrop = null,
   hue = "moss",
+  layout = "poster",
   rarity = null,
   example = false,
 }: WrappedCardProps) {
@@ -96,8 +110,8 @@ export function WrappedCard({
   const peak = Math.max(1, ...series.map(Math.abs));
 
   return (
-    <article className={styles.card} data-hue={hue}>
-      {backdrop ? (
+    <article className={styles.card} data-hue={hue} data-layout={layout}>
+      {backdrop && layout !== "ledger" ? (
         // eslint-disable-next-line @next/next/no-img-element -- a stored PNG
         // at a fixed URL, sized by the card; next/image buys nothing here.
         <img src={backdrop} alt="" className={styles.scene} />

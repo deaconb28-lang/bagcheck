@@ -350,3 +350,309 @@
   flex: none;
   white-space: nowrap;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+ * The six templates.
+ *
+ * Everything above is the `poster` default; each block below is the delta
+ * from it. They vary in composition and in voice — four type treatments
+ * drawn from the four faces the product already loads, so the set reads as
+ * one family rather than as six unrelated cards.
+ *
+ * DOM order is fixed (top, title, statement, foot) and the variants reorder
+ * with flex `order`, so the reading order a screen reader gets is the same
+ * on all six.
+ * ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── numeral — the figure IS the card ─────────────────────────────────── */
+.card[data-layout="numeral"] .title {
+  order: 3;
+  margin-top: 4cqw;
+}
+
+.card[data-layout="numeral"] .statement {
+  order: 2;
+  margin-top: 12cqw;
+}
+
+/* Nothing else on the card competes with it. */
+.card[data-layout="numeral"] .value {
+  font-size: 38cqw;
+  line-height: 0.78;
+  letter-spacing: -0.03em;
+}
+
+.card[data-layout="numeral"] .unit {
+  font-size: 8cqw;
+}
+
+.card[data-layout="numeral"] .kicker {
+  font-size: 4.6cqw;
+}
+
+.card[data-layout="numeral"] .headline {
+  font-size: 11cqw;
+  color: var(--share-ink);
+}
+
+.card[data-layout="numeral"] .lede {
+  font-size: 3.4cqw;
+  margin-top: 2cqw;
+}
+
+.card[data-layout="numeral"] .foot {
+  order: 4;
+}
+
+/* ── stamp — a certificate, not a poster. Serif, centred, no bleed. ────── */
+.card[data-layout="stamp"] .inner {
+  align-items: center;
+  text-align: center;
+  padding: 9cqw 8cqw 7cqw;
+}
+
+.card[data-layout="stamp"] .scene {
+  /* The scene recedes to a texture: this card's subject is the word. */
+  opacity: 0.4;
+}
+
+.card[data-layout="stamp"] .top {
+  width: 100%;
+}
+
+.card[data-layout="stamp"] .title {
+  align-items: center;
+}
+
+.card[data-layout="stamp"] .kicker,
+.card[data-layout="stamp"] .headline {
+  font-family: var(--font-display), serif;
+  font-weight: 800;
+  text-transform: none;
+  line-height: 0.95;
+}
+
+.card[data-layout="stamp"] .kicker {
+  font-size: 6cqw;
+  letter-spacing: -0.01em;
+}
+
+.card[data-layout="stamp"] .headline {
+  font-size: 15cqw;
+  letter-spacing: -0.022em;
+}
+
+.card[data-layout="stamp"] .lede {
+  max-width: 26ch;
+}
+
+.card[data-layout="stamp"] .statement {
+  align-items: center;
+}
+
+.card[data-layout="stamp"] .value {
+  font-family: var(--font-display), serif;
+  font-weight: 800;
+  font-size: 30cqw;
+  letter-spacing: -0.022em;
+}
+
+.card[data-layout="stamp"] .foot {
+  width: 100%;
+  align-items: center;
+  text-align: center;
+}
+
+/* ── editorial — scene on top, type in a band beneath it ──────────────── */
+.card[data-layout="editorial"] .scene {
+  /* The picture gets the top half and the type sits under it, not on it. */
+  height: 56%;
+  object-position: center 45%;
+}
+
+.card[data-layout="editorial"] .wash {
+  background:
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--card-deep) 55%, transparent) 0%,
+      color-mix(in srgb, var(--card-deep) 10%, transparent) 30%,
+      var(--card-deep) 54%,
+      var(--card-deep) 100%
+    );
+}
+
+.card[data-layout="editorial"] .rule {
+  /* Clears the picture above it. Any taller and the type band overflows. */
+  margin-top: 34cqw;
+  margin-bottom: 3cqw;
+}
+
+.card[data-layout="editorial"] .kicker,
+.card[data-layout="editorial"] .headline {
+  font-family: var(--font-display), serif;
+  font-weight: 700;
+  text-transform: none;
+  line-height: 0.98;
+}
+
+.card[data-layout="editorial"] .kicker {
+  font-size: 5cqw;
+  letter-spacing: 0;
+}
+
+.card[data-layout="editorial"] .headline {
+  font-size: 12.5cqw;
+  letter-spacing: -0.02em;
+}
+
+.card[data-layout="editorial"] .value {
+  font-family: var(--font-display), serif;
+  font-weight: 800;
+  font-size: 14cqw;
+  letter-spacing: -0.02em;
+}
+
+.card[data-layout="editorial"] .statement {
+  padding-top: 3cqw;
+}
+
+/* ── ledger — the instrument. No scene, flat field, mono throughout. ───── */
+/*
+ * Far darker than the hue's mid tone. This card has no picture to sit under,
+ * so the field is read directly rather than through a scene — at the mid tone
+ * it came out as a flat wall of saturated colour with type floating on it.
+ */
+.card[data-layout="ledger"] .wash {
+  background:
+    linear-gradient(
+      168deg,
+      var(--card-deep) 0%,
+      color-mix(in srgb, var(--card-mid) 34%, var(--card-deep)) 62%,
+      var(--card-deep) 100%
+    );
+}
+
+.card[data-layout="ledger"] .rule {
+  width: 100%;
+  height: 1px;
+  border-radius: 0;
+  background: color-mix(in srgb, var(--card-lit) 45%, transparent);
+}
+
+.card[data-layout="ledger"] .kicker,
+.card[data-layout="ledger"] .headline {
+  font-family: var(--font-mono), monospace;
+  font-weight: 700;
+  line-height: 1.02;
+}
+
+.card[data-layout="ledger"] .kicker {
+  font-size: 3.4cqw;
+  letter-spacing: 0.2em;
+}
+
+.card[data-layout="ledger"] .headline {
+  font-size: 12cqw;
+  letter-spacing: -0.03em;
+}
+
+/* The rows sit under the lede rather than at the foot: a ledger is a block
+   of figures, not a headline with a number parked below it. */
+.card[data-layout="ledger"] .statement {
+  margin-top: 7cqw;
+  margin-bottom: auto;
+}
+
+.card[data-layout="ledger"] .value {
+  font-family: var(--font-mono), monospace;
+  font-weight: 700;
+  font-size: 13cqw;
+  letter-spacing: -0.04em;
+}
+
+/* Each beat becomes a ruled row — a table, which is what a ledger is. */
+.card[data-layout="ledger"] .beats {
+  padding-left: 0;
+  gap: 0;
+}
+
+.card[data-layout="ledger"] .beats::before {
+  display: none;
+}
+
+.card[data-layout="ledger"] .dot {
+  display: none;
+}
+
+.card[data-layout="ledger"] .beat {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4cqw;
+  padding: 3.4cqw 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--share-ink) 14%, transparent);
+}
+
+.card[data-layout="ledger"] .beat:last-child {
+  border-bottom: 0;
+}
+
+.card[data-layout="ledger"] .beatDetail {
+  font-family: var(--font-mono), monospace;
+  font-size: 3.2cqw;
+  text-align: right;
+  letter-spacing: -0.01em;
+}
+
+.card[data-layout="ledger"] .foot {
+  background: none;
+  border-top: 1px solid color-mix(in srgb, var(--share-ink) 14%, transparent);
+  border-radius: 0;
+  padding: 3cqw 0 0;
+}
+
+/* ── chartfirst — the series leads, the reading follows ───────────────── */
+.card[data-layout="chartfirst"] .statement {
+  order: 2;
+  margin-top: 5cqw;
+  margin-bottom: auto;
+}
+
+.card[data-layout="chartfirst"] .title {
+  order: 3;
+  margin-top: 4cqw;
+}
+
+.card[data-layout="chartfirst"] .foot {
+  order: 4;
+}
+
+.card[data-layout="chartfirst"] .chart {
+  height: 34cqw;
+  margin-top: 4cqw;
+}
+
+.card[data-layout="chartfirst"] .kicker,
+.card[data-layout="chartfirst"] .headline {
+  font-family: var(--font-body), sans-serif;
+  font-weight: 700;
+  text-transform: none;
+  line-height: 1;
+}
+
+.card[data-layout="chartfirst"] .kicker {
+  font-size: 4.4cqw;
+  letter-spacing: -0.01em;
+}
+
+.card[data-layout="chartfirst"] .headline {
+  font-size: 11.5cqw;
+  letter-spacing: -0.035em;
+}
+
+.card[data-layout="chartfirst"] .value {
+  font-family: var(--font-body), sans-serif;
+  font-weight: 700;
+  font-size: 12cqw;
+  letter-spacing: -0.03em;
+}

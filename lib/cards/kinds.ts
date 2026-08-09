@@ -38,6 +38,26 @@ export type CardKind =
 
 export type CardHue = "moss" | "ember" | "azure" | "violet";
 
+/**
+ * The six card templates.
+ *
+ * A closed set, and each kind is assigned the one that suits what it is
+ * saying — twelve cards in one template is a series, and a series is what
+ * people scroll past. They differ in composition *and* in voice: `poster` and
+ * `numeral` are set in the condensed poster face, `stamp` and `editorial` in
+ * the display serif, `ledger` in mono, `chartfirst` in the body sans at
+ * weight. Four voices, all from faces the product already loads — no fifth
+ * family, and none of them assigned at random.
+ *
+ * - `poster`     kicker over a huge headline, statement at the foot
+ * - `numeral`    the figure *is* the card; the headline demotes to a caption
+ * - `stamp`      centred, serif, no bleed — a certificate rather than a poster
+ * - `editorial`  scene on top, type in a band beneath it
+ * - `ledger`     no scene at all; flat field, mono, instrument-like
+ * - `chartfirst` the series on top, the reading under it
+ */
+export type CardLayout = "poster" | "numeral" | "stamp" | "editorial" | "ledger" | "chartfirst";
+
 export type CardBody =
   /** One number, and what it measures. The quietest card and usually the best. */
   | { kind: "figure"; label: string; value: string; unit?: string }
@@ -57,6 +77,7 @@ export interface CardSpec {
   lede: string;
   body: CardBody;
   hue: CardHue;
+  layout: CardLayout;
   rarity: "rare" | null;
   /** The instrument the card is about, when it is about one. */
   symbol: string | null;
@@ -177,6 +198,7 @@ function archetypeCard(i: CardInput): CardSpec | null {
           detail: `${Math.round(i.components![key] ?? 0)} out of 100`,
         })),
     },
+    layout: "poster",
     hue: i.archetype.strong.length >= 3 ? "ember" : i.archetype.strong.length ? "moss" : "violet",
     rarity: i.archetype.strong.length === 4 ? "rare" : null,
     symbol: null,
@@ -193,6 +215,7 @@ function healthCard(i: CardInput): CardSpec | null {
     headline: "Score",
     lede: "Scored against your own baseline, not against a model investor.",
     body: { kind: "figure", label: "Health today", value: String(i.score), unit: "/100" },
+    layout: "numeral",
     hue: "moss",
     rarity: i.score >= RARE.health ? "rare" : null,
     symbol: null,
@@ -214,6 +237,7 @@ function longestHoldCard(i: CardInput): CardSpec | null {
     headline: "Hold",
     lede: `${held} days on ${longest.symbol}. Longer than you have held anything else.`,
     body: { kind: "figure", label: "Days held", value: String(held), unit: "days" },
+    layout: "numeral",
     hue: "ember",
     rarity: held >= RARE.hold ? "rare" : null,
     symbol: longest.symbol,
@@ -243,6 +267,7 @@ function holdRatioCard(i: CardInput): CardSpec | null {
         { label: "Losers", detail: `${days(losersMean)} days, across ${losers}` },
       ],
     },
+    layout: "ledger",
     hue: runs ? "moss" : "azure",
     rarity: ratio >= RARE.holdRatio ? "rare" : null,
     symbol: null,
@@ -259,6 +284,7 @@ function noPanicCard(i: CardInput): CardSpec | null {
     headline: "Panic",
     lede: `Not one panic sell across ${i.scoredDays} scored sessions.`,
     body: { kind: "figure", label: "Panic sells", value: "0" },
+    layout: "stamp",
     hue: "moss",
     // Scarce by construction: a quarter without one is unusual.
     rarity: "rare",
@@ -276,6 +302,7 @@ function streakCard(i: CardInput): CardSpec | null {
     headline: "Streak",
     lede: `${i.streakName}, and it has not broken.`,
     body: { kind: "figure", label: "Consecutive sessions", value: String(i.streakDays), unit: "days" },
+    layout: "poster",
     hue: "ember",
     rarity: i.streakDays >= RARE.streak ? "rare" : null,
     symbol: null,
@@ -296,6 +323,7 @@ function bestDecisionCard(i: CardInput): CardSpec | null {
     headline: "Call",
     lede: `${best.symbol}, held ${days(best.holdDays)} days and closed.`,
     body: { kind: "figure", label: "Realised", value: money(best.pnl) },
+    layout: "editorial",
     hue: "moss",
     rarity: null,
     symbol: best.symbol,
@@ -322,6 +350,7 @@ function drawdownHeldCard(i: CardInput): CardSpec | null {
     headline: "Through",
     lede: "The deepest your account fell from its own high, and you stayed in it.",
     body: { kind: "figure", label: "Peak to trough", value: `−${worst.toFixed(0)}`, unit: "%" },
+    layout: "stamp",
     hue: "azure",
     rarity: worst >= RARE.drawdown ? "rare" : null,
     symbol: null,
@@ -346,6 +375,7 @@ function cadenceCard(i: CardInput): CardSpec | null {
       value: mean.toFixed(1),
       strip: weeks,
     },
+    layout: "ledger",
     hue: "azure",
     rarity: null,
     symbol: null,
@@ -377,6 +407,7 @@ function monthlyPnlCard(i: CardInput): CardSpec | null {
       strip: months.map(([, v]) => v),
       labels: months.map(([m]) => MONTHS[Number(m.slice(5, 7)) - 1] ?? ""),
     },
+    layout: "chartfirst",
     hue: total >= 0 ? "moss" : "azure",
     rarity: null,
     symbol: null,
@@ -407,6 +438,7 @@ function equityCard(i: CardInput): CardSpec | null {
        */
       strip: points.map((v) => v - Math.min(...points)),
     },
+    layout: "chartfirst",
     hue: last >= first ? "moss" : "azure",
     rarity: null,
     symbol: null,
@@ -430,6 +462,7 @@ function wrappedCard(i: CardInput): CardSpec | null {
         { label: "Reading as", detail: i.archetype.name },
       ],
     },
+    layout: "editorial",
     hue: "violet",
     // Scarce by construction — a year of history is what earns it.
     rarity: "rare",
