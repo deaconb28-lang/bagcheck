@@ -21,10 +21,13 @@
 }
 
 .mark {
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
-  background: var(--moss);
+  width: 36px;
+  height: 36px;
+  border-radius: 13px;
+  background: var(--moss-tint);
+  border: 1px solid var(--moss-line);
+  box-shadow: var(--glow-moss);
+  color: var(--moss);
   display: grid;
   place-items: center;
   margin-bottom: 14px;
@@ -51,6 +54,7 @@
    whose whole subject is discipline, and the active route is that signal. */
 .item[data-active] {
   background: var(--moss-tint);
+  border: 1px solid var(--moss-line);
   color: var(--moss);
 }
 
@@ -62,12 +66,12 @@
   width: 38px;
   height: 38px;
   border-radius: 999px;
-  background: var(--signal-tint);
-  border: 1px solid var(--signal-line);
-  color: var(--signal);
+  background: var(--inset);
+  border: 1px solid var(--line2);
+  color: var(--ink2);
   display: grid;
   place-items: center;
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-display), system-ui, sans-serif;
   font-weight: 700;
   font-size: 12.5px;
   letter-spacing: -0.008em;

@@ -48,12 +48,20 @@
 .bar[data-dir="up"] {
   border-radius: 8px 4px 2px 2px;
   transform-origin: bottom;
-  background: var(--moss);
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--moss) 34%, transparent),
+    var(--moss)
+  );
 }
 
-/* The only place clay is allowed: the number itself is negative. */
+/* The only place loss is allowed: the number itself is negative. */
 .bar[data-dir="down"] {
   border-radius: 8px 2px 4px 4px;
   transform-origin: top;
-  background: var(--loss);
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--loss) 34%, transparent),
+    var(--loss)
+  );
 }

@@ -2,127 +2,130 @@
  * Bagcheck colour tokens — the single source of colour.
  * A palette hex anywhere else in the repo's source is a bug.
  *
- * The palette is the Kylani v0.8 design system: a paper-and-ink surface
- * language, deliberately flat and matte. No iridescence, no gloss, no glass.
- * Bagcheck's three semantic roles map onto its semantic scale —
- *   --moss   discipline        -> the "converted / won" deep forest
- *   --signal exposure          -> the "engaged" slate blue
- *   --loss   negative P&L      -> a muted terracotta (see the note below)
- * and --accent carries the one thing Kylani reserves an accent for: work the
- * product did on its own.
+ * ── The system ────────────────────────────────────────────────────────────
+ *
+ * One dark luminous field. The share cards found the product's real language
+ * — deep warm black, four hue families with light behind them, poster-scale
+ * figures — and the app now speaks it too, because the strongest thing an
+ * app with a share economy can do is look like its own cards. This is the
+ * Whoop move: the product *is* the artefact people post.
+ *
+ * There is no light mode. A fitness tracker for money is a night instrument;
+ * a second mode doubles the polish cost and halves the identity.
+ *
+ * Four hue families, each with a fixed meaning. Colour is never variety:
+ *   moss   #57D69D  discipline — the score, the ring, sessions inside rules
+ *   azure  #62B0F5  exposure, comparison, percentile        (token: --signal)
+ *   ember  #FF9B45  streaks, PRs, scarcity — anything with heat behind it
+ *   violet #B48BFF  Bagcheck's own voice — the insight, Wrapped, identity
+ *                                                           (token: --accent)
+ * Loss is its own warm red, on negative P&L and literally nowhere else.
+ *
+ * Glow is legal here and rationed: it marks *live data* — the score ring,
+ * the sync dot, an active streak — never chrome, never a heading. A panel
+ * carries a 1px inside edge at low alpha; on a dark field edges are what
+ * borders were not on paper.
  */
 
 :root {
-  /* Neutrals */
-  --bg: #f6f3ee;
-  --s1: #ffffff;
-  --sunken: #fcfaf7;
-  --inset: #f3efe9;
+  /* ── Field ── */
+  --bg: #0b0a09;
+  --s1: #15130f;
+  --sunken: #0e0d0a;
+  --inset: #1d1a15;
+  --tile: #1a1712;
+  --track: rgba(244, 240, 232, 0.09);
+  --control: rgba(244, 240, 232, 0.07);
+
+  /* ── Ink ── */
+  --ink: #f4f0e8;
+  --ink2: #d9d3c8;
+  --ink3: #b9b2a6;
+  --meta: #97907f;
+
+  /* ── Edges. Panels get --edge; rows inside a list get --line-light. ── */
+  --edge: rgba(244, 240, 232, 0.07);
+  --line: rgba(244, 240, 232, 0.1);
+  --line-light: rgba(244, 240, 232, 0.06);
+  --line2: rgba(244, 240, 232, 0.16);
+  --line2-hover: rgba(244, 240, 232, 0.26);
+
   /*
-   * Meter grooves and empty data cells. The handoff's #F3EFE9 is a chip fill
-   * meant for white surfaces; at that value a track vanishes against the
-   * paper canvas, which is where the marketing idioms sit. Darkened so the
-   * quiet half of an idiom stays perceivable on both.
+   * The old "ink field" — now simply the brightest fill. The primary action
+   * inside the app is warm white on dark: quiet, expensive, unmissable.
    */
-  --track: #e7e1d8;
-  --control: #efe9e1;
-
-  --ink: #14120f;
-  --ink2: #4a453e;
-  --ink3: #6e6760;
-  /*
-   * Mono metadata. The handoff specifies #857E74 and lists it at 4.5:1 on
-   * white — it actually measures 4.01:1, and 3.63:1 on the paper canvas, so
-   * it fails AA on both surfaces Bagcheck uses at the 10.5-12px sizes
-   * metadata is set in. This is the nearest warm grey that clears 4.5:1
-   * everywhere: 5.8:1 on white, 5.3:1 on the canvas, 5.1:1 on --inset.
-   */
-  --meta: #6b645b;
-
-  --line: #eae4db;
-  --line-light: #f4f0ea;
-  --line2: #ded7cd;
-  --line2-hover: #cfc7bb;
-
-  /* Ink field — the sidebar, primary buttons, dark specimens */
-  --ink-field: #17140f;
-  --ink-field-hover: #000000;
-  --on-ink: #fdfcfa;
+  --ink-field: #f4f0e8;
+  --ink-field-hover: #ffffff;
+  --on-ink: #0b0a09;
   --on-ink-muted: #b4ada3;
   --on-ink-faint: #9c948a;
   --on-ink-body: #e6e1da;
-  --ink-fill: rgba(253, 252, 250, 0.06);
-  --ink-fill-active: rgba(253, 252, 250, 0.1);
-  --ink-line: rgba(253, 252, 250, 0.09);
+  --ink-fill: rgba(244, 240, 232, 0.06);
+  --ink-fill-active: rgba(244, 240, 232, 0.1);
+  --ink-line: rgba(244, 240, 232, 0.09);
+
+  /* ── Moss — discipline ── */
+  --moss: #57d69d;
+  --moss-hover: #74e0af;
+  --moss-deep: #2e8c63;
+  --moss-tint: rgba(87, 214, 157, 0.12);
+  --moss-line: rgba(87, 214, 157, 0.34);
+  --moss-dim: rgba(87, 214, 157, 0.38);
+  --on-moss: #0b0a09;
+
+  /* ── Azure — exposure, comparison, percentile ── */
+  --signal: #62b0f5;
+  --signal-tint: rgba(98, 176, 245, 0.12);
+  --signal-line: rgba(98, 176, 245, 0.34);
+
+  /* ── Ember — streaks, PRs, scarcity ── */
+  --ember: #ff9b45;
+  --ember-tint: rgba(255, 155, 69, 0.12);
+  --ember-line: rgba(255, 155, 69, 0.36);
+
+  /* ── Loss — negative P&L, nothing else ── */
+  --loss: #ef8666;
+  --loss-tint: rgba(239, 134, 102, 0.12);
+  --loss-line: rgba(239, 134, 102, 0.34);
 
   /*
-   * Discipline. Kylani's "shipped or won" forest — the outcome colour.
-   * Ink owns the primary action inside the app; a moss-filled button appears
-   * only on marketing surfaces, so the colour keeps its meaning in-product.
+   * ── Violet — the accent, still reserved ──
+   * One colour means "Bagcheck did this on its own": the nightly score
+   * arriving, the written daily insight, Wrapped. Never a hover fill, never
+   * decoration. Accent text on the dark field is the lit value itself.
    */
-  --moss: #1e6b4a;
-  --moss-hover: #17553b;
-  --moss-tint: #e9f2ec;
-  --moss-line: #bfd9cb;
-  --moss-dim: rgba(30, 107, 74, 0.34);
-  --on-moss: #fdfcfa;
-
-  /* Exposure, comparison, percentile. Kylani's "engaged" slate. */
-  --signal: #3e6b8a;
-  --signal-tint: #edf3f7;
-  --signal-line: #cfdce6;
+  --accent: #b48bff;
+  --accent-deep: #c9a9ff;
+  --accent-tint: rgba(180, 139, 255, 0.12);
+  --accent-line: rgba(180, 139, 255, 0.36);
+  --accent-wash: rgba(180, 139, 255, 0.06);
 
   /*
-   * Negative P&L, and nothing else. The handoff adds no red to the palette;
-   * Bagcheck has to mark a down day, so this is a muted terracotta drawn from
-   * the same warm family rather than a red — information, not alarm.
+   * ── Glow — rationed to live data ──
+   * A glow is a box-shadow with negative spread so it hugs its source.
+   * The halo variants are background washes for a hero panel's key metric.
    */
-  --loss: #9a4a2c;
-  --loss-tint: #f7ece6;
-  --loss-line: #e5cfc3;
+  --glow-moss: 0 0 34px -4px rgba(87, 214, 157, 0.45);
+  --glow-ember: 0 0 34px -4px rgba(255, 155, 69, 0.45);
+  --glow-azure: 0 0 34px -4px rgba(98, 176, 245, 0.45);
+  --glow-accent: 0 0 34px -4px rgba(180, 139, 255, 0.45);
+  --halo-moss: radial-gradient(58% 52% at 50% 30%, rgba(87, 214, 157, 0.13), transparent 72%);
+  --halo-ember: radial-gradient(58% 52% at 50% 30%, rgba(255, 155, 69, 0.13), transparent 72%);
+  --halo-azure: radial-gradient(58% 52% at 50% 30%, rgba(98, 176, 245, 0.13), transparent 72%);
+  --halo-accent: radial-gradient(58% 52% at 50% 30%, rgba(180, 139, 255, 0.13), transparent 72%);
+
+  /* Elevation: dark fields lift with darkness, not with grey. */
+  --lift: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --lift-hero: 0 1px 2px rgba(0, 0, 0, 0.4), 0 24px 60px -32px rgba(0, 0, 0, 0.8);
+  --scrim: rgba(0, 0, 0, 0.62);
+
+  /* Retired light-era alias kept so no straggler breaks the paint. */
+  --iridescence: none;
 
   /*
-   * The accent, reserved. Kylani's rule: one colour means "the product did
-   * something on its own." Here that is the nightly score and the written
-   * daily insight — never decoration, never a hover fill, never a heading.
-   */
-  --accent: #0fa47a;
-  --accent-deep: #0a7a59;
-  --accent-tint: #e3f6ee;
-  --accent-line: #b7e4d2;
-  --accent-wash: #f2fbf7;
-
-  /*
-   * Marketing only. The handoff's surface language is flat and matte and the
-   * product carries no decorative gradient — this is the one exception, and
-   * it lives where the moss-filled button already does: the landing page.
-   * Alphas stay under .08 so the type on top never loses contrast.
-   */
-  --iridescence:
-    radial-gradient(
-      74% 62% at 14% -8%,
-      rgba(30, 107, 74, 0.08),
-      rgba(30, 107, 74, 0) 66%
-    ),
-    radial-gradient(
-      66% 54% at 88% -6%,
-      rgba(62, 107, 138, 0.07),
-      rgba(62, 107, 138, 0) 62%
-    ),
-    radial-gradient(
-      58% 44% at 50% 34%,
-      rgba(15, 164, 122, 0.05),
-      rgba(15, 164, 122, 0) 70%
-    );
-
-  /* Elevation is for lift only, never style. Dark-neutral and low. */
-  --lift: 0 1px 2px rgba(20, 18, 15, 0.03);
-  --lift-hero: 0 1px 2px rgba(20, 18, 15, 0.03), 0 18px 40px -30px rgba(20, 18, 15, 0.3);
-  --scrim: rgba(20, 18, 15, 0.32);
-
-  /*
-   * Dark specimen surfaces — share cards and Wrapped viewers, which stay dark
-   * in both modes per the brand rule. Declared once; never overridden.
+   * ── Share surfaces ──
+   * Cards and Wrapped viewers. Mode-invariant before; now simply of a piece
+   * with the app around them. Values unchanged — the cards were the source.
    */
   --share-bg: #17140f;
   --share-s1: #211d17;
@@ -135,30 +138,17 @@
   --share-signal: #7ba6c4;
   --share-signal-tint: rgba(123, 166, 196, 0.14);
   --share-loss: #c87a5c;
-  /* The mock's shorthand for the dim ink-field text. Same value. */
   --share-dim: var(--share-ink-dim);
-  /* Ghost controls on the ink field, and the dark ink that sits on a moss
-     fill there. Mode-invariant, like everything else --share-*. */
   --share-fill: rgba(253, 252, 250, 0.08);
   --share-fill-hover: rgba(253, 252, 250, 0.16);
   --on-share-moss: #14120f;
 
   /*
-   * ─── Share-card palettes ──────────────────────────────────────────────
-   *
-   * The one place gradients and saturation are allowed, and the reason is
-   * scope: everything above this block paints the *app*, which is an
-   * instrument and stays flat and matte. A share card is not in the app. It
-   * is minted to leave, and it lands in a feed next to everything else in
-   * that feed — a card that whispers there is a card nobody opens.
-   *
-   * Four hue families, one per card, never two in one card. Each is a deep
-   * field, a lit accent, and the ink that sits on it. They are mode-invariant
-   * like every other --share-* value.
-   *
-   * A card picks its family from what the card is about, not from taste:
-   * moss for discipline, ember for a streak or a scarce card, azure for
-   * exposure and comparison, violet for the annual Wrapped.
+   * ── Share-card palettes ──
+   * Four hue families, one per card, never two in one card. These are the
+   * parents of the app palette above; a card picks its family from what it
+   * is about — moss discipline, ember streaks/scarcity, azure comparison,
+   * violet the annual Wrapped.
    */
   --card-moss-deep: #0a1a13;
   --card-moss-mid: #12694a;
@@ -176,37 +166,30 @@
   --card-violet-mid: #4a2699;
   --card-violet-lit: #b48bff;
 
-  /* Set per card by a data-hue attribute; the card itself only reads these. */
   --card-deep: var(--card-moss-deep);
   --card-mid: var(--card-moss-mid);
   --card-lit: var(--card-moss-lit);
 
   /*
-   * Heatmap ramp — day cells, contribution grids, hour grids. Five steps from
-   * the empty cell to full moss, so a grid reads as one measurement rather
-   * than five colours. --h0 is a filled empty, not --track: a heat grid sits
-   * on a panel, and --track is tuned for a groove on the canvas.
+   * Heatmap ramp — five steps from a filled empty to full moss, so a grid
+   * reads as one measurement rather than five colours.
    */
-  --h0: #ece6dc;
-  --h1: #cfe3d7;
-  --h2: #9ecab4;
-  --h3: #5aa886;
-  --h4: #1e6b4a;
-
-  /* A tile inside a card — one step off --s1, never a bordered box. */
-  --tile: #fbf8f4;
+  --h0: rgba(244, 240, 232, 0.06);
+  --h1: #21402f;
+  --h2: #2e6347;
+  --h3: #3fa873;
+  --h4: #57d69d;
 
   /*
-   * The marketing ink field. Darker and cooler than --ink-field, because the
-   * ridge artwork sits behind it and needs the ground to fall away. Declared
-   * once and never flipped: the landing page is a single visual world.
+   * ── Marketing field ──
+   * The landing page predates the overhaul and already lives on this same
+   * dark ground; its remaps stay valid.
    */
   --field: #0b0a08;
   --field-2: #111310;
   --field-black: #050505;
   --on-field: #fdfcfa;
   --on-field-2: rgba(253, 252, 250, 0.62);
-  /* .42 measures 3.98:1 on the field — below AA at eyebrow sizes. */
   --on-field-3: rgba(253, 252, 250, 0.56);
   --hair: rgba(253, 252, 250, 0.12);
   --hair-2: rgba(253, 252, 250, 0.2);
@@ -218,69 +201,15 @@
   --field-accent: #16c091;
   --field-accent-deep: #3ed4aa;
   --ridge-ground: #040604;
-  /* The hero button keeps the deep fill even though --moss is remapped to
-     the lit variant on that surface: white on deep clears AA, white on lit
-     does not. */
   --moss-deep-fill: #1e6b4a;
   --moss-deep-hover: #28815b;
 }
 
 /*
- * Dark is a first-class mode, not a derived variant: both ship, new users
- * default to it, and the choice persists on the user document so it follows
- * them across devices rather than living in one browser's localStorage.
+ * The mode attribute survives in the DOM (prefs, old sessions, the marketing
+ * page's inline script) but no longer selects anything: there is one system.
  */
+html[data-mode="light"],
 html[data-mode="dark"] {
-  --ink-field: #fdfcfa;
-  --ink-field-hover: #ffffff;
-  --on-ink: #14120f;
-
-  --bg: #17140f;
-  --s1: #211d17;
-  --sunken: #1c1913;
-  --inset: rgba(253, 252, 250, 0.05);
-  --track: rgba(253, 252, 250, 0.1);
-  --control: rgba(253, 252, 250, 0.07);
-
-  --ink: #fdfcfa;
-  --ink2: #e6e1da;
-  --ink3: #b4ada3;
-  --meta: #9c948a;
-
-  --line: rgba(253, 252, 250, 0.1);
-  --line-light: rgba(253, 252, 250, 0.06);
-  --line2: rgba(253, 252, 250, 0.18);
-  --line2-hover: rgba(253, 252, 250, 0.28);
-
-  --moss: #4fb287;
-  --moss-hover: #6cc39c;
-  --moss-tint: rgba(79, 178, 135, 0.14);
-  --moss-line: rgba(79, 178, 135, 0.34);
-  --moss-dim: rgba(79, 178, 135, 0.34);
-  --on-moss: #14120f;
-
-  --signal: #7ba6c4;
-  --signal-tint: rgba(123, 166, 196, 0.14);
-  --signal-line: rgba(123, 166, 196, 0.34);
-
-  --loss: #c87a5c;
-  --loss-tint: rgba(200, 122, 92, 0.14);
-  --loss-line: rgba(200, 122, 92, 0.34);
-
-  --accent: #16c091;
-  --accent-deep: #3ed4aa;
-  --accent-tint: rgba(22, 192, 145, 0.14);
-  --accent-line: rgba(22, 192, 145, 0.36);
-  --accent-wash: rgba(22, 192, 145, 0.07);
-
-  --lift: none;
-  --lift-hero: none;
-
-  --h0: rgba(253, 252, 250, 0.055);
-  --h1: rgba(79, 178, 135, 0.22);
-  --h2: rgba(79, 178, 135, 0.42);
-  --h3: rgba(79, 178, 135, 0.66);
-  --h4: #4fb287;
-
-  --tile: #262119;
+  color-scheme: dark;
 }

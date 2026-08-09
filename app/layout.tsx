@@ -1,15 +1,31 @@
 import type { Metadata } from "next";
-import { Anton, JetBrains_Mono, Playfair_Display, Public_Sans } from "next/font/google";
+import { Anton, JetBrains_Mono, Playfair_Display, Public_Sans, Space_Grotesk } from "next/font/google";
 import "../styles/tokens.css";
 import "./globals.css";
 
-// Display — figures, hero display, card titles. Never a sentence, never a
-// label, never under 17px. Tracked −.008 to −.022em, tightening with size;
-// the scale by size lives in globals.css.
-const display = Playfair_Display({
+/*
+ * Display — figures, headings, hero numbers. A geometric grotesque with
+ * enough personality to carry a 96px score and enough restraint to sit in a
+ * header. This is the voice of the instrument; the serif that used to hold
+ * this job read as a financial newspaper, which is the opposite of a product
+ * people screenshot.
+ */
+const display = Space_Grotesk({
   subsets: ["latin"],
-  weight: ["600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-display",
+  display: "swap",
+});
+
+/*
+ * Serif — share cards only. On a card it is a *voice* (the stamp and
+ * editorial templates), one of four; in the app it is retired. Enforced by
+ * scope: the variable is only read inside components/cards and app/c.
+ */
+const serif = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["700", "800"],
+  variable: "--font-serif",
   display: "swap",
 });
 
@@ -62,8 +78,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-mode="light"
-      className={`${display.variable} ${body.variable} ${mono.variable} ${poster.variable}`}
+      data-mode="dark"
+      className={`${display.variable} ${serif.variable} ${body.variable} ${mono.variable} ${poster.variable}`}
     >
       <body>{children}</body>
     </html>

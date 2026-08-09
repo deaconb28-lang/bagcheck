@@ -1,24 +1,31 @@
+/*
+ * The sticky header. Frosted over the dark canvas so content slides under it
+ * — the one place blur is chrome rather than style, because a hard-edged bar
+ * on a luminous field reads as a spreadsheet's freeze pane.
+ */
 .head {
   position: sticky;
   top: 0;
   z-index: 15;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 28px var(--pad-page, 48px) 20px;
-  background: var(--bg);
+  gap: 12px;
+  padding: 22px var(--pad-page, 48px) 18px;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--line-light);
 }
 
 .text {
   display: flex;
   flex-direction: column;
+  gap: 2px;
   min-width: 0;
 }
 
 .title {
-  font-size: 19px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
+  font-size: 20px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -39,6 +46,7 @@
 }
 
 .scorePill,
+.agePill,
 .sync,
 .tier {
   display: flex;
@@ -46,34 +54,39 @@
   gap: 8px;
   border-radius: 999px;
   background: var(--s1);
+  border: 1px solid var(--edge);
   white-space: nowrap;
   flex: none;
 }
 
 .scorePill {
-  padding: 4px 16px 4px 4px;
-  transition: background 0.16s ease;
+  padding: 4px 14px 4px 4px;
+  transition: border-color 0.16s ease;
 }
 
 .scorePill:hover {
-  background: var(--moss-tint);
+  border-color: var(--moss-line);
 }
 
+/* The score is live data — the one glow in the chrome. */
 .scoreDot {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 999px;
   background: var(--moss-tint);
   border: 1px solid var(--moss-line);
+  box-shadow: var(--glow-moss);
   display: grid;
   place-items: center;
-  font-family: var(--font-display), Georgia, serif;
-  font-weight: 800;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
   font-size: 12.5px;
+  letter-spacing: -0.02em;
   color: var(--moss);
 }
 
 .scoreLabel,
+.ageLabel,
 .sync span:last-child,
 .tier {
   font-family: var(--font-mono), monospace;
@@ -83,8 +96,34 @@
   color: var(--ink3);
 }
 
+/* Investor Age — the product's own reading, so it wears the reserved violet. */
+.agePill {
+  padding: 4px 14px 4px 4px;
+  transition: border-color 0.16s ease;
+}
+
+.agePill:hover {
+  border-color: var(--accent-line);
+}
+
+.ageNum {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent-tint);
+  border: 1px solid var(--accent-line);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: -0.02em;
+  color: var(--accent-deep);
+}
+
 .sync {
-  padding: 8px 12px 8px 8px;
+  padding: 8px 12px 8px 10px;
 }
 
 /* The accent, earned: a sync is work the product did on its own. */
@@ -93,41 +132,48 @@
   height: 7px;
   border-radius: 999px;
   background: var(--accent);
-  box-shadow: 0 0 0 4px var(--accent-tint);
+  box-shadow: 0 0 10px 1px var(--accent-line);
   flex: none;
 }
 
 .tier {
   padding: 8px 12px;
   background: var(--control);
+  border-color: transparent;
   font-size: 10.5px;
   letter-spacing: 0.1em;
 }
 
-/* The one commerce action in the app. */
+/* The one commerce action in the app — bright fill, quiet everywhere else. */
 .upgrade {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
+  padding: 11px 18px;
   border-radius: 999px;
-  background: var(--moss);
-  color: var(--on-moss);
+  background: var(--ink-field);
+  color: var(--on-ink);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13.5px;
   white-space: nowrap;
   flex: none;
   transition: background 0.16s ease, transform 0.16s ease;
 }
 
 .upgrade:hover {
-  background: var(--moss-hover);
+  background: var(--ink-field-hover);
   transform: translateY(-1px);
+}
+
+@media (max-width: 1080px) {
+  .agePill {
+    display: none;
+  }
 }
 
 @media (max-width: 899px) {
   .head {
-    padding: 20px 20px 16px;
-    gap: 12px;
+    padding: 16px 20px 14px;
+    gap: 10px;
   }
 
   .sync,
@@ -136,7 +182,7 @@
   }
 
   .upgrade {
-    padding: 10px 16px;
+    padding: 10px 14px;
     font-size: 13px;
   }
 }

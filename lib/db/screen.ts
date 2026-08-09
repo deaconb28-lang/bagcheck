@@ -7,6 +7,7 @@ import { modeFor } from "./prefs";
 import type { AppData, HoldingRow } from "./queries";
 import type { Mode } from "./prefs";
 import type { Tier } from "@/lib/tiers";
+import { investorAge } from "@/lib/score";
 
 /**
  * One round trip for everything the shell and the screens read.
@@ -27,6 +28,8 @@ export interface ScreenData extends AppData {
   /** Entries with a why on file, and the openings that could carry one. */
   tagged: number;
   taggable: number;
+  /** The header stat: how old the conduct reads. Null before a first score. */
+  investorAge: number | null;
 }
 
 export async function loadScreen(userId: string, scoreLimit = 400): Promise<ScreenData> {
@@ -53,6 +56,11 @@ export async function loadScreen(userId: string, scoreLimit = 400): Promise<Scre
     mode,
     tagged,
     taggable,
+    investorAge: investorAge({
+      components: app.scores[0]?.components ?? null,
+      winnersMeanHold: derived?.holdTime.winnersMean ?? null,
+      scoredDays: app.scores.length,
+    }),
   };
 }
 

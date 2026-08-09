@@ -14,6 +14,8 @@ export type ScreenHeaderProps = {
   delta?: number | null;
   /** "06:14", or null when the ledger has never synced. */
   syncedAt?: string | null;
+  /** Investor Age — how old the conduct reads. Null before a first score. */
+  age?: number | null;
   tier: Tier;
 };
 
@@ -31,6 +33,7 @@ export function ScreenHeader({
   score,
   delta = null,
   syncedAt = null,
+  age = null,
   tier,
 }: ScreenHeaderProps) {
   return (
@@ -48,6 +51,17 @@ export function ScreenHeader({
           <span className={styles.scoreLabel}>
             Health{delta != null && delta !== 0 ? ` ${delta > 0 ? "+" : "−"}${Math.abs(delta)}` : ""}
           </span>
+        </Link>
+      ) : null}
+
+      {/*
+        * Violet, because the age is Bagcheck's own reading of the conduct —
+        * the same reserved voice as the insight and the nightly score.
+        */}
+      {age != null ? (
+        <Link href="/dna" className={styles.agePill} title="Investor Age — how old your conduct reads. Open DNA.">
+          <span className={styles.ageNum}>{age}</span>
+          <span className={styles.ageLabel}>Investor age</span>
         </Link>
       ) : null}
 

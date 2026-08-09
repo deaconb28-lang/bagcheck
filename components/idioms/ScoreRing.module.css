@@ -27,6 +27,12 @@
 .value {
   line-height: 0.86;
   color: var(--moss);
+  text-shadow: 0 0 32px color-mix(in srgb, var(--moss) 45%, transparent);
+}
+
+/* The arc's own light. Painted by SVG, haloed by CSS. */
+.svg {
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--moss) 35%, transparent));
 }
 
 .label {

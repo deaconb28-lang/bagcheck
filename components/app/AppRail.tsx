@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MarkGlyph, MOBILE_ROUTES, ROUTES } from "./routes";
-import { ModeToggle } from "./ModeToggle";
 import styles from "./AppRail.module.css";
 
 export type ShellUser = {
@@ -45,8 +44,6 @@ export function AppRail({ user }: { user: ShellUser | null }) {
       ))}
 
       <div className={styles.spacer} />
-
-      <ModeToggle />
 
       <Link
         href="/profile"

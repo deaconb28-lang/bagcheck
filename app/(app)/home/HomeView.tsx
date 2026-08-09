@@ -37,6 +37,7 @@ export type HomeViewProps = {
   taggable: number;
   tier: Tier;
   syncedAt: string | null;
+  age?: number | null;
   accountCount: number;
   transactionCount: number;
   pulse: { question: string; options: readonly string[] } | null;
@@ -87,6 +88,7 @@ export function HomeView(props: HomeViewProps) {
     taggable,
     tier,
     syncedAt,
+    age = null,
     accountCount,
     transactionCount,
     pulse,
@@ -101,6 +103,7 @@ export function HomeView(props: HomeViewProps) {
         score={score}
         delta={delta}
         syncedAt={syncedAt}
+        age={age}
         tier={tier}
       />
 

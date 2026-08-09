@@ -33,7 +33,7 @@
 .fieldRidge {
   position: absolute;
   inset: -14%;
-  opacity: 0.5;
+  opacity: 0.3;
   animation: drift 62s ease-in-out infinite;
   will-change: transform;
   background-image:
@@ -69,30 +69,13 @@
   inset: 0;
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--bg) 60%, transparent) 0%,
-    color-mix(in srgb, var(--bg) 84%, transparent) 44%,
-    color-mix(in srgb, var(--bg) 95%, transparent) 100%
-  );
-}
-
-/*
- * Dark needs far more suppression than light. On the paper canvas the art
- * reads as a faint wash; on the ink field the same opacity reads as smoke
- * drifting behind the type, which is the opposite of an instrument. The
- * gesture stays — it is just barely there, which is the whole point.
- */
-:global(html[data-mode="dark"]) .fieldRidge {
-  opacity: 0.3;
-}
-
-:global(html[data-mode="dark"]) .fieldFade {
-  background: linear-gradient(
-    180deg,
     color-mix(in srgb, var(--bg) 82%, transparent) 0%,
     color-mix(in srgb, var(--bg) 93%, transparent) 44%,
     color-mix(in srgb, var(--bg) 98%, transparent) 100%
   );
 }
+
+/* Suppressed hard: the gesture is barely there, which is the point. */
 
 @media (max-width: 899px) {
   .shell {

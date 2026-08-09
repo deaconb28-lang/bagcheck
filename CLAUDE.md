@@ -4,7 +4,7 @@ Fitness tracking for your investment portfolio. Read-only, permanently: Bagcheck
 
 Reference docs (read before any UI work — the design system is authoritative on anything visual):
 
-- `docs/design-system/` — the Kylani v0.8 handoff. `README.md` is the spec; the two `.dc.html` files are the rendered reference. **This is the visual authority.**
+- `docs/design-system/` — the retired Kylani v0.8 paper-and-ink handoff, kept as history. **The visual authority is now this file's Colour/Type/Layout sections plus `styles/tokens.css`** — the dark luminous system the share cards established.
 - `docs/bagcheck-feature-architecture.md` — product layers. Its brand addendum is superseded by the design system above.
 - `docs/bagcheck-build-instructions.md` — stack, project shape, milestones
 - `docs/bagcheck-unit-economics.md` — what a month costs and what conversion rate the pricing needs. SnapTrade is 83% of marginal cost and is billed on free users; break-even at $9/$29 is ~10%. `docs/costs.mjs` re-runs the model.
@@ -12,46 +12,48 @@ Reference docs (read before any UI work — the design system is authoritative o
 
 ## Colour
 
-- `styles/tokens.css` is the single source of colour. A palette hex anywhere else in `app/`, `components/`, `lib/`, or `styles/` is a bug. Always `var(--*)`. (`docs/` is imported reference material and exempt.)
-- Paper-and-ink, deliberately flat and matte. Canvas `--bg`, cards `--s1` white, nested panels `--sunken`, chip fills `--inset`.
-- `--track` (meter grooves, empty data cells) is darker than the handoff's chip fill on purpose: at `#F3EFE9` a track is invisible against the paper canvas, which is where the marketing idioms sit.
-- Both modes ship and dark is first-class, not derived. New users default to dark; the choice persists on the user document (`lib/db/prefs.ts`), never in localStorage, so it follows them across devices. The app layout sets `data-mode` before paint — a client effect shows one frame of the wrong mode on every navigation.
-- `--moss` (deep forest) means discipline. `--signal` (slate blue) means exposure, comparison, percentile. `--loss` marks negative P&L and nothing else — a muted terracotta, because the system adds no red. Warnings, errors, and empty states stay in ink on `--sunken`.
-- **`--accent` is reserved.** It means "Bagcheck did this on its own" — the nightly score and the written daily insight. Never a hover fill, never a section heading, never decoration. `--accent` is a fill and stroke colour only; accent *text* is `--accent-deep`.
-- Ink owns the primary action inside the app (`<Button>`). A moss-filled button (`<Button marketing>`) appears only on marketing surfaces, so the colour keeps its meaning in-product.
-- One accent per surface — never two saturated fills competing in one view.
-- The accents never decorate. `--moss` appears only where the metric is a discipline signal: the Health score and its ring, the component meters, sessions inside your rules, the streak, positive P&L. Not on a progress meter, not on a selected chip, not on an icon tile. `--signal` appears only for exposure, comparison or percentile — if it is being reached for as "a nice highlight", that is a bug. `--loss` appears only on a negative number, literally never otherwise. Holdings weight bars are `--ink3`, because weight is neither discipline nor exposure — it is size. A mood chip's selected state is `--ink`, because a mood is not good or bad. Rarity on a trophy card is carried by the word "Scarce", not by a green label.
+- `styles/tokens.css` is the single source of colour. A palette hex anywhere else in `app/`, `components/`, `lib/`, or `styles/` is a bug. Always `var(--*)`; when a value needs alpha, `color-mix(in srgb, var(--token) N%, transparent)`. (`docs/` is imported reference material and exempt.)
+- **One dark luminous field. There is no light mode.** The share cards found the product's language — deep warm black, hue families with light behind them — and the app speaks it, because the strongest thing an app with a share economy can do is look like its own cards. The `data-mode` attribute survives in the DOM but selects nothing.
+- Canvas `--bg`, panel `--s1`, rail `--sunken`, chip fill `--inset`, tile `--tile`. **A panel is a fill plus a 1px `--edge`** — on a dark field the edge is what whitespace was on paper. Rows inside a list divide with `--line-light`; controls outline with `--line2`.
+- Four hue families with fixed meanings, shared with the share cards. Colour is never variety:
+  - `--moss` #57D69D — discipline. The score and its ring, sessions inside your rules, the streak count, positive P&L.
+  - `--signal` (azure #62B0F5) — exposure, comparison, percentile. Also the Plus tier's mark.
+  - `--ember` #FF9B45 — streaks, PRs, scarcity, heat. Also the Trader tier's mark.
+  - `--accent` (violet #B48BFF) — **reserved: Bagcheck's own voice.** The written daily insight, the nightly score arriving, Wrapped identity, Investor Age. Never a hover fill, never decoration. Accent text on the field is `--accent-deep` (the lighter value — dark inverts the old relationship).
+  - `--loss` — negative P&L and literally nothing else.
+- **Glow is rationed to live data.** `--glow-*` box-shadows and `--halo-*` washes mark a key metric that is measured and current — the score ring, the sync dot, an active streak. One halo per surface (`.hero` takes `data-halo`). Never chrome, never a heading, never a hover state.
+- The brightest object in a view is the primary action: warm-white `--ink-field` fill. Moss stays data-only in-product; a moss-filled button exists only on marketing surfaces.
 - Status is never encoded by colour alone: every state carries a word.
-- Share cards and Wrapped viewers stay on the ink field in both modes, via the `--share-*` tokens.
-- Tone props follow the tokens: `moss`, `signal`, `clay`, `accent`, `neutral`, `ink`. Contributor tones are persisted in Mongo, so read them through `contributorTone()` — pre-existing documents still carry the old `gold`/`violet` spellings.
+- Share cards keep the `--share-*` and `--card-*` families — they are the parents of the app palette, unchanged.
+- Tone props follow the tokens: `moss`, `signal`, `ember`, `clay`, `accent`, `neutral`, `ink`. Contributor tones are persisted in Mongo, so read them through `contributorTone()` — pre-existing documents still carry the old `gold`/`violet` spellings.
 
-## Type — three roles, three jobs, no fourth family
+## Type — one voice for the instrument, voices for the cards
 
-- **Playfair Display** 700/800 owns figures, hero display and card titles. Never a sentence, never a label, never under 17px. Tracked −.008 to −.022em, tightening with size — a high-contrast serif needs far less negative tracking than a grotesque, so these are not the old Outfit values scaled. `font-variant-numeric:tabular-nums`.
-- **Public Sans** 400/500/600 owns anything that is a sentence, plus buttons and inputs. Never a metric label, never a timestamp. Body 15px/1.7, `text-wrap:pretty`.
-- **JetBrains Mono** 400/500/600 owns labels, eyebrows, timestamps, counts and comparatives. Never body copy, never a heading. The moment a metric label renders in Public Sans the system starts to smear.
-- Hierarchy comes from size contrast, not new elements. Every card is the same three moves: the number huge in the serif, the label tiny in mono, the tail a quiet Public Sans line. If a card reads flat, widen the gap between number and label — do not add a weight, a colour or an element.
-- Three text colours and only three: `--ink` for figures and headlines, `--ink3` for sentences and tails, `--meta` for mono metadata. `--ink2` is retired from components.
-- Mono metadata takes `--meta`. It departs from the handoff's `#857E74`, which measures 4.01:1 on white and 3.63:1 on the canvas — below AA at the sizes metadata is set in. `--meta` clears 4.5:1 on every surface Bagcheck uses.
-- Never Roboto, never Inter, and never a fourth family. Variety is the thing that breaks this.
+- **Space Grotesk** 400–700 owns figures, headings and hero numbers (`--font-display`, the `.disp`/`.num` classes). Tracked −.014 to −.035em, tightening with size. `font-variant-numeric: tabular-nums`. Never a sentence, never a label.
+- **Public Sans** 400/500/600 owns anything that is a sentence, plus buttons and inputs. Never a metric label, never a timestamp.
+- **JetBrains Mono** 400/500/600 owns labels, eyebrows, timestamps, counts and comparatives. Never body copy, never a heading. The moment a metric label renders in the body face the system smears.
+- **Card-only voices:** Anton (`--font-poster`) and Playfair Display (`--font-serif`) exist solely on share cards, where a template is a voice — they never appear in app chrome. Enforced by scope: the variables are only read inside `components/cards`, `app/c` and `app/og`.
+- Hierarchy comes from size contrast, not new elements: the number huge in the grotesque, the label tiny in mono, the tail a quiet body line. If a card reads flat, widen the gap between number and label — do not add a weight, a colour or an element.
+- Three text colours: `--ink` for figures and headlines, `--ink3` for sentences and tails, `--meta` for mono metadata (`--ink2` for mid emphasis where a row needs it).
+- Never Roboto, never Inter. Font changes go through `app/layout.tsx` and nowhere else.
 
 ## Screen structure
 
 - Every screen is score-first: `<ScreenHeader>` sticky at the top, then a hero number and its decomposition. Nothing above the fold is prose.
-- `<ScreenHeader>` carries a conversational title over a mono line of machine facts, then the score chip, the sync pill, the tier chip and the one upgrade button. The score rides the header on every route so the number never leaves the screen.
+- `<ScreenHeader>` carries a conversational title over a mono line of machine facts, then the score chip, the **Investor Age** chip (violet — the product's own reading; computed in `lib/score/age.ts`, deterministic, bounded 18–72, exposure deliberately absent), the sync pill, the tier chip and the one upgrade button. The score rides the header on every route so the number never leaves the screen.
 - Seven routes: `/home`, `/dna`, `/wrapped`, `/patterns`, `/insights`, `/ledger`, `/cards`. `/today`, `/portfolio`, `/activity` and `/reports` are permanent redirects into them and stay that way — they are in every bookmark and every link minted before the rename. `/profile` is settings, reachable from the avatar, and is not a tab.
 - One hero panel per screen. Row dividers inside a panel are `--line-light`, and the last row drops its border.
 
 ## Layout and surfaces
 
-- 76px icon rail (`components/app/AppRail.tsx`), `--sunken`, sticky full height, seven 46px glyph buttons with native `title` tooltips — do not build a tooltip system. Mode toggle and avatar at the foot. Below 900px it becomes a five-tab bottom bar; Patterns and Ledger reach the phone through links on Home, because seven 48px targets across 390px is a tab bar you mis-tap.
+- 76px icon rail (`components/app/AppRail.tsx`), `--sunken`, sticky full height, seven 46px glyph buttons with native `title` tooltips — do not build a tooltip system. Avatar at the foot. Below 900px it becomes a five-tab bottom bar; Patterns and Ledger reach the phone through links on Home, because seven 48px targets across 390px is a tab bar you mis-tap.
 - Content grid is a 620px-min column and a 336px rail sticky at `top:96px`, capped at 1360px. Below 900px the rail folds into the scroll in the same order.
 - Flex and grid with `gap` only. No margin-spaced inline siblings. Fixed-count grids use `minmax(0, 1fr)`.
 - Radii: 34 hero, 30 standard, 28 card-in-grid, 26 nested, 22 tiles, 18 rows, 14 buttons, 12 controls, 999 pills.
 - Everything sits on a 4px base — 4/8/12/16/20/24/32/40/48. An off-grid value is a bug, not a taste call. Block rhythm: 46px between blocks in a column, 40px column-to-rail, 48px page padding, 32–38px panel padding, 120px at the foot.
-- **No borders and no resting elevation on surfaces.** A surface is a *fill*: canvas `--bg`, panel `--s1`, inset `--sunken`, ink field `--share-bg`. Hairlines survive in exactly two places — row dividers inside a list, and the rule above a panel's footer. Semantic chip borders (`--moss-line`, `--signal-line`, `--accent-line`, `--loss-line`) survive because they carry meaning. Nothing else gets a stroke, and whitespace is what replaces them: shrink the spacing back and the layout collapses into a list.
+- **A surface is a fill plus a 1px `--edge`.** Dark fields need edge definition where paper needed none. Hairlines inside a panel stay rationed: row dividers (`--line-light`) and the rule above a footer. Semantic chip borders (`--moss-line`, `--signal-line`, `--ember-line`, `--accent-line`, `--loss-line`) carry meaning. Resting elevation is dark (`--lift`), never grey, never coloured.
 - **A stat is not a box.** Eyebrow, number, 3px meter, tail, laid out as a plain column in a `gap` grid. Four small filled rectangles inside a big one is the tell.
-- No glass, no blur as style, no backdrop-filter, no bevels, no inner shadows. `filter: blur()` appears only on a locked tile.
+- Blur is chrome, not style: the sticky `ScreenHeader` frosts over the canvas, and `filter: blur()` appears on a locked tile. Nowhere else. No bevels, no inner shadows, no glass panels.
 - The one gradient in the app is the fade over the drifting field in `app/(app)/app.module.css`, and its whole job is to push the artwork almost out of sight. Dark needs far more suppression than light — at the light opacity the same image reads as smoke behind the type.
 - 44px hit targets on mobile; interactive rows ≥40px. Err toward whitespace.
 

@@ -48,23 +48,46 @@ button {
 }
 
 /*
- * Shared type classes — three faces, three jobs, no fourth family.
+ * ── Panel grammar, stated once ──
+ * On the dark field a surface is a fill *plus an edge*: 1px at 7% warm
+ * white. Without it, panels dissolve into the canvas; with more, the UI
+ * turns into a wireframe. Hero panels may add a hue halo behind their key
+ * metric — one halo per surface, and only where the metric is live data.
+ */
+.panelEdge {
+  border: 1px solid var(--edge);
+}
+
+/* Glow marks live data. Never chrome, never a heading, never a hover. */
+.glowMoss {
+  box-shadow: var(--glow-moss);
+}
+
+.glowEmber {
+  box-shadow: var(--glow-ember);
+}
+
+.glowAccent {
+  box-shadow: var(--glow-accent);
+}
+
+/*
+ * Shared type classes — three faces in the app, each with one job.
  *
- *   display (Playfair)  figures, hero display, card titles.
- *                       Never a sentence, never a label, never under 17px.
- *   body (Public Sans)  anything that is a sentence, buttons, inputs.
- *                       Never a metric label, never a timestamp.
- *   mono (JetBrains)    labels, eyebrows, timestamps, counts, comparatives.
- *                       Never body copy, never a heading.
+ *   display (Space Grotesk)  figures, headings, hero numbers.
+ *                            Never a sentence, never a label.
+ *   body (Public Sans)       anything that is a sentence, buttons, inputs.
+ *                            Never a metric label, never a timestamp.
+ *   mono (JetBrains)         labels, eyebrows, timestamps, counts.
+ *                            Never body copy, never a heading.
  *
- * The serif tracks -.008 to -.022em, tightening with size; a high-contrast
- * display face needs far less negative tracking than a grotesque, so these
- * are not the Outfit values scaled — they are re-tuned for Playfair.
+ * (The serif and the poster face exist only on share cards, where a card
+ * template is a voice; they never appear in the app chrome.)
  *
- * Hierarchy comes from size contrast, not from new elements: the number huge
- * in the serif, the label tiny in mono, the tail a quiet body line. If a card
- * reads flat, widen the gap between number and label rather than adding a
- * weight, a colour or an element.
+ * A geometric grotesque wants real negative tracking at display sizes —
+ * -.02 to -.04em, tightening as it grows. Hierarchy still comes from size
+ * contrast, not new elements: the number huge, the label tiny in mono, the
+ * tail a quiet body line.
  */
 
 .eyebrow {
@@ -90,25 +113,25 @@ button {
 }
 
 .disp {
-  font-family: var(--font-display), Georgia, serif;
-  font-weight: 700;
-  letter-spacing: -0.012em;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.022em;
   font-variant-numeric: tabular-nums;
-  line-height: 1.24;
+  line-height: 1.16;
 }
 
 .disp[data-size="s"] {
-  letter-spacing: -0.008em;
+  letter-spacing: -0.014em;
 }
 
 .disp[data-size="l"] {
-  letter-spacing: -0.017em;
+  letter-spacing: -0.03em;
 }
 
 .num {
-  font-family: var(--font-display), Georgia, serif;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.035em;
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }

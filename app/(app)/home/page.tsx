@@ -179,6 +179,7 @@ export default async function HomePage({
         tagged={data.tagged}
         taggable={data.taggable}
         tier={data.tier}
+        age={data.investorAge}
         syncedAt={syncClock(data.connection?.lastSyncAt)}
         accountCount={data.connection?.accounts.length ?? 0}
         transactionCount={data.transactionCount}

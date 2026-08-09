@@ -1,6 +1,5 @@
 import { auth, getUserId, isAuthConfigured } from "@/auth";
 import { isDbConfigured, loadShellConnection } from "@/lib/db";
-import { DEFAULT_MODE, modeFor } from "@/lib/db/prefs";
 import { AppRail, MobileTabs, type ShellUser } from "@/components/app/AppRail";
 import styles from "./app.module.css";
 
@@ -30,25 +29,10 @@ async function shellUser(): Promise<ShellUser | null> {
 }
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const userId = await getUserId();
-  const [user, mode] = await Promise.all([
-    shellUser(),
-    userId && isDbConfigured() ? modeFor(userId) : Promise.resolve(DEFAULT_MODE),
-  ]);
+  const user = await shellUser();
 
   return (
     <div className={styles.shell} data-surface>
-      {/*
-        Set before paint rather than in an effect: the mode lives on the user
-        document, so the server already knows it, and a client effect would
-        show one frame of the wrong mode on every navigation into the app.
-      */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `document.documentElement.dataset.mode=${JSON.stringify(mode)}`,
-        }}
-      />
-
       {/*
         The field — the same ridge the landing page runs, drawn in CSS rather
         than loaded as an image. It renders at any size, costs nothing, has no
