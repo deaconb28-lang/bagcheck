@@ -9,13 +9,13 @@ import { PulseSurvey } from "@/components/app/PulseSurvey";
 import { ScreenHeader } from "@/components/app/ScreenHeader";
 import { ShareButton } from "@/components/app/ShareButton";
 import { TagPrompt } from "@/components/app/TagPrompt";
-import { readiness } from "@/lib/tiers";
+import { can, readiness } from "@/lib/tiers";
 import type { Tier } from "@/lib/tiers";
 import { CORRELATION_FLOOR } from "@/lib/tags";
 import type { UntaggedEntry } from "@/lib/tags";
 import type { ScoreComponents } from "@/lib/score";
 import type { Finding } from "@/lib/engine";
-import type { WaveSummary } from "../derive";
+import type { SessionRecap, WaveSummary } from "../derive";
 import { signedMoney } from "../derive";
 import screen from "../screen.module.css";
 import styles from "./home.module.css";
@@ -31,6 +31,8 @@ export type HomeViewProps = {
   waveSummary: WaveSummary;
   /** Ledger findings with dollar impacts, straight off the derived doc. */
   findings: Finding[];
+  /** The latest realised session, for the Trader recap. */
+  recap: SessionRecap | null;
   heat: HeatDay[];
   streak: number;
   longest: number;
@@ -97,6 +99,7 @@ export function HomeView(props: HomeViewProps) {
     wave,
     waveSummary: summary,
     findings,
+    recap,
     heat,
     streak,
     longest,
@@ -327,18 +330,26 @@ export function HomeView(props: HomeViewProps) {
               </div>
             </section>
 
-            {/* 6 — the lock, in the slot its unlocked twin would take. */}
-            <section data-reveal className={screen.panel} style={{ animationDelay: "0.08s" }}>
-              <Locked
-                capability="sessionRecapCard"
-                eyebrow="Session recap · at the close"
-                readiness={readiness(tagged, CORRELATION_FLOOR)}
-              >
+            {/*
+              * 6 — the session recap. Real for the tier that owns it; for
+              * everyone else the lock occupies the slot its unlocked twin
+              * would take, previewing the shape with example figures.
+              */}
+            {can({ tier }, "sessionRecapCard") && recap && recap.closed > 0 ? (
+              <section data-reveal className={screen.panel} style={{ animationDelay: "0.08s" }}>
+                <div className={screen.head}>
+                  <div className={screen.headText}>
+                    <span className={screen.eyebrow}>Session recap · {recap.date}</span>
+                    <div className={`disp ${screen.h2}`}>
+                      {recap.wins} of {recap.closed} closed green
+                    </div>
+                  </div>
+                </div>
                 <div className={styles.recap}>
                   {[
-                    ["61%", "Win rate today"],
-                    ["4", "Trades"],
-                    ["+$1,240", "Session P&L"],
+                    [`${recap.winRate}%`, "Win rate"],
+                    [String(recap.closed), "Positions closed"],
+                    [signedMoney(recap.pnl), "Session P&L"],
                   ].map(([v, l]) => (
                     <div key={l} className={screen.sunken}>
                       <div className={`num ${styles.recapValue}`}>{v}</div>
@@ -346,8 +357,29 @@ export function HomeView(props: HomeViewProps) {
                     </div>
                   ))}
                 </div>
-              </Locked>
-            </section>
+              </section>
+            ) : !can({ tier }, "sessionRecapCard") ? (
+              <section data-reveal className={screen.panel} style={{ animationDelay: "0.08s" }}>
+                <Locked
+                  capability="sessionRecapCard"
+                  eyebrow="Session recap · at the close"
+                  readiness={readiness(tagged, CORRELATION_FLOOR)}
+                >
+                  <div className={styles.recap}>
+                    {[
+                      ["61%", "Win rate today"],
+                      ["4", "Trades"],
+                      ["+$1,240", "Session P&L"],
+                    ].map(([v, l]) => (
+                      <div key={l} className={screen.sunken}>
+                        <div className={`num ${styles.recapValue}`}>{v}</div>
+                        <div className={screen.tail}>{l}</div>
+                      </div>
+                    ))}
+                  </div>
+                </Locked>
+              </section>
+            ) : null}
           </div>
 
           <aside className={screen.rail}>

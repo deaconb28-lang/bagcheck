@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { getUserId } from "@/auth";
 import { getCollections, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
+import { holdTimeFrom } from "@/lib/db/derived";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { SignInCta } from "@/components/app/SignInCta";
 import { WrappedView } from "./WrappedView";
-import { archetypeOf, currentStreak, weekDelta, weeklySessions } from "../derive";
+import { archetypeOf, currentStreak, longestStreak, weekDelta, weeklySessions } from "../derive";
 import { buildCards } from "@/lib/cards/kinds";
 
 export const metadata: Metadata = { title: "Bagcheck — Wrapped" };
@@ -14,9 +15,9 @@ export const dynamic = "force-dynamic";
 export default async function WrappedPage({
   searchParams,
 }: {
-  searchParams: Promise<{ play?: string }>;
+  searchParams: Promise<{ play?: string; w?: string }>;
 }) {
-  const { play } = await searchParams;
+  const { play, w } = await searchParams;
   const userId = await getUserId();
   if (!userId || !isDbConfigured()) {
     return (
@@ -53,16 +54,34 @@ export default async function WrappedPage({
     );
   }
 
-  // Read, not recomputed — see lib/db/derived.ts.
-  const trips = data.derived?.roundTrips ?? [];
-  const hold = data.derived?.holdTime ?? {
-    winnersMean: null,
-    losersMean: null,
-    winners: 0,
-    losers: 0,
-  };
+  /*
+   * The window. Wrapped is the annual archive by default, and any quarter
+   * with data replays through the same twelve kinds — the doc's quarterly
+   * earnings report, worn as cards. A quarter that has not happened yet is
+   * not an option, and one with no realised day renders no chip.
+   */
+  const now = new Date();
+  const yearNum = now.getUTCFullYear();
+  const currentQ = Math.floor(now.getUTCMonth() / 3) + 1;
+  const q = /^q[1-4]$/.test(w ?? "") && Number((w as string)[1]) <= currentQ
+    ? Number((w as string)[1])
+    : null;
+  const qStart = (n: number) => `${yearNum}-${String((n - 1) * 3 + 1).padStart(2, "0")}-01`;
+  const qEndEx = (n: number) => (n === 4 ? `${yearNum + 1}-01-01` : qStart(n + 1));
+  const inWindow = (d: string) => (q == null ? true : d >= qStart(q) && d < qEndEx(q));
+  const label = q == null ? String(yearNum) : `Q${q} ${yearNum}`;
 
-  const latest = data.scores[0];
+  // Read, not recomputed — see lib/db/derived.ts — then sliced to the window.
+  const allPnl = data.derived?.dailyPnl ?? [];
+  const trips = (data.derived?.roundTrips ?? []).filter((t) => inWindow(t.closeDate));
+  const dailyPnl = allPnl.filter((d) => inWindow(d.date));
+  const equity = (data.derived?.equitySeries ?? []).filter((p) => inWindow(p.date));
+  const scores = data.scores.filter((s) => inWindow(s.date));
+  const hold = q == null
+    ? data.derived?.holdTime ?? { winnersMean: null, losersMean: null, winners: 0, losers: 0 }
+    : holdTimeFrom(trips);
+
+  const latest = scores[0] ?? data.scores[0];
   const best = trips.reduce<(typeof trips)[number] | null>(
     (b, t) => (!b || t.pnl > b.pnl ? t : b),
     null,
@@ -73,23 +92,37 @@ export default async function WrappedPage({
   );
 
   const cards = buildCards({
-    year: new Date().getUTCFullYear(),
+    year: yearNum,
     score: latest.score,
     archetype: archetypeOf(latest.components as unknown as Record<string, number>),
     components: latest.components as unknown as Record<string, number>,
     trips,
     holdTime: hold,
-    dailyPnl: data.derived?.dailyPnl ?? [],
-    equity: data.derived?.equitySeries ?? [],
-    scoredDays: data.scores.length,
+    dailyPnl,
+    equity,
+    scoredDays: scores.length,
     transactionCount: data.transactionCount,
-    panicSells: data.scores.filter((s) =>
+    panicSells: scores.filter((s) =>
       s.contributors.some((c) => c.name.toLowerCase().includes("panic")),
     ).length,
-    streakDays: currentStreak(data.scores),
+    streakDays: q == null ? currentStreak(data.scores) : longestStreak(scores),
     streakName: "Sessions inside your rules",
-    weeklySessions: weeklySessions(data.derived?.dailyPnl ?? []),
+    weeklySessions: weeklySessions(dailyPnl),
   });
+
+  // Which windows exist at all: the year, plus each elapsed quarter with a
+  // realised day in it.
+  const windows = [
+    { key: "year", label: String(yearNum), href: "/wrapped", active: q == null },
+    ...Array.from({ length: currentQ }, (_, i) => i + 1)
+      .filter((n) => allPnl.some((d) => d.date >= qStart(n) && d.date < qEndEx(n)))
+      .map((n) => ({
+        key: `q${n}`,
+        label: `Q${n}`,
+        href: `/wrapped?w=q${n}`,
+        active: q === n,
+      })),
+  ];
 
   /*
    * The hero card's slug, if this user has already minted it — that is what
@@ -108,11 +141,14 @@ export default async function WrappedPage({
     return (
       <PageGrid>
         <EmptyState
-          eyebrow="Bagcheck · wrapped"
+          eyebrow={`Bagcheck · wrapped · ${label}`}
           icon="waiting"
-          title="No card earned yet"
-          body="Cards are minted from behaviour the ledger can prove. The first one appears once there is enough history behind it."
-          actions={[{ label: "Open the ledger view", href: "/debug" }]}
+          title={q == null ? "No card earned yet" : `Nothing cleared a floor in ${label}`}
+          body="Cards are minted from behaviour the ledger can prove. A window with too little history in it stays quiet rather than inventing one."
+          actions={[
+            { label: "Open the ledger view", href: "/debug" },
+            ...(q != null ? [{ label: "Back to the year", href: "/wrapped", ghost: true }] : []),
+          ]}
         />
       </PageGrid>
     );
@@ -120,9 +156,11 @@ export default async function WrappedPage({
 
   return (
     <WrappedView
-      year={new Date().getUTCFullYear()}
+      year={yearNum}
+      label={label}
+      windows={windows}
       archetype={archetypeOf(latest.components as unknown as Record<string, number>)}
-      scoredDays={data.scores.length}
+      scoredDays={scores.length}
       transactionCount={data.transactionCount}
       winnerHold={hold.winnersMean}
       loserHold={hold.losersMean}

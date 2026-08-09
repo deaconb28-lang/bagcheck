@@ -1,0 +1,136 @@
+/*
+ * The minimal landing: the app's own black field, one oversized claim,
+ * one action. The strongest thing the front door can do is look exactly
+ * like the instrument behind it.
+ */
+.page {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 40px;
+}
+
+.mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+}
+
+.wordmark {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 16.5px;
+  letter-spacing: -0.014em;
+}
+
+.navCta {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1px solid var(--line2);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 14px;
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+
+.navCta:hover {
+  background: var(--control);
+  border-color: var(--line2-hover);
+}
+
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 28px;
+  padding: 48px 24px 96px;
+}
+
+.headline {
+  font-size: clamp(52px, 9vw, 128px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  max-width: 12ch;
+}
+
+.lede {
+  font-size: 16.5px;
+  line-height: 1.65;
+  color: var(--ink3);
+  max-width: 56ch;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* The one inversion on the page. */
+.cta {
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 30px;
+  border-radius: 999px;
+  background: var(--ink-field);
+  color: var(--on-ink);
+  font-weight: 600;
+  font-size: 15.5px;
+  transition: transform 0.16s ease;
+}
+
+.cta:hover {
+  transform: translateY(-1px);
+}
+
+.trust {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 40px;
+  border-top: 1px solid var(--line-light);
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.foot a {
+  color: var(--ink3);
+}
+
+@media (max-width: 640px) {
+  .nav,
+  .foot {
+    padding-inline: 20px;
+  }
+}

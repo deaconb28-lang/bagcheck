@@ -152,3 +152,36 @@ export function weeklySessions(dailyPnl: Array<{ date: string }>): number[] {
   }
   return [...byWeek.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([, n]) => n);
 }
+
+export interface SessionRecap {
+  date: string;
+  /** Round trips that closed this session. */
+  closed: number;
+  wins: number;
+  /** 0–100, over the closed positions. */
+  winRate: number;
+  /** Realised P&L for the session, from the daily series. */
+  pnl: number;
+}
+
+/**
+ * The latest session with a result — what the Trader recap card grades.
+ * Null when the ledger has no realised day yet, so the panel can stay a
+ * preview rather than showing a recap of nothing.
+ */
+export function sessionRecap(
+  trips: Array<{ closeDate: string; pnl: number }>,
+  dailyPnl: Array<{ date: string; realised: number }>,
+): SessionRecap | null {
+  const last = dailyPnl[dailyPnl.length - 1];
+  if (!last) return null;
+  const closed = trips.filter((t) => t.closeDate === last.date);
+  const wins = closed.filter((t) => t.pnl > 0).length;
+  return {
+    date: last.date,
+    closed: closed.length,
+    wins,
+    winRate: closed.length ? Math.round((wins / closed.length) * 100) : 0,
+    pnl: last.realised,
+  };
+}

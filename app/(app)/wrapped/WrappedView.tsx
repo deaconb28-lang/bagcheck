@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Avatar } from "@/components/primitives";
 import type { Archetype } from "@/lib/archetypes";
 import { ScreenHeader } from "@/components/app/ScreenHeader";
@@ -16,6 +17,10 @@ type Trip = { symbol: string; holdDays: number; pnl: number } | null;
 
 export type WrappedViewProps = {
   year: number;
+  /** "2026" for the year, "Q2 2026" for a replay window. */
+  label: string;
+  /** The replay selector — the year plus every elapsed quarter with data. */
+  windows: Array<{ key: string; label: string; href: string; active: boolean }>;
   archetype: Archetype;
   scoredDays: number;
   transactionCount: number;
@@ -49,6 +54,8 @@ const usd = (n: number) =>
 export function WrappedView(props: WrappedViewProps) {
   const {
     year,
+    label,
+    windows,
     archetype,
     scoredDays,
     transactionCount,
@@ -78,7 +85,7 @@ export function WrappedView(props: WrappedViewProps) {
     <>
       <ScreenHeader
         title="Wrapped"
-        meta={`${year} · ${scoredDays} scored days · ${cards.length} cards`}
+        meta={`${label} · ${scoredDays} scored days · ${cards.length} cards`}
         score={score}
         delta={delta}
         syncedAt={syncedAt}
@@ -92,6 +99,22 @@ export function WrappedView(props: WrappedViewProps) {
             * thing it wants you to do is press play — a Wrapped that opens on
             * a grid of cards has already spent the moment it exists to create.
             */}
+          {windows.length > 1 ? (
+            <div data-reveal className={screen.chips}>
+              {windows.map((win) => (
+                <Link
+                  key={win.key}
+                  href={win.href}
+                  className={screen.chip}
+                  data-tone={win.active ? "moss" : undefined}
+                  aria-current={win.active ? "page" : undefined}
+                >
+                  {win.label}
+                </Link>
+              ))}
+            </div>
+          ) : null}
+
           <section data-reveal className={styles.poster}>
             <img
               className={styles.posterArt}
@@ -102,7 +125,7 @@ export function WrappedView(props: WrappedViewProps) {
             <div className={styles.posterWash} aria-hidden="true" />
 
             <div className={styles.posterBody}>
-              <span className={styles.heroEyebrow}>Bagcheck · {year}</span>
+              <span className={styles.heroEyebrow}>Bagcheck · {label}</span>
               <Avatar archetype={archetype.key} size={80} />
               <h1 className={`num ${styles.heroTitle}`}>{archetype.name}</h1>
               <p className={styles.heroLine}>{archetype.line}</p>
@@ -113,7 +136,7 @@ export function WrappedView(props: WrappedViewProps) {
                     <path d="M7 4.6v14.8L19.4 12z" />
                   </svg>
                 </span>
-                Play your {year}
+                Play your {label}
               </button>
 
               <span className={styles.posterMeta}>
@@ -136,7 +159,7 @@ export function WrappedView(props: WrappedViewProps) {
                   slug={null}
                   symbol={card.symbol}
                   backdrop={`/cards/${card.kind}.jpg`}
-                  provenance={`Bagcheck · ${year} · read from your brokerage`}
+                  provenance={`Bagcheck · ${label} · read from your brokerage`}
                   hue={card.hue}
                   layout={card.layout}
                   rarity={card.rarity}

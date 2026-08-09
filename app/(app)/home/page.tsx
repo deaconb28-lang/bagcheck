@@ -24,6 +24,7 @@ import {
   currentStreak,
   heatFromScores,
   longestStreak,
+  sessionRecap,
   waveSummary,
   weekDelta,
 } from "../derive";
@@ -172,6 +173,7 @@ export default async function HomePage({
         wave={wave}
         waveSummary={waveSummary(wave)}
         findings={data.derived?.findings ?? []}
+        recap={sessionRecap(data.derived?.roundTrips ?? [], data.derived?.dailyPnl ?? [])}
         heat={heatFromScores(data.scores)}
         streak={currentStreak(data.scores)}
         longest={longestStreak(data.scores)}

@@ -67,29 +67,29 @@
   --ink-fill-active: rgba(255, 255, 255, 0.1);
   --ink-line: rgba(255, 255, 255, 0.09);
 
-  /* ── Moss — discipline. The full white. ── */
-  --moss: #ffffff;
+  /* ── Moss — discipline. White with a mint whisper. ── */
+  --moss: #e9fcf2;
   --moss-hover: #ffffff;
-  --moss-deep: #bfbfbf;
-  --moss-tint: rgba(255, 255, 255, 0.1);
-  --moss-line: rgba(255, 255, 255, 0.32);
-  --moss-dim: rgba(255, 255, 255, 0.38);
+  --moss-deep: #b8ccc1;
+  --moss-tint: rgba(233, 252, 242, 0.1);
+  --moss-line: rgba(233, 252, 242, 0.32);
+  --moss-dim: rgba(233, 252, 242, 0.38);
   --on-moss: #000000;
 
-  /* ── Signal — exposure, comparison, percentile. A step down. ── */
-  --signal: #ababab;
-  --signal-tint: rgba(255, 255, 255, 0.07);
-  --signal-line: rgba(255, 255, 255, 0.22);
+  /* ── Signal — exposure, comparison, percentile. A step down, cooled. ── */
+  --signal: #a4b0bd;
+  --signal-tint: rgba(164, 176, 189, 0.1);
+  --signal-line: rgba(164, 176, 189, 0.3);
 
-  /* ── Ember — streaks, PRs, scarcity. Lit, not lead. ── */
-  --ember: #d9d9d9;
-  --ember-tint: rgba(255, 255, 255, 0.09);
-  --ember-line: rgba(255, 255, 255, 0.28);
+  /* ── Ember — streaks, PRs, scarcity. Lit, warmed a breath. ── */
+  --ember: #e3d5c3;
+  --ember-tint: rgba(227, 213, 195, 0.1);
+  --ember-line: rgba(227, 213, 195, 0.3);
 
-  /* ── Loss — negative P&L, nothing else. Recessed, never highlighted. ── */
-  --loss: #7d7d7d;
-  --loss-tint: rgba(255, 255, 255, 0.05);
-  --loss-line: rgba(255, 255, 255, 0.18);
+  /* ── Loss — negative P&L, nothing else. Recessed, faintly warm. ── */
+  --loss: #8a7a74;
+  --loss-tint: rgba(138, 122, 116, 0.12);
+  --loss-line: rgba(138, 122, 116, 0.3);
 
   /*
    * ── The accent, still reserved ──
@@ -98,11 +98,11 @@
    * not a hue — it is the strongest edge and densest tint in the system.
    * Never a hover fill, never decoration.
    */
-  --accent: #ffffff;
-  --accent-deep: #ffffff;
-  --accent-tint: rgba(255, 255, 255, 0.12);
-  --accent-line: rgba(255, 255, 255, 0.42);
-  --accent-wash: rgba(255, 255, 255, 0.05);
+  --accent: #e2d9f5;
+  --accent-deep: #e9e2f8;
+  --accent-tint: rgba(226, 217, 245, 0.12);
+  --accent-line: rgba(226, 217, 245, 0.42);
+  --accent-wash: rgba(226, 217, 245, 0.05);
 
   /*
    * ── Glow — rationed to live data ──
@@ -110,14 +110,14 @@
    * light is white now; what varies is how much of it a meaning earns.
    * The halo variants are background washes for a hero panel's key metric.
    */
-  --glow-moss: 0 0 34px -4px rgba(255, 255, 255, 0.32);
-  --glow-ember: 0 0 34px -4px rgba(255, 255, 255, 0.2);
-  --glow-azure: 0 0 34px -4px rgba(255, 255, 255, 0.2);
-  --glow-accent: 0 0 34px -4px rgba(255, 255, 255, 0.32);
-  --halo-moss: radial-gradient(58% 52% at 50% 30%, rgba(255, 255, 255, 0.08), transparent 72%);
-  --halo-ember: radial-gradient(58% 52% at 50% 30%, rgba(255, 255, 255, 0.06), transparent 72%);
-  --halo-azure: radial-gradient(58% 52% at 50% 30%, rgba(255, 255, 255, 0.06), transparent 72%);
-  --halo-accent: radial-gradient(58% 52% at 50% 30%, rgba(255, 255, 255, 0.08), transparent 72%);
+  --glow-moss: 0 0 34px -4px rgba(233, 252, 242, 0.32);
+  --glow-ember: 0 0 34px -4px rgba(227, 213, 195, 0.22);
+  --glow-azure: 0 0 34px -4px rgba(164, 176, 189, 0.24);
+  --glow-accent: 0 0 34px -4px rgba(226, 217, 245, 0.32);
+  --halo-moss: radial-gradient(58% 52% at 50% 30%, rgba(233, 252, 242, 0.08), transparent 72%);
+  --halo-ember: radial-gradient(58% 52% at 50% 30%, rgba(227, 213, 195, 0.07), transparent 72%);
+  --halo-azure: radial-gradient(58% 52% at 50% 30%, rgba(164, 176, 189, 0.08), transparent 72%);
+  --halo-accent: radial-gradient(58% 52% at 50% 30%, rgba(226, 217, 245, 0.08), transparent 72%);
 
   /* Elevation: dark fields lift with darkness, not with grey. */
   --lift: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -183,7 +183,7 @@
   --h1: #2b2b2b;
   --h2: #575757;
   --h3: #a3a3a3;
-  --h4: #ffffff;
+  --h4: #e9fcf2;
 
   /*
    * ── Marketing field ──
