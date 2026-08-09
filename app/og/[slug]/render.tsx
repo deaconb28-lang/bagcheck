@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { FORMAT_SIZE, type ShareFormat } from "@/lib/cards/share";
 import { fetchLogoPng, monogram, normalizeSymbol, TILE, toneIndex } from "@/lib/logos";
 
 export const runtime = "nodejs";
@@ -97,10 +98,34 @@ async function logoTile(symbol: string | null | undefined, size: number) {
 }
 
 /** The card image. Shared by the route and by visual checks. */
-export async function renderCard(card: CardLike, cells: number[]) {
+/**
+ * Three frames from one composition.
+ *
+ * `unfurl` is 1200×630, what a pasted link expands to. `feed` is 1080×1350,
+ * the tallest the Instagram feed shows without cropping. `story` is 1080×1920
+ * for stories, Reels and TikTok. Same card, re-proportioned — a 16:9 unfurl
+ * letterboxed into a 9:16 story is a postage stamp with black above and below
+ * it, which is the shape people scroll past.
+ *
+ * The scale factor keeps the type optically the same size in all three: the
+ * padding and the figure are expressed against the frame's own width.
+ */
+export async function renderCard(
+  card: CardLike,
+  cells: number[],
+  format: ShareFormat = "unfurl",
+) {
+  const { w, h } = FORMAT_SIZE[format];
+  /*
+   * The notional width the composition is drawn against. Everything below is
+   * expressed in those units and multiplied by `k`.
+   */
+  const CONTENT = { unfurl: 1200, feed: 780, story: 660 } as const;
+  const k = w / CONTENT[format];
+  const px = (n: number) => Math.round(n * k);
   const accent = card.tone === "signal" ? SIGNAL : MOSS;
   const font = await displayFont();
-  const tile = await logoTile(card.symbol, 56);
+  const tile = await logoTile(card.symbol, Math.round(56 * (w / CONTENT[format])));
   const art = card.art
     ? `data:image/png;base64,${Buffer.from(card.art).toString("base64")}`
     : null;
@@ -118,23 +143,23 @@ export async function renderCard(card: CardLike, cells: number[]) {
           position: "relative",
           background: INK,
           color: ON_INK,
-          padding: "64px 72px",
+          padding: `${px(format === "unfurl" ? 64 : 78)}px ${px(72)}px`,
           fontFamily: font ? "Outfit" : "sans-serif",
         }}
       >
         {art ? (
           <img
             src={art}
-            width={1200}
-            height={630}
+            width={w}
+            height={h}
             style={{ position: "absolute", top: 0, left: 0, opacity: 0.55 }}
           />
         ) : null}
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: px(20) }}>
             {tile}
-            <div style={{ fontSize: 24, letterSpacing: 3, color: DIM, textTransform: "uppercase" }}>
+            <div style={{ fontSize: px(24), letterSpacing: px(3), color: DIM, textTransform: "uppercase" }}>
               {card.label}
             </div>
           </div>
@@ -142,13 +167,13 @@ export async function renderCard(card: CardLike, cells: number[]) {
             <div
               style={{
                 display: "flex",
-                fontSize: 22,
-                letterSpacing: 3,
+                fontSize: px(22),
+                letterSpacing: px(3),
                 textTransform: "uppercase",
                 color: accent,
                 border: `1px solid ${accent}`,
                 borderRadius: 999,
-                padding: "8px 20px",
+                padding: `${px(8)}px ${px(20)}px`,
               }}
             >
               {card.rarity}
@@ -156,33 +181,52 @@ export async function renderCard(card: CardLike, cells: number[]) {
           ) : null}
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        {/*
+          * `margin: auto 0` centres the figure in whatever space is left
+          * between the header and the receipt. On the 16:9 unfurl there is
+          * almost none and it changes nothing; on a 9:16 story it is the
+          * difference between a centred card and a number stranded near the
+          * top with a third of the frame empty under it.
+          */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            /*
+             * flexGrow + centred justification, not `margin: auto` — Satori
+             * does not honour the margin shorthand, so the auto-margin
+             * version silently left the figure pinned near the top.
+             */
+            flexGrow: format === "unfurl" ? 0 : 1,
+            justifyContent: "center",
+          }}
+        >
           <div
             style={{
-              fontSize: big ? 230 : 104,
+              fontSize: px(big ? 230 : 104),
               fontWeight: 800,
-              letterSpacing: big ? -12 : -4,
+              letterSpacing: px(big ? -12 : -4),
               lineHeight: 1,
               color: accent,
             }}
           >
             {card.value}
           </div>
-          <div style={{ fontSize: 38, lineHeight: 1.35, marginTop: 20, maxWidth: 760 }}>
+          <div style={{ fontSize: px(38), lineHeight: 1.35, marginTop: px(20), maxWidth: px(760) }}>
             {card.tail}
           </div>
         </div>
 
         {/* The receipt: the days behind the number. */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-          <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: px(28) }}>
+          <div style={{ display: "flex", gap: px(8) }}>
             {cells.map((c, i) => (
               <div
                 key={i}
                 style={{
-                  width: 14,
-                  height: 14,
-                  borderRadius: 3,
+                  width: px(14),
+                  height: px(14),
+                  borderRadius: px(3),
                   background: c === 2 ? SIGNAL : c === 1 ? MOSS : TRACK,
                 }}
               />
@@ -193,20 +237,20 @@ export async function renderCard(card: CardLike, cells: number[]) {
               display: "flex",
               justifyContent: "space-between",
               borderTop: `1px solid ${LINE}`,
-              paddingTop: 22,
-              fontSize: 24,
+              paddingTop: px(22),
+              fontSize: px(24),
               color: DIM,
             }}
           >
             <div>{`bagcheck.app/c/${card.slug}`}</div>
-            <div style={{ letterSpacing: 3, textTransform: "uppercase" }}>verified</div>
+            <div style={{ letterSpacing: px(3), textTransform: "uppercase" }}>verified</div>
           </div>
         </div>
       </div>
     ),
     {
-      width: 1200,
-      height: 630,
+      width: w,
+      height: h,
       fonts: font ? [{ name: "Outfit", data: font, weight: 800, style: "normal" }] : undefined,
     },
   );

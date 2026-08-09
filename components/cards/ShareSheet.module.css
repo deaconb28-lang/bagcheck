@@ -129,3 +129,75 @@
   color: var(--ink3);
   line-height: 1.55;
 }
+
+
+/* ── Destinations ─────────────────────────────────────────────────────────
+ * One row each, every row saying what the tap actually does. X opens a
+ * composer; Instagram and TikTok have no web composer to open, so they hand
+ * the file to the OS sheet or save it — and the note says so rather than
+ * letting the icon imply otherwise.
+ */
+.targets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.target {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 56px;
+  padding: 10px 16px 10px 12px;
+  border-radius: 18px;
+  background: var(--inset);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.16s ease;
+}
+
+.target:hover:not(:disabled) {
+  background: var(--control);
+}
+
+.target:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.targetMark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: var(--s1);
+  color: var(--ink);
+}
+
+.targetText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.targetLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.targetNote {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink3);
+  text-wrap: pretty;
+}
