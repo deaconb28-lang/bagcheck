@@ -1,5 +1,6 @@
 .card {
   background: var(--share-bg);
+  border: 1px solid var(--share-line);
   border-radius: 28px;
   padding: 24px;
   display: flex;
@@ -7,11 +8,30 @@
   gap: 20px;
   min-height: 260px;
   color: var(--share-ink);
-  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.3, 1);
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.3, 1), border-color 0.16s ease;
 }
 
 .card:hover {
   transform: translateY(-6px) rotate(-0.7deg);
+  border-color: color-mix(in srgb, var(--share-ink) 20%, transparent);
+}
+
+/*
+ * The case borrows WrappedCard's own hue family rather than a palette of its
+ * own: a rarer trophy's edge steps through the same moss/azure/ember a
+ * minted card's tag would wear. Common carries none — there is nothing to
+ * signal yet.
+ */
+.card:has(.rarity[data-rarity="uncommon"]) {
+  border-color: color-mix(in srgb, var(--card-moss-lit) 30%, transparent);
+}
+
+.card:has(.rarity[data-rarity="rare"]) {
+  border-color: color-mix(in srgb, var(--card-azure-lit) 32%, transparent);
+}
+
+.card:has(.rarity[data-rarity="scarce"]) {
+  border-color: color-mix(in srgb, var(--card-ember-lit) 34%, transparent);
 }
 
 .top {
@@ -22,8 +42,11 @@
 }
 
 /*
- * Rarity is a word. The colour steps are scarcity tiers, not decoration —
- * and "Scarce" reads as scarce even in greyscale, which is the test.
+ * Rarity is a word first — "Scarce" reads as scarce even in greyscale — and
+ * the pill is the same recipe WrappedCard's own tag wears: a 16% tint of the
+ * hue family's lit step, one family per tier, never two in one card. Scarcity
+ * runs ember here, not moss — moss stays discipline, so a scarce trophy no
+ * longer borrows the score's own colour.
  */
 .rarity,
 .year,
@@ -35,15 +58,27 @@
 }
 
 .rarity {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: var(--share-fill);
   color: var(--share-dim);
 }
 
+.rarity[data-rarity="uncommon"] {
+  color: var(--card-moss-lit);
+  background: color-mix(in srgb, var(--card-moss-lit) 16%, transparent);
+}
+
 .rarity[data-rarity="rare"] {
-  color: var(--share-signal);
+  color: var(--card-azure-lit);
+  background: color-mix(in srgb, var(--card-azure-lit) 16%, transparent);
 }
 
 .rarity[data-rarity="scarce"] {
-  color: var(--share-moss);
+  color: var(--card-ember-lit);
+  background: color-mix(in srgb, var(--card-ember-lit) 16%, transparent);
 }
 
 .year,
@@ -80,7 +115,7 @@
 }
 
 .title {
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-display), system-ui, sans-serif;
   font-weight: 700;
   font-size: 18px;
   letter-spacing: -0.008em;

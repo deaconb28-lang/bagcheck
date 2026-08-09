@@ -10,9 +10,9 @@ type PageHeaderProps = {
 };
 
 /**
- * The top area. Not a bar — it floats on the canvas above the cards, and
- * wraps at narrow widths. Mono metadata here takes --ink3 rather than
- * --meta: --meta is the 4.5:1 floor on white, and the canvas is not white.
+ * The top area of a non-tab screen (settings, debug). Not a bar — it floats
+ * on the canvas above the cards and wraps at narrow widths. Tab routes use
+ * the sticky <ScreenHeader> instead; this one carries no score.
  */
 export function PageHeader({ title, subtitle, aside }: PageHeaderProps) {
   return (

@@ -36,7 +36,8 @@
 }
 
 .cell:hover {
-  transform: scale(1.2);
+  /* House convention for every heat cell in the app — see HeatGrid. */
+  transform: scale(1.35);
 }
 
 .cell[data-sign="up"] {

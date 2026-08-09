@@ -20,6 +20,12 @@ export const dynamic = "force-dynamic";
 /**
  * Locked *categories*, never locked achievements. Each of these is a format
  * the product would render for you, not a thing your conduct earned.
+ *
+ * A locked card's badge always renders as "{Tier} category" — TrophyCard
+ * overwrites the word regardless of what `rarity` says below — so `rarity`
+ * here is repurposed purely to pick the badge's colour via the hue-family
+ * pill in TrophyCard.module.css: "rare" reads azure, "scarce" reads ember,
+ * the same Plus/Trader pairing the tier chip uses everywhere else.
  */
 const CATEGORIES: Array<{ cap: Capability; trophy: Trophy }> = [
   {
@@ -27,7 +33,7 @@ const CATEGORIES: Array<{ cap: Capability; trophy: Trophy }> = [
     trophy: {
       id: "cat-correlation",
       type: "quarter",
-      rarity: "common",
+      rarity: "rare", // Plus — azure
       year: "—",
       value: "4.1×",
       title: "Correlation card",
@@ -40,7 +46,7 @@ const CATEGORIES: Array<{ cap: Capability; trophy: Trophy }> = [
     trophy: {
       id: "cat-setup",
       type: "quarter",
-      rarity: "common",
+      rarity: "scarce", // Trader — ember
       year: "—",
       value: "61%",
       title: "Setup performance",
@@ -53,7 +59,7 @@ const CATEGORIES: Array<{ cap: Capability; trophy: Trophy }> = [
     trophy: {
       id: "cat-motion",
       type: "wrapped",
-      rarity: "common",
+      rarity: "scarce", // Trader — ember
       year: "—",
       value: "MP4",
       title: "Motion card",
@@ -63,12 +69,23 @@ const CATEGORIES: Array<{ cap: Capability; trophy: Trophy }> = [
   },
 ];
 
+/*
+ * Display rarity for kinds that do not carry `rarity: "rare"` themselves —
+ * keyed by the real CardKind ids in lib/cards/kinds.ts. "Scarce" stays
+ * reserved for what kinds.ts itself marks rare (noPanic, wrapped), so the
+ * word is earned in exactly one place.
+ */
 const RARITY: Record<string, Rarity> = {
-  score: "common",
+  archetype: "uncommon",
+  health: "common",
+  longestHold: "rare",
+  holdRatio: "uncommon",
   streak: "uncommon",
-  hold: "rare",
-  quarter: "scarce",
-  wrapped: "rare",
+  bestDecision: "rare",
+  drawdownHeld: "rare",
+  cadence: "common",
+  monthlyPnl: "common",
+  equity: "uncommon",
 };
 
 export default async function CardsPage() {
@@ -78,12 +95,16 @@ export default async function CardsPage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · cards"
-          icon="signin"
-          title="Nothing earned yet"
-          body={userId ? "The ledger store is not configured." : "Sign in to see your case."}
+          icon={userId ? "setup" : "signin"}
+          title={userId ? "Configure the ledger store" : "Sign in to open your case"}
+          body={
+            userId
+              ? "Set MONGODB_URI on this deployment to store synced history and scores."
+              : "Cards are earned by conduct and minted when you share them."
+          }
           actions={[{ label: "Back to the landing page", href: "/", ghost: true }]}
         >
-          <SignInCta />
+          {userId ? null : <SignInCta />}
         </EmptyState>
       </PageGrid>
     );
@@ -181,7 +202,7 @@ export default async function CardsPage() {
 
       <div className={screen.body}>
         <div className={styles.wrap}>
-          <section data-reveal className={styles.statBar}>
+          <section data-reveal className={`${screen.panel} ${styles.statBar}`}>
             {[
               ["Earned", String(trophies.length)],
               ["Scarce", String(scarce)],

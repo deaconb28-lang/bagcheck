@@ -29,12 +29,16 @@ export default async function PatternsPage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · patterns"
-          icon="signin"
-          title="Nothing to read yet"
-          body={userId ? "The ledger store is not configured." : "Sign in to see what your history repeats."}
+          icon={userId ? "setup" : "signin"}
+          title={userId ? "Configure the ledger store" : "Sign in to see what repeats"}
+          body={
+            userId
+              ? "Set MONGODB_URI on this deployment to store synced history and scores."
+              : "Entries by hour, session size and the reasons you gave — what your history does again and again."
+          }
           actions={[{ label: "Back to the landing page", href: "/", ghost: true }]}
         >
-          <SignInCta />
+          {userId ? null : <SignInCta />}
         </EmptyState>
       </PageGrid>
     );
@@ -91,6 +95,7 @@ export default async function PatternsPage() {
         score={data.scores[0]?.score ?? null}
         delta={weekDelta(data.scores)}
         syncedAt={syncClock(data.connection?.lastSyncAt)}
+        age={data.investorAge}
         tier={data.tier}
       />
 
@@ -98,7 +103,9 @@ export default async function PatternsPage() {
         <div className={screen.grid}>
           <div className={screen.column}>
             {grid ? (
-              <section data-reveal className={`${screen.panel} ${screen.hero}`}>
+              // Azure, because the panel's subject is a comparison across entry
+              // windows — never discipline (moss) or Bagcheck's own voice (accent).
+              <section data-reveal className={`${screen.panel} ${screen.hero}`} data-halo="azure">
                 <div className={screen.head}>
                   <div className={screen.headText}>
                     <span className={screen.eyebrow}>Return by entry hour</span>

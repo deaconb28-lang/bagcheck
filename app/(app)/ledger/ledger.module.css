@@ -111,14 +111,16 @@
   color: var(--ink3);
 }
 
+/* This toggle only ever gates on "verifiedTrackRecord", a Trader capability
+   — Trader-tier lock chips read ember, never azure. */
 .gate {
   font-family: var(--font-mono), monospace;
   font-size: 10px;
   letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: var(--signal);
-  background: var(--signal-tint);
-  border: 1px solid var(--signal-line);
+  color: var(--ember);
+  background: var(--ember-tint);
+  border: 1px solid var(--ember-line);
   border-radius: 999px;
   padding: 4px 12px;
   white-space: nowrap;

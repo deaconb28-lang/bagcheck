@@ -23,6 +23,7 @@
   max-height: 90svh;
   overflow: auto;
   background: var(--s1);
+  border: 1px solid var(--edge);
   border-radius: 30px;
   padding: 28px;
   display: flex;
@@ -66,6 +67,7 @@
   border-radius: 22px;
   overflow: hidden;
   background: var(--share-bg);
+  border: 1px solid var(--share-line);
   aspect-ratio: 1200 / 630;
 }
 

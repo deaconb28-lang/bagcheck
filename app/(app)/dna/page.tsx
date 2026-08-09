@@ -24,12 +24,16 @@ export default async function DnaPage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · DNA"
-          icon="signin"
-          title="Nothing to show yet"
-          body={userId ? "The ledger store is not configured." : "Sign in to see your holdings."}
+          icon={userId ? "setup" : "signin"}
+          title={userId ? "Configure the ledger store" : "Sign in to see your DNA"}
+          body={
+            userId
+              ? "Set MONGODB_URI on this deployment to store synced history and scores."
+              : "Holdings, hold pattern and equity curve, read from your own brokerage history."
+          }
           actions={[{ label: "Open the ledger view", href: "/debug", ghost: true }]}
         >
-          <SignInCta />
+          {userId ? null : <SignInCta />}
         </EmptyState>
       </PageGrid>
     );
@@ -100,6 +104,7 @@ export default async function DnaPage() {
         score={latest?.score ?? null}
         delta={weekDelta(data.scores)}
         syncedAt={syncClock(data.connection?.lastSyncAt)}
+        age={data.investorAge}
         tier={data.tier}
       />
 

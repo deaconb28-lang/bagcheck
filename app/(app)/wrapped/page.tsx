@@ -23,12 +23,16 @@ export default async function WrappedPage({
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · wrapped"
-          icon="signin"
-          title="Nothing archived yet"
-          body={userId ? "The ledger store is not configured." : "Sign in to see your year."}
+          icon={userId ? "setup" : "signin"}
+          title={userId ? "Configure the ledger store" : "Sign in to play your year"}
+          body={
+            userId
+              ? "Set MONGODB_URI on this deployment to store synced history and scores."
+              : "Twelve cards and a story player, assembled from your scored year."
+          }
           actions={[{ label: "Back to the landing page", href: "/", ghost: true }]}
         >
-          <SignInCta />
+          {userId ? null : <SignInCta />}
         </EmptyState>
       </PageGrid>
     );

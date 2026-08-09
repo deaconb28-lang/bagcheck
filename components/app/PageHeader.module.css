@@ -21,14 +21,11 @@
   text-overflow: ellipsis;
 }
 
-/*
- * --ink3, not --meta. --meta is the contrast floor at 4.5:1 on white and the
- * canvas is not white; on --bg it falls to 3.6:1. --ink3 holds 5:1 here.
- */
+/* Machine facts, same job as ScreenHeader's .meta — mono, one line, --meta. */
 .sub {
   font-family: var(--font-mono), monospace;
   font-size: 11.5px;
-  color: var(--ink3);
+  color: var(--meta);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

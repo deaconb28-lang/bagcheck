@@ -190,9 +190,22 @@
     font-size: 23px;
   }
 
+  /* Four stats read as a 2×2, not three-and-a-straggler. */
+  .componentGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .archetype {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  /* In a column, a flex-basis set for row layout becomes height — 300px of
+     empty panel between the name and the meters. */
+  .archText,
+  .archBars {
+    flex: none;
+    min-width: 0;
   }
 
   .recap {

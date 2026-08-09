@@ -19,12 +19,16 @@ export default async function LedgerPage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · ledger"
-          icon="signin"
-          title="Nothing to show yet"
-          body={userId ? "The ledger store is not configured." : "Sign in to see your ledger."}
+          icon={userId ? "setup" : "signin"}
+          title={userId ? "Configure the ledger store" : "Sign in to open your ledger"}
+          body={
+            userId
+              ? "Set MONGODB_URI on this deployment to store synced history and scores."
+              : "Every trade and transfer, exactly as the brokerage reported them."
+          }
           actions={[{ label: "Back to the landing page", href: "/", ghost: true }]}
         >
-          <SignInCta />
+          {userId ? null : <SignInCta />}
         </EmptyState>
       </PageGrid>
     );
@@ -65,6 +69,7 @@ export default async function LedgerPage() {
         score={latest?.score ?? null}
         delta={weekDelta(data.scores)}
         syncedAt={syncClock(data.connection?.lastSyncAt)}
+        age={data.investorAge}
         tier={data.tier}
       />
       <LedgerView

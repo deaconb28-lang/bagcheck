@@ -78,7 +78,7 @@ export default async function HomePage({
         <EmptyState
           eyebrow="Bagcheck · home"
           icon="setup"
-          title="The ledger store is not configured"
+          title="Configure the ledger store"
           body="Set MONGODB_URI on this deployment to store synced history and scores."
           actions={[{ label: "Open the ledger view", href: "/debug" }]}
         />

@@ -35,16 +35,16 @@ export default async function ProfilePage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · profile"
-          icon="signin"
-          title="Nothing to show yet"
+          icon={userId ? "setup" : "signin"}
+          title={userId ? "Configure the ledger store" : "Sign in to open your profile"}
           body={
             userId
-              ? "The ledger store is not configured on this deployment."
-              : "Sign in to see your archetype and settings."
+              ? "Set MONGODB_URI on this deployment to store synced history and scores."
+              : "Your archetype, plan and connection settings live here."
           }
           actions={[{ label: "Back to the landing page", href: "/", ghost: true }]}
         >
-          <SignInCta />
+          {userId ? null : <SignInCta />}
         </EmptyState>
       </PageGrid>
     );

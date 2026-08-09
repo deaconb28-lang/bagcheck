@@ -32,16 +32,18 @@
   white-space: nowrap;
 }
 
+/* Plus reads azure, Trader reads ember — moss stays reserved for discipline
+   and never labels a tier. */
 .tier[data-tier="plus"] {
-  background: var(--moss-tint);
-  border: 1px solid var(--moss-line);
-  color: var(--moss);
-}
-
-.tier[data-tier="trader"] {
   background: var(--signal-tint);
   border: 1px solid var(--signal-line);
   color: var(--signal);
+}
+
+.tier[data-tier="trader"] {
+  background: var(--ember-tint);
+  border: 1px solid var(--ember-line);
+  color: var(--ember);
 }
 
 .blurred {

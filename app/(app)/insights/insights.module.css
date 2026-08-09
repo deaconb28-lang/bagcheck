@@ -1,17 +1,13 @@
 /*
  * The one surface carrying the reserved accent. --accent means "Bagcheck did
  * this on its own", and the nightly insight is the only thing on this screen
- * that qualifies.
+ * that qualifies — so it wears the shared hero panel (screen.panel +
+ * screen.hero, data-halo="accent" for the violet wash) with its edge
+ * retinted to match, rather than repeating the panel's fill/radius/padding.
  */
 .written {
-  background: var(--s1);
-  border: 1px solid var(--accent-line);
-  border-radius: 34px;
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
+  border-color: var(--accent-line);
   gap: 16px;
-  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }
 
 .writtenHead {
@@ -84,7 +80,7 @@
   place-items: center;
   background: var(--share-moss-tint);
   color: var(--share-moss);
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-display), system-ui, sans-serif;
   font-weight: 800;
   font-size: 18px;
 }
@@ -115,11 +111,7 @@
 }
 
 @media (max-width: 899px) {
-  .written {
-    padding: 24px;
-    border-radius: 28px;
-  }
-
+  /* .written's padding/radius now come from screen.hero's own breakpoint. */
   .writtenText {
     font-size: 22px;
   }

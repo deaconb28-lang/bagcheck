@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Logo } from "@/components/primitives";
 import { WHY_OPTIONS, progressLine, queueLine, tagProgress, whyKey } from "@/lib/tags";
 import type { Conviction, UntaggedEntry, Why } from "@/lib/tags";
-import { KIND_FLOOR } from "@/lib/tags";
+import { CORRELATION_FLOOR, KIND_FLOOR } from "@/lib/tags";
 import styles from "./TagPrompt.module.css";
 
 type TagPromptProps = {
@@ -139,9 +139,15 @@ export function TagPrompt({ queue, tagged, total }: TagPromptProps) {
 function Meter({ progress }: { progress: ReturnType<typeof tagProgress> }) {
   return (
     <div className={styles.meterBlock}>
+      {/* Past the floor the meter reports the real ratio — "112 of 100" is
+          not a number anyone should read. */}
       <div className={styles.meterHead}>
-        <span>{progress.tagged} of 100 tagged</span>
-        <span>{progress.unlocked ? "Correlations running" : "Correlations unlock at 100"}</span>
+        <span>
+          {progress.tagged} of {progress.unlocked ? progress.total : CORRELATION_FLOOR} tagged
+        </span>
+        <span>
+          {progress.unlocked ? "Correlations running" : `Correlations unlock at ${CORRELATION_FLOOR}`}
+        </span>
       </div>
       <div className={styles.track}>
         <i className={styles.fill} style={{ width: `${progress.pct}%` }} />

@@ -1,6 +1,11 @@
+/* The one hero panel on this screen — the same content Home shows at 34px in
+   a plain panel reads small at 25px in this larger, avatar-led card. Give it
+   real presence: size carries the hierarchy here, not colour or a halo. */
 .archetype {
-  font-size: 25px;
-  letter-spacing: -0.025em;
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.016em;
 }
 
 .body {
@@ -61,7 +66,7 @@
 }
 
 .option[data-selected] {
-  border-color: var(--moss);
+  border-color: var(--moss-line);
   background: var(--moss-tint);
 }
 
@@ -117,32 +122,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-}
-
-.records {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.record {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.recordKey {
-  font-family: var(--font-mono), monospace;
-  font-size: 9.5px;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--meta);
-}
-
-.recordVal {
-  margin: 0;
-  font-size: 14px;
 }
 
 @media (max-width: 899px) {
@@ -212,6 +191,7 @@
   min-height: 44px;
   padding: 0 14px 0 10px;
   border-radius: 999px;
+  border: 1px solid var(--line2);
   background: var(--inset);
   color: var(--ink3);
   font-family: var(--font-mono), monospace;
@@ -219,10 +199,12 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   cursor: pointer;
+  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
 }
 
 .switch[aria-checked="true"] {
   background: var(--moss-tint);
+  border-color: var(--moss-line);
   color: var(--moss);
 }
 

@@ -14,6 +14,7 @@
   max-height: 92svh;
   overflow-y: auto;
   background: var(--s1);
+  border: 1px solid var(--edge);
   border-radius: 34px;
   padding: 38px 36px 32px;
   display: flex;
@@ -34,12 +35,18 @@
   height: 52px;
   flex: none;
   border-radius: 22px;
-  background: var(--sunken);
+  background: var(--tile);
   color: var(--ink);
 }
 
-/* The one moving part. Reduced motion holds the mark still — the checklist
-   below it is what actually reports progress. */
+/* The one moving part, and the one glow: while the sync is running this is
+   the single piece of live data on screen. Reduced motion holds the mark
+   still — the checklist below it is what actually reports progress — but
+   the glow is a static box-shadow, not an animation, so it is unaffected. */
+.mark[data-spinning] {
+  box-shadow: var(--glow-moss);
+}
+
 .mark[data-spinning] svg {
   animation: spin 1.6s linear infinite;
 }

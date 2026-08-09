@@ -30,12 +30,16 @@ export default async function InsightsPage() {
       <PageGrid>
         <EmptyState
           eyebrow="Bagcheck · insights"
-          icon="signin"
-          title="Nothing written yet"
-          body={userId ? "The ledger store is not configured." : "Sign in to read your nightly insight."}
+          icon={userId ? "setup" : "signin"}
+          title={userId ? "Configure the ledger store" : "Sign in to read your insight"}
+          body={
+            userId
+              ? "Set MONGODB_URI on this deployment to store synced history and scores."
+              : "One written paragraph each night, built from your own scored days."
+          }
           actions={[{ label: "Back to the landing page", href: "/", ghost: true }]}
         >
-          <SignInCta />
+          {userId ? null : <SignInCta />}
         </EmptyState>
       </PageGrid>
     );
@@ -129,14 +133,20 @@ export default async function InsightsPage() {
         score={latest.score}
         delta={weekDelta(data.scores)}
         syncedAt={syncClock(data.connection?.lastSyncAt)}
+        age={data.investorAge}
         tier={data.tier}
       />
 
       <div className={screen.body}>
         <div className={screen.grid}>
           <div className={screen.column}>
-            {/* The one place the reserved accent appears: Bagcheck wrote this. */}
-            <section data-reveal className={styles.written}>
+            {/* The one place the reserved accent appears: Bagcheck wrote this.
+                It is this screen's hero, so it carries the shared halo. */}
+            <section
+              data-reveal
+              className={`${screen.panel} ${screen.hero} ${styles.written}`}
+              data-halo="accent"
+            >
               <div className={styles.writtenHead}>
                 <span className={styles.accentDot} aria-hidden="true" />
                 <span className={styles.writtenEyebrow}>Written by Bagcheck · {latest.date}</span>

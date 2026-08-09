@@ -1338,10 +1338,10 @@
 .page {
   --bg: var(--field);
   --s1: var(--field-2);
-  --sunken: rgba(253, 252, 250, 0.03);
-  --inset: rgba(253, 252, 250, 0.05);
-  --control: rgba(253, 252, 250, 0.06);
-  --track: rgba(253, 252, 250, 0.1);
+  --sunken: color-mix(in srgb, var(--on-field) 3%, transparent);
+  --inset: color-mix(in srgb, var(--on-field) 5%, transparent);
+  --control: color-mix(in srgb, var(--on-field) 6%, transparent);
+  --track: color-mix(in srgb, var(--on-field) 10%, transparent);
   --tile: var(--field-2);
 
   --ink: var(--on-field);
@@ -1350,23 +1350,23 @@
   --meta: var(--on-field-3);
 
   --line: var(--hair);
-  --line-light: rgba(253, 252, 250, 0.07);
+  --line-light: color-mix(in srgb, var(--on-field) 7%, transparent);
   --line2: var(--hair-2);
 
   --moss: var(--moss-lit);
   /* The fill is the lit moss now, so what sits on it has to be ink, not
-     white — white on #4fb287 measures 2.5:1. */
+     white — white on the lit moss measures 2.5:1. */
   --on-moss: var(--on-field-moss);
-  --moss-tint: rgba(79, 178, 135, 0.14);
-  --moss-line: rgba(79, 178, 135, 0.34);
+  --moss-tint: color-mix(in srgb, var(--moss-lit) 14%, transparent);
+  --moss-line: color-mix(in srgb, var(--moss-lit) 34%, transparent);
   --signal: var(--field-signal);
-  --signal-tint: rgba(123, 166, 196, 0.14);
-  --signal-line: rgba(123, 166, 196, 0.34);
+  --signal-tint: color-mix(in srgb, var(--field-signal) 14%, transparent);
+  --signal-line: color-mix(in srgb, var(--field-signal) 34%, transparent);
   --loss: var(--field-loss);
   --accent: var(--field-accent);
   --accent-deep: var(--field-accent-deep);
-  --accent-tint: rgba(22, 192, 145, 0.14);
-  --accent-line: rgba(22, 192, 145, 0.36);
+  --accent-tint: color-mix(in srgb, var(--field-accent) 14%, transparent);
+  --accent-line: color-mix(in srgb, var(--field-accent) 36%, transparent);
   --lift: none;
   --lift-hero: none;
 
@@ -1426,7 +1426,7 @@
 
 .navLink:hover {
   color: var(--on-field);
-  background: rgba(253, 252, 250, 0.06);
+  background: var(--control);
 }
 
 .navCta {

@@ -5,12 +5,17 @@
   gap: 10px;
 }
 
+/*
+ * The only place a full equity curve renders in the product — so it carries
+ * this screen's one glow. Live portfolio value, not chrome.
+ */
 .svg {
   width: 100%;
   height: 220px;
   display: block;
   background: var(--sunken);
   border-radius: 22px;
+  box-shadow: var(--glow-moss);
 }
 
 .axis {

@@ -12,12 +12,17 @@
   align-items: center;
 }
 
-/* The card itself — the ink field, in both modes. */
+/*
+ * The card itself — the ink field, in both modes. This is the one figure the
+ * whole page is about, so it carries the same halo idiom a screen's hero
+ * panel gives its key metric, hued to the card's own tone.
+ */
 .card {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: var(--share-bg);
+  background-color: var(--share-bg);
+  background-image: var(--halo-moss);
   color: var(--share-ink);
   border: 1px solid var(--share-line);
   border-radius: 22px;
@@ -26,6 +31,10 @@
   flex-direction: column;
   gap: 24px;
   box-shadow: var(--lift-hero);
+}
+
+.card[data-tone="signal"] {
+  background-image: var(--halo-azure);
 }
 
 /*
@@ -82,7 +91,9 @@
   text-transform: uppercase;
   color: var(--share-moss);
   background: var(--share-moss-tint);
-  border: 1px solid var(--share-moss-tint);
+  /* A visible edge, not the tint again — the same colour on both meant the
+     border painted invisibly on top of its own fill. */
+  border: 1px solid color-mix(in srgb, var(--share-moss) 34%, transparent);
   border-radius: 999px;
   padding: 4px 9px;
 }
@@ -90,7 +101,7 @@
 .card[data-tone="signal"] .rarity {
   color: var(--share-signal);
   background: var(--share-signal-tint);
-  border-color: var(--share-signal-tint);
+  border-color: color-mix(in srgb, var(--share-signal) 34%, transparent);
 }
 
 .body {

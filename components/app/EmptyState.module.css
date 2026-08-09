@@ -1,12 +1,21 @@
+/*
+ * A predicament owns the whole viewport, so it composes like one: a centred
+ * lockup with the void distributed around it, not a paragraph pinned to the
+ * top-left corner of an empty screen.
+ */
 .wrap {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  align-items: flex-start;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  min-height: calc(100dvh - 220px);
   padding: 40px 0;
 }
 
-/* --ink3, not --meta: this sits on the canvas rather than on a white card. */
+/* Muted, like an inactive rail glyph — the words below name the situation,
+   not the icon. */
 .glyph {
   display: flex;
   color: var(--ink3);
@@ -15,7 +24,7 @@
 
 .title {
   font-size: 29px;
-  max-width: 13ch;
+  max-width: 16ch;
 }
 
 .body {
@@ -28,6 +37,7 @@
 .actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 10px;
   margin-top: 6px;
 }
