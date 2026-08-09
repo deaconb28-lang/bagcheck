@@ -3,7 +3,15 @@ import { getUserId } from "@/auth";
 import { getCollections, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
 import { buildRoundTrips } from "@/lib/score";
 import type { TxnLite } from "@/lib/score";
-import { findings, whatIsMissing } from "@/lib/engine";
+import {
+  eventSegments,
+  findings,
+  taggedFindings,
+  tiltFindings,
+  whatIsMissing,
+  whatTagsAreMissing,
+} from "@/lib/engine";
+import type { TaggedOpen } from "@/lib/engine";
 import { HourHeat } from "@/components/idioms";
 import { Locked } from "@/components/app/Locked";
 import { EmptyState } from "@/components/app/EmptyState";
@@ -11,8 +19,9 @@ import { PageGrid } from "@/components/app/PageGrid";
 import { ScreenHeader } from "@/components/app/ScreenHeader";
 import { ShareButton } from "@/components/app/ShareButton";
 import { SignInCta } from "@/components/app/SignInCta";
-import { readiness } from "@/lib/tiers";
+import { can, readiness } from "@/lib/tiers";
 import { CORRELATION_FLOOR } from "@/lib/tags";
+import type { WhyKey } from "@/lib/tags";
 import { weekDelta } from "../derive";
 import { DAYS, HOURS, hasClock, hourGrid } from "./hourGrid";
 import screen from "../screen.module.css";
@@ -46,13 +55,33 @@ export default async function PatternsPage() {
 
   const data = await loadScreen(userId, 400);
   // The engine needs the raw rows for entry timestamps; everything else comes
-  // off the derived document.
-  const { transactions } = await getCollections();
-  const rows = await transactions
-    .find({ userId })
-    .sort({ date: 1 })
-    .project<TxnLite>({ _id: 0, date: 1, type: 1, symbol: 1, units: 1, price: 1, amount: 1 })
-    .toArray();
+  // off the derived document. externalId rides along so tags can join back.
+  const { transactions, tags } = await getCollections();
+  const [rows, tagDocs] = await Promise.all([
+    transactions
+      .find({ userId })
+      .sort({ date: 1 })
+      .project<TxnLite & { externalId: string | null }>({
+        _id: 0,
+        externalId: 1,
+        date: 1,
+        type: 1,
+        symbol: 1,
+        units: 1,
+        price: 1,
+        amount: 1,
+      })
+      .toArray(),
+    tags
+      .find({ userId })
+      .project<{ transactionId: string; why: WhyKey; conviction: 1 | 2 | 3 | 4 | 5 }>({
+        _id: 0,
+        transactionId: 1,
+        why: 1,
+        conviction: 1,
+      })
+      .toArray(),
+  ]);
 
   if (!rows.length) {
     return (
@@ -73,8 +102,37 @@ export default async function PatternsPage() {
   }
 
   const trips = data.derived?.roundTrips ?? buildRoundTrips(rows);
-  const found = findings(trips, rows);
+
+  /*
+   * The join the whole engine layer waits on: a tag knows its transaction,
+   * the transaction knows its symbol and day, and a round trip is keyed by
+   * both. Reasons are already stored lower-cased (see TagDoc).
+   */
+  const txnById = new Map(rows.filter((r) => r.externalId).map((r) => [r.externalId, r]));
+  const opens: TaggedOpen[] = [];
+  const kindCounts: Partial<Record<WhyKey, number>> = {};
+  for (const tag of tagDocs) {
+    kindCounts[tag.why] = (kindCounts[tag.why] ?? 0) + 1;
+    const txn = txnById.get(tag.transactionId);
+    if (!txn?.symbol || !txn.date) continue;
+    opens.push({
+      symbol: txn.symbol,
+      date: txn.date.slice(0, 10),
+      why: tag.why,
+      conviction: tag.conviction,
+    });
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  const tagFound = taggedFindings(trips, opens, kindCounts);
+  const found = [
+    ...tagFound,
+    ...findings(trips, rows),
+    ...tiltFindings(trips, rows, today),
+  ];
+  const segments = eventSegments(data.derived?.equitySeries ?? [], trips, rows);
   const missing = whatIsMissing(trips, rows);
+  const tagsMissing = whatTagsAreMissing(opens, kindCounts);
   const clock = hasClock(rows);
   const grid = clock ? hourGrid(trips, rows) : null;
 
@@ -91,7 +149,7 @@ export default async function PatternsPage() {
     <>
       <ScreenHeader
         title="Patterns"
-        meta={`${trips.length} closed positions · ${rows.length.toLocaleString("en-US")} rows read`}
+        meta={`${trips.length} closed positions · ${opens.length} carry a reason · ${rows.length.toLocaleString("en-US")} rows read`}
         score={data.scores[0]?.score ?? null}
         delta={weekDelta(data.scores)}
         syncedAt={syncClock(data.connection?.lastSyncAt)}
@@ -111,7 +169,7 @@ export default async function PatternsPage() {
                     <span className={screen.eyebrow}>Return by entry hour</span>
                     <div className={`disp ${screen.h2}`}>When you open matters</div>
                   </div>
-                  <ShareButton type="quarter" label="this heatmap" size={34} />
+                  <ShareButton type="cadence" label="your rhythm" size={34} />
                 </div>
 
                 <HourHeat days={DAYS} hours={HOURS} cells={grid} />
@@ -132,10 +190,10 @@ export default async function PatternsPage() {
                   className={screen.panel}
                   style={{ animationDelay: `${0.04 + i * 0.04}s` }}
                 >
+                  {/* No share button on a finding: the correlation card is
+                      the Plus format and it does not mint yet. */}
                   <div className={screen.head}>
                     <span className={screen.eyebrow}>{finding.tag}</span>
-                    <div className={screen.spacer} />
-                    <ShareButton type="quarter" label="this finding" />
                   </div>
                   <p className={`disp ${styles.claim}`}>{finding.sentence}</p>
                   <span className={styles.evidence}>{finding.evidence}</span>
@@ -151,20 +209,49 @@ export default async function PatternsPage() {
               </section>
             )}
 
-            <section data-reveal className={screen.panel} style={{ animationDelay: "0.2s" }}>
-              <Locked
-                capability="correlationCard"
-                eyebrow="Conviction decay"
-                readiness={readiness(data.tagged, CORRELATION_FLOOR)}
+            {/*
+              * The reader's own stress windows. Finding-shaped on purpose: a
+              * future segment leaderboard scores the same object, and until a
+              * user base exists no rank is claimed anywhere.
+              */}
+            {segments.map((segment, i) => (
+              <section
+                key={segment.key}
+                data-reveal
+                className={screen.panel}
+                style={{ animationDelay: `${0.08 + i * 0.04}s` }}
               >
-                <div className={styles.decay}>
-                  <div className={`num ${styles.decayValue}`}>4.1×</div>
-                  <p className={screen.tail}>
-                    Conviction-5 positions against your conviction-2 positions.
-                  </p>
+                <div className={screen.head}>
+                  <span className={screen.eyebrow}>{segment.tag}</span>
+                  <div className={screen.spacer} />
+                  <ShareButton type="drawdownHeld" label="this window" />
                 </div>
-              </Locked>
-            </section>
+                <p className={`disp ${styles.claim}`}>{segment.sentence}</p>
+                <span className={styles.evidence}>{segment.evidence}</span>
+              </section>
+            ))}
+
+            {/*
+              * The correlation *card* is the Plus format. The findings above
+              * stay free — what is paid is the shareable artefact, so the
+              * lock disappears once the capability is held.
+              */}
+            {!can({ tier: data.tier }, "correlationCard") ? (
+              <section data-reveal className={screen.panel} style={{ animationDelay: "0.2s" }}>
+                <Locked
+                  capability="correlationCard"
+                  eyebrow="Conviction decay"
+                  readiness={readiness(data.tagged, CORRELATION_FLOOR)}
+                >
+                  <div className={styles.decay}>
+                    <div className={`num ${styles.decayValue}`}>4.1×</div>
+                    <p className={screen.tail}>
+                      Conviction-5 positions against your conviction-2 positions.
+                    </p>
+                  </div>
+                </Locked>
+              </section>
+            ) : null}
           </div>
 
           <aside className={screen.rail}>
@@ -180,6 +267,7 @@ export default async function PatternsPage() {
             <div className={screen.panel}>
               <span className={screen.eyebrow}>What is still missing</span>
               <p className={screen.tail}>{missing}</p>
+              {tagsMissing ? <p className={screen.tail}>{tagsMissing}</p> : null}
             </div>
           </aside>
         </div>

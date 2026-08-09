@@ -117,7 +117,7 @@ export default async function DnaPage() {
                   <span className={screen.eyebrow}>Portfolio value</span>
                   <div className={`num ${styles.bigFigure}`}>{money(totalValue)}</div>
                 </div>
-                <ShareButton type="hold" label="your return" size={34} />
+                <ShareButton type="equity" label="your return" size={34} />
               </div>
 
               <div className={styles.sideTiles}>
@@ -192,7 +192,7 @@ export default async function DnaPage() {
                       your rules
                     </div>
                   </div>
-                  <ShareButton type="quarter" label="your quarter" />
+                  <ShareButton type="monthlyPnl" label="your months" />
                 </div>
                 <SegmentRing days={segments} />
               </div>
@@ -215,7 +215,7 @@ export default async function DnaPage() {
               <p className={styles.specTail}>{archetype.line}</p>
               <div className={styles.specFoot}>
                 <span className={styles.specUrl}>Read-only brokerage data</span>
-                <ShareButton type="hold" label="your archetype" size={34} onInk />
+                <ShareButton type="archetype" label="your archetype" size={34} onInk />
               </div>
             </div>
 

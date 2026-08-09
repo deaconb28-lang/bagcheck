@@ -126,7 +126,7 @@ export function HomeView(props: HomeViewProps) {
                     </span>
                   ) : null}
                   <div className={screen.spacer} />
-                  <ShareButton type="score" label="your score" />
+                  <ShareButton type="health" label="your score" />
                 </div>
 
                 <p className={`disp ${styles.sentence}`}>{insight.sentence}</p>
@@ -190,7 +190,7 @@ export function HomeView(props: HomeViewProps) {
               <Link href="/dna" className={styles.openDna}>
                 Open DNA
               </Link>
-              <ShareButton type="hold" label="your archetype" size={44} />
+              <ShareButton type="archetype" label="your archetype" size={44} />
             </section>
 
             {/* 4 — P&L, mirrored. */}
@@ -210,7 +210,7 @@ export function HomeView(props: HomeViewProps) {
                       </span>
                     </div>
                   </div>
-                  <ShareButton type="quarter" label="this chart" size={34} />
+                  <ShareButton type="monthlyPnl" label="this chart" size={34} />
                 </div>
 
                 <WaveChart days={wave} />

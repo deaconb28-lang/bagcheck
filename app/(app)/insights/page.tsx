@@ -88,7 +88,7 @@ export default async function InsightsPage() {
         lHold != null && lHold > 0.5 && wHold != null
           ? `Your losers: ${lHold < 10 ? lHold.toFixed(1) : lHold.toFixed(0)} days.`
           : "Not enough closed positions to compare yet.",
-      type: "hold",
+      type: "holdRatio",
     },
     {
       eyebrow: "Sessions inside your rules",
@@ -151,7 +151,7 @@ export default async function InsightsPage() {
                 <span className={styles.accentDot} aria-hidden="true" />
                 <span className={styles.writtenEyebrow}>Written by Bagcheck · {latest.date}</span>
                 <div className={screen.spacer} />
-                <ShareButton type="score" label="tonight's insight" />
+                <ShareButton type="health" label="tonight's insight" />
               </div>
               <p className={`disp ${styles.writtenText}`}>{insight.sentence}</p>
               {insight.tail ? <p className={screen.tail}>{insight.tail}</p> : null}
@@ -173,10 +173,10 @@ export default async function InsightsPage() {
               {locked.map((card) =>
                 can({ tier: data.tier }, card.cap) ? (
                   <div key={card.eyebrow} className={screen.panel}>
+                    {/* No share button: these formats do not mint yet, and a
+                        button that always refuses is worse than none. */}
                     <div className={screen.head}>
                       <span className={screen.eyebrow}>{card.eyebrow}</span>
-                      <div className={screen.spacer} />
-                      <ShareButton type="quarter" label={card.eyebrow.toLowerCase()} />
                     </div>
                     <div className={`num ${styles.cardValue}`}>{card.value}</div>
                     <p className={screen.tail}>{card.tail}</p>

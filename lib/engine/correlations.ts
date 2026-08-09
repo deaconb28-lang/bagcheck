@@ -23,7 +23,7 @@ export interface Finding {
 }
 
 /** Below this a "pattern" is noise, and printing it would be a lie. */
-const MIN_SAMPLE = 8;
+export const MIN_SAMPLE = 8;
 
 const hourOf = (iso: string | null): number | null => {
   if (!iso || iso.length <= 10) return null; // date-only: no clock to read

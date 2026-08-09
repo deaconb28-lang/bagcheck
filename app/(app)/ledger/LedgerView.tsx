@@ -99,7 +99,7 @@ export function LedgerView({
                 <span className={screen.eyebrow}>Your public page</span>
                 <div className={`disp ${screen.h2}`}>What a visitor sees</div>
               </div>
-              <ShareButton type="score" label="your public page" size={34} />
+              <ShareButton type="health" label="your public page" size={34} />
             </div>
 
             <div className={styles.preview}>
