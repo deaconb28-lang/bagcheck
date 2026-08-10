@@ -23,7 +23,7 @@ import sharp from "sharp";
 import { SCENE } from "../lib/wrapped/scenes.ts";
 import { artPromptFor } from "../lib/wrapped/brief.ts";
 import { buildCards } from "../lib/cards/kinds.ts";
-import { exampleLedger } from "../app/(marketing)/exampleLedger.ts";
+import { exampleLedger } from "../lib/cards/exampleLedger.ts";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "public", "cards");

@@ -37,3 +37,33 @@
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   }
 }
+
+/* The publication-export rows: kind in mono, the two formats as chips. */
+.exportList {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.exportRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.exportRow:last-child {
+  border-bottom: 0;
+}
+
+.exportKind {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--meta);
+  min-width: 110px;
+  text-align: right;
+}

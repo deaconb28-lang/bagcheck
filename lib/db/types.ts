@@ -77,6 +77,17 @@ export interface TagDoc {
   conviction: 1 | 2 | 3 | 4 | 5;
 }
 
+/**
+ * A live score badge. The slug is 96 bits of randomness and is the badge's
+ * whole access model, exactly like a card — minted once per user, and the
+ * public SVG at /api/badge/[slug] re-reads the score on every cache miss.
+ */
+export interface BadgeDoc {
+  userId: string;
+  slug: string;
+  mintedAt: Date;
+}
+
 export interface InsightDoc {
   userId: string;
   date: string;

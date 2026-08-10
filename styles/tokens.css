@@ -67,13 +67,14 @@
   --ink-fill-active: rgba(255, 255, 255, 0.1);
   --ink-line: rgba(255, 255, 255, 0.09);
 
-  /* ── Moss — discipline. White with a mint whisper. ── */
-  --moss: #e9fcf2;
-  --moss-hover: #ffffff;
-  --moss-deep: #b8ccc1;
-  --moss-tint: rgba(233, 252, 242, 0.1);
-  --moss-line: rgba(233, 252, 242, 0.32);
-  --moss-dim: rgba(233, 252, 242, 0.38);
+  /* ── Moss — discipline and profit. Green earns its name back: the score,
+     sessions inside rules, and every positive P&L figure wear it. ── */
+  --moss: #4ade80;
+  --moss-hover: #6ee7a0;
+  --moss-deep: #2e9c5a;
+  --moss-tint: rgba(74, 222, 128, 0.12);
+  --moss-line: rgba(74, 222, 128, 0.34);
+  --moss-dim: rgba(74, 222, 128, 0.4);
   --on-moss: #000000;
 
   /* ── Signal — exposure, comparison, percentile. A step down, cooled. ── */
@@ -86,10 +87,10 @@
   --ember-tint: rgba(227, 213, 195, 0.1);
   --ember-line: rgba(227, 213, 195, 0.3);
 
-  /* ── Loss — negative P&L, nothing else. Recessed, faintly warm. ── */
-  --loss: #8a7a74;
-  --loss-tint: rgba(138, 122, 116, 0.12);
-  --loss-line: rgba(138, 122, 116, 0.3);
+  /* ── Loss — negative P&L, nothing else. A clear red, never a siren. ── */
+  --loss: #f26d6d;
+  --loss-tint: rgba(242, 109, 109, 0.12);
+  --loss-line: rgba(242, 109, 109, 0.34);
 
   /*
    * ── The accent, still reserved ──
@@ -110,11 +111,11 @@
    * light is white now; what varies is how much of it a meaning earns.
    * The halo variants are background washes for a hero panel's key metric.
    */
-  --glow-moss: 0 0 34px -4px rgba(233, 252, 242, 0.32);
+  --glow-moss: 0 0 34px -4px rgba(74, 222, 128, 0.4);
   --glow-ember: 0 0 34px -4px rgba(227, 213, 195, 0.22);
   --glow-azure: 0 0 34px -4px rgba(164, 176, 189, 0.24);
   --glow-accent: 0 0 34px -4px rgba(226, 217, 245, 0.32);
-  --halo-moss: radial-gradient(58% 52% at 50% 30%, rgba(233, 252, 242, 0.08), transparent 72%);
+  --halo-moss: radial-gradient(58% 52% at 50% 30%, rgba(74, 222, 128, 0.1), transparent 72%);
   --halo-ember: radial-gradient(58% 52% at 50% 30%, rgba(227, 213, 195, 0.07), transparent 72%);
   --halo-azure: radial-gradient(58% 52% at 50% 30%, rgba(164, 176, 189, 0.08), transparent 72%);
   --halo-accent: radial-gradient(58% 52% at 50% 30%, rgba(226, 217, 245, 0.08), transparent 72%);
@@ -180,10 +181,10 @@
    * reads as one measurement rather than five colours.
    */
   --h0: rgba(255, 255, 255, 0.06);
-  --h1: #2b2b2b;
-  --h2: #575757;
-  --h3: #a3a3a3;
-  --h4: #e9fcf2;
+  --h1: #1c3a28;
+  --h2: #2a6b44;
+  --h3: #38a866;
+  --h4: #4ade80;
 
   /*
    * ── Marketing field ──

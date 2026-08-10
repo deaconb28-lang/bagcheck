@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { getUserId } from "@/auth";
-import { getCollections, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
+import { getCollections, isDbConfigured, loadScreen, syncClock, taggedOpensFor } from "@/lib/db";
 import { buildCards } from "@/lib/cards";
+import { convictionStats } from "@/lib/engine";
 import { TrophyCard } from "@/components/cards/TrophyCard";
 import type { Rarity, Trophy } from "@/components/cards/TrophyCard";
+import { BadgeMint } from "@/components/app/BadgeMint";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { ScreenHeader } from "@/components/app/ScreenHeader";
@@ -144,6 +146,7 @@ export default async function CardsPage() {
     streakDays: currentStreak(data.scores),
     streakName: "Sessions inside your rules",
     weeklySessions: weeklySessions(data.derived?.dailyPnl ?? []),
+    conviction: convictionStats(trips, (await taggedOpensFor(userId)).opens),
   });
 
   // Slugs for anything already minted, so an existing card shares its own URL
@@ -224,6 +227,67 @@ export default async function CardsPage() {
               <TrophyCard key={trophy.id} trophy={trophy} locked capability={cap} />
             ))}
           </section>
+
+          {/*
+            * The Plus format shelf. Absent on free — the locked categories
+            * above already carry the pitch — and fully real once the tier
+            * holds the capabilities: the carousel ZIP, per-card publication
+            * exports, and the live badge.
+            */}
+          {can({ tier: data.tier }, "reportCarousel") ? (
+            <section data-reveal className={screen.panel}>
+              <div className={screen.head}>
+                <div className={screen.headText}>
+                  <span className={screen.eyebrow}>Plus formats</span>
+                  <div className={`disp ${screen.h2}`}>Built for publishing</div>
+                </div>
+              </div>
+
+              <div className={screen.chips}>
+                <a href="/api/cards/carousel" className={screen.chip} download>
+                  Download this year as a carousel
+                </a>
+                <a
+                  href={`/api/cards/carousel?w=q${Math.floor(new Date().getUTCMonth() / 3) + 1}`}
+                  className={screen.chip}
+                  download
+                >
+                  This quarter
+                </a>
+              </div>
+
+              {minted.length ? (
+                <div className={styles.exportList}>
+                  {minted.slice(0, 6).map((m) => (
+                    <div key={m.slug} className={styles.exportRow}>
+                      <span className={styles.exportKind}>{m.type}</span>
+                      <a href={`/api/cards/export/${m.slug}`} className={screen.chip} download>
+                        PNG 4×
+                      </a>
+                      <a
+                        href={`/api/cards/export/${m.slug}?variant=transparent`}
+                        className={screen.chip}
+                        download
+                      >
+                        Transparent
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className={screen.tail}>
+                  Publication exports appear here per card once you have minted one.
+                </p>
+              )}
+
+              <BadgeMint />
+              <p className={screen.tail}>
+                The badge is a self-updating SVG at its own URL — paste it into a
+                Substack header or a personal site and it re-reads your score
+                each hour.
+              </p>
+            </section>
+          ) : null}
 
           <p data-reveal className={styles.note}>
             Rarity is earned by behaviour, never bought. Paying unlocks

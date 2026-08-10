@@ -162,6 +162,25 @@ export function revenge(
   };
 }
 
+/**
+ * The raw conviction numbers, for the correlation card. Same floors as the
+ * finding; the card layer decides what separation is worth printing.
+ */
+export interface ConvictionStats {
+  highMean: number;
+  lowMean: number;
+  highN: number;
+  lowN: number;
+}
+
+export function convictionStats(trips: RoundTrip[], opens: TaggedOpen[]): ConvictionStats | null {
+  const joined = joinTags(trips, opens);
+  const high = joined.filter((j) => j.conviction >= 4).map((j) => ret(j.trip));
+  const low = joined.filter((j) => j.conviction <= 2).map((j) => ret(j.trip));
+  if (high.length < MIN_SAMPLE || low.length < MIN_SAMPLE) return null;
+  return { highMean: mean(high), lowMean: mean(low), highN: high.length, lowN: low.length };
+}
+
 /** Every tag-joined finding the ledger currently supports. */
 export function taggedFindings(
   trips: RoundTrip[],

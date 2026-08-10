@@ -134,3 +134,140 @@
     padding-inline: 20px;
   }
 }
+
+/* ── The demo sections ─────────────────────────────────────────────────── */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+  padding: 96px 24px;
+  border-top: 1px solid var(--line-light);
+}
+
+.sectionEyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.sectionTitle {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  line-height: 1.1;
+  max-width: 24ch;
+}
+
+.sectionTail {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink3);
+  max-width: 52ch;
+}
+
+.waveFrame {
+  width: min(760px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: var(--s1);
+  border: 1px solid var(--edge);
+  border-radius: 30px;
+  padding: 32px;
+}
+
+.waveHead {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+
+.waveStat {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.waveStat[data-tone="moss"] {
+  color: var(--moss);
+  background: var(--moss-tint);
+  border: 1px solid var(--moss-line);
+}
+
+.waveStat[data-tone="loss"] {
+  color: var(--loss);
+  background: var(--loss-tint);
+  border: 1px solid var(--loss-line);
+}
+
+/* Three cards, fanned a breath. Motion is the reveal and a lift on hover —
+   the static state is the finished design. */
+.deck {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding-top: 12px;
+}
+
+.deckCard {
+  width: min(300px, 84vw);
+  transition: transform 0.2s ease;
+}
+
+.deckCard[data-slot="0"] {
+  transform: rotate(-1.6deg);
+}
+
+.deckCard[data-slot="2"] {
+  transform: rotate(1.6deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .deckCard:hover {
+    transform: translateY(-6px) rotate(0deg);
+  }
+}
+
+.ctaGhost {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 26px;
+  border-radius: 999px;
+  border: 1px solid var(--line2);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 14.5px;
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+
+.ctaGhost:hover {
+  background: var(--control);
+  border-color: var(--line2-hover);
+}
+
+.closing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 26px;
+  padding: 120px 24px;
+  border-top: 1px solid var(--line-light);
+}
+
+.closingLine {
+  font-size: clamp(34px, 5.5vw, 64px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}

@@ -137,8 +137,19 @@ export async function renderCard(
   card: CardLike,
   cells: number[],
   format: ShareFormat = "unfurl",
+  /**
+   * Publication options. `scale` multiplies the whole frame (type included,
+   * since everything is expressed against the frame's own width) — 2× the
+   * story frame is a 2160×3840 press asset. `rounded` clips the card to a
+   * radius and leaves the corners transparent, so it can sit inside a
+   * newsletter without a black plate behind it.
+   */
+  opts: { scale?: number; rounded?: boolean } = {},
 ) {
-  const { w, h } = FORMAT_SIZE[format];
+  const scale = Math.min(4, Math.max(1, opts.scale ?? 1));
+  const base = FORMAT_SIZE[format];
+  const w = Math.round(base.w * scale);
+  const h = Math.round(base.h * scale);
   /*
    * The notional width the composition is drawn against. Everything below is
    * expressed in those units and multiplied by `k`.
@@ -173,6 +184,8 @@ export async function renderCard(
           color: ON_INK,
           padding: `${px(format === "unfurl" ? 64 : 78)}px ${px(72)}px`,
           fontFamily: font ? "Outfit" : "sans-serif",
+          borderRadius: opts.rounded ? px(52) : 0,
+          overflow: "hidden",
         }}
       >
         {art ? (

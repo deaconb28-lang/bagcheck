@@ -35,6 +35,10 @@ export const SCENE: Record<CardKind, string> = {
   monthlyPnl: "many distinct mountain ranges layered one behind another, each a paler silhouette",
   /** A curve: one long rising ridgeline sweeping across the frame. */
   equity: "one long unbroken ridgeline rising steadily from left to right across the frame",
+
+  /** correlation — two flows of very different weight; the comparison is the picture. */
+  correlation:
+    "two rivers of very different width running side by side across a plain, the broad one catching the light, converging far at the horizon",
   /** The year: a wide panorama of everything at once. */
   wrapped: "a vast panoramic range under a sky full of stars, the whole horizon visible",
 };

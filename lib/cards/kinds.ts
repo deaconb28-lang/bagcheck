@@ -35,6 +35,7 @@ export type CardKind =
   | "cadence"
   | "monthlyPnl"
   | "equity"
+  | "correlation"
   | "wrapped";
 
 export type CardHue = "moss" | "ember" | "azure" | "violet";
@@ -115,6 +116,12 @@ export interface CardInput {
   panicSells: number;
   streakDays: number;
   streakName: string;
+  /**
+   * Conviction return means (%), from the tag join. Null (or absent) when
+   * the tag loop has not yet produced both buckets — the correlation card
+   * is tag-earned, which is what makes it the rarest thing here.
+   */
+  conviction?: { highMean: number; lowMean: number; highN: number; lowN: number } | null;
   /** Sessions per week over the recent window, oldest first. */
   weeklySessions: number[];
 }
@@ -174,6 +181,7 @@ export function buildCards(input: CardInput): CardSpec[] {
     cadenceCard,
     monthlyPnlCard,
     equityCard,
+    correlationCard,
     wrappedCard,
   ]
     .map((build) => build(input))
@@ -184,7 +192,45 @@ export function cardOfKind(input: CardInput, kind: CardKind): CardSpec | null {
   return buildCards(input).find((c) => c.kind === kind) ?? null;
 }
 
-/* ── The twelve ────────────────────────────────────────────────────────── */
+/* ── The thirteen ──────────────────────────────────────────────────────── */
+
+/**
+ * Conviction, priced — the engine's most-quoted artefact. It only exists
+ * when months of tagged entries have closed on both sides of the bar and
+ * high conviction actually paid, which no brokerage feed can fake.
+ */
+function correlationCard(i: CardInput): CardSpec | null {
+  const c = i.conviction;
+  if (!c) return null;
+  // The clean multiple is the card. An inverted gradient is a finding for
+  // Patterns to name, not a poster to wear.
+  if (!(c.highMean > 0 && c.lowMean > 0.2)) return null;
+  const ratio = c.highMean / c.lowMean;
+  if (ratio < 1.5) return null;
+  return {
+    kind: "correlation",
+    eyebrow: "Bagcheck · conviction",
+    kicker: "Conviction",
+    headline: "Decay",
+    lede: `High-conviction entries returned ${ratio.toFixed(1)}× your low-conviction entries.`,
+    body: {
+      kind: "figure",
+      label: "High against low conviction",
+      value: ratio.toFixed(1),
+      unit: "×",
+    },
+    hue: "azure",
+    layout: "numeral",
+    art: {
+      magnitude: unit(ratio / 4),
+      direction: "up",
+      texture: textureOf(i.equity.map((p) => p.value)),
+      density: c.highN + c.lowN,
+    },
+    rarity: "rare",
+    symbol: null,
+  };
+}
 
 /** Who the ledger says you are, decomposed into the components that said it. */
 function archetypeCard(i: CardInput): CardSpec | null {

@@ -1,9 +1,19 @@
 import { NextResponse } from "next/server";
 import { getUserId } from "@/auth";
-import { getCollections, getDerived, isDbConfigured, loadAppData, mintCard } from "@/lib/db";
+import {
+  getCollections,
+  getDerived,
+  isDbConfigured,
+  loadAppData,
+  mintCard,
+  taggedOpensFor,
+  tierFor,
+} from "@/lib/db";
 import { buildCards } from "@/lib/cards/kinds";
 import type { CardSpec } from "@/lib/cards/kinds";
 import { archetypeFor } from "@/lib/archetypes";
+import { convictionStats } from "@/lib/engine";
+import { can } from "@/lib/tiers";
 import { currentStreak, weeklySessions } from "@/app/(app)/derive";
 
 /**
@@ -30,11 +40,14 @@ export async function POST(req: Request) {
   }
 
   const { transactions, tags } = await getCollections();
-  const [{ scores, transactionCount }, derived, taggedCount] = await Promise.all([
-    loadAppData(userId, 400),
-    getDerived(userId),
-    tags.countDocuments({ userId }),
-  ]);
+  const [{ scores, transactionCount }, derived, taggedCount, { opens }, tier] =
+    await Promise.all([
+      loadAppData(userId, 400),
+      getDerived(userId),
+      tags.countDocuments({ userId }),
+      taggedOpensFor(userId),
+      tierFor(userId),
+    ]);
   void transactions;
   void taggedCount;
 
@@ -69,6 +82,7 @@ export async function POST(req: Request) {
     streakDays: currentStreak(scores),
     streakName: "Sessions inside your rules",
     weeklySessions: weeklySessions(dailyPnl),
+    conviction: convictionStats(derived?.roundTrips ?? [], opens),
   });
 
   const spec = kind ? options.find((o) => o.kind === kind) : options[0];
@@ -76,6 +90,18 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { error: "that card has not been earned yet" },
       { status: 422 },
+    );
+  }
+
+  /*
+   * The correlation card is a Plus *format*: the finding is free on
+   * Patterns, the mintable artefact is the paid category. Enforced here
+   * because the client only ever names a kind.
+   */
+  if (spec.kind === "correlation" && !can({ tier }, "correlationCard")) {
+    return NextResponse.json(
+      { error: "the correlation card is a Plus format" },
+      { status: 403 },
     );
   }
 

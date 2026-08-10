@@ -28,3 +28,5 @@ export type { ScreenData } from "./screen";
 export { DERIVED_VERSION, getDerived, rebuildDerived } from "./derived";
 export { getSyncProgress } from "./sync-progress";
 export type { DailyPnl, EquityPoint, HoldTime } from "./derived";
+export { taggedOpensFor } from "./opens";
+export { badgeBySlug, mintBadge } from "./badges";
