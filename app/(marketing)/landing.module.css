@@ -238,19 +238,37 @@
   position: relative;
 }
 
+/* Hero phones run smaller than the base .phone and sit apart, the gap
+   bridged by the curl — the reference art's composition. */
+.heroArt .phone {
+  width: 268px;
+  padding: 14px 13px 16px;
+  border-radius: 38px;
+}
+
 .heroArt .phone[data-phone="portfolio"] {
   z-index: 2;
-  transform: rotate(-2deg);
+  margin-top: 88px;
+  transform: rotate(-3deg);
   animation: floaty 8s ease-in-out infinite;
 }
 
 .heroArt .phone[data-phone="wrapped"] {
-  margin-left: -64px;
-  margin-top: 56px;
-  transform: rotate(2.4deg);
-  --tilt: 2.4deg;
+  transform: rotate(2.6deg);
+  --tilt: 2.6deg;
   animation: floaty 8s -3.4s ease-in-out infinite;
-  background: linear-gradient(168deg, var(--mk-violet-soft), var(--mk-violet) 42%, var(--mk-violet-deep));
+  background: color-mix(in srgb, var(--mk-violet-deep) 22%, var(--mk-night));
+}
+
+/* The equity line leaves the chart, loops once, and heads for the Wrapped
+   phone — drawn ink, not chrome. */
+.heroCurl {
+  align-self: flex-start;
+  flex: 0 0 auto;
+  width: 128px;
+  margin: 276px -30px 0;
+  z-index: 3;
+  color: var(--mk-ink);
 }
 
 .phoneTop {
@@ -435,10 +453,9 @@
   opacity: 0.6;
 }
 
-.bestDayBubble {
+/* Floating annotation bubbles — white cards pinned to a phone's edge. */
+.bubble {
   position: absolute;
-  top: 34px;
-  right: -34px;
   background: var(--mk-bg);
   color: var(--mk-ink);
   border-radius: 14px;
@@ -448,23 +465,46 @@
   flex-direction: column;
 }
 
-.bestDayBubble i {
+.bubble i {
   font-style: normal;
   font-size: 10px;
   color: var(--mk-ink3);
   font-weight: 600;
 }
 
-.bestDayBubble b {
+.bubble b {
   font-size: 14px;
 }
 
-/* Wrapped phone internals */
+.bestDayBubble {
+  top: 26px;
+  right: -54px;
+}
+
+.winRateBubble {
+  top: 6px;
+  right: -30px;
+}
+
+.topBagBubble {
+  top: 246px;
+  right: -36px;
+}
+
+/* Wrapped phone internals — the gradient lives on the card, not the phone,
+   so the artefact reads as content on an instrument. */
 .wrapHero {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 10px 8px 4px;
+  padding: 16px 14px 14px;
+  border-radius: 22px;
+  background: linear-gradient(
+    155deg,
+    var(--mk-violet-soft),
+    var(--mk-violet) 44%,
+    color-mix(in srgb, var(--mk-amber) 72%, var(--mk-bg))
+  );
 }
 
 .wrapEyebrow {
@@ -486,15 +526,27 @@
   line-height: 1.4;
 }
 
+.wrapChips {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
 .typeChip {
-  align-self: flex-start;
   background: var(--mk-bg);
   color: var(--mk-ink);
   font-size: 11.5px;
   font-weight: 700;
   padding: 6px 12px;
   border-radius: 999px;
-  margin-top: 4px;
+}
+
+.tradesChip {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mk-bg) 18%, transparent);
 }
 
 .wrapTiles {
@@ -505,8 +557,8 @@
 }
 
 .wrapTile {
-  background: color-mix(in srgb, var(--mk-ink) 26%, transparent);
-  border: 1px solid color-mix(in srgb, var(--mk-bg) 16%, transparent);
+  background: color-mix(in srgb, var(--mk-bg) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mk-bg) 11%, transparent);
   border-radius: 14px;
   padding: 10px 12px;
   display: flex;
@@ -531,8 +583,14 @@
   font-size: 10px;
 }
 
-.wrapTile:first-child em {
+.wrapTile b[data-tone="green"],
+.wrapTile em[data-tone="green"] {
   color: var(--mk-green-soft);
+  font-weight: 700;
+}
+
+.wrapTile em[data-tone="red"] {
+  color: color-mix(in srgb, var(--mk-red) 78%, var(--mk-bg));
   font-weight: 700;
 }
 
@@ -767,6 +825,8 @@
 }
 
 /* ── Coming soon ── */
+/* The score section is dark — the instrument being built, shown in its own
+   light before the first-week band continues the register below. */
 .soon {
   display: flex;
   align-items: center;
@@ -774,7 +834,49 @@
   gap: 72px;
   flex-wrap: wrap;
   padding: 104px 44px;
-  border-top: 1px solid var(--mk-line);
+  background: color-mix(in srgb, var(--mk-violet-deep) 8%, var(--mk-ink));
+  color: var(--mk-bg);
+}
+
+.soon .lede {
+  color: color-mix(in srgb, var(--mk-bg) 66%, transparent);
+}
+
+.soon .fine {
+  color: color-mix(in srgb, var(--mk-bg) 46%, transparent);
+}
+
+.soon .eyebrowRed {
+  color: color-mix(in srgb, var(--mk-red) 72%, var(--mk-bg));
+}
+
+.soon .waitInput,
+.pricing .waitInput {
+  background: color-mix(in srgb, var(--mk-bg) 6%, transparent);
+  border-color: color-mix(in srgb, var(--mk-bg) 20%, transparent);
+  color: var(--mk-bg);
+}
+
+.soon .waitInput::placeholder,
+.pricing .waitInput::placeholder {
+  color: color-mix(in srgb, var(--mk-bg) 42%, transparent);
+}
+
+.soon .waitInput:focus-visible,
+.pricing .waitInput:focus-visible {
+  outline-color: var(--mk-bg);
+}
+
+.soon .waitButton,
+.pricing .waitButton {
+  background: var(--mk-bg);
+  color: var(--mk-ink);
+}
+
+.soon .waitButton[data-done],
+.pricing .waitButton[data-done] {
+  background: var(--mk-green-soft);
+  color: var(--mk-ink);
 }
 
 .soonCopy {
@@ -787,6 +889,8 @@
 
 .soon .phone {
   animation: floaty 8s ease-in-out infinite;
+  border-color: var(--mk-night-line);
+  box-shadow: 0 40px 110px -30px color-mix(in srgb, var(--mk-green-soft) 26%, transparent);
 }
 
 .previewTag {
@@ -867,6 +971,7 @@
     color-mix(in srgb, var(--mk-violet-deep) 16%, var(--mk-ink));
   color: var(--mk-bg);
   padding: 104px 44px 112px;
+  border-top: 1px solid var(--mk-night-line);
 }
 
 .fwInner {
@@ -1606,6 +1711,8 @@
 }
 
 /* ── Pricing ── */
+/* The close is dark: the page opens in daylight and ends inside the
+   instrument, waitlist in hand. */
 .pricing {
   display: flex;
   flex-direction: column;
@@ -1613,7 +1720,44 @@
   text-align: center;
   gap: 16px;
   padding: 104px 44px 120px;
-  border-top: 1px solid var(--mk-line);
+  background: color-mix(in srgb, var(--mk-violet-deep) 8%, var(--mk-ink));
+  color: var(--mk-bg);
+}
+
+.pricing .eyebrow {
+  color: color-mix(in srgb, var(--mk-bg) 56%, transparent);
+}
+
+.pricing .hint {
+  color: color-mix(in srgb, var(--mk-bg) 62%, transparent);
+}
+
+.pricing .tier {
+  background: color-mix(in srgb, var(--mk-bg) 4%, transparent);
+  border-color: color-mix(in srgb, var(--mk-bg) 14%, transparent);
+}
+
+.pricing .tier[data-popular] {
+  border: 2px solid var(--mk-bg);
+  box-shadow: 0 30px 60px -34px color-mix(in srgb, var(--mk-violet) 45%, transparent);
+}
+
+.pricing .popular {
+  background: var(--mk-bg);
+  color: var(--mk-ink);
+}
+
+.pricing .tier i {
+  color: color-mix(in srgb, var(--mk-bg) 56%, transparent);
+}
+
+.pricing .price span,
+.pricing .refund {
+  color: color-mix(in srgb, var(--mk-bg) 62%, transparent);
+}
+
+.pricing .tier li::before {
+  color: var(--mk-green-soft);
 }
 
 .tiers {
@@ -1755,9 +1899,14 @@
   gap: 20px;
   flex-wrap: wrap;
   padding: 28px 44px;
-  border-top: 1px solid var(--mk-line);
+  border-top: 1px solid var(--mk-night-line);
+  background: color-mix(in srgb, var(--mk-violet-deep) 8%, var(--mk-ink));
   font-size: 14px;
-  color: var(--mk-ink3);
+  color: color-mix(in srgb, var(--mk-bg) 60%, transparent);
+}
+
+.foot .brand {
+  color: var(--mk-bg);
 }
 
 .footLinks {
@@ -1776,8 +1925,13 @@
     min-height: 560px;
   }
 
-  .heroArt .phone[data-phone="wrapped"] {
+  .heroArt .phone[data-phone="wrapped"],
+  .heroCurl {
     display: none;
+  }
+
+  .heroArt .phone[data-phone="portfolio"] {
+    margin-top: 0;
   }
 }
 

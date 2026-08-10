@@ -155,18 +155,35 @@ export default function LandingPage() {
               <span data-acct="add">+</span>
             </div>
             <div className={styles.phoneFoot}>🔒 Read-only, secured by SnapTrade</div>
-            <div className={styles.bestDayBubble}>
+            <div className={`${styles.bubble} ${styles.bestDayBubble}`}>
               <i>Best day</i>
               <b>+$8,412</b>
             </div>
           </div>
+
+          {/* The equity line leaves the chart and heads for the Wrapped */}
+          <svg className={styles.heroCurl} viewBox="0 0 128 64" fill="none">
+            <path
+              d="M3 40 C 22 24 38 14 54 20 C 68 26 68 42 56 43 C 45 44 44 30 57 26 C 78 19 102 26 122 38"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+            />
+            <path
+              d="M112 30 L 123 38 L 110 44"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
 
           {/* Wrapped phone */}
           <div className={styles.phone} data-phone="wrapped">
             <div className={styles.phoneTop} data-on-violet="">
               <span>9:41</span>
               <span className={styles.phoneTitle}>Your Wrapped</span>
-              <span />
+              <span>•••</span>
             </div>
             <div className={styles.wrapHero}>
               <span className={styles.wrapEyebrow}>2026 WRAPPED · @jordan</span>
@@ -174,23 +191,44 @@ export default function LandingPage() {
               <div className={styles.wrapSub}>
                 Return this year · Top 3% of bagcheck
               </div>
-              <span className={styles.typeChip}>The Conviction Buyer</span>
+              <div className={styles.wrapChips}>
+                <span className={styles.typeChip}>The Conviction Buyer</span>
+                <span className={styles.tradesChip}>142 trades</span>
+              </div>
             </div>
             <div className={styles.wrapTiles}>
               <div className={styles.wrapTile}>
                 <i>TOP BAG</i>
                 <b>NVDA</b>
-                <em>41% of book</em>
+                <em data-tone="green">41% of book</em>
+              </div>
+              <div className={styles.wrapTile}>
+                <i>BEST TRADE</i>
+                <b data-tone="green">+$18,402</b>
+                <em>Mar 14 · NVDA</em>
               </div>
               <div className={styles.wrapTile}>
                 <i>DIAMOND HANDS</i>
                 <b>411 days</b>
                 <em>Longest hold</em>
               </div>
+              <div className={styles.wrapTile}>
+                <i>ONE THAT GOT AWAY</i>
+                <b>TSLA</b>
+                <em data-tone="red">Sold 9 days early</em>
+              </div>
             </div>
             <div className={styles.wrapActions}>
               <span>⟳ Remix</span>
               <span data-primary="">Share Wrapped</span>
+            </div>
+            <div className={`${styles.bubble} ${styles.winRateBubble}`}>
+              <i>Win rate</i>
+              <b>64%</b>
+            </div>
+            <div className={`${styles.bubble} ${styles.topBagBubble}`}>
+              <i>Top bag</i>
+              <b>NVDA 41%</b>
             </div>
           </div>
         </div>
