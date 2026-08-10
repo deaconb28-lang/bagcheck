@@ -78,6 +78,7 @@
   font-size: 17px;
   font-weight: 600;
   letter-spacing: -0.01em;
+  white-space: nowrap;
   transition: opacity 0.16s ease, border-color 0.16s ease;
 }
 
@@ -2870,13 +2871,26 @@
   }
 
   .ratingPill {
-    font-size: 16px;
-    padding: 6px 16px 6px 6px;
+    font-size: 14px;
+    gap: 9px;
+    padding: 6px 14px 6px 6px;
+  }
+
+  .ratingPill > span:last-child {
+    gap: 6px;
   }
 
   .avatars i {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
+    font-size: 11px;
+    margin-left: -10px;
+  }
+
+  .navCta,
+  .navGhost {
+    font-size: 15px;
+    padding: 11px 16px;
   }
 
   .pnl,
