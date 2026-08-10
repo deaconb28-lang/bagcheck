@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { appLocked } from "@/lib/launch";
+import { BagMark } from "./BagMark";
 import { FirstWeek } from "./FirstWeek";
+import { PnlChart } from "./PnlChart";
 import { WaitlistForm } from "./WaitlistForm";
-import { WrappedStack } from "./WrappedStack";
+import { WrappedDeck } from "./WrappedDeck";
 import styles from "./landing.module.css";
 
 export const metadata: Metadata = {
@@ -13,34 +15,79 @@ export const metadata: Metadata = {
 };
 
 /*
- * The landing, from the design handoff: white editorial field, lowercase
- * wordmark, Wrapped sold first and the score layer as the thing worth
- * waiting for. The social numbers below are the design's placeholders —
- * swap them for measured ones the day there are measured ones.
+ * The landing, built to the design handoff: a white hero over a dark field
+ * that runs from the Wrapped deck to the footer. The social numbers below are
+ * the design's placeholders — swap them for measured ones the day there are
+ * measured ones.
  */
 const SOCIAL = { lovedBy: "320K", rating: "4.9", ahead: "4,281", investors: "12,408" };
 
-/** The bag mark. Currentcolor body, amber clasp — the one logo everywhere. */
-function BagMark({ size = 26 }: { size?: number }) {
+function Check({ tone }: { tone: "green" | "violet" | "white" }) {
+  const stroke =
+    tone === "green" ? "var(--mk-green-soft)" : tone === "violet" ? "var(--mk-violet-soft)" : "var(--mk-bg)";
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
-      <rect x="8" y="20" width="48" height="36" rx="11" fill="currentColor" />
-      <path
-        d="M21 27v-6a11 11 0 0 1 22 0v6"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="7"
-        strokeLinecap="round"
-      />
-      <circle cx="32" cy="38" r="6" fill="var(--mk-amber)" />
+    <svg
+      width="17"
+      height="17"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={stroke}
+      strokeWidth="2.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M4 12.5l5 5L20 6.5" />
     </svg>
   );
 }
 
+function StatusIcons() {
+  return (
+    <span className={styles.statusIcons}>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor">
+        <rect x="0" y="8" width="3" height="4" rx="1" />
+        <rect x="4.5" y="5.5" width="3" height="6.5" rx="1" />
+        <rect x="9" y="3" width="3" height="9" rx="1" />
+        <rect x="13.5" y="0" width="3" height="12" rx="1" />
+      </svg>
+      <svg width="26" height="12" viewBox="0 0 26 12" fill="none">
+        <rect x="0.6" y="0.6" width="21" height="10.8" rx="3.2" stroke="currentColor" strokeOpacity="0.6" />
+        <rect x="2.4" y="2.4" width="16" height="7.2" rx="2" fill="currentColor" />
+      </svg>
+    </span>
+  );
+}
+
+function ShareIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 16V4" />
+      <path d="M7 9l5-5 5 5" />
+      <path d="M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3" />
+    </svg>
+  );
+}
+
+const HOLDINGS = [
+  { tile: "NV", tone: "nvda", sym: "NVDA", qty: "61.4 shares", val: "$61,204", ret: "+214.6%", dir: "up" },
+  { tile: "AA", tone: "aapl", sym: "AAPL", qty: "88 shares", val: "$24,780", ret: "+18.2%", dir: "up" },
+  { tile: "₿", tone: "btc", sym: "BTC", qty: "0.41 BTC", val: "$38,140", ret: "+41.0%", dir: "up" },
+  { tile: "TS", tone: "tsla", sym: "TSLA", qty: "42 shares", val: "$9,842", ret: "−22.4%", dir: "down" },
+] as const;
+
+const WRAP_TILES = [
+  { label: "TOP BAG", value: "NVDA", tail: "41% of book", tone: "green" },
+  { label: "BEST TRADE", value: "+$18,402", tail: "Mar 14 · NVDA", tone: "green" },
+  { label: "DIAMOND HANDS", value: "411 days", tail: "Longest hold", tone: "mute" },
+  { label: "ONE THAT GOT AWAY", value: "TSLA", tail: "Sold 9 days early", tone: "red" },
+] as const;
+
 export default function LandingPage() {
-  // While the app is locked, every door leads to the waitlist: no Login
-  // link, and the primary CTA scrolls to the tiers instead of /home.
+  // While the app is locked, every door leads to the waitlist: no Login link,
+  // and the primary CTA scrolls to the tiers instead of /home.
   const locked = appLocked();
+
   return (
     <main className={styles.page}>
       <header className={styles.nav}>
@@ -49,20 +96,25 @@ export default function LandingPage() {
           <span className={styles.wordmark}>bagcheck</span>
         </Link>
         <nav className={styles.navLinks} aria-label="Sections">
-          <a href="#wrapped">Wrapped</a>
-          <a href="#score">The score</a>
-          <a href="#pricing">Pricing</a>
+          <a href="#deck">Wrapped</a>
+          <a href="#soon">The score</a>
+          <a href="#waitlist">Pricing</a>
           {!locked && <Link href="/home">Login</Link>}
         </nav>
-        {locked ? (
-          <a href="#pricing" className={styles.navCta}>
-            Get early access
+        <div className={styles.navActions}>
+          {locked ? (
+            <a href="#waitlist" className={styles.navCta}>
+              Get early access
+            </a>
+          ) : (
+            <Link href="/home" className={styles.navCta}>
+              Get started now
+            </Link>
+          )}
+          <a href="#waitlist" className={styles.navGhost}>
+            Join the waitlist
           </a>
-        ) : (
-          <Link href="/home" className={styles.navCta}>
-            Get started now
-          </Link>
-        )}
+        </div>
       </header>
 
       {/* ── Hero ── */}
@@ -70,16 +122,22 @@ export default function LandingPage() {
         <div className={styles.heroCopy}>
           <div className={styles.ratingPill}>
             <span className={styles.avatars} aria-hidden="true">
-              <i>JR</i>
-              <i>MK</i>
-              <i>AD</i>
+              <i data-a="1">JR</i>
+              <i data-a="2">MK</i>
+              <i data-a="3">AD</i>
             </span>
-            Loved by {SOCIAL.lovedBy} investors with <span className={styles.star}>★</span>{" "}
-            {SOCIAL.rating} rating
+            <span>
+              Loved by {SOCIAL.lovedBy} investors with{" "}
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="var(--mk-amber)" aria-hidden="true">
+                <path d="M12 2.5l2.9 5.9 6.6.9-4.8 4.6 1.2 6.5-5.9-3.1-5.9 3.1 1.2-6.5L2.5 9.3l6.6-.9z" />
+              </svg>{" "}
+              {SOCIAL.rating} rating
+            </span>
           </div>
           <h1 className={styles.h1}>
             <span className={styles.h1Strong}>Meet bagcheck</span>
-            Turn your portfolio into a flex
+            <span>Turn your portfolio</span>
+            <span>into a flex</span>
           </h1>
           <p className={styles.lede}>
             Connect your brokerage in two taps through SnapTrade. bagcheck reads
@@ -88,139 +146,204 @@ export default function LandingPage() {
           </p>
           <div className={styles.heroActions}>
             {locked ? (
-              <a href="#pricing" className={styles.ctaDark}>
-                Get early access <span aria-hidden="true">→</span>
+              <a href="#waitlist" className={styles.ctaDark}>
+                Get early access
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14" />
+                  <path d="M13 5l7 7-7 7" />
+                </svg>
               </a>
             ) : (
               <Link href="/home" className={styles.ctaDark}>
-                Get started now <span aria-hidden="true">→</span>
+                Get started now
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14" />
+                  <path d="M13 5l7 7-7 7" />
+                </svg>
               </Link>
             )}
-            <a href="#score" className={styles.ctaGhost}>
+            <a href="#waitlist" className={styles.ctaGhost}>
               Join the waitlist
             </a>
           </div>
         </div>
 
         <div className={styles.heroArt} aria-hidden="true">
-          {/* Portfolio phone */}
-          <div className={styles.phone} data-phone="portfolio">
-            <div className={styles.phoneTop}>
-              <span>9:41</span>
-              <span className={styles.phoneTitle}>Accounts</span>
-              <span>•••</span>
-            </div>
-            <div className={styles.screenCard}>
-              <div className={styles.screenHead}>
-                <span className={styles.screenLabel}>Portfolio</span>
-                <span className={styles.connected}>● Connected</span>
-              </div>
-              <div className={styles.bigMoney}>
-                $148,392<span>.11</span>
-              </div>
-              <div className={styles.deltaLine}>▲ $12,204.86 +8.96% · 1Y</div>
-              <svg className={styles.spark} viewBox="0 0 280 70" preserveAspectRatio="none">
-                <path
-                  d="M0 58 L20 52 L40 56 L60 44 L80 48 L100 38 L120 42 L140 30 L160 36 L180 24 L200 28 L220 18 L240 22 L260 12 L280 8"
-                  fill="none"
-                  stroke="var(--mk-green)"
-                  strokeWidth="2.5"
-                />
-              </svg>
-              {[
-                ["NV", "NVDA", "61.4 shares", "$61,204", "+214.6%", "up"],
-                ["AA", "AAPL", "88 shares", "$24,780", "+18.2%", "up"],
-                ["₿", "BTC", "0.41 BTC", "$38,140", "+41.0%", "up"],
-                ["TS", "TSLA", "42 shares", "$9,842", "−22.4%", "down"],
-              ].map(([tile, sym, qty, val, ret, dir]) => (
-                <div key={sym} className={styles.holding}>
-                  <span className={styles.holdTile} data-sym={sym}>
-                    {tile}
-                  </span>
-                  <span className={styles.holdName}>
-                    <b>{sym}</b>
-                    <i>{qty}</i>
-                  </span>
-                  <span className={styles.holdVal}>
-                    <b>{val}</b>
-                    <i data-dir={dir}>{ret}</i>
+          {/* Portfolio phone — a dark handset holding a light account card */}
+          <div className={styles.phoneShell} data-phone="portfolio">
+            <div className={styles.phoneScreen}>
+              <div className={styles.screenField} />
+              <div className={styles.acctCard}>
+                <div className={styles.acctHead}>
+                  <span>Portfolio</span>
+                  <span className={styles.connected}>
+                    <i />
+                    Connected
                   </span>
                 </div>
-              ))}
-            </div>
-            <div className={styles.acctChips}>
-              <span data-acct="rh">RH</span>
-              <span data-acct="fid">FID</span>
-              <span data-acct="sch">SCH</span>
-              <span data-acct="add">+</span>
-            </div>
-            <div className={styles.phoneFoot}>🔒 Read-only, secured by SnapTrade</div>
-            <div className={`${styles.bubble} ${styles.bestDayBubble}`}>
-              <i>Best day</i>
-              <b>+$8,412</b>
+                <div className={styles.bigMoney}>
+                  $148,392<span>.11</span>
+                </div>
+                <div className={styles.deltaLine}>
+                  <b>▲ $12,204.86</b>
+                  <span>+8.96%</span>
+                  <i>1Y</i>
+                </div>
+                <svg className={styles.spark} viewBox="0 0 280 96" preserveAspectRatio="none">
+                  <path
+                    d="M0 74 L18 68 L34 78 L52 60 L70 66 L88 48 L104 56 L122 40 L140 52 L158 34 L176 42 L194 26 L212 33 L230 18 L248 24 L266 10 L280 14 L280 96 L0 96 Z"
+                    fill="color-mix(in srgb, var(--mk-green) 10%, transparent)"
+                  />
+                  <path
+                    d="M0 74 L18 68 L34 78 L52 60 L70 66 L88 48 L104 56 L122 40 L140 52 L158 34 L176 42 L194 26 L212 33 L230 18 L248 24 L266 10 L280 14"
+                    fill="none"
+                    stroke="var(--mk-green)"
+                    strokeWidth="2.4"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className={styles.holdings}>
+                  {HOLDINGS.map((h) => (
+                    <div key={h.sym} className={styles.holding}>
+                      <span className={styles.holdTile} data-tone={h.tone}>
+                        {h.tile}
+                      </span>
+                      <span className={styles.holdName}>
+                        <b>{h.sym}</b>
+                        <i>{h.qty}</i>
+                      </span>
+                      <span className={styles.holdVal}>
+                        <b>{h.val}</b>
+                        <i data-dir={h.dir}>{h.ret}</i>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className={styles.statusBar}>
+                <span>9:41</span>
+                <StatusIcons />
+              </div>
+              <div className={styles.screenNav}>
+                <span className={styles.navBubble}>
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 5l-7 7 7 7" />
+                  </svg>
+                </span>
+                <b>Accounts</b>
+                <span className={styles.navBubble} data-dots="">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+              </div>
+              <div className={styles.screenFoot}>
+                <div className={styles.acctChips}>
+                  <span data-acct="rh">RH</span>
+                  <span data-acct="fid">FID</span>
+                  <span data-acct="sch">SCH</span>
+                  <span data-acct="add">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+                      <path d="M12 5v14M5 12h14" />
+                    </svg>
+                  </span>
+                </div>
+                <div className={styles.secured}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="4" y="10" width="16" height="11" rx="3" />
+                    <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                  </svg>
+                  Read-only, secured by SnapTrade
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* The equity line leaves the chart and heads for the Wrapped */}
-          <svg className={styles.heroCurl} viewBox="0 0 128 64" fill="none">
+          {/* The equity line leaves the chart and points at the Wrapped */}
+          <svg className={styles.heroCurl} viewBox="0 0 150 120" fill="none">
             <path
-              d="M3 40 C 22 24 38 14 54 20 C 68 26 68 42 56 43 C 45 44 44 30 57 26 C 78 19 102 26 122 38"
+              d="M4 22c34-22 66 6 52 30-9 15-30 6-22-10 10-19 48-24 88-6"
               stroke="currentColor"
-              strokeWidth="2.4"
+              strokeWidth="3"
               strokeLinecap="round"
             />
             <path
-              d="M112 30 L 123 38 L 110 44"
+              d="M112 26l14 10-17 8"
               stroke="currentColor"
-              strokeWidth="2.4"
+              strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
           </svg>
 
           {/* Wrapped phone */}
-          <div className={styles.phone} data-phone="wrapped">
-            <div className={styles.phoneTop} data-on-violet="">
-              <span>9:41</span>
-              <span className={styles.phoneTitle}>Your Wrapped</span>
-              <span>•••</span>
+          <div className={styles.phoneShell} data-phone="wrapped">
+            <div className={styles.phoneScreen} data-violet="">
+              <div className={styles.wrapTop}>
+                <div className={styles.statusBar} data-inline="">
+                  <span>9:41</span>
+                  <StatusIcons />
+                </div>
+                <div className={styles.screenNav} data-inline="">
+                  <span className={styles.navBubble}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M15 5l-7 7 7 7" />
+                    </svg>
+                  </span>
+                  <b>Your Wrapped</b>
+                  <span className={styles.navBubble} data-dots="">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                </div>
+              </div>
+              <div className={styles.wrapBody}>
+                <div className={styles.wrapCard}>
+                  <span className={styles.wrapBlob} />
+                  <div className={styles.wrapCardInner}>
+                    <div className={styles.wrapCardHead}>
+                      <span>2026 WRAPPED</span>
+                      <span>@jordan</span>
+                    </div>
+                    <div className={styles.wrapReturn}>+38.4%</div>
+                    <div className={styles.wrapSub}>Return this year · Top 3% of bagcheck</div>
+                    <div className={styles.wrapChips}>
+                      <span className={styles.typeChip}>The Conviction Buyer</span>
+                      <span className={styles.tradesChip}>142 trades</span>
+                    </div>
+                  </div>
+                </div>
+                <div className={styles.wrapTiles}>
+                  {WRAP_TILES.map((t) => (
+                    <div key={t.label} className={styles.wrapTile}>
+                      <i>{t.label}</i>
+                      <b>{t.value}</b>
+                      <em data-tone={t.tone}>{t.tail}</em>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className={styles.wrapActions}>
+                <span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 11a8 8 0 1 0-2.3 5.7" />
+                    <path d="M20 4v7h-7" />
+                  </svg>
+                  Remix
+                </span>
+                <span data-primary="">
+                  <ShareIcon size={15} />
+                  Share Wrapped
+                </span>
+              </div>
+              <span className={styles.phoneHandle} />
             </div>
-            <div className={styles.wrapHero}>
-              <span className={styles.wrapEyebrow}>2026 WRAPPED · @jordan</span>
-              <div className={styles.wrapReturn}>+38.4%</div>
-              <div className={styles.wrapSub}>
-                Return this year · Top 3% of bagcheck
-              </div>
-              <div className={styles.wrapChips}>
-                <span className={styles.typeChip}>The Conviction Buyer</span>
-                <span className={styles.tradesChip}>142 trades</span>
-              </div>
-            </div>
-            <div className={styles.wrapTiles}>
-              <div className={styles.wrapTile}>
-                <i>TOP BAG</i>
-                <b>NVDA</b>
-                <em data-tone="green">41% of book</em>
-              </div>
-              <div className={styles.wrapTile}>
-                <i>BEST TRADE</i>
-                <b data-tone="green">+$18,402</b>
-                <em>Mar 14 · NVDA</em>
-              </div>
-              <div className={styles.wrapTile}>
-                <i>DIAMOND HANDS</i>
-                <b>411 days</b>
-                <em>Longest hold</em>
-              </div>
-              <div className={styles.wrapTile}>
-                <i>ONE THAT GOT AWAY</i>
-                <b>TSLA</b>
-                <em data-tone="red">Sold 9 days early</em>
-              </div>
-            </div>
-            <div className={styles.wrapActions}>
-              <span>⟳ Remix</span>
-              <span data-primary="">Share Wrapped</span>
+
+            <div className={`${styles.bubble} ${styles.bestDayBubble}`}>
+              <i>Best day</i>
+              <b>+$8,412</b>
             </div>
             <div className={`${styles.bubble} ${styles.winRateBubble}`}>
               <i>Win rate</i>
@@ -234,138 +357,299 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── The Wrapped stack ── */}
-      <section id="wrapped" className={styles.section}>
-        <span className={styles.eyebrow}>THE WRAPPED</span>
-        <h2 className={styles.h2}>See your portfolio, beautifully.</h2>
-        <p className={styles.hint}>Swipe the top card away</p>
-        <WrappedStack
-          faces={{
-            return: (
-              <div className={styles.face} data-face="return">
-                <i>2026 WRAPPED · @jordan</i>
-                <b>+38.4%</b>
-                <span>Return this year</span>
-                <em>Top 3% of bagcheck</em>
+      {/* ── The Wrapped deck ── */}
+      <section id="deck" className={styles.deckSection}>
+        <WrappedDeck
+          faces={[
+            <div key="return" className={styles.card} data-card="return">
+              <div className={styles.cardHead}>
+                <span>2026 WRAPPED</span>
+                <span>@jordan</span>
               </div>
-            ),
-            topbag: (
-              <div className={styles.face} data-face="topbag">
-                <i>TOP BAG</i>
-                <b>NVDA</b>
-                <span>41% of book</span>
-                <div className={styles.alloc}>
-                  {[
-                    ["NVDA", 41],
-                    ["BTC", 26],
-                    ["AAPL", 17],
-                    ["TSLA", 9],
-                  ].map(([sym, pct]) => (
-                    <div key={sym} className={styles.allocRow}>
-                      <span>{sym}</span>
-                      <div className={styles.allocTrack}>
-                        <div style={{ width: `${pct}%` }} />
-                      </div>
-                      <span>{pct}%</span>
-                    </div>
-                  ))}
+              <div>
+                <div className={styles.cardHuge}>+38.4%</div>
+                <div className={styles.cardTail}>Return this year</div>
+              </div>
+              <span className={styles.cardPill}>
+                <i />
+                Top 3% of bagcheck
+              </span>
+            </div>,
+
+            <div key="topbag" className={styles.card} data-card="topbag">
+              <span className={styles.cardEyebrow}>TOP BAG</span>
+              <div className={styles.cardRing}>
+                <svg width="210" height="210" viewBox="0 0 210 210">
+                  <circle cx="105" cy="105" r="85" fill="none" stroke="color-mix(in srgb, var(--mk-bg) 8%, transparent)" strokeWidth="22" />
+                  <circle
+                    cx="105"
+                    cy="105"
+                    r="85"
+                    fill="none"
+                    stroke="var(--mk-green-soft)"
+                    strokeWidth="22"
+                    strokeLinecap="round"
+                    strokeDasharray="534"
+                    strokeDashoffset="315"
+                    transform="rotate(-90 105 105)"
+                  />
+                </svg>
+                <div className={styles.cardRingNum}>
+                  <b>NVDA</b>
+                  <i>41% of book</i>
                 </div>
               </div>
-            ),
-            trade: (
-              <div className={styles.face} data-face="trade">
-                <i>BEST TRADE</i>
-                <b>+$18,402</b>
-                <span>Mar 14 · NVDA · held 9 months</span>
+              <div className={styles.cardBars}>
+                {[
+                  ["AAPL", 41, "17%", "violet"],
+                  ["BTC", 62, "26%", "amber"],
+                  ["TSLA", 24, "9%", "red"],
+                ].map(([sym, w, pct, tone]) => (
+                  <div key={sym as string}>
+                    <span>{sym}</span>
+                    <span className={styles.cardTrack}>
+                      <i data-tone={tone as string} style={{ width: `${w}%` }} />
+                    </span>
+                    <span>{pct}</span>
+                  </div>
+                ))}
               </div>
-            ),
-            hands: (
-              <div className={styles.face} data-face="hands">
-                <i>DIAMOND HANDS</i>
-                <b>411</b>
-                <span>Days on your longest hold</span>
+            </div>,
+
+            <div key="trade" className={styles.card} data-card="trade">
+              <span className={styles.cardEyebrow}>BEST TRADE</span>
+              <div className={styles.cardLine}>
+                <svg viewBox="0 0 270 190" preserveAspectRatio="none">
+                  <path
+                    d="M0 168 L26 150 L52 162 L78 128 L104 138 L130 96 L156 108 L182 62 L208 74 L234 30 L270 8"
+                    fill="none"
+                    stroke="var(--mk-bg)"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className={styles.cardDot} />
               </div>
-            ),
-            type: (
-              <div className={styles.face} data-face="type">
-                <i>YOUR TYPE</i>
-                <b className={styles.faceType}>
+              <div>
+                <div className={styles.cardBig}>+$18,402</div>
+                <div className={styles.cardTail}>Mar 14 · NVDA · held 9 months</div>
+              </div>
+            </div>,
+
+            <div key="hands" className={styles.card} data-card="hands">
+              <span className={styles.cardEyebrow}>DIAMOND HANDS</span>
+              <div className={styles.cardWave}>
+                {[34, 58, 45, 100, 71, 52].map((h, i) => (
+                  <span key={i} style={{ height: `${h}%` }} data-peak={h === 100 || undefined} />
+                ))}
+              </div>
+              <div>
+                <div className={styles.cardHuge}>411</div>
+                <div className={styles.cardTail}>Days on your longest hold</div>
+              </div>
+            </div>,
+
+            <div key="type" className={styles.card} data-card="type">
+              <span className={styles.cardEyebrow}>YOUR TYPE</span>
+              <div>
+                <div className={styles.cardName}>
                   The
                   <br />
                   Conviction
                   <br />
                   Buyer
-                </b>
-                <div className={styles.traits}>
+                </div>
+                <div className={styles.cardTraits}>
                   {[
-                    ["Concentration", "High"],
-                    ["Patience", "Elite"],
-                    ["Panic selling", "Rare"],
-                  ].map(([k, v]) => (
-                    <div key={k}>
-                      <span>{k}</span>
-                      <b>{v}</b>
+                    ["Concentration", "High", 84, "violet"],
+                    ["Patience", "Elite", 92, "amber"],
+                    ["Panic selling", "Rare", 22, "green"],
+                  ].map(([k, v, w, tone]) => (
+                    <div key={k as string}>
+                      <div className={styles.cardTraitHead}>
+                        <span>{k}</span>
+                        <span>{v}</span>
+                      </div>
+                      <span className={styles.cardTraitTrack}>
+                        <i data-tone={tone as string} style={{ width: `${w}%` }} />
+                      </span>
                     </div>
                   ))}
                 </div>
               </div>
-            ),
-          }}
+              <span className={styles.cardShare}>
+                <ShareIcon />
+                Share Wrapped
+              </span>
+            </div>,
+          ]}
         />
-        <a href="#pricing" className={styles.ctaDark}>
-          Share Wrapped
-        </a>
       </section>
 
-      {/* ── Coming soon: the score layer ── */}
-      <section id="score" className={styles.soon}>
-        <div className={styles.soonCopy}>
-          <span className={styles.eyebrowRed}>COMING SOON</span>
-          <h2 className={styles.h2}>Transform the way you trade.</h2>
-          <p className={styles.lede}>
-            Whoop for your portfolio. Strain, recovery and risk — read every
-            morning, no spreadsheet required.
-          </p>
-          <WaitlistForm tier="waitlist" cta="Join the waitlist" />
-          <p className={styles.fine}>Read-only, via SnapTrade. Cancel any time.</p>
-        </div>
-        <div className={styles.phone} data-phone="health" aria-hidden="true">
-          <div className={styles.phoneTop}>
-            <span>Tuesday, 9 Aug</span>
-            <span className={styles.previewTag}>PREVIEW</span>
+      {/* ── Coming soon: the score, and what it reads ── */}
+      <section id="soon" className={styles.soon}>
+        <div className={styles.soonGlowVioleta} aria-hidden="true" />
+        <div className={styles.soonGlowAmber} aria-hidden="true" />
+
+        <div className={styles.soonTop}>
+          <div className={styles.soonCopy}>
+            <span className={styles.soonTag}>
+              <i />
+              COMING SOON
+            </span>
+            <h2 className={styles.h2}>
+              Transform the way
+              <br />
+              you trade.
+            </h2>
+            <p className={styles.lede}>
+              Whoop for your portfolio. Strain, recovery and risk — read every
+              morning, no spreadsheet required.
+            </p>
+            <WaitlistForm tier="waitlist" cta="Join the waitlist" />
+            <p className={styles.fine}>Read-only, via SnapTrade. Cancel any time.</p>
           </div>
-          <div className={styles.healthRing}>
-            <svg viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="52" fill="none" stroke="var(--mk-night-line)" strokeWidth="9" />
-              <circle
-                cx="60"
-                cy="60"
-                r="52"
-                fill="none"
-                stroke="var(--mk-green-soft)"
-                strokeWidth="9"
-                strokeLinecap="round"
-                strokeDasharray="327"
-                strokeDashoffset="95"
-                transform="rotate(-90 60 60)"
-              />
-            </svg>
-            <div className={styles.healthNum}>
-              <b>71</b>
-              <i>HEALTH</i>
+
+          <div className={styles.healthCard} aria-hidden="true">
+            <div className={styles.healthHead}>
+              <span>Tuesday, 9 Aug</span>
+              <b>PREVIEW</b>
+            </div>
+            <div className={styles.healthTop}>
+              <div className={styles.healthRing}>
+                <svg width="150" height="150" viewBox="0 0 150 150">
+                  <circle cx="75" cy="75" r="65" fill="none" stroke="color-mix(in srgb, var(--mk-bg) 8%, transparent)" strokeWidth="10" />
+                  <circle cx="75" cy="75" r="53" fill="none" stroke="color-mix(in srgb, var(--mk-bg) 8%, transparent)" strokeWidth="10" />
+                  <circle
+                    cx="75"
+                    cy="75"
+                    r="65"
+                    fill="none"
+                    stroke="var(--mk-violet-soft)"
+                    strokeWidth="10"
+                    strokeLinecap="round"
+                    strokeDasharray="409"
+                    strokeDashoffset="123"
+                    transform="rotate(-90 75 75)"
+                  />
+                  <circle
+                    cx="75"
+                    cy="75"
+                    r="53"
+                    fill="none"
+                    stroke="var(--mk-amber)"
+                    strokeWidth="10"
+                    strokeLinecap="round"
+                    strokeDasharray="333"
+                    strokeDashoffset="183"
+                    transform="rotate(-90 75 75)"
+                  />
+                </svg>
+                <div className={styles.healthNum}>
+                  <b>71</b>
+                  <i>HEALTH</i>
+                </div>
+              </div>
+              <div className={styles.healthStats}>
+                <div>
+                  <span>STRAIN</span>
+                  <b>14.2</b>
+                </div>
+                <div>
+                  <span>TODAY&rsquo;S PERFORMANCE</span>
+                  <b data-tone="red">−4.8%</b>
+                </div>
+                <div>
+                  <span>YTD PERFORMANCE</span>
+                  <b data-tone="green">+75%</b>
+                </div>
+              </div>
+            </div>
+            <div className={styles.healthDays}>
+              <span className={styles.healthDaysLabel}>LAST 14 DAYS</span>
+              <div className={styles.healthBars}>
+                {[38, 52, 31, 64, 44, 72, 57, 83, 49, 68, 41, 76, 59, 100].map((h, i) => (
+                  <span key={i} style={{ height: `${h}%` }} data-today={h === 100 || undefined} />
+                ))}
+              </div>
             </div>
           </div>
-          <div className={styles.healthRows}>
-            {[
-              ["STRAIN", "14.2"],
-              ["TODAY'S PERFORMANCE", "−4.8%"],
-              ["YTD PERFORMANCE", "+75%"],
-            ].map(([k, v]) => (
-              <div key={k} className={styles.healthRow}>
-                <span>{k}</span>
-                <b data-neg={v.startsWith("−") || undefined}>{v}</b>
+        </div>
+
+        <div className={styles.insights}>
+          <PnlChart />
+
+          <div className={styles.insightRow}>
+            <div className={styles.insight}>
+              <span className={styles.insightEyebrow}>WEEKDAY PATTERN</span>
+              <div className={styles.weekWrap}>
+                <span className={styles.weekFlag}>−0.8%</span>
+                <span className={styles.weekAxis} />
+                {[
+                  ["M", 0, 44, "red"],
+                  ["T", 26, 0, ""],
+                  ["W", 15, 0, ""],
+                  ["T", 40, 0, ""],
+                  ["F", 22, 0, ""],
+                ].map(([d, up, down, tone], i) => (
+                  <div key={`${d}${i}`} className={styles.weekCol}>
+                    <span className={styles.weekUp}>
+                      <i style={{ height: `${up}px` }} data-tone={(tone as string) || undefined} />
+                    </span>
+                    <span className={styles.weekDown}>
+                      <i style={{ height: `${down}px` }} data-tone={(tone as string) || undefined} />
+                    </span>
+                    <b data-tone={(tone as string) || undefined}>{d}</b>
+                  </div>
+                ))}
               </div>
-            ))}
+              <div className={styles.insightHead}>−0.8% on Mondays</div>
+              <p>Your Monday positions underperform the rest of your week by 1.1 points.</p>
+            </div>
+
+            <div className={styles.insight}>
+              <span className={styles.insightEyebrow}>HOLDING BEHAVIOUR</span>
+              <div className={styles.holdRows}>
+                <div>
+                  <div className={styles.holdRowHead}>
+                    <span>Winners</span>
+                    <span>41 days</span>
+                  </div>
+                  <span className={styles.holdTrack}>
+                    <i style={{ width: "31%" }} data-tone="green" />
+                  </span>
+                </div>
+                <div>
+                  <div className={styles.holdRowHead}>
+                    <span>Losers</span>
+                    <span>132 days</span>
+                  </div>
+                  <span className={styles.holdTrack}>
+                    <i style={{ width: "100%" }} data-tone="red" />
+                  </span>
+                </div>
+              </div>
+              <div className={styles.insightHead}>Winners cut 3.2× faster</div>
+              <p>You hold losers 132 days on average and winners just 41.</p>
+            </div>
+
+            <div className={styles.insight}>
+              <span className={styles.insightEyebrow}>ENTRY TIMING</span>
+              <div className={styles.timeWrap}>
+                <div className={styles.timeBar}>
+                  <span className={styles.timeBand} />
+                  <span className={styles.timeAxis} />
+                </div>
+                <div className={styles.timeTicks}>
+                  <span>9:30</span>
+                  <span>12:00</span>
+                  <span>16:00</span>
+                </div>
+              </div>
+              <div className={styles.insightHead}>9:45 – 10:15</div>
+              <p>Two thirds of your profitable entries land in the first hour.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -373,155 +657,104 @@ export default function LandingPage() {
       {/* ── The first week, day by day ── */}
       <FirstWeek investors={SOCIAL.investors} />
 
-      {/* ── What the score reads: four behaviour insights ── */}
-      <section className={styles.insights}>
-        <div className={styles.insight}>
-          <span className={styles.eyebrow}>45-DAY P&amp;L</span>
-          <div className={styles.insightHead}>
-            <b>+$41,208</b>
-            <span className={styles.pos}>+38.4%</span>
+      {/* ── The waitlist ── */}
+      <section id="waitlist" className={styles.waitlist}>
+        <div className={styles.waitGlow} aria-hidden="true" />
+        <div className={styles.waitInner}>
+          <div className={styles.waitHead}>
+            <div>
+              <span className={styles.eyebrow}>THE WAITLIST</span>
+              <h2 className={styles.h2}>Get in early.</h2>
+            </div>
+            <p className={styles.waitCount}>{SOCIAL.ahead} investors ahead of you</p>
           </div>
-          <svg className={styles.pnlChart} viewBox="0 0 320 90" preserveAspectRatio="none">
-            <path
-              d="M0 74 L26 66 L52 70 L78 54 L104 60 L130 44 L156 50 L182 34 L208 40 L234 26 L260 32 L286 16 L320 10"
-              fill="none"
-              stroke="var(--mk-green)"
-              strokeWidth="2.5"
-            />
-          </svg>
-          <div className={styles.axis}>
-            <span>Jun 8</span>
-            <span>Jun 22</span>
-            <span>Jul 6</span>
-            <span>Jul 20</span>
-            <span>Aug 3</span>
-          </div>
-          <p>45 trading days of P&amp;L, straight from your brokerage.</p>
-        </div>
 
-        <div className={styles.insight}>
-          <span className={styles.eyebrow}>WEEKDAY PATTERN</span>
-          <div className={styles.insightHead}>
-            <b className={styles.neg}>−0.8%</b>
-            <span>on Mondays</span>
-          </div>
-          <div className={styles.weekBars}>
-            {[
-              ["M", 34, "down"],
-              ["T", 62, ""],
-              ["W", 58, ""],
-              ["T", 74, ""],
-              ["F", 66, ""],
-            ].map(([d, h, dir], i) => (
-              <div key={`${d}${i}`} className={styles.weekBar}>
-                <i style={{ height: `${h}%` }} data-dir={dir || undefined} />
-                <span>{d}</span>
+          <div className={styles.tiers}>
+            <div className={styles.tier}>
+              <span className={styles.tierLabel}>WAITLIST</span>
+              <div className={styles.tierPrice}>
+                <b>Free</b>
               </div>
-            ))}
-          </div>
-          <p>Your Monday positions underperform the rest of your week by 1.1 points.</p>
-        </div>
+              <ul className={styles.tierList}>
+                {["Wrapped the day it ships", "Monthly score preview", "No card required"].map((f) => (
+                  <li key={f}>
+                    <Check tone="green" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <WaitlistForm tier="waitlist" cta="Join the waitlist" />
+            </div>
 
-        <div className={styles.insight}>
-          <span className={styles.eyebrow}>HOLDING BEHAVIOUR</span>
-          <div className={styles.insightHead}>
-            <b>Winners cut 3.2× faster</b>
-          </div>
-          <div className={styles.holdBars}>
-            <div className={styles.holdBarRow}>
-              <span>Winners</span>
-              <div className={styles.holdTrack}>
-                <i style={{ width: "31%" }} data-kind="win" />
+            <div className={styles.tier} data-popular="">
+              <span className={styles.popular}>
+                <i />
+                MOST POPULAR
+              </span>
+              <span className={styles.tierLabel}>EARLY ACCESS</span>
+              <div className={styles.tierPrice}>
+                <b>$5</b>
+                <span>once</span>
               </div>
-              <span>41 days</span>
+              <p className={styles.tierNote}>Refunded if we miss our launch window</p>
+              <ul className={styles.tierList}>
+                {[
+                  "Skip the line — first 1,000 accounts",
+                  "50% off Premium for 12 months",
+                  "Founding badge on every Wrapped",
+                  "Input on what we build next",
+                ].map((f) => (
+                  <li key={f}>
+                    <Check tone="white" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <WaitlistForm tier="early" cta="Get early access" />
             </div>
-            <div className={styles.holdBarRow}>
-              <span>Losers</span>
-              <div className={styles.holdTrack}>
-                <i style={{ width: "100%" }} data-kind="loss" />
+
+            <div className={styles.tier}>
+              <span className={styles.tierLabel}>PREMIUM</span>
+              <div className={styles.tierPrice}>
+                <b>$9</b>
+                <span>/mo with early access</span>
               </div>
-              <span>132 days</span>
+              <p className={styles.tierNote} data-mute="">
+                $18/mo at launch
+              </p>
+              <ul className={styles.tierList}>
+                {[
+                  "Daily score, strain and recovery",
+                  "Full P&L history and drawdowns",
+                  "Behaviour insights, weekly",
+                  "Unlimited Wrapped remixes",
+                ].map((f) => (
+                  <li key={f}>
+                    <Check tone="violet" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <WaitlistForm tier="premium" cta="Notify me at launch" />
             </div>
-          </div>
-          <p>You hold losers 132 days on average and winners just 41.</p>
-        </div>
-
-        <div className={styles.insight}>
-          <span className={styles.eyebrow}>ENTRY TIMING</span>
-          <div className={styles.insightHead}>
-            <b>9:45 – 10:15</b>
-          </div>
-          <div className={styles.timeline}>
-            <div className={styles.timelineBand} />
-            <span>9:30</span>
-            <span>12:00</span>
-            <span>16:00</span>
-          </div>
-          <p>Two thirds of your profitable entries land in the first hour.</p>
-        </div>
-      </section>
-
-      {/* ── The waitlist / pricing ── */}
-      <section id="pricing" className={styles.pricing}>
-        <span className={styles.eyebrow}>THE WAITLIST</span>
-        <h2 className={styles.h2}>Get in early.</h2>
-        <p className={styles.hint}>{SOCIAL.ahead} investors ahead of you</p>
-
-        <div className={styles.tiers}>
-          <div className={styles.tier}>
-            <i>WAITLIST</i>
-            <div className={styles.price}>Free</div>
-            <ul>
-              <li>Wrapped the day it ships</li>
-              <li>Monthly score preview</li>
-              <li>No card required</li>
-            </ul>
-            <WaitlistForm tier="waitlist" cta="Join the waitlist" />
-          </div>
-
-          <div className={styles.tier} data-popular="">
-            <span className={styles.popular}>MOST POPULAR</span>
-            <i>EARLY ACCESS</i>
-            <div className={styles.price}>
-              $5 <span>once</span>
-            </div>
-            <p className={styles.refund}>Refunded if we miss our launch window</p>
-            <ul>
-              <li>Skip the line — first 1,000 accounts</li>
-              <li>50% off Premium for 12 months</li>
-              <li>Founding badge on every Wrapped</li>
-              <li>Input on what we build next</li>
-            </ul>
-            <WaitlistForm tier="early" cta="Get early access" />
-          </div>
-
-          <div className={styles.tier}>
-            <i>PREMIUM</i>
-            <div className={styles.price}>
-              $9 <span>/mo with early access</span>
-            </div>
-            <p className={styles.refund}>$18/mo at launch</p>
-            <ul>
-              <li>Daily score, strain and recovery</li>
-              <li>Full P&amp;L history and drawdowns</li>
-              <li>Behaviour insights, weekly</li>
-              <li>Unlimited Wrapped remixes</li>
-            </ul>
-            <WaitlistForm tier="premium" cta="Notify me at launch" />
           </div>
         </div>
       </section>
 
       <footer className={styles.foot}>
-        <span className={styles.brand}>
-          <BagMark size={20} />
-          <span className={styles.wordmark}>bagcheck</span>
-        </span>
-        <nav className={styles.footLinks} aria-label="Footer">
-          <Link href="/legal/icons">Icon credits</Link>
-          {!locked && <Link href="/home">Login</Link>}
-        </nav>
-        <span className={styles.copyright}>© 2026 bagcheck</span>
+        <div className={styles.footInner}>
+          <span className={styles.brand} data-foot="">
+            <BagMark size={28} check="var(--mk-field)" />
+            <span className={styles.wordmark} data-small="">
+              bagcheck
+            </span>
+          </span>
+          <div className={styles.footLinks}>
+            <Link href="/legal/icons">Icon credits</Link>
+            {!locked && <Link href="/home">Login</Link>}
+          </div>
+          <span className={styles.footNote}>© 2026 bagcheck</span>
+        </div>
       </footer>
     </main>
   );

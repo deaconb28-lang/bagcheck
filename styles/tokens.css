@@ -197,22 +197,44 @@
   --mk-ink2: #4b4b52;
   --mk-ink3: #6b7280;
   --mk-meta: #8a8a93;
+  --mk-meta2: #9a9aa2;
   --mk-line: #e6e6ea;
   --mk-line2: #dedee3;
-  --mk-fill: #f6f6f8;
+  --mk-line3: #eaeaee;
+  --mk-fill: #f7f7f8;
   --mk-chip: #eeeef2;
+
+  /* The dark field the page runs from the Wrapped section down. */
+  --mk-field: #0b0b12;
+  --mk-field-violet: #120c24;
+  --mk-card: #111119;
+  --mk-bezel: #111113;
+  --mk-bezel-line: #2a2a2e;
+  --mk-screen: #0e0f12;
+  --mk-screen-2: #1a1b20;
+
   --mk-green: #12a150;
   --mk-green-deep: #1e7a3c;
   --mk-green-bright: #00c805;
   --mk-green-soft: #4ade80;
+  --mk-green-abyss: #03291f;
+  --mk-green-mid: #065f46;
   --mk-red: #e11d48;
-  --mk-amber: #f2a900;
+  --mk-red-soft: #fb7185;
+  --mk-amber: #f59e0b;
+  --mk-amber-deep: #b45309;
+  --mk-amber-abyss: #2b1500;
+  --mk-bitcoin: #f2a900;
+  --mk-nvidia: #76b900;
+  --mk-fidelity: #1e7a3c;
+  --mk-schwab: #0b3e8c;
+  --mk-coinbase: #1652f0;
   --mk-violet: #7c3aed;
+  --mk-violet-lit: #a855f7;
   --mk-violet-soft: #a78bfa;
+  --mk-violet-mid: #6d28d9;
   --mk-violet-deep: #4c1d95;
-  --mk-night: #111113;
-  --mk-night-2: #1a1b20;
-  --mk-night-line: #2a2a2e;
+  --mk-violet-abyss: #3b0764;
 }
 
 /*
