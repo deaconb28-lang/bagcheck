@@ -188,27 +188,31 @@
 
   /*
    * ── Marketing field ──
-   * The landing page predates the overhaul and already lives on this same
-   * dark ground; its remaps stay valid.
+   * The landing is its own world: a white editorial field in the Cal AI
+   * register, selling the flex while the app stays a black instrument.
+   * Only app/(marketing) reads these.
    */
-  --field: #0b0a08;
-  --field-2: #111310;
-  --field-black: #050505;
-  --on-field: #fdfcfa;
-  --on-field-2: rgba(253, 252, 250, 0.62);
-  --on-field-3: rgba(253, 252, 250, 0.56);
-  --hair: rgba(253, 252, 250, 0.12);
-  --hair-2: rgba(253, 252, 250, 0.2);
-  --moss-lit: #4fb287;
-  --moss-glow: #7fe0b4;
-  --field-loss: #c87a5c;
-  --on-field-moss: #14120f;
-  --field-signal: #7ba6c4;
-  --field-accent: #16c091;
-  --field-accent-deep: #3ed4aa;
-  --ridge-ground: #040604;
-  --moss-deep-fill: #1e6b4a;
-  --moss-deep-hover: #28815b;
+  --mk-bg: #ffffff;
+  --mk-ink: #0b0b0c;
+  --mk-ink2: #4b4b52;
+  --mk-ink3: #6b7280;
+  --mk-meta: #8a8a93;
+  --mk-line: #e6e6ea;
+  --mk-line2: #dedee3;
+  --mk-fill: #f6f6f8;
+  --mk-chip: #eeeef2;
+  --mk-green: #12a150;
+  --mk-green-deep: #1e7a3c;
+  --mk-green-bright: #00c805;
+  --mk-green-soft: #4ade80;
+  --mk-red: #e11d48;
+  --mk-amber: #f2a900;
+  --mk-violet: #7c3aed;
+  --mk-violet-soft: #a78bfa;
+  --mk-violet-deep: #4c1d95;
+  --mk-night: #111113;
+  --mk-night-2: #1a1b20;
+  --mk-night-line: #2a2a2e;
 }
 
 /*

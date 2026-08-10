@@ -77,6 +77,14 @@ export interface TagDoc {
   conviction: 1 | 2 | 3 | 4 | 5;
 }
 
+/** One row per waitlist signup. Email is the identity; tier is what they asked for. */
+export interface WaitlistDoc {
+  email: string;
+  /** "waitlist" | "early" | "premium" — which card they joined from. */
+  tier: string;
+  joinedAt: Date;
+}
+
 /**
  * A live score badge. The slug is 96 bits of randomness and is the badge's
  * whole access model, exactly like a card — minted once per user, and the

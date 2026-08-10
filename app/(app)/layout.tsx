@@ -1,4 +1,6 @@
+import { redirect } from "next/navigation";
 import { auth, getUserId, isAuthConfigured } from "@/auth";
+import { appLocked } from "@/lib/launch";
 import { isDbConfigured, loadShellConnection } from "@/lib/db";
 import { AppRail, MobileTabs, type ShellUser } from "@/components/app/AppRail";
 import styles from "./app.module.css";
@@ -29,6 +31,10 @@ async function shellUser(): Promise<ShellUser | null> {
 }
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  // Locked until launch: the app group exists but the doors are shut. The
+  // landing carries the waitlist; APP_UNLOCKED=1 opens the shell again.
+  if (appLocked()) redirect("/");
+
   const user = await shellUser();
 
   return (

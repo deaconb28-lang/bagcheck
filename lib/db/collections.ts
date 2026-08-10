@@ -2,6 +2,7 @@ import type { Db } from "mongodb";
 import { dbName, getMongoClient } from "./client";
 import type {
   BadgeDoc,
+  WaitlistDoc,
   CardDoc,
   EmailLogDoc,
   ConnectionDoc,
@@ -36,6 +37,7 @@ export async function getCollections() {
     insights: db.collection<InsightDoc>("insights"),
     cards: db.collection<CardDoc>("cards"),
     badges: db.collection<BadgeDoc>("badges"),
+    waitlist: db.collection<WaitlistDoc>("waitlist"),
     subscriptions: db.collection<SubscriptionDoc>("subscriptions"),
     marketCache: db.collection<MarketCacheDoc>("marketCache"),
     icons: db.collection<IconDoc>("icons"),

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { auth, isAuthConfigured, isDevIdentity, signIn, signOut } from "@/auth";
+import { appLocked } from "@/lib/launch";
 import { getCollections, isDbConfigured } from "@/lib/db";
 import type {
   ConnectionDoc,
@@ -71,6 +73,8 @@ async function signOutAction() {
 }
 
 export default async function DebugPage() {
+  if (appLocked()) redirect("/");
+
   let userId: string | null = null;
   let userEmail: string | null = null;
   let authError: string | null = null;
