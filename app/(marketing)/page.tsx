@@ -63,7 +63,24 @@ export default function LandingPage() {
       </header>
 
       <section className={styles.hero}>
-        <h1 className={`disp ${styles.headline}`}>Transform how you trade.</h1>
+        {/* The splash field: two slow orbs of the product's own light. */}
+        <div className={styles.orb} data-orb="moss" aria-hidden="true" />
+        <div className={styles.orb} data-orb="accent" aria-hidden="true" />
+        {/* Real spaces between the spans: screen readers and copy-paste get
+            the sentence, the animation gets the words. */}
+        <h1 className={`disp ${styles.headline}`}>
+          {"Transform how you trade.".split(" ").map((word, i) => (
+            <span key={word}>
+              {i > 0 ? " " : ""}
+              <span
+                className={styles.word}
+                style={{ animationDelay: `${0.08 + i * 0.09}s` }}
+              >
+                {word}
+              </span>
+            </span>
+          ))}
+        </h1>
         <p className={styles.lede}>
           It starts with seeing what you actually do. Bagcheck reads your
           brokerage history — read-only, permanently — and scores the part you

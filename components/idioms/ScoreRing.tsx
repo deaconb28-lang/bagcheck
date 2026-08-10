@@ -22,6 +22,12 @@ export function ScoreRing({ score, size = 246, label = "Health" }: ScoreRingProp
   const r = size / 2 - stroke / 2 - 8;
   const circumference = 2 * Math.PI * r;
   const [drawn, setDrawn] = useState(false);
+  /*
+   * The count-up. The real value is the default render — if the tween never
+   * starts, the number on screen is still correct, and under reduced motion
+   * it never starts.
+   */
+  const [shown, setShown] = useState(score);
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -30,8 +36,19 @@ export function ScoreRing({ score, size = 246, label = "Health" }: ScoreRingProp
       return;
     }
     const id = requestAnimationFrame(() => setDrawn(true));
-    return () => cancelAnimationFrame(id);
-  }, []);
+    setShown(0);
+    const started = performance.now();
+    const tick = window.setInterval(() => {
+      const t = Math.min(1, (performance.now() - started) / 850);
+      const eased = 1 - (1 - t) ** 3;
+      setShown(Math.round(score * eased));
+      if (t >= 1) window.clearInterval(tick);
+    }, 24);
+    return () => {
+      cancelAnimationFrame(id);
+      window.clearInterval(tick);
+    };
+  }, [score]);
 
   const pct = Math.max(0, Math.min(100, score)) / 100;
   const offset = drawn ? circumference * (1 - pct) : circumference;
@@ -55,7 +72,7 @@ export function ScoreRing({ score, size = 246, label = "Health" }: ScoreRingProp
       </svg>
       <div className={styles.inner}>
         <div className={`num ${styles.value}`} style={{ fontSize: Math.round(size * 0.358) }}>
-          {score}
+          {shown}
         </div>
         <div className={styles.label}>{label}</div>
       </div>

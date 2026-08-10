@@ -50,6 +50,25 @@
 .streakPill,
 .leakPill,
 .sync,
+.tier,
+.upgrade {
+  /* The pill arrival — chrome settles in a third of a second, oldest first. */
+  animation: rise 0.4s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+.scorePill { animation-delay: 0.02s; }
+.streakPill { animation-delay: 0.06s; }
+.leakPill { animation-delay: 0.1s; }
+.agePill { animation-delay: 0.14s; }
+.sync { animation-delay: 0.18s; }
+.tier { animation-delay: 0.22s; }
+.upgrade { animation-delay: 0.26s; }
+
+.scorePill,
+.agePill,
+.streakPill,
+.leakPill,
+.sync,
 .tier {
   display: flex;
   align-items: center;

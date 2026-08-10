@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Anton, JetBrains_Mono, Playfair_Display, Public_Sans, Space_Grotesk } from "next/font/google";
 import "../styles/tokens.css";
 import "./globals.css";
@@ -68,6 +68,19 @@ const poster = Anton({
 export const metadata: Metadata = {
   title: "Bagcheck",
   description: "Fitness tracking for your investment portfolio.",
+};
+
+/*
+ * `viewportFit: "cover"` is load-bearing on phones: without it,
+ * env(safe-area-inset-bottom) resolves to zero and the bottom tab bar sits
+ * under the iPhone home indicator. The theme colour keeps the browser
+ * chrome black over the black field.
+ */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#000000",
 };
 
 export default function RootLayout({

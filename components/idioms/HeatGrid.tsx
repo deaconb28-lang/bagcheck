@@ -16,12 +16,13 @@ export function HeatGrid({ days, legend = true }: { days: HeatDay[]; legend?: bo
   return (
     <div className={styles.wrap}>
       <div className={styles.grid}>
-        {days.map((day) => (
+        {days.map((day, i) => (
           <i
             key={day.date}
             className={styles.cell}
             data-level={day.level}
             title={day.note ?? day.date}
+            style={{ animationDelay: `${Math.min(i * 4, 640)}ms` }}
           />
         ))}
       </div>

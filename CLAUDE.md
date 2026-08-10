@@ -88,7 +88,9 @@ Motion is the one warm gesture in an instrument aesthetic. The softening happens
 - Hover: rail items −1px, trophy cards −6px with −.7deg, heat cells scale 1.35, the mode toggle rotates 45°. Panels do **not** lift on hover — with borders gone there is nothing to lift.
 - Everything honours `prefers-reduced-motion`, and JS tweens check `matchMedia` before starting.
 - Marketing may use scroll-driven motion (`animation-timeline: view()` / `scroll()`), always behind `@supports` and `prefers-reduced-motion`, and always so the static state is the finished design. Never write a hover rule against a property a scroll animation also writes — `fill: both` wins and the hover silently dies.
-- Ease-out, nothing over 500ms.
+- Ease-out, nothing over 500ms — for *arrivals*. Ambient loops (`breathe`, `floaty`, `wander`, `shimmer`) run long and slow, and are allowed in exactly two places: light behind live data (the score ring's halo) and marketing surfaces. Never on a panel, never on text a reader is parsing.
+- Arrivals are staggered, not simultaneous: header pills, money rows and heat cells land oldest-first with delays under 300ms total. A grid caps its cascade so scale never slows arrival.
+- Count-ups run on `setInterval`. The real value is the default render — if the tween never starts, the number on screen must still be correct.
 - Count-ups run on `setInterval`. The real value is the default render — if the tween never starts, the number on screen must still be correct.
 - Everything honours `prefers-reduced-motion`.
 
