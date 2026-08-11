@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { WrappedCard } from "@/components/cards/WrappedCard";
 import { ShareButton } from "@/components/app/ShareButton";
 import type { CardSpec } from "@/lib/cards";
@@ -9,19 +9,23 @@ import styles from "./wrapped.module.css";
 /**
  * Wrapped, in reading mode.
  *
- * Two ways through the same twelve cards, because two things happen here and
- * they want opposite layouts. **Play** is the artefact: one card at a time,
- * full height, arrow keys and swipe, the way a story is read. **Grid** is the
- * contact sheet: every card at once, so someone who came to post can find the
- * one they want without stepping through eleven others.
+ * **The deck is a rail, not a page.** Cards sit in one horizontal
+ * scroll-snap track with the neighbours peeking in at both edges, which is
+ * the idiom every phone already teaches — swipe. The first build asked the
+ * reader to pick between "all at once" and "one at a time" before showing
+ * them anything, which is a question about layout dressed up as a question
+ * about intent. A rail answers both: the current card is centred and large,
+ * and the ones on either side are visibly there to be reached.
  *
- * Play is the default on a phone and grid on a desktop, which is where each
- * one is actually better — but the toggle is always there, because the
- * default is a guess about intent and the reader knows theirs.
+ * Native scrolling does the work rather than a transform, so momentum,
+ * rubber-banding and the scrollbar all behave the way the platform does.
+ * The arrows and the dots drive the same `scrollTo`, so there is exactly one
+ * source of truth for where the deck is, and an IntersectionObserver reads
+ * the position back rather than a second counter drifting alongside it.
  *
- * Sharing is never gated. Every card carries its own button; tapping it mints
- * that kind server-side and opens the sheet, so the card that gets posted is
- * recomputed from the ledger rather than assembled by the client.
+ * Sharing is never gated. The action bar under the rail always acts on the
+ * card in view, so the button is in one fixed place instead of repeating on
+ * every card and moving as the reader scrolls.
  */
 export function WrappedDeck({
   cards,
@@ -32,164 +36,142 @@ export function WrappedDeck({
   example: boolean;
   provenance: string;
 }) {
-  const [mode, setMode] = useState<"play" | "grid">("grid");
-  const [at, setAt] = useState(0);
-  const touch = useRef<number | null>(null);
-
   /*
-   * The annual summary leads. It is the only card about the whole year
-   * rather than one thing inside it, which makes it the cover — and a deck
-   * whose cover is buried at the end is a deck read in the wrong order.
+   * The annual summary leads: it is the only card about the whole year
+   * rather than one thing inside it, which makes it the cover.
    */
   const deck = [
     ...cards.filter((c) => c.kind === "wrapped"),
     ...cards.filter((c) => c.kind !== "wrapped"),
   ];
 
-  /* Phones get the story by default; the toggle overrides it either way. */
+  const rail = useRef<HTMLOListElement>(null);
+  const slides = useRef<Array<HTMLLIElement | null>>([]);
+  const [at, setAt] = useState(0);
+
+  /* Read the position back off the rail rather than tracking it in parallel. */
   useEffect(() => {
-    if (window.matchMedia("(max-width: 860px)").matches) setMode("play");
+    const root = rail.current;
+    if (!root) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting && e.intersectionRatio > 0.6) {
+            const i = slides.current.indexOf(e.target as HTMLLIElement);
+            if (i >= 0) setAt(i);
+          }
+        }
+      },
+      { root, threshold: [0.6] },
+    );
+    slides.current.forEach((el) => el && io.observe(el));
+    return () => io.disconnect();
+  }, [deck.length]);
+
+  const go = useCallback((i: number) => {
+    const target = slides.current[Math.max(0, Math.min(slides.current.length - 1, i))];
+    target?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
   }, []);
 
   useEffect(() => {
-    if (mode !== "play") return;
     function onKey(e: KeyboardEvent) {
-      if (e.key === "ArrowRight") setAt((i) => Math.min(deck.length - 1, i + 1));
-      if (e.key === "ArrowLeft") setAt((i) => Math.max(0, i - 1));
+      if (e.key === "ArrowRight") go(at + 1);
+      if (e.key === "ArrowLeft") go(at - 1);
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [mode, deck.length]);
+  }, [at, go]);
 
-  const card = deck[Math.min(at, deck.length - 1)];
+  const card = deck[at] ?? deck[0];
 
   return (
-    <div className={styles.deck}>
-      <div className={styles.deckBar}>
-        <div className={styles.modes} role="group" aria-label="How to read your cards">
-          <button type="button" data-on={mode === "grid" || undefined} onClick={() => setMode("grid")}>
-            All at once
-          </button>
-          <button type="button" data-on={mode === "play" || undefined} onClick={() => setMode("play")}>
-            One at a time
-          </button>
-        </div>
-        <span className={styles.count}>
-          {mode === "play" ? `${at + 1} of ${deck.length}` : `${deck.length} cards`}
-        </span>
-      </div>
-
-      {mode === "grid" ? (
-        <ol className={styles.grid}>
-          {deck.map((c, i) => (
-            <li key={c.kind} className={styles.cell} style={{ animationDelay: `${Math.min(i * 0.045, 0.5)}s` }}>
-              <div className={styles.cellCard}>
-                <WrappedCard
-                  eyebrow={c.eyebrow}
-                  kicker={c.kicker}
-                  headline={c.headline}
-                  lede={c.lede}
-                  body={c.body}
-                  kind={c.kind}
-                  hue={c.hue}
-                  layout={c.layout}
-                  symbol={c.symbol}
-                  rarity={c.rarity}
-                  slug={null}
-                  provenance={provenance}
-                  example={example}
-                />
-              </div>
-              {/*
-                * No caption. The card already carries its own eyebrow on its
-                * face, and repeating it under the frame says the same thing
-                * twice in two type sizes.
-                */}
-              {example ? null : (
-                <div className={styles.cellFoot}>
-                  <ShareButton type={c.kind} label={c.headline} size={34} />
-                  <span>Post this</span>
-                </div>
-              )}
-            </li>
-          ))}
-        </ol>
-      ) : (
-        <div
-          className={styles.player}
-          onTouchStart={(e) => {
-            touch.current = e.touches[0].clientX;
-          }}
-          onTouchEnd={(e) => {
-            if (touch.current == null) return;
-            const dx = e.changedTouches[0].clientX - touch.current;
-            if (dx < -50) setAt((i) => Math.min(deck.length - 1, i + 1));
-            if (dx > 50) setAt((i) => Math.max(0, i - 1));
-            touch.current = null;
-          }}
-        >
-          <div className={styles.ticks} aria-hidden="true">
-            {deck.map((c, i) => (
-              <span key={c.kind} data-on={i <= at || undefined} />
-            ))}
-          </div>
-
-          <button
-            type="button"
-            className={styles.step}
-            data-side="back"
-            onClick={() => setAt((i) => Math.max(0, i - 1))}
-            disabled={at === 0}
-            aria-label="Previous card"
+    <section className={styles.deck} aria-label="Your Wrapped cards">
+      <ol className={styles.rail} ref={rail}>
+        {deck.map((c, i) => (
+          <li
+            key={c.kind}
+            className={styles.slide}
+            ref={(el) => {
+              slides.current[i] = el;
+            }}
+            aria-label={`${i + 1} of ${deck.length}: ${c.headline}`}
           >
-            <Chevron dir="left" />
-          </button>
-
-          <div className={styles.stage}>
-            <div key={card.kind} className={styles.stageCard}>
+            <div className={styles.slideCard} data-at={i === at || undefined}>
               <WrappedCard
-                eyebrow={card.eyebrow}
-                kicker={card.kicker}
-                headline={card.headline}
-                lede={card.lede}
-                body={card.body}
-                kind={card.kind}
-                hue={card.hue}
-                layout={card.layout}
-                symbol={card.symbol}
-                rarity={card.rarity}
+                eyebrow={c.eyebrow}
+                kicker={c.kicker}
+                headline={c.headline}
+                lede={c.lede}
+                body={c.body}
+                kind={c.kind}
+                hue={c.hue}
+                layout={c.layout}
+                symbol={c.symbol}
+                rarity={c.rarity}
                 slug={null}
                 provenance={provenance}
                 example={example}
               />
             </div>
-            {example ? null : (
-              <div className={styles.stageFoot}>
-                <ShareButton type={card.kind} label={card.headline} size={40} />
-                <span>Post this one</span>
-              </div>
-            )}
-          </div>
+          </li>
+        ))}
+      </ol>
 
+      <div className={styles.dots} role="tablist" aria-label="Jump to a card">
+        {deck.map((c, i) => (
           <button
+            key={c.kind}
             type="button"
-            className={styles.step}
-            data-side="next"
-            onClick={() => setAt((i) => Math.min(deck.length - 1, i + 1))}
-            disabled={at === deck.length - 1}
-            aria-label="Next card"
-          >
-            <Chevron dir="right" />
-          </button>
+            role="tab"
+            aria-selected={i === at}
+            aria-label={c.headline}
+            className={styles.dot}
+            data-on={i === at || undefined}
+            onClick={() => go(i)}
+          />
+        ))}
+      </div>
+
+      <div className={styles.actions}>
+        <button
+          type="button"
+          className={styles.arrow}
+          onClick={() => go(at - 1)}
+          disabled={at === 0}
+          aria-label="Previous card"
+        >
+          <Chevron dir="left" />
+        </button>
+
+        {/*
+          * The card in view names itself on its own face, so this row does
+          * not repeat it. It carries the count — the one fact the card
+          * cannot state — and the action.
+          */}
+        <div className={styles.actionMain}>
+          <span className={styles.nowLabel}>
+            {at + 1} / {deck.length}
+          </span>
+          {example ? null : <ShareButton type={card.kind} label={card.headline} size={44} />}
         </div>
-      )}
-    </div>
+
+        <button
+          type="button"
+          className={styles.arrow}
+          onClick={() => go(at + 1)}
+          disabled={at === deck.length - 1}
+          aria-label="Next card"
+        >
+          <Chevron dir="right" />
+        </button>
+      </div>
+    </section>
   );
 }
 
 function Chevron({ dir }: { dir: "left" | "right" }) {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d={dir === "left" ? "M15 5l-7 7 7 7" : "M9 5l7 7-7 7"} />
     </svg>
   );
