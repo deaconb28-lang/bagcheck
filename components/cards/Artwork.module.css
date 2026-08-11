@@ -1,0 +1,39 @@
+/*
+ * The artwork layer. Fills the card, sits under every word, and never
+ * carries type — a number drawn into the picture is one nobody can correct.
+ *
+ * Pigment resolves here, once: each hue binds the three `--card-*` values
+ * the twelve figures draw with, so a figure never names a family and the
+ * whole set repigments by changing one attribute.
+ */
+.art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.art[data-hue="moss"] {
+  --art-deep: var(--card-moss-deep);
+  --art-mid: var(--card-moss-mid);
+  --art-lit: var(--card-moss-lit);
+}
+
+.art[data-hue="ember"] {
+  --art-deep: var(--card-ember-deep);
+  --art-mid: var(--card-ember-mid);
+  --art-lit: var(--card-ember-lit);
+}
+
+.art[data-hue="azure"] {
+  --art-deep: var(--card-azure-deep);
+  --art-mid: var(--card-azure-mid);
+  --art-lit: var(--card-azure-lit);
+}
+
+.art[data-hue="violet"] {
+  --art-deep: var(--card-violet-deep);
+  --art-mid: var(--card-violet-mid);
+  --art-lit: var(--card-violet-lit);
+}

@@ -66,15 +66,18 @@
   --card-lit: var(--card-violet-lit);
 }
 
-/* The generated scene sits in the lower half, where the type is not. */
+/*
+ * The artwork's frame. The picture itself is drawn in Artwork.tsx and fills
+ * this box; what lives here is where the box sits, which is what the three
+ * templates below rewrite.
+ */
 .scene {
   position: absolute;
   inset: 0;
   z-index: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center bottom;
+  overflow: hidden;
 }
 
 /*
@@ -502,7 +505,7 @@
 .card[data-layout="editorial"] .scene {
   /* The picture gets the top half and the type sits under it, not on it. */
   height: 56%;
-  object-position: center 45%;
+  inset: 0 0 auto 0;
 }
 
 .card[data-layout="editorial"] .wash {

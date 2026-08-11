@@ -122,7 +122,7 @@ export function StoryViewer({
             body={card.body}
             slug={null}
             symbol={card.symbol}
-            backdrop={`/cards/${card.kind}.jpg`}
+            kind={card.kind}
             provenance={`Bagcheck · ${year} · read from your brokerage`}
             hue={card.hue}
             layout={card.layout}

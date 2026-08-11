@@ -1,0 +1,197 @@
+/*
+ * The connect screen. One panel, one decision, and the twelve artworks
+ * drifting behind it — the wait for the broker portal is spent showing what
+ * is being built rather than spinning.
+ */
+.main {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px 80px;
+}
+
+.panel {
+  width: min(620px, 100%);
+  background: color-mix(in srgb, var(--mk-field) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mk-bg) 12%, transparent);
+  border-radius: 34px;
+  padding: 46px 44px 40px;
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow: 0 50px 120px -40px color-mix(in srgb, var(--mk-violet) 45%, transparent);
+}
+
+.eyebrow {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--mk-violet-soft);
+}
+
+.h1 {
+  margin-top: 16px;
+  font-size: clamp(34px, 4.4vw, 50px);
+  line-height: 1.02;
+  letter-spacing: -0.038em;
+  font-weight: 600;
+}
+
+.lede {
+  margin-top: 20px;
+  font-size: 18px;
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--mk-bg) 62%, transparent);
+  max-width: 46ch;
+}
+
+.facts {
+  list-style: none;
+  margin: 32px 0 0;
+  padding: 28px 0 0;
+  border-top: 1px solid color-mix(in srgb, var(--mk-bg) 10%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.facts li {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--mk-bg) 55%, transparent);
+}
+
+.facts svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.facts b {
+  color: var(--mk-bg);
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 34px;
+}
+
+.primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 62px;
+  border-radius: 16px;
+  background: var(--mk-bg);
+  color: var(--mk-field);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.primary:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.primary[aria-busy] {
+  opacity: 0.7;
+}
+
+.secondary {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--mk-bg) 50%, transparent);
+  padding: 6px;
+  transition: color 0.16s ease;
+}
+
+.secondary:hover {
+  color: var(--mk-bg);
+}
+
+.warn {
+  font-size: 14px;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--mk-bg) 45%, transparent);
+}
+
+.fine {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 14px;
+  color: color-mix(in srgb, var(--mk-bg) 38%, transparent);
+}
+
+/* ── The drifting deck ── */
+.deck {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.floater {
+  position: absolute;
+  animation: sway 22s ease-in-out infinite;
+}
+
+.floaterCard {
+  position: relative;
+  width: 150px;
+  height: 225px;
+  border-radius: 18px;
+  overflow: hidden;
+  opacity: 0.5;
+  transform: rotate(var(--rot)) scale(var(--scale));
+  box-shadow: 0 30px 60px -24px color-mix(in srgb, var(--mk-ink) 85%, transparent);
+}
+
+/*
+ * A long, shallow orbit. Each card carries its own delay, so the field
+ * breathes rather than pulsing in unison — twelve cards moving in step reads
+ * as one object, which is the opposite of a deck.
+ */
+@keyframes sway {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(14px, -22px, 0);
+  }
+  50% {
+    transform: translate3d(-10px, -34px, 0);
+  }
+  75% {
+    transform: translate3d(-18px, -12px, 0);
+  }
+}
+
+@media (max-width: 900px) {
+  .panel {
+    padding: 34px 24px 30px;
+    border-radius: 28px;
+  }
+
+  .floaterCard {
+    width: 104px;
+    height: 156px;
+  }
+
+  .main {
+    padding: 24px 18px 60px;
+  }
+}

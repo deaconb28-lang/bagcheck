@@ -1,5 +1,7 @@
 import type { Archetype } from "@/lib/archetypes";
+import type { CardKind } from "@/lib/cards";
 import { Logo } from "@/components/primitives";
+import { Artwork } from "./Artwork";
 import styles from "./WrappedCard.module.css";
 
 export type CardHue = "moss" | "ember" | "azure" | "violet";
@@ -51,8 +53,14 @@ export type WrappedCardProps = {
    * they were saying the same thing twice.
    */
   provenance: string;
-  /** Generated backdrop. The scene only — every word here is set by us. */
-  backdrop?: string | null;
+  /**
+   * Which of the twelve artworks sits under the type.
+   *
+   * The picture is fixed per kind and authored once in `Artwork.tsx` — it
+   * takes no data, so everyone with this kind gets the identical scene. What
+   * makes the card someone's own is the type composited over it.
+   */
+  kind?: CardKind;
   hue?: CardHue;
   /**
    * Which of the six templates this card is set in. Assigned per kind in
@@ -112,7 +120,7 @@ export function WrappedCard({
   body,
   slug,
   provenance,
-  backdrop = null,
+  kind = "wrapped",
   hue = "moss",
   layout = "poster",
   symbol = null,
@@ -130,10 +138,16 @@ export function WrappedCard({
 
   return (
     <article className={styles.card} data-hue={hue} data-layout={layout} data-fill={fill || undefined}>
-      {backdrop && layout !== "ledger" ? (
-        // eslint-disable-next-line @next/next/no-img-element -- a stored PNG
-        // at a fixed URL, sized by the card; next/image buys nothing here.
-        <img src={backdrop} alt="" className={styles.scene} />
+      {/*
+        * The ledger template is the one card with no scene at all — a flat
+        * field, mono, instrument-like. Everywhere else the artwork is the
+        * ground, drawn in SVG rather than fetched as an image: it is crisp at
+        * any export size, costs no bytes, and repigments with the card.
+        */}
+      {layout !== "ledger" ? (
+        <div className={styles.scene}>
+          <Artwork kind={kind} hue={hue} />
+        </div>
       ) : null}
       <div className={styles.wash} aria-hidden="true" />
 

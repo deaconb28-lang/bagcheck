@@ -4,7 +4,7 @@ import { getUserId } from "@/auth";
 import { isDbConfigured, tierFor } from "@/lib/db";
 import { stripCells } from "@/lib/cards";
 import { can } from "@/lib/tiers";
-import { assembleWrapped } from "@/app/(app)/wrapped/assemble";
+import { assembleWrapped } from "@/lib/wrapped/assemble";
 import { renderCard } from "@/app/og/[slug]/render";
 import type { CardSpec } from "@/lib/cards/kinds";
 

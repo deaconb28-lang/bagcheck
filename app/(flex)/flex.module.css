@@ -1,0 +1,51 @@
+/*
+ * The Wrapped flow's shell — the landing's dark field carried inward, so
+ * "Get started free" does not feel like leaving the site. Spoken in --mk-*
+ * like the rest of the marketing world; the app's tokens never appear here.
+ */
+.shell {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--mk-field);
+  color: var(--mk-bg);
+  font-family: "General Sans", "Public Sans", system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Zero specificity, so a class on the anchor (.primary, .headCta) wins. */
+:where(.shell a) {
+  color: inherit;
+}
+
+/* ── Chrome shared by both steps ── */
+.bar {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 40px;
+  max-width: 1560px;
+  margin-inline: auto;
+  width: 100%;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wordmark {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+
+.barNote {
+  font-size: 14px;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--mk-bg) 45%, transparent);
+}

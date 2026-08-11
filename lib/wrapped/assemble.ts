@@ -5,7 +5,7 @@ import { buildCards } from "@/lib/cards/kinds";
 import type { CardSpec } from "@/lib/cards/kinds";
 import type { RoundTrip } from "@/lib/score";
 import type { ScreenData } from "@/lib/db";
-import { archetypeOf, currentStreak, longestStreak, weeklySessions } from "../derive";
+import { archetypeOf, currentStreak, longestStreak, weeklySessions } from "@/app/(app)/derive";
 
 export interface WrappedWindow {
   key: string;
@@ -35,7 +35,7 @@ export interface WrappedAssembly {
  */
 export async function assembleWrapped(
   userId: string,
-  w: string | undefined,
+  w?: string,
 ): Promise<WrappedAssembly | null> {
   const data = await loadScreen(userId, 400);
   if (!data.scores.length) return null;

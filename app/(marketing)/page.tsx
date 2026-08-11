@@ -84,8 +84,12 @@ const WRAP_TILES = [
 ] as const;
 
 export default function LandingPage() {
-  // While the app is locked, every door leads to the waitlist: no Login link,
-  // and the primary CTA scrolls to the tiers instead of /home.
+  /*
+   * Wrapped is open; the score is not. So the primary CTA hands off to the
+   * connect flow and the waitlist keeps its own button for the second act —
+   * two doors, each labelled with what is actually behind it. While the app
+   * is locked there is no Login link, because there is nothing to log in to.
+   */
   const locked = appLocked();
 
   return (
@@ -102,15 +106,9 @@ export default function LandingPage() {
           {!locked && <Link href="/home">Login</Link>}
         </nav>
         <div className={styles.navActions}>
-          {locked ? (
-            <a href="#waitlist" className={styles.navCta}>
-              Get early access
-            </a>
-          ) : (
-            <Link href="/home" className={styles.navCta}>
-              Get started now
-            </Link>
-          )}
+          <Link href="/start" className={styles.navCta}>
+            Get started free
+          </Link>
           <a href="#waitlist" className={styles.navGhost}>
             Join the waitlist
           </a>
@@ -145,23 +143,13 @@ export default function LandingPage() {
             returns, top bags, best trades, and the ones that got away.
           </p>
           <div className={styles.heroActions}>
-            {locked ? (
-              <a href="#waitlist" className={styles.ctaDark}>
-                Get early access
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M5 12h14" />
-                  <path d="M13 5l7 7-7 7" />
-                </svg>
-              </a>
-            ) : (
-              <Link href="/home" className={styles.ctaDark}>
-                Get started now
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M5 12h14" />
-                  <path d="M13 5l7 7-7 7" />
-                </svg>
-              </Link>
-            )}
+            <Link href="/start" className={styles.ctaDark}>
+              Get started free
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M5 12h14" />
+                <path d="M13 5l7 7-7 7" />
+              </svg>
+            </Link>
             <a href="#waitlist" className={styles.ctaGhost}>
               Join the waitlist
             </a>
