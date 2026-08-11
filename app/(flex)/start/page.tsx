@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getUserId } from "@/auth";
+import { getUserId, isAuthConfigured } from "@/auth";
 import { isSnapTradeConfigured } from "@/lib/snaptrade";
 import { BagMark } from "@/app/(marketing)/BagMark";
 import { DancingCards } from "./DancingCards";
@@ -23,7 +23,13 @@ export const dynamic = "force-dynamic";
  */
 export default async function StartPage() {
   const userId = await getUserId();
-  const ready = isSnapTradeConfigured();
+  /*
+   * Linking needs both halves: a broker integration to talk to, and an
+   * identity to hang the connection on. With SnapTrade keys but no sign-in
+   * there is nobody to mint a portal session for, so the screen offers the
+   * sample year rather than a button that cannot finish.
+   */
+  const ready = isSnapTradeConfigured() && (Boolean(userId) || isAuthConfigured());
 
   return (
     <>

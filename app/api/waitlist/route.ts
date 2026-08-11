@@ -26,14 +26,21 @@ export async function POST(req: Request) {
     tier === "early" || tier === "premium" ? tier : "waitlist";
 
   const { waitlist } = await getCollections();
-  await waitlist.updateOne(
-    { email: email.toLowerCase() },
+  const address = email.toLowerCase();
+  const result = await waitlist.updateOne(
+    { email: address },
     {
       $set: { tier: askedTier },
-      $setOnInsert: { email: email.toLowerCase(), joinedAt: new Date() },
+      $setOnInsert: { email: address, joinedAt: new Date() },
     },
     { upsert: true },
   );
 
-  return NextResponse.json({ ok: true });
+  /*
+   * Whether this address was already on the list, so the screen can say the
+   * true thing rather than the generic one — "you're already on it" answers
+   * the question someone submitting twice is actually asking, and a second
+   * "you're on the list" reads like the first one did not take.
+   */
+  return NextResponse.json({ ok: true, joined: result.upsertedCount > 0, email: address });
 }

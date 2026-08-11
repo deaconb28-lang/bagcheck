@@ -25,8 +25,8 @@ export function ConnectButton({ signedIn, ready }: { signedIn: boolean; ready: b
           See a sample year
         </a>
         <p className={styles.warn}>
-          Brokerage linking is not configured on this deployment yet. The sample
-          year is built from an example ledger, and says so on every card.
+          Brokerage linking is not open on this deployment yet. The sample year
+          is built from an example ledger, and says so on every card.
         </p>
       </div>
     );

@@ -2636,8 +2636,81 @@
   opacity: 0.85;
 }
 
-.waitButton[data-done] {
+.waitButton:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.waitProblem {
+  flex: 1 0 100%;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--mk-red-soft);
+}
+
+/*
+ * The confirmation that replaces the form. It occupies the space the form
+ * did, so the section does not jump, and it stays put — a confirmation that
+ * fades out is one the reader may never have looked at.
+ */
+.waitDone {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  margin-top: 34px;
+  padding: 20px 22px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--mk-green-soft) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mk-green-soft) 32%, transparent);
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+.soonCopy .waitDone {
+  margin-top: 44px;
+  max-width: 560px;
+}
+
+.tier .waitDone {
+  margin-top: auto;
+}
+
+.waitTick {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: var(--mk-green-soft);
+  color: var(--mk-ink);
+}
+
+.waitDoneText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.waitDoneText b {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.waitDoneText span {
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--mk-bg) 62%, transparent);
+}
+
+.waitDoneText i {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--mk-bg);
+  overflow-wrap: anywhere;
 }
 
 /* Inside a tier the form stacks and the button runs full width, as a pill. */
