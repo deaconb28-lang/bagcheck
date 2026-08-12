@@ -106,7 +106,14 @@
 /* ── Hero ── */
 .hero {
   display: grid;
-  grid-template-columns: minmax(480px, 1fr) minmax(560px, 1.05fr);
+  /*
+   * `minmax(0, …)` on both tracks, not `auto`. A grid item's default minimum
+   * is its content, and the art column's content is two fixed-width phones —
+   * so the track refused to shrink, forced the grid wider than the viewport,
+   * and pushed the phones over the headline and off the right edge. The
+   * columns have to be allowed to give before anything else can.
+   */
+  grid-template-columns: minmax(min-content, 1fr) minmax(0, 1.05fr);
   gap: 40px;
   align-items: center;
   padding: 70px 40px 90px 60px;
@@ -117,6 +124,7 @@
 
 .heroCopy {
   max-width: 640px;
+  min-width: 0;
 }
 
 .ratingPill {
@@ -244,8 +252,9 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  gap: 56px;
+  gap: var(--phone-gap, 56px);
   padding-top: 20px;
+  min-width: 0;
 }
 
 .phoneShell {
@@ -2813,6 +2822,90 @@
 }
 
 /* ── Responsive ── */
+/*
+ * ── The hero art between 1240 and 1520px ──
+ *
+ * Above this the two phones and their bubbles fit their column at full size;
+ * below it the hero stacks. In between they have to give, so the whole unit
+ * steps down together — widths, screen heights and bubble offsets in the
+ * same proportion — rather than the phones being squeezed and their
+ * aspect ratios going with them. Roughly 300/330 of full size.
+ */
+@media (min-width: 1241px) and (max-width: 1520px) {
+  .hero {
+    padding-left: 44px;
+    gap: 32px;
+  }
+
+  .heroArt {
+    --phone-gap: 26px;
+  }
+
+  .phoneShell[data-phone="portfolio"] {
+    width: 300px;
+    margin-top: 84px;
+  }
+
+  .phoneShell[data-phone="wrapped"] {
+    width: 284px;
+  }
+
+  .phoneScreen {
+    height: 590px;
+  }
+
+  .phoneScreen[data-violet] {
+    min-height: 608px;
+  }
+
+  /* Pulled in so the bubbles ride the phone's edge instead of the page's. */
+  .bestDayBubble {
+    left: -34px;
+  }
+
+  .winRateBubble {
+    right: -22px;
+  }
+
+  /*
+   * Dropped at this width. It annotates the top bag, and the TOP BAG tile
+   * sits directly under it saying the same thing — at full width they have
+   * room to coexist, but squeezed in they collide with the trade-count chip
+   * and the card ends up repeating itself over its own artwork.
+   */
+  .topBagBubble {
+    display: none;
+  }
+
+  /*
+   * The account card keeps all four holdings. A shorter screen needs tighter
+   * insets and a shorter chart, or the last row falls off the bottom of the
+   * card — measured at 440px of content against a 416px box before this.
+   */
+  .acctCard {
+    top: 74px;
+    bottom: 92px;
+  }
+
+  .spark {
+    height: 48px;
+  }
+
+  .acctChips span {
+    height: 40px;
+  }
+
+  .acctChips span[data-acct="add"] {
+    width: 40px;
+  }
+
+  .heroCurl {
+    left: 274px;
+    top: 320px;
+    width: 122px;
+  }
+}
+
 @media (max-width: 1240px) {
   .hero {
     grid-template-columns: 1fr;
