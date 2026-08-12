@@ -1,10 +1,11 @@
 /*
  * Wrapped, in reading mode.
  *
- * The cards are the loudest objects on any screen they appear on, so the
- * screen around them is close to nothing: one line of chrome, the rail, its
- * dots, one action row, and a quiet tail. No panel competes with a card and
- * nothing above the deck pushes it down the page.
+ * The page is a contact sheet and the player is the reader. Nothing here
+ * competes with a card: the field is flat, the chrome is one line, and every
+ * piece of type on the page is either a frame number, a name, or a fact. The
+ * cards bring all the colour, which is the whole editorial contrast — a set of
+ * saturated posters laid out on a black sheet.
  */
 .main {
   flex: 1;
@@ -19,8 +20,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 14px 20px;
-  padding-top: max(14px, env(safe-area-inset-top));
+  padding: 16px 24px;
+  padding-top: max(16px, env(safe-area-inset-top));
   border-bottom: 1px solid color-mix(in srgb, var(--mk-bg) 9%, transparent);
 }
 
@@ -34,165 +35,244 @@
 }
 
 .barLabel {
-  font-size: 13.5px;
-  font-weight: 500;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: color-mix(in srgb, var(--mk-bg) 45%, transparent);
 }
 
-/* ── The rail ──
-   One horizontal scroll-snap track. The neighbours peek in at both edges,
-   which is what tells a reader it moves without a caption saying "swipe". */
-.deck {
-  display: flex;
-  flex-direction: column;
-  padding-top: 22px;
+/* The one measure the whole page is set to. */
+.page {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding: 0 24px;
 }
 
-.rail {
-  list-style: none;
-  margin: 0;
-  padding: 0 max(20px, calc(50% - 200px));
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
+/* ── The hero: the cover, and what the year came to ──
+   The cover is the only card about the whole year, so it is the only one that
+   gets a lockup beside it. Everything else is a frame on the sheet below. */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 372px) minmax(0, 1fr);
+  align-items: center;
+  gap: 64px;
+  padding: 60px 0 72px;
 }
 
-.rail::-webkit-scrollbar {
-  display: none;
-}
-
-.slide {
-  flex: 0 0 auto;
-  scroll-snap-align: center;
-  width: min(400px, 78vw);
-}
-
-/*
- * The card off-centre is dimmed and slightly set back rather than hidden —
- * it reads as the next one along instead of as a second, competing subject.
- */
-.slideCard {
-  border-radius: 30px;
-  overflow: hidden;
-  opacity: 0.42;
-  transform: scale(0.94);
-  transition: opacity 0.32s ease, transform 0.32s cubic-bezier(0.2, 0.8, 0.3, 1);
-}
-
-.slideCard[data-at] {
-  opacity: 1;
-  transform: none;
-  box-shadow: 0 40px 80px -34px color-mix(in srgb, var(--mk-ink) 92%, transparent);
-}
-
-/* ── Dots ── */
-.dots {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 7px;
-  padding: 14px 20px 0;
-}
-
-/* The tap area is 44px tall; only the mark inside it is small. */
-.dot {
-  width: 22px;
-  height: 44px;
+.coverCard,
+.frameCard {
+  display: block;
+  width: 100%;
   padding: 0;
   border: 0;
   background: none;
   cursor: pointer;
-  position: relative;
+  border-radius: 30px;
+  /* The card's own corners are 30px; the ring has to follow them. */
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.3, 1);
 }
 
-.dot::after {
-  content: "";
-  position: absolute;
-  left: 3px;
-  right: 3px;
-  top: 50%;
-  height: 3px;
-  transform: translateY(-50%);
-  background: color-mix(in srgb, var(--mk-bg) 22%, transparent);
-  transition: background 0.24s ease;
+.coverCard {
+  box-shadow: 0 44px 90px -40px rgba(0, 0, 0, 0.9);
 }
 
-.dot[data-on]::after {
-  background: var(--mk-bg);
+.coverCard:hover,
+.frameCard:hover {
+  transform: translateY(-5px) rotate(-0.5deg);
 }
 
-.dot:focus-visible {
+.coverCard:focus-visible,
+.frameCard:focus-visible {
   outline: 2px solid var(--mk-violet-soft);
-  outline-offset: 2px;
+  outline-offset: 5px;
 }
 
-/* ── Action row: always acts on the card in view ── */
-.actions {
+.lockup {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  padding: 2px 20px 0;
-}
-
-.arrow {
-  width: 48px;
-  height: 48px;
-  flex: none;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--mk-bg) 16%, transparent);
-  background: transparent;
-  color: var(--mk-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.16s ease, opacity 0.16s ease;
-}
-
-.arrow:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--mk-bg) 10%, transparent);
-}
-
-.arrow:disabled {
-  opacity: 0.25;
-  cursor: default;
-}
-
-.actionMain {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
+  align-items: flex-start;
   min-width: 0;
 }
 
-.nowLabel {
-  font-size: 14px;
-  font-weight: 600;
+.kicker {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--mk-violet-soft);
+}
+
+/*
+ * The year, set as large as the column allows. It is the one number on the
+ * page that is not on a card, and it is what the reader came for.
+ */
+.year {
+  font-size: clamp(60px, 8.6vw, 118px);
+  line-height: 0.86;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  margin: 10px 0 0;
   font-variant-numeric: tabular-nums;
-  color: color-mix(in srgb, var(--mk-bg) 45%, transparent);
+}
+
+.stat {
+  font-size: 17px;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--mk-bg) 58%, transparent);
+  margin: 20px 0 0;
+  max-width: 34ch;
+  text-wrap: pretty;
+}
+
+.heroActions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+/*
+ * The brightest object on the page, spent on the one action the screen exists
+ * for. Play is a filled white pill; sharing sits beside it in its own outline,
+ * because a reader who wants one card should not have to watch thirteen.
+ */
+.play {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 26px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--mk-bg);
+  color: var(--mk-field);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.16s ease, opacity 0.16s ease;
+}
+
+.play:hover {
+  transform: translateY(-1px);
+}
+
+.play:focus-visible {
+  outline: 2px solid var(--mk-violet-soft);
+  outline-offset: 3px;
+}
+
+.prov {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--mk-bg) 38%, transparent);
+  margin: 26px 0 0;
+}
+
+/* ── The set ── */
+.set {
+  padding-bottom: 40px;
+}
+
+.setHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid color-mix(in srgb, var(--mk-bg) 13%, transparent);
+}
+
+.setTitle {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.setCount,
+.no,
+.name,
+.scarce {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.setCount {
+  color: color-mix(in srgb, var(--mk-bg) 42%, transparent);
+}
+
+.sheet {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  /* Four across, so twelve cards fill three rows exactly rather than leaving
+     an orphan pair on a fourth. */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 44px 30px;
+  padding-top: 36px;
+}
+
+.frame {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  animation: rise 0.5s ease-out both;
+}
+
+/*
+ * The frame's edge marking: its number, its name, and scarcity where it was
+ * earned. Three facts on one line — enough to pick a card out of thirteen
+ * without reading every poster.
+ */
+.caption {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+.no {
+  color: color-mix(in srgb, var(--mk-bg) 34%, transparent);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+
+.name {
+  color: color-mix(in srgb, var(--mk-bg) 78%, transparent);
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.nowNote {
-  font-size: 14px;
-  color: color-mix(in srgb, var(--mk-bg) 38%, transparent);
+/* Amber is scarcity everywhere else in the product; the word carries it. */
+.scarce {
+  color: var(--mk-amber);
+  flex: none;
+  margin-left: auto;
 }
 
-/* ── The tail: everything that is not a card ── */
+/* ── The tail ── */
 .tail {
-  margin-top: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 18px;
   flex-wrap: wrap;
   text-align: center;
-  padding: 34px 20px;
-  padding-bottom: max(34px, calc(env(safe-area-inset-bottom) + 24px));
+  border-top: 1px solid color-mix(in srgb, var(--mk-bg) 10%, transparent);
+  padding: 40px 24px;
+  padding-bottom: max(48px, calc(env(safe-area-inset-bottom) + 32px));
+  margin-top: 24px;
 }
 
 .tail p {
@@ -273,22 +353,59 @@
   border: 1px solid color-mix(in srgb, var(--mk-bg) 22%, transparent);
 }
 
-@media (min-width: 900px) {
-  .deck {
-    padding-top: 34px;
+/* ── Narrow ──
+   The hero stacks and the cover comes first: the artefact is the argument,
+   and on a phone it should be the first thing on the screen. */
+@media (max-width: 860px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 34px;
+    padding: 34px 0 44px;
+    max-width: 420px;
+    margin-inline: auto;
   }
 
-  .slide {
-    width: 380px;
+  .lockup {
+    align-items: flex-start;
+  }
+
+  .sheet {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 34px 18px;
+  }
+
+  /* Two narrow columns cannot hold number, name and mark on one line, and a
+     name cut to "CONVICTION DEC…" has stopped being a name. It wraps. */
+  .caption {
+    flex-wrap: wrap;
+    gap: 4px 8px;
+  }
+
+  .name {
+    white-space: normal;
+    overflow: visible;
+  }
+
+  .scarce {
+    margin-left: 0;
+  }
+}
+
+/* Three across between the two, where four would squeeze the captions. */
+@media (min-width: 861px) and (max-width: 1120px) {
+  .sheet {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rail {
-    scroll-behavior: auto;
+  .frame {
+    animation: none;
   }
 
-  .slideCard {
+  .coverCard,
+  .frameCard,
+  .play {
     transition: none;
   }
 }

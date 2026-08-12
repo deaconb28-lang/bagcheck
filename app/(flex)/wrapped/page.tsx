@@ -6,7 +6,7 @@ import { exampleLedger } from "@/lib/cards/exampleLedger";
 import { assembleWrapped } from "@/lib/wrapped/assemble";
 import { storedPhotos } from "@/lib/unsplash";
 import { BagMark } from "@/app/(marketing)/BagMark";
-import { WrappedDeck } from "./WrappedDeck";
+import { Gallery } from "./Gallery";
 import styles from "./wrapped.module.css";
 
 export const dynamic = "force-dynamic";
@@ -14,20 +14,20 @@ export const dynamic = "force-dynamic";
 /**
  * Step two: your year, as cards.
  *
- * **The cards start at the top of the screen.** The first build opened with
- * an eyebrow, a headline, a paragraph and a full-width white button, so on a
- * phone the first card began somewhere past a thousand pixels down — a page
- * about cards where the cards were below the fold. All of that is now a
- * single line of chrome across the top, and the deck begins immediately.
+ * **The page is the sheet; the player is the reader.** Browsing thirteen
+ * artefacts and reading one are different jobs, and the build before this
+ * asked a single horizontal snap rail to do both — which meant a desktop saw
+ * one and a half cards, a third of the width sat empty, and the only way to
+ * reach card nine was nine presses or one of thirteen anonymous dashes.
  *
- * What was the loudest thing on the screen is now the quietest: connecting a
- * brokerage is a link at the foot, because a white button competing with
- * twelve saturated posters wins, and it should not.
+ * Now the cover leads beside the year, the rest lie out under their frame
+ * numbers, and either the play button or any card opens the player at that
+ * frame. Nothing above the cards is prose.
  *
- * Three ways in, each landing on a real deck. A connected account gets its
- * own cards; `?demo=1` gets the example ledger with "Example" on every card;
- * someone with nothing synced is sent back to step one, because the next
- * move there is a brokerage rather than a message.
+ * Three ways in, each landing on a real set. A connected account gets its own
+ * cards; `?demo=1` gets the example ledger with "Example" on every card;
+ * someone with nothing synced is sent back to step one, because the next move
+ * there is a brokerage rather than a message.
  */
 export default async function WrappedPage({
   searchParams,
@@ -54,11 +54,11 @@ export default async function WrappedPage({
       <>
         <Bar label={String(year)} />
         <main className={styles.empty}>
-          <h1 className={styles.emptyTitle}>No card has been earned yet</h1>
+          <h1 className={styles.emptyTitle}>Nothing has been earned yet</h1>
           <p className={styles.emptyBody}>
-            Cards are built from behaviour the ledger can prove, so a year with
-            too little history stays quiet rather than inventing one. Sync more
-            history, or read the sample year to see what arrives.
+            A card needs behaviour the ledger can prove, so a short history
+            stays quiet rather than inventing one. Sync more of it, or read the
+            sample year to see what turns up.
           </p>
           <div className={styles.emptyActions}>
             <Link className={styles.primary} href="/start">
@@ -78,22 +78,39 @@ export default async function WrappedPage({
     ? "Example ledger · not anyone's record"
     : "Read-only brokerage data via SnapTrade";
 
+  /*
+   * The cover card already states the year's counts in its own lede, so the
+   * hero borrows that line rather than recomputing it — one number, one
+   * source, and no chance of the page and the card disagreeing.
+   */
+  const stat =
+    cards.find((c) => c.kind === "wrapped")?.lede ?? `${cards.length} cards from your year.`;
+
   return (
     <>
       <Bar label={label} example={example} />
       <main className={styles.main}>
-        <WrappedDeck cards={cards} example={example} provenance={provenance} photos={photos} />
+        <div className={styles.page}>
+          <Gallery
+            cards={cards}
+            example={example}
+            provenance={provenance}
+            photos={photos}
+            year={label}
+            stat={stat}
+          />
+        </div>
 
         {/*
-          * The tail. Everything that is not a card lives below the deck, in
+          * The tail. Everything that is not a card lives below the sheet, in
           * one quiet row — the reader came for the cards and gets them first.
           */}
         <footer className={styles.tail}>
           {example ? (
             <>
               <p>
-                These figures come from an example ledger and say so on every
-                card. Connect a brokerage to get your own.
+                Every figure here comes off an example ledger, and every card
+                says so. Connect a brokerage and these become yours.
               </p>
               <Link className={styles.tailCta} href="/start">
                 Connect a brokerage
@@ -105,7 +122,7 @@ export default async function WrappedPage({
             </>
           ) : (
             <p>
-              Every card your year earned, built from read-only brokerage data.
+              Every card your year earned, off read-only brokerage data.
               Sharing is never behind a plan.
             </p>
           )}

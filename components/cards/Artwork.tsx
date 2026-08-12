@@ -247,9 +247,16 @@ export function Artwork({
   kind,
   hue = "moss",
   photo = null,
+  onGround = false,
 }: {
   kind: CardKind;
   hue?: CardHue;
+  /**
+   * The card already carries a photograph across its whole face, so the band
+   * paints no backing of its own and shows the drawn figure over that ground.
+   * Without this the band's opaque fill cut a hard seam across the picture.
+   */
+  onGround?: boolean;
   /**
    * An optional photographic ground under the geometry, fixed per kind and
    * hotlinked from Unsplash. It is a texture, not a subject: duotoned to the
@@ -261,7 +268,7 @@ export function Artwork({
 }) {
   const Figure = FIGURES[kind] ?? Health;
   return (
-    <div className={styles.frame} data-hue={hue}>
+    <div className={styles.frame} data-hue={hue} data-bare={onGround || undefined}>
       {photo ? (
         // eslint-disable-next-line @next/next/no-img-element -- hotlinked from
         // Unsplash's CDN, as their terms require; next/image would proxy it.
@@ -282,7 +289,7 @@ export function Artwork({
       aria-hidden="true"
       focusable="false"
     >
-      {photo ? null : <rect width={BOX.w} height={BOX.h} fill="var(--art-deep)" />}
+      {photo || onGround ? null : <rect width={BOX.w} height={BOX.h} fill="var(--art-deep)" />}
       {/*
         * Drawn at full size and centred. The card crops this to a band across
         * its top, so the figures run edge to edge and are cut by the frame

@@ -15,7 +15,7 @@ import styles from "./flex.module.css";
  */
 export const metadata: Metadata = {
   title: "bagcheck — your Wrapped",
-  description: "Connect a brokerage and get your year as twelve cards worth posting.",
+  description: "Connect a brokerage and get your year back as a set of cards worth posting.",
 };
 
 export default function FlexLayout({ children }: { children: React.ReactNode }) {

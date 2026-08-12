@@ -32,12 +32,23 @@ export function StoryViewer({
   cards,
   onClose,
   year,
+  startAt = 0,
+  photos = {},
+  provenance,
+  example = false,
 }: {
   cards: CardSpec[];
-  onClose: () => void;
+  /** Called with the frame the reader stopped on, so a caller can go there. */
+  onClose: (landedOn: number) => void;
   year: number;
+  /** Which card the reader opened. Opening the set plays from the cover. */
+  startAt?: number;
+  /** Photographic grounds by kind, read from the store by the page. */
+  photos?: Record<string, { url: string; color: string }>;
+  provenance?: string;
+  example?: boolean;
 }) {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(startAt);
   const [elapsed, setElapsed] = useState(0);
   const [held, setHeld] = useState(false);
   const [autoplay, setAutoplay] = useState(true);
@@ -78,13 +89,13 @@ export function StoryViewer({
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") onClose(index);
       if (e.key === "ArrowRight" || e.key === " ") next();
       if (e.key === "ArrowLeft") prev();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [next, prev, onClose]);
+  }, [next, prev, onClose, index]);
 
   // The body must not scroll behind a full-bleed player.
   useEffect(() => {
@@ -123,10 +134,12 @@ export function StoryViewer({
             slug={null}
             symbol={card.symbol}
             kind={card.kind}
-            provenance={`Bagcheck · ${year} · read from your brokerage`}
+            photo={photos[card.kind] ?? null}
+            provenance={provenance ?? `Bagcheck · ${year} · read from your brokerage`}
             hue={card.hue}
             layout={card.layout}
             rarity={card.rarity}
+            example={example}
             fill
           />
         </div>
@@ -161,7 +174,7 @@ export function StoryViewer({
           onPointerUp={() => {
             setHeld(false);
             if (performance.now() - startedAt.current < 250) {
-              if (last) onClose();
+              if (last) onClose(index);
               else next();
             }
           }}
@@ -169,11 +182,15 @@ export function StoryViewer({
         />
 
         <div className={styles.foot}>
-          <ShareButton type={card.kind} label="this card" size={40} onInk />
+          {/* An example deck has nothing to mint, so the affordance is absent
+              rather than present and refusing. */}
+          {example ? <span className={styles.count}>Example ledger</span> : (
+            <ShareButton type={card.kind} label="this card" size={40} onInk />
+          )}
           <span className={styles.count}>
             {index + 1} / {cards.length}
           </span>
-          <button type="button" className={styles.done} onClick={onClose}>
+          <button type="button" className={styles.done} onClick={() => onClose(index)}>
             {last ? "Done" : "Close"}
           </button>
         </div>

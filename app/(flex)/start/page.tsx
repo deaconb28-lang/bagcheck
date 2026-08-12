@@ -48,21 +48,21 @@ export default async function StartPage() {
         <div className={styles.panel}>
           <span className={styles.eyebrow}>CONNECT</span>
           <h1 className={styles.h1}>
-            Link a brokerage.
+            Your year is already
             <br />
-            Get your year back.
+            in your order history.
           </h1>
           <p className={styles.lede}>
-            bagcheck reads your filled orders through SnapTrade and builds
-            twelve cards from what it finds. Most accounts take about thirty
-            seconds.
+            bagcheck reads your filled orders through SnapTrade and makes a card
+            out of everything the year can prove. Most accounts take about
+            thirty seconds.
           </p>
 
           <ul className={styles.facts}>
             <li>
               <Tick />
               <span>
-                <b>Read-only, permanently.</b> bagcheck can see filled orders and
+                <b>Read-only, permanently.</b> bagcheck sees filled orders and
                 positions. It cannot place a trade, move money, or change a
                 setting.
               </span>
@@ -77,8 +77,8 @@ export default async function StartPage() {
             <li>
               <Tick />
               <span>
-                <b>Disconnect whenever.</b> Unlinking stops the sync and removes
-                the history from bagcheck.
+                <b>Unlink any time.</b> That stops the sync and takes the
+                history out of bagcheck.
               </span>
             </li>
           </ul>
@@ -91,8 +91,8 @@ export default async function StartPage() {
                 </a>
                 <p className={styles.warn}>
                   Brokerage linking is not open on this deployment yet. The
-                  sample year is built from an example ledger, and says so on
-                  every card.
+                  sample year comes off an example ledger, and says so on every
+                  card.
                 </p>
               </>
             ) : userId ? (

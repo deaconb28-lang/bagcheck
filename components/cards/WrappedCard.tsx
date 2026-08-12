@@ -99,6 +99,19 @@ export type WrappedCardProps = {
 const BARS = 12;
 
 /**
+ * The two cards whose photograph runs the whole face instead of sitting in
+ * the artwork band.
+ *
+ * These are the identity cards — the year itself, and who the year says you
+ * are. They carry no chart and no figure to protect, so the picture can be
+ * the card's ground rather than a strip behind a drawn shape, and an abstract
+ * photograph is doing something on them the flat geometry cannot. Everywhere
+ * else the band stays a band: a full-bleed photograph under a number is a
+ * number that is harder to read.
+ */
+const FULL_GROUND = new Set<CardKind>(["wrapped", "archetype"]);
+
+/**
  * The Wrapped card.
  *
  * **The model draws the scene. We set every word and every number.** That
@@ -139,8 +152,26 @@ export function WrappedCard({
   const series = body.kind === "chart" ? body.strip.slice(-BARS) : [];
   const peak = Math.max(1, ...series.map(Math.abs));
 
+  const ground = photo && FULL_GROUND.has(kind) ? photo : null;
+
   return (
     <article className={styles.card} data-hue={hue} data-layout={layout} data-fill={fill || undefined}>
+      {/*
+        * The full-face photograph, under everything. It sits below the wash
+        * rather than above it, so the scrim that keeps the type readable is
+        * still doing its job — the picture is the ground, never the subject.
+        */}
+      {ground ? (
+        <img
+          className={styles.ground}
+          src={ground.url}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          decoding="async"
+          style={{ backgroundColor: ground.color }}
+        />
+      ) : null}
       {/*
         * The ledger template is the one card with no scene at all — a flat
         * field, mono, instrument-like. Everywhere else the artwork is the
@@ -149,7 +180,13 @@ export function WrappedCard({
         */}
       {layout !== "ledger" ? (
         <div className={styles.scene}>
-          <Artwork kind={kind} hue={hue} photo={photo} />
+          {/*
+            * A card that already wears the photograph across its whole face
+            * does not also put it in the band: two copies of one picture at
+            * two opacities is a seam across the artwork, not a composition.
+            * The band keeps the drawn figure and lets the ground show through.
+            */}
+          <Artwork kind={kind} hue={hue} photo={ground ? null : photo} onGround={Boolean(ground)} />
         </div>
       ) : null}
       <div className={styles.wash} aria-hidden="true" />

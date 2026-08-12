@@ -56,6 +56,12 @@
   display: none;
 }
 
+/* On a card with its own full-face ground, the band adds nothing but the
+   figure — no fill, no tint, no second copy of the picture. */
+.frame[data-bare]::after {
+  display: none;
+}
+
 .frame[data-hue="moss"] {
   --art-deep: var(--card-moss-deep);
   --art-mid: var(--card-moss-mid);

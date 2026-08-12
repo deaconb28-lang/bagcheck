@@ -67,6 +67,35 @@
 }
 
 /*
+ * The full-face photograph, on the two identity cards only.
+ *
+ * Desaturated and blended to luminosity, then pulled to the card's own hue by
+ * the tint above it — so a stock photograph can never drag its own palette
+ * onto the card, and the result is a material rather than a picture of
+ * something. It runs under `.wash`, which is what keeps the type readable.
+ */
+.ground {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.06) brightness(1.18);
+  mix-blend-mode: luminosity;
+  opacity: 0.5;
+}
+
+.card:has(.ground)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--card-deep);
+  mix-blend-mode: color;
+}
+
+/*
  * The artwork's frame. The picture itself is drawn in Artwork.tsx and fills
  * this box; what lives here is where the box sits, which is what the three
  * templates below rewrite.
@@ -530,10 +559,13 @@
 }
 
 /* ── editorial — scene on top, type in a band beneath it ──────────────── */
-.card[data-layout="editorial"] .scene {
-  /* The band is standard across templates now; nothing to override. */
-  inset: 0;
-}
+/*
+ * The band is standard across templates: it starts below the eyebrow, like
+ * every other layout's. This used to override it to `inset: 0`, which ran the
+ * picture up under the eyebrow row — invisible while the band was a flat fill
+ * and obvious the moment a photograph went behind it, with the ring sliced off
+ * at the card's top edge and BAGCHECK · 2026 lying across it.
+ */
 
 .card[data-layout="editorial"] .wash {
   background:
@@ -547,8 +579,14 @@
 }
 
 .card[data-layout="editorial"] .rule {
-  /* Clears the picture above it. Any taller and the type band overflows. */
-  margin-top: 34cqw;
+  /*
+   * `.inner` already reserves the band. This used to add its own 34cqw on
+   * top of that reserve, which is where the card's empty middle third came
+   * from — and what pushed the foot off the bottom edge. What it does still
+   * owe is clearance: this template's picture is a full dial, and at the
+   * shared reserve the kicker landed on the bottom of the ring.
+   */
+  margin-top: 10cqw;
   margin-bottom: 3cqw;
 }
 
@@ -680,13 +718,13 @@
 /* ── chartfirst — the series leads, the reading follows ───────────────── */
 .card[data-layout="chartfirst"] .statement {
   order: 2;
-  margin-top: 5cqw;
+  margin-top: 4cqw;
   margin-bottom: auto;
 }
 
 .card[data-layout="chartfirst"] .title {
   order: 3;
-  margin-top: 4cqw;
+  margin-top: 3cqw;
 }
 
 .card[data-layout="chartfirst"] .foot {
@@ -694,8 +732,13 @@
 }
 
 .card[data-layout="chartfirst"] .chart {
-  height: 34cqw;
-  margin-top: 4cqw;
+  /*
+   * This card carries the most stacked blocks of any template — figure,
+   * chart, title, tail, foot — so the chart is the one that yields. At 34cqw
+   * the foot fell off the bottom edge on both cards that use this layout.
+   */
+  height: 23cqw;
+  margin-top: 3cqw;
 }
 
 .card[data-layout="chartfirst"] .kicker,
