@@ -6,6 +6,15 @@
  * the twelve figures draw with, so a figure never names a family and the
  * whole set repigments by changing one attribute.
  */
+/*
+ * The frame holds two layers: an optional photographic ground and the drawn
+ * geometry over it. Pigment resolves here so both read from one hue.
+ */
+.frame {
+  position: absolute;
+  inset: 0;
+}
+
 .art {
   position: absolute;
   inset: 0;
@@ -14,25 +23,58 @@
   display: block;
 }
 
-.art[data-hue="moss"] {
+/*
+ * The photograph is a texture, never a subject.
+ *
+ * Duotoned hard to the card's own family — desaturated to nothing, then
+ * tinted through the deep and lit values — so a stock image can never drag
+ * its own palette onto the card. It sits behind the geometry at low
+ * presence: enough to give the flat shapes a material to sit on, not enough
+ * to become the thing being looked at. Without it the card is exactly the
+ * drawn artwork.
+ */
+.photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.15);
+  mix-blend-mode: luminosity;
+  opacity: 0.46;
+}
+
+.frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--art-deep);
+  mix-blend-mode: color;
+}
+
+.frame:not(:has(.photo))::after {
+  display: none;
+}
+
+.frame[data-hue="moss"] {
   --art-deep: var(--card-moss-deep);
   --art-mid: var(--card-moss-mid);
   --art-lit: var(--card-moss-lit);
 }
 
-.art[data-hue="ember"] {
+.frame[data-hue="ember"] {
   --art-deep: var(--card-ember-deep);
   --art-mid: var(--card-ember-mid);
   --art-lit: var(--card-ember-lit);
 }
 
-.art[data-hue="azure"] {
+.frame[data-hue="azure"] {
   --art-deep: var(--card-azure-deep);
   --art-mid: var(--card-azure-mid);
   --art-lit: var(--card-azure-lit);
 }
 
-.art[data-hue="violet"] {
+.frame[data-hue="violet"] {
   --art-deep: var(--card-violet-deep);
   --art-mid: var(--card-violet-mid);
   --art-lit: var(--card-violet-lit);

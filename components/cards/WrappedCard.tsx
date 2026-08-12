@@ -61,6 +61,8 @@ export type WrappedCardProps = {
    * makes the card someone's own is the type composited over it.
    */
   kind?: CardKind;
+  /** The photographic ground for this kind, when the store has one. */
+  photo?: { url: string; color: string } | null;
   hue?: CardHue;
   /**
    * Which of the six templates this card is set in. Assigned per kind in
@@ -121,6 +123,7 @@ export function WrappedCard({
   slug,
   provenance,
   kind = "wrapped",
+  photo = null,
   hue = "moss",
   layout = "poster",
   symbol = null,
@@ -146,7 +149,7 @@ export function WrappedCard({
         */}
       {layout !== "ledger" ? (
         <div className={styles.scene}>
-          <Artwork kind={kind} hue={hue} />
+          <Artwork kind={kind} hue={hue} photo={photo} />
         </div>
       ) : null}
       <div className={styles.wash} aria-hidden="true" />

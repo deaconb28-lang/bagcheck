@@ -164,6 +164,33 @@ export interface MarketCacheDoc {
 }
 
 /**
+ * The photograph behind a card kind's art band.
+ *
+ * Metadata only, never the bytes: Unsplash's terms require that images are
+ * hotlinked from their own CDN rather than re-hosted, so what is stored here
+ * is the URL to link to plus the credit that has to appear beside it. No
+ * TTL, for the same reason the icons have none — the picture for a kind is
+ * chosen once and then it is the picture for that kind.
+ */
+export interface PhotoDoc {
+  /** The card kind this photograph belongs to. Unique. */
+  kind: string;
+  /** Unsplash's own id, so a photo can be traced back. */
+  photoId: string;
+  /** The CDN url, already sized. Hotlinked, never copied. */
+  url: string;
+  /** Average colour, for the plate that shows while the photo loads. */
+  color: string;
+  /** Photographer's name, rendered wherever the photo appears. */
+  creditName: string;
+  /** Their profile, carrying the referral parameters Unsplash requires. */
+  creditProfileUrl: string;
+  /** The photo's page on Unsplash. */
+  creditPhotoUrl: string;
+  fetchedAt: Date;
+}
+
+/**
  * Icons already fetched from The Noun Project. No TTL: an icon does not
  * change, the vocabulary is fixed and small, and every call costs quota —
  * so this is the store, not a cache in front of one.

@@ -4,6 +4,7 @@ import { isDbConfigured } from "@/lib/db";
 import { buildCards } from "@/lib/cards";
 import { exampleLedger } from "@/lib/cards/exampleLedger";
 import { assembleWrapped } from "@/lib/wrapped/assemble";
+import { storedPhotos } from "@/lib/unsplash";
 import { BagMark } from "@/app/(marketing)/BagMark";
 import { WrappedDeck } from "./WrappedDeck";
 import styles from "./wrapped.module.css";
@@ -42,6 +43,11 @@ export default async function WrappedPage({
 
   const example = !assembled;
   const cards = assembled?.cards ?? buildCards(exampleLedger(year));
+  /*
+   * Read-only, and never a call to Unsplash: rendering a page must not spend
+   * quota. An empty store just means the cards wear their drawn artwork.
+   */
+  const photos = await storedPhotos();
 
   if (!example && cards.length === 0) {
     return (
@@ -76,7 +82,7 @@ export default async function WrappedPage({
     <>
       <Bar label={label} example={example} />
       <main className={styles.main}>
-        <WrappedDeck cards={cards} example={example} provenance={provenance} />
+        <WrappedDeck cards={cards} example={example} provenance={provenance} photos={photos} />
 
         {/*
           * The tail. Everything that is not a card lives below the deck, in

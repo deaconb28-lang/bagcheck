@@ -739,6 +739,7 @@ export default function LandingPage() {
           </span>
           <div className={styles.footLinks}>
             <Link href="/legal/icons">Icon credits</Link>
+            <Link href="/legal/photos">Photo credits</Link>
             {!locked && <Link href="/home">Login</Link>}
           </div>
           <span className={styles.footNote}>© 2026 bagcheck</span>

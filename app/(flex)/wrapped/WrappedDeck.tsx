@@ -31,10 +31,13 @@ export function WrappedDeck({
   cards,
   example,
   provenance,
+  photos = {},
 }: {
   cards: CardSpec[];
   example: boolean;
   provenance: string;
+  /** Photographic grounds by kind, read from the store by the page. */
+  photos?: Record<string, { url: string; color: string }>;
 }) {
   /*
    * The annual summary leads: it is the only card about the whole year
@@ -104,6 +107,7 @@ export function WrappedDeck({
                 lede={c.lede}
                 body={c.body}
                 kind={c.kind}
+                photo={photos[c.kind] ?? null}
                 hue={c.hue}
                 layout={c.layout}
                 symbol={c.symbol}

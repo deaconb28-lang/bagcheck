@@ -243,10 +243,38 @@ const FIGURES: Record<CardKind, () => React.JSX.Element> = {
   wrapped: Health,
 };
 
-export function Artwork({ kind, hue = "moss" }: { kind: CardKind; hue?: CardHue }) {
+export function Artwork({
+  kind,
+  hue = "moss",
+  photo = null,
+}: {
+  kind: CardKind;
+  hue?: CardHue;
+  /**
+   * An optional photographic ground under the geometry, fixed per kind and
+   * hotlinked from Unsplash. It is a texture, not a subject: duotoned to the
+   * card's own family in CSS so it can never fight the palette, and always
+   * behind the drawn figure. With no photograph the card is exactly the
+   * drawn artwork, which is a finished design rather than a gap.
+   */
+  photo?: { url: string; color: string } | null;
+}) {
   const Figure = FIGURES[kind] ?? Health;
   return (
-    <svg
+    <div className={styles.frame} data-hue={hue}>
+      {photo ? (
+        // eslint-disable-next-line @next/next/no-img-element -- hotlinked from
+        // Unsplash's CDN, as their terms require; next/image would proxy it.
+        <img
+          className={styles.photo}
+          src={photo.url}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          style={{ backgroundColor: photo.color }}
+        />
+      ) : null}
+      <svg
       className={styles.art}
       data-hue={hue}
       viewBox={`0 0 ${BOX.w} ${BOX.h}`}
@@ -254,7 +282,7 @@ export function Artwork({ kind, hue = "moss" }: { kind: CardKind; hue?: CardHue 
       aria-hidden="true"
       focusable="false"
     >
-      <rect width={BOX.w} height={BOX.h} fill="var(--art-deep)" />
+      {photo ? null : <rect width={BOX.w} height={BOX.h} fill="var(--art-deep)" />}
       {/*
         * Drawn at full size and centred. The card crops this to a band across
         * its top, so the figures run edge to edge and are cut by the frame
@@ -271,6 +299,7 @@ export function Artwork({ kind, hue = "moss" }: { kind: CardKind; hue?: CardHue 
       <g transform="translate(100 174) scale(0.5)">
         <Figure />
       </g>
-    </svg>
+      </svg>
+    </div>
   );
 }
