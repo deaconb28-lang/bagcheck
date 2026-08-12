@@ -1,4 +1,5 @@
 import type { Archetype } from "@/lib/archetypes";
+import { avatarFamily } from "./drawn";
 
 /**
  * The prompt for an archetype avatar — pure, so what gets asked for is
@@ -49,15 +50,12 @@ const GLOW: Record<string, string> = {
 };
 
 /**
- * Which family an archetype is lit in. Moss is discipline, so the archetypes
- * with more components above the bar burn brighter — the colour is carrying
- * the same reading the name is, rather than being assigned for variety.
+ * Which family an archetype is drawn in. One mapping, defined beside the
+ * drawing in `./drawn.ts` — a generated avatar that disagreed with the drawn
+ * one about its own colour would be worse than no generated avatar.
  */
 export function avatarHue(archetype: Archetype): keyof typeof GLOW {
-  if (archetype.strong.length >= 3) return "ember";
-  if (archetype.strong.length === 2) return "moss";
-  if (archetype.strong.length === 1) return "azure";
-  return "violet";
+  return avatarFamily(archetype);
 }
 
 export function avatarPrompt(archetype: Archetype): string {

@@ -1,17 +1,70 @@
 /*
- * The emblem sits on the ink field in both modes, like a share card — an
- * archetype is an identity that travels, and it should look the same wherever
- * it lands.
+ * The tile an archetype's character sits in.
+ *
+ * It carries the family palette rather than the character doing it, so one
+ * drawing wears whichever of the four colours the archetype earned — and the
+ * ground under it is that family's deep tone, which is what makes a set of
+ * sixteen read as sixteen rather than as one shape in four inks.
+ *
+ * The colour lives here on purpose. The app is monochrome, but an archetype is
+ * an identity that travels onto a share card, which is the one surface with its
+ * own palette — so it is spoken in the `--card-*` families, exactly like the
+ * card it ends up on.
  */
 .avatar {
+  position: relative;
   display: grid;
   place-items: center;
   flex: none;
   overflow: hidden;
-  /* --share-s1, not --share-bg: on a share card the two would be the same
-     fill and the mark would have no field to sit on. */
-  background: var(--share-s1);
+  isolation: isolate;
+  background: var(--av-deep);
   color: var(--share-ink);
+}
+
+/*
+ * A soft lift from the top of the tile, so the character sits in light rather
+ * than on a flat plate. One wash, no gradient stack.
+ */
+.avatar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(
+    120% 90% at 50% 0%,
+    color-mix(in srgb, var(--av-lit) 22%, transparent),
+    transparent 70%
+  );
+}
+
+.avatar > svg {
+  position: relative;
+  z-index: 1;
+}
+
+.avatar[data-family="moss"] {
+  --av-deep: var(--card-moss-deep);
+  --av-mid: var(--card-moss-mid);
+  --av-lit: var(--card-moss-lit);
+}
+
+.avatar[data-family="ember"] {
+  --av-deep: var(--card-ember-deep);
+  --av-mid: var(--card-ember-mid);
+  --av-lit: var(--card-ember-lit);
+}
+
+.avatar[data-family="azure"] {
+  --av-deep: var(--card-azure-deep);
+  --av-mid: var(--card-azure-mid);
+  --av-lit: var(--card-azure-lit);
+}
+
+.avatar[data-family="violet"] {
+  --av-deep: var(--card-violet-deep);
+  --av-mid: var(--card-violet-mid);
+  --av-lit: var(--card-violet-lit);
 }
 
 .art {
@@ -19,7 +72,4 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* App chrome is black and white; the painted avatars keep their colour on
-     card surfaces, which composite their own art rather than this primitive. */
-  filter: grayscale(1);
 }
