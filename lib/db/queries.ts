@@ -164,6 +164,30 @@ export async function loadActivity(
 }
 
 /** Just what the app shell paints — one projected lookup, no history. */
+/**
+ * Whether this identity has a brokerage actually linked.
+ *
+ * Not the same question as "is there a connection document". `ensureRegistered`
+ * writes one the moment someone opens the portal, so its existence only means
+ * they started — an account in `accounts` is what means they finished. The
+ * start screen has to tell those apart, or it asks someone who is already
+ * linked to link again.
+ */
+export async function linkedBrokerage(
+  userId: string,
+): Promise<{ accounts: number; institutions: string[]; lastSyncAt: Date | null } | null> {
+  const { connections } = await getCollections();
+  const doc = await connections.findOne(
+    { userId },
+    { projection: { _id: 0, accounts: 1, lastSyncAt: 1 } },
+  );
+  if (!doc?.accounts?.length) return null;
+  const institutions = [
+    ...new Set(doc.accounts.map((a) => a.institution).filter((x): x is string => Boolean(x))),
+  ];
+  return { accounts: doc.accounts.length, institutions, lastSyncAt: doc.lastSyncAt ?? null };
+}
+
 export async function loadShellConnection(
   userId: string,
 ): Promise<{ institution: string | null } | null> {

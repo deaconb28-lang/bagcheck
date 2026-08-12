@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getUserId } from "@/auth";
+import { auth, getUserId, isAuthConfigured } from "@/auth";
 import { isDbConfigured } from "@/lib/db";
 import { buildCards } from "@/lib/cards";
 import { exampleLedger } from "@/lib/cards/exampleLedger";
@@ -7,6 +7,8 @@ import { assembleWrapped } from "@/lib/wrapped/assemble";
 import { storedPhotos } from "@/lib/unsplash";
 import { BagMark } from "@/app/(marketing)/BagMark";
 import { Gallery } from "./Gallery";
+import { FirstRun } from "./FirstRun";
+import { ComingSoon } from "./ComingSoon";
 import styles from "./wrapped.module.css";
 
 export const dynamic = "force-dynamic";
@@ -32,9 +34,9 @@ export const dynamic = "force-dynamic";
 export default async function WrappedPage({
   searchParams,
 }: {
-  searchParams: Promise<{ demo?: string }>;
+  searchParams: Promise<{ demo?: string; connected?: string }>;
 }) {
-  const { demo } = await searchParams;
+  const { demo, connected } = await searchParams;
   const userId = await getUserId();
   const year = new Date().getUTCFullYear();
 
@@ -48,6 +50,32 @@ export default async function WrappedPage({
    * quota. An empty store just means the cards wear their drawn artwork.
    */
   const photos = await storedPhotos();
+
+  /*
+   * Straight off the connection portal: greet, run the first read, and let
+   * the cards fill in underneath. The greeting is the only place the flow
+   * knows the reader's name, and it is the moment the connect-once promise
+   * becomes true, so it is made here as well as on the screen before.
+   */
+  const firstRun = connected === "1" && userId ? <FirstRun name={await firstName()} /> : null;
+
+  /*
+   * Mid-first-read there is nothing of the reader's to show yet, and the
+   * example deck must not stand in for it: sample cards stamped "Example"
+   * under "Hey Deacon" reads as their year having arrived wrong. The greeting
+   * holds the screen alone until the sync writes something, and the refresh
+   * it fires at the end is what brings the cards in.
+   */
+  if (firstRun && (example || cards.length === 0)) {
+    return (
+      <>
+        <Bar label={String(year)} />
+        <main className={styles.main}>
+          <div className={styles.page}>{firstRun}</div>
+        </main>
+      </>
+    );
+  }
 
   if (!example && cards.length === 0) {
     return (
@@ -91,6 +119,7 @@ export default async function WrappedPage({
       <Bar label={label} example={example} />
       <main className={styles.main}>
         <div className={styles.page}>
+          {firstRun}
           <Gallery
             cards={cards}
             example={example}
@@ -99,6 +128,12 @@ export default async function WrappedPage({
             year={label}
             stat={stat}
           />
+
+          {/*
+            * What Wrapped is the first chapter of. It sits below the sheet
+            * because the cards are what the reader came for.
+            */}
+          <ComingSoon />
         </div>
 
         {/*
@@ -122,14 +157,35 @@ export default async function WrappedPage({
             </>
           ) : (
             <p>
-              Every card your year earned, off read-only brokerage data.
-              Sharing is never behind a plan.
+              Every card your year earned, off read-only brokerage data. Your
+              brokerage stays linked to this account, so new fills arrive on
+              their own — you never connect it again. Sharing is never behind a
+              plan.
             </p>
           )}
         </footer>
       </main>
     </>
   );
+}
+
+/**
+ * The signed-in reader's first name, for the greeting and nothing else.
+ *
+ * Falls back to "there" rather than to an email address or an id — a greeting
+ * that says hello to a string nobody chose is worse than a generic one.
+ */
+async function firstName(): Promise<string> {
+  if (!isAuthConfigured()) return "there";
+  try {
+    const session = await auth();
+    const raw = session?.user?.name?.trim() || session?.user?.email?.split("@")[0];
+    if (!raw) return "there";
+    return raw.split(/\s+/)[0];
+  } catch (err) {
+    console.error("[wrapped] session lookup failed", err);
+    return "there";
+  }
 }
 
 /** One line of chrome. The mark, what you are reading, and the way out. */

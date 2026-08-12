@@ -1,0 +1,134 @@
+/*
+ * The first minute after a brokerage connects.
+ *
+ * It sits above the sheet on the same screen and holds the same measure, so
+ * as the cards arrive underneath it the page reads as one thing filling in
+ * rather than as a loading screen that got replaced.
+ */
+.run {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 56px 0 20px;
+  border-bottom: 1px solid color-mix(in srgb, var(--mk-bg) 12%, transparent);
+  margin-bottom: 8px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--mk-green-soft);
+}
+
+.hello {
+  font-size: clamp(38px, 6.4vw, 74px);
+  line-height: 0.94;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  margin: 12px 0 0;
+}
+
+.lede {
+  font-size: 17px;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--mk-bg) 62%, transparent);
+  margin: 16px 0 0;
+  max-width: 44ch;
+  text-wrap: pretty;
+}
+
+/* ── The four phases ──
+   Every figure on these rows is one the sync counted. Nothing moves on a
+   timer, so a row with no denominator sits at rest rather than drifting. */
+.steps {
+  list-style: none;
+  margin: 30px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+  width: 100%;
+  max-width: 560px;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.mark {
+  width: 11px;
+  height: 11px;
+  justify-self: center;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--mk-bg) 26%, transparent);
+}
+
+.step[data-state="running"] .mark {
+  border-color: var(--mk-green-soft);
+  background: color-mix(in srgb, var(--mk-green-soft) 30%, transparent);
+}
+
+.step[data-state="done"] .mark {
+  border-color: var(--mk-green-soft);
+  background: var(--mk-green-soft);
+}
+
+.step[data-state="failed"] .mark {
+  border-color: var(--mk-red-soft);
+  background: var(--mk-red-soft);
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--mk-bg) 40%, transparent);
+}
+
+.step[data-state="running"] .label,
+.step[data-state="done"] .label {
+  color: var(--mk-bg);
+}
+
+.detail {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--mk-bg) 45%, transparent);
+  white-space: nowrap;
+}
+
+.meter {
+  grid-column: 2 / -1;
+  height: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mk-bg) 12%, transparent);
+  overflow: hidden;
+}
+
+.meter i {
+  display: block;
+  height: 100%;
+  background: var(--mk-green-soft);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.5s ease-out;
+}
+
+.failed {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--mk-red-soft);
+  margin: 22px 0 0;
+  max-width: 52ch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meter i {
+    transition: none;
+  }
+}
