@@ -11,6 +11,7 @@ Reference docs (read before any UI work — the design system is authoritative o
 - `docs/bagcheck-build-instructions.md` — stack, project shape, milestones
 - `docs/bagcheck-unit-economics.md` — what a month costs and what conversion rate the pricing needs. SnapTrade is 83% of marginal cost and is billed on free users; break-even at $9/$29 is ~10%. `docs/costs.mjs` re-runs the model.
 - `docs/bagcheck-ai-architecture.md` — **authoritative on the AI boundary**: the five tiers, the decision procedure before any model call, the SnapTrade→Mongo→screen layers, the fact-pack contract, and the six touchpoints that earn a model. Read it before adding one.
+- `.claude/skills/` — seven design skills vendored verbatim from the MIT-licensed [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) plugin, with `ui-ux-pro-max` the one this project leans on: a searchable database of styles, palettes, font pairings and UX rules. Consult it before a visual decision — the monochrome app and the share cards' poster grammar both came out of it. **Never edit those files**; they are a copy, and `.claude/skills/UPSTREAM.md` records the pinned version and how to update.
 
 ## Colour
 
