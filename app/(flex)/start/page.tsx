@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getUserId, isAuthConfigured } from "@/auth";
 import { isSnapTradeConfigured } from "@/lib/snaptrade";
 import { BagMark } from "@/app/(marketing)/BagMark";
+import { GoogleSignIn } from "@/components/app/GoogleSignIn";
 import { DancingCards } from "./DancingCards";
 import { ConnectButton } from "./ConnectButton";
 import shell from "../flex.module.css";
@@ -25,11 +26,11 @@ export default async function StartPage() {
   const userId = await getUserId();
   /*
    * Linking needs both halves: a broker integration to talk to, and an
-   * identity to hang the connection on. With SnapTrade keys but no sign-in
-   * there is nobody to mint a portal session for, so the screen offers the
-   * sample year rather than a button that cannot finish.
+   * identity to hang the connection on. Three real states, and the screen
+   * shows exactly one of them — sign in, then link, or (on a deployment
+   * missing either credential) the sample year instead of a dead end.
    */
-  const ready = isSnapTradeConfigured() && (Boolean(userId) || isAuthConfigured());
+  const canLink = isSnapTradeConfigured() && (Boolean(userId) || isAuthConfigured());
 
   return (
     <>
@@ -82,7 +83,39 @@ export default async function StartPage() {
             </li>
           </ul>
 
-          <ConnectButton signedIn={Boolean(userId)} ready={ready} />
+          <div className={styles.actions}>
+            {!canLink ? (
+              <>
+                <a className={styles.primary} href="/wrapped?demo=1">
+                  See a sample year
+                </a>
+                <p className={styles.warn}>
+                  Brokerage linking is not open on this deployment yet. The
+                  sample year is built from an example ledger, and says so on
+                  every card.
+                </p>
+              </>
+            ) : userId ? (
+              <>
+                <ConnectButton />
+                <a className={styles.secondary} href="/wrapped?demo=1">
+                  See a sample year first
+                </a>
+              </>
+            ) : (
+              <>
+                {/*
+                  * Sign in first: SnapTrade mints a portal session against an
+                  * identity, so there has to be one before a broker can be
+                  * linked to it. One step, named for what it does.
+                  */}
+                <GoogleSignIn redirectTo="/start" className={styles.primary} />
+                <a className={styles.secondary} href="/wrapped?demo=1">
+                  See a sample year first
+                </a>
+              </>
+            )}
+          </div>
 
           <p className={styles.fine}>
             Robinhood, Fidelity, Schwab, Coinbase and 20+ others.

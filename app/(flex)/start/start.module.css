@@ -84,8 +84,21 @@
   margin-top: 34px;
 }
 
+/*
+ * The sign-in button arrives wrapped in its own form (a server action, not a
+ * link). `display: contents` lets that form drop out of the layout so the
+ * button sits in this column exactly as the anchors beside it do.
+ */
+.actions form {
+  display: contents;
+}
+
 .primary {
   display: flex;
+  width: 100%;
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
   align-items: center;
   justify-content: center;
   gap: 12px;

@@ -3,7 +3,7 @@ import { Button } from "@/components/primitives";
 
 async function signInAction() {
   "use server";
-  await signIn("google", { redirectTo: "/today" });
+  await signIn("google", { redirectTo: "/wrapped" });
 }
 
 /** Sign-in entry point for app screens reached while signed out. */
