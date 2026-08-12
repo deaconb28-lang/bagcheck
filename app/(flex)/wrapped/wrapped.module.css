@@ -70,6 +70,14 @@
   background: none;
   cursor: pointer;
   border-radius: 30px;
+  /*
+   * A button centres its text and swaps in the UA font. The card inside is a
+   * poster with its own left-aligned lockup, so both are handed back — without
+   * this every card's lede, spine and headline sat centred.
+   */
+  font: inherit;
+  color: inherit;
+  text-align: left;
   /* The card's own corners are 30px; the ring has to follow them. */
   transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.3, 1);
 }

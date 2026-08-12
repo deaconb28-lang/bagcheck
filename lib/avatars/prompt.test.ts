@@ -14,7 +14,18 @@ test("every archetype asks for its own emblem, and no two prompts match", () => 
 
 test("the prompt forbids everything that would break the system", () => {
   const prompt = avatarPrompt(ARCHETYPES[0]);
-  for (const banned of ["no text, letters, numbers", "No logos", "No people", "No border"]) {
+  /*
+   * The avatars are cartoon characters now, so a face is asked for rather than
+   * banned — but only as two punched dots and a mouth. A rendered human face
+   * beside a person's name would be a claim about who they are, and that is
+   * the line these still hold.
+   */
+  for (const banned of [
+    "no text, letters, numbers",
+    "No logos",
+    "No human faces",
+    "No border",
+  ]) {
     assert.ok(prompt.includes(banned), banned);
   }
 });

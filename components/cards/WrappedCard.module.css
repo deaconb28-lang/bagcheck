@@ -239,7 +239,38 @@
  * band each, whatever the template puts first, and the card composes.
  */
 .card:has(.scene) .inner {
+  /*
+   * The band runs to 37% of the card's height, which on a 2:3 card is 55.5cqw
+   * — but a shared reserve cannot land every template the same distance below
+   * it, because each stacks a different first element on top of it. So this is
+   * the floor that `numeral` and `chartfirst` are tuned to, and the two
+   * templates that lead with a poster lockup raise it for themselves below.
+   */
   padding-top: 42cqw;
+}
+
+/*
+ * The two that lead with type rather than a label. At the shared reserve their
+ * kicker started inside the artwork — invisible on a thumbnail, and obvious the
+ * moment a card was read at full size: "THE" sat across the archetype's four
+ * squares.
+ */
+.card[data-layout="poster"] .inner {
+  padding-top: 50cqw;
+}
+
+.card[data-layout="editorial"] .inner {
+  padding-top: 46cqw;
+}
+
+/* Bought back from the headline and the spine, so the taller reserve does not
+   push this template's footer off the bottom edge. */
+.card[data-layout="poster"] .headline {
+  font-size: 18cqw;
+}
+
+.card[data-layout="poster"] .beats {
+  gap: 2.8cqw;
 }
 
 /* The poster face, and the only place in the product it appears. */

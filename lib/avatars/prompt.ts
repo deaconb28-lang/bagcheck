@@ -10,33 +10,42 @@ import type { Archetype } from "@/lib/archetypes";
  * comes from `ARCHETYPES[n].emblem` and not from the model's imagination —
  * the form is decided by us, and the model is drawing it, not inventing it.
  *
- * The avatar is lit like the Wrapped card it sits on: a luminous emblem on a
- * deep field, with light behind it. The first set was flat matte line art,
- * which was right for the old flat card and looks like a placeholder next to
- * the new one. An avatar that whispers beside a poster is a bug.
+ * The avatar is a character: a chunky mascot built out of the emblem's form,
+ * with a simple two-dot face. Two earlier passes — flat line art, then neon
+ * glyphs on a dark field — both read as instrumentation, and nobody wants a
+ * schematic as their profile picture.
  *
- * Everything the Wrapped backdrop forbids is forbidden here for the same
- * reason, plus one more: an avatar sits beside a person's name, and a
- * generated face there would be a claim about who they are.
+ * The face is drawn as two dots and a mouth and nothing else. A rendered human
+ * face beside a person's name would be a claim about who they are; a cartoon
+ * one at two dots wide cannot be mistaken for one, which is the line this
+ * prompt holds.
+ *
+ * `lib/avatars/drawn.ts` is the reference these have to match — it is what
+ * ships today, and a generated set that does not sit beside it is worse than
+ * no generated set at all.
  */
 
 const CONSTRAINTS = [
   "Absolutely no text, letters, numbers, words, digits or symbols anywhere.",
   "No logos, charts, arrows, coins, currency or financial iconography.",
-  "No people, faces, hands, animals, plants or recognisable objects.",
-  "Fully abstract geometry. One centred form and nothing else.",
-  "No border, no frame, no vignette, no drop shadow, no bevelled or chrome metal.",
+  "No human faces, no hands, no bodies, no animals, no plants, no branded or",
+  "recognisable objects. The only face is the two dots and the mouth described",
+  "above, drawn flat on the shape itself.",
+  "One centred character and nothing else.",
+  "No border, no frame, no vignette, no drop shadow, no gradient mesh, no",
+  "bevelled or chrome metal, no 3D render, no glow.",
 ].join(" ");
 
 /**
- * The light behind the form, per hue family. Named after the `--card-*`
- * families so an avatar and the card it sits on read as one object.
+ * The one flat colour the character is filled in, per hue family. Named after
+ * the `--card-*` families so an avatar and the card it sits on read as one
+ * object.
  */
 const GLOW: Record<string, string> = {
-  moss: "emerald green (#57D69D) light",
-  ember: "warm amber-orange (#FF9B45) light",
-  azure: "cold blue (#62B0F5) light",
-  violet: "violet-magenta (#B48BFF) light",
+  moss: "flat emerald green (#57D69D)",
+  ember: "flat warm amber-orange (#FF9B45)",
+  azure: "flat cold blue (#62B0F5)",
+  violet: "flat violet-magenta (#B48BFF)",
 };
 
 /**
@@ -52,14 +61,16 @@ export function avatarHue(archetype: Archetype): keyof typeof GLOW {
 }
 
 export function avatarPrompt(archetype: Archetype): string {
-  const glow = GLOW[avatarHue(archetype)];
+  const fill = GLOW[avatarHue(archetype)];
   return [
-    `A single luminous emblem, centred on a deep near-black field: ${archetype.emblem}.`,
-    `The form glows with ${glow}, brightest at its core and falling off into the dark.`,
-    "Even stroke weight throughout, as if cut from one ribbon of light at one width.",
-    "A soft halo of the same colour behind the form; the corners of the frame stay near-black.",
-    "Generous empty margin on all four sides; the form occupies the middle two thirds.",
-    "Crisp, graphic, poster-like. Fine grain over the whole image.",
+    `A chunky cartoon mascot, centred on a plain near-black field, whose whole`,
+    `body is this shape: ${archetype.emblem}.`,
+    `The body is filled in ${fill} with soft rounded corners and no outline.`,
+    "Two small round eyes and one small curved mouth are punched out of the body",
+    "in the background colour, like holes cut in paper — the entire face.",
+    "Flat vector sticker art, thick friendly forms, one flat colour and one cut.",
+    "Generous empty margin on all four sides; the character occupies the middle",
+    "two thirds and sits square to the frame.",
     CONSTRAINTS,
   ].join(" ");
 }
