@@ -9,9 +9,10 @@ import {
   loadScreen,
   questionFor,
   syncClock,
+  taggedOpensFor,
 } from "@/lib/db";
 import { untaggedQueue } from "@/lib/tags";
-import { assembleWrapped } from "@/lib/wrapped/assemble";
+import { assembleWrappedFrom } from "@/lib/wrapped/assemble";
 import { storedPhotos } from "@/lib/unsplash";
 import type { UntaggedEntry } from "@/lib/tags";
 import { EmptyState } from "@/components/app/EmptyState";
@@ -115,11 +116,12 @@ export default async function HomePage({
   /*
    * Wrapped is a first-class panel on the dashboard now rather than a route
    * you have to know about, so the deck is assembled here alongside
-   * everything else. It costs one more read of the score history; the year's
-   * cards are the product's most-shared surface and burying them behind a
-   * tab is what kept people from ever seeing them.
+   * everything else — out of the screen this page has *already* loaded.
+   * `assembleWrapped` would re-read the same 400 scores for the same
+   * document; `assembleWrappedFrom` takes the one in hand and the tag opens
+   * it needs for conviction, which is the only read this panel adds.
    */
-  const [recent, taggedDocs, pulse, insight, wrapped, photos] = await Promise.all([
+  const [recent, taggedDocs, pulse, insight, opens, photos] = await Promise.all([
     transactions
       .find({ userId, type: { $regex: /buy/i } })
       .sort({ date: -1 })
@@ -146,9 +148,11 @@ export default async function HomePage({
         data.connection?.accounts.length ?? 0,
       ),
     ),
-    assembleWrapped(userId),
+    taggedOpensFor(userId),
     storedPhotos(),
   ]);
+
+  const wrapped = assembleWrappedFrom(data, opens);
 
   /*
    * The wave is read, not computed. This used to pull four thousand rows on

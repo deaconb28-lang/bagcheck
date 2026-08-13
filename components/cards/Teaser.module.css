@@ -1,0 +1,25 @@
+/*
+ * The teaser plate. It is a frame, not a card — the thing it previews is the
+ * card, and a locked preview that competes with a real artefact beside it
+ * defeats the point of locking it.
+ *
+ * The caller sets the box: `--teaser-lit` for the one lit colour, plus
+ * whatever background and inset the surface wants. Everything else here is
+ * `currentColor`, so a teaser takes the ink of the row it sits in.
+ */
+.teaser {
+  display: block;
+  width: 100%;
+  aspect-ratio: 120 / 78;
+  border-radius: var(--teaser-radius, 12px);
+  background: var(--teaser-bg, transparent);
+  overflow: hidden;
+  color: var(--teaser-ink, currentColor);
+  --teaser-lit: var(--teaser-accent, currentColor);
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

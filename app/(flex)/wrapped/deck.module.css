@@ -219,6 +219,7 @@
  * figure, no blurred readout: a fake number beside real ones cheapens both.
  */
 .locked {
+  position: relative;
   aspect-ratio: 2 / 3;
   border-radius: 26px;
   border: 1px dashed color-mix(in srgb, var(--mk-bg) 28%, transparent);
@@ -231,13 +232,36 @@
   text-align: left;
 }
 
-.lockMark {
-  margin-bottom: auto;
-  width: 34px;
-  height: 34px;
+/*
+ * The picture of what mints here. It sits in the card's upper two thirds,
+ * where an earned card puts its own artwork, so a locked frame and its
+ * unlocked twin have the same composition.
+ */
+.lockArt {
+  flex: 1;
   display: grid;
   place-items: center;
-  border-radius: 12px;
+  width: 100%;
+  min-height: 0;
+  padding: 8px 0 20px;
+  --teaser-accent: var(--mk-violet-soft);
+  --teaser-ink: color-mix(in srgb, var(--mk-bg) 62%, transparent);
+  --teaser-radius: 14px;
+}
+
+.lockArt > * {
+  width: 100%;
+}
+
+.lockMark {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
   background: color-mix(in srgb, var(--mk-bg) 10%, transparent);
   color: color-mix(in srgb, var(--mk-bg) 58%, transparent);
 }

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { WrappedCard } from "@/components/cards/WrappedCard";
 import { StoryViewer } from "@/components/cards/StoryViewer";
 import { ShareButton } from "@/components/app/ShareButton";
+import { Teaser } from "@/components/cards/Teaser";
 import { deckFrames, earnedCount, firstEarned } from "@/lib/cards";
 import type { CardSpec, Frame } from "@/lib/cards";
 import styles from "./deck.module.css";
@@ -219,14 +220,21 @@ export function Deck({
 /**
  * A frame that has not been minted.
  *
- * It states the one condition that opens it and nothing else. No figure, no
- * placeholder number, no blurred readout pretending to be data — the whole
- * claim of a card is that its numbers came off a brokerage, and a fake one
- * sitting beside the real ones cheapens both.
+ * It shows what the card will look like, names it, and states the one
+ * condition that opens it. **The picture is shapes and the shapes carry no
+ * figures** — the whole claim of a card is that its numbers came off a
+ * brokerage, and a locked frame with a plausible number on it would undermine
+ * every real one beside it. A ring with a gap says "a score"; it does not say
+ * 82. Naming the requirement without showing anything was honest and
+ * completely unpersuasive, which is its own kind of failure on the screen
+ * that is meant to make someone want the rest of the set.
  */
 function Locked({ frame }: { frame: Frame }) {
   return (
     <div className={styles.locked} aria-label={`${frame.name} — not earned yet`}>
+      <span className={styles.lockArt}>
+        <Teaser kind={frame.teaser} />
+      </span>
       <span className={styles.lockMark} aria-hidden="true">
         <LockGlyph />
       </span>

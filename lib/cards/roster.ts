@@ -1,3 +1,4 @@
+import type { TeaserKind } from "@/components/cards/Teaser";
 import type { CardKind, CardSpec } from "./kinds";
 
 /**
@@ -27,6 +28,14 @@ export interface RosterEntry {
   name: string;
   /** The one condition that mints it. Present tense, no dates, no promises. */
   requires: string;
+  /**
+   * The drawing an unearned frame wears.
+   *
+   * Shapes only — a teaser with a plausible figure on it would undermine
+   * every real figure beside it, on the one screen whose whole claim is that
+   * its numbers came off a brokerage.
+   */
+  teaser: TeaserKind;
 }
 
 /**
@@ -36,19 +45,19 @@ export interface RosterEntry {
  * frame numbers have to mean the same thing on every reader's screen.
  */
 export const ROSTER: readonly RosterEntry[] = [
-  { kind: "wrapped", name: "Your year", requires: "365 scored days" },
-  { kind: "archetype", name: "Your archetype", requires: "one scored day" },
-  { kind: "health", name: "Discipline score", requires: "one scored day" },
-  { kind: "streak", name: "Current streak", requires: "14 consecutive sessions inside your rules" },
-  { kind: "longestHold", name: "Longest hold", requires: "a position held 30 days" },
-  { kind: "holdRatio", name: "Winners run", requires: "8 closed winners and 8 closed losers" },
-  { kind: "bestDecision", name: "Best call", requires: "one round trip closed green" },
-  { kind: "drawdownHeld", name: "Held through", requires: "a 10% drawdown you did not sell" },
-  { kind: "noPanic", name: "Zero panic", requires: "60 scored days with no panic sell" },
-  { kind: "cadence", name: "Weekly rhythm", requires: "8 weeks of sessions" },
-  { kind: "monthlyPnl", name: "Realised months", requires: "4 months of realised P&L" },
-  { kind: "equity", name: "Account curve", requires: "30 days of account value" },
-  { kind: "correlation", name: "Conviction decay", requires: "conviction tags on 30 entries" },
+  { kind: "wrapped", name: "Your year", requires: "365 scored days", teaser: "cardFan" },
+  { kind: "archetype", name: "Your archetype", requires: "one scored day", teaser: "archetypes" },
+  { kind: "health", name: "Discipline score", requires: "one scored day", teaser: "ring" },
+  { kind: "streak", name: "Current streak", requires: "14 consecutive sessions inside your rules", teaser: "streak" },
+  { kind: "longestHold", name: "Longest hold", requires: "a position held 30 days", teaser: "hold" },
+  { kind: "holdRatio", name: "Winners run", requires: "8 closed winners and 8 closed losers", teaser: "exitSpeed" },
+  { kind: "bestDecision", name: "Best call", requires: "one round trip closed green", teaser: "records" },
+  { kind: "drawdownHeld", name: "Held through", requires: "a 10% drawdown you did not sell", teaser: "eventWindow" },
+  { kind: "noPanic", name: "Zero panic", requires: "60 scored days with no panic sell", teaser: "stamp" },
+  { kind: "cadence", name: "Weekly rhythm", requires: "8 weeks of sessions", teaser: "cadence" },
+  { kind: "monthlyPnl", name: "Realised months", requires: "4 months of realised P&L", teaser: "months" },
+  { kind: "equity", name: "Account curve", requires: "30 days of account value", teaser: "equity" },
+  { kind: "correlation", name: "Conviction decay", requires: "conviction tags on 30 entries", teaser: "conviction" },
 ] as const;
 
 export interface Frame {
@@ -57,6 +66,7 @@ export interface Frame {
   kind: CardKind;
   name: string;
   requires: string;
+  teaser: TeaserKind;
   /** The built card, or null where the ledger has not earned it yet. */
   card: CardSpec | null;
 }
@@ -74,6 +84,7 @@ export function deckFrames(cards: CardSpec[]): Frame[] {
     kind: entry.kind,
     name: entry.name,
     requires: entry.requires,
+    teaser: entry.teaser,
     card: byKind.get(entry.kind) ?? null,
   }));
 
@@ -85,6 +96,7 @@ export function deckFrames(cards: CardSpec[]): Frame[] {
       kind: card.kind,
       name: card.headline,
       requires: "",
+      teaser: "cardFan",
       card,
     });
   }

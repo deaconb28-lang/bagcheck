@@ -32,12 +32,35 @@ export interface WrappedAssembly {
  * story player behind it, and the carousel export. The window slices trips,
  * daily P&L, equity and scores before the same thirteen kinds build, so a
  * screen and its exported ZIP can never disagree about what a quarter held.
+ *
+ * The loading half is split from the assembling half so a caller that has
+ * already read the screen can hand it over instead of reading it again. The
+ * dashboard is exactly that caller: Wrapped is a panel on it now, and
+ * `loadScreen` at the same 400-score limit was running twice per navigation
+ * for one document.
  */
 export async function assembleWrapped(
   userId: string,
   w?: string,
 ): Promise<WrappedAssembly | null> {
   const data = await loadScreen(userId, 400);
+  if (!data.scores.length) return null;
+  return assembleWrappedFrom(data, await taggedOpensFor(userId), w);
+}
+
+/**
+ * The same assembly, from a screen the caller already holds.
+ *
+ * No I/O — every figure comes off `data` and `opens`, which is what lets the
+ * dashboard build the deck out of the read it was doing anyway. `loadScreen`
+ * defaults to the same 400 scores this needs, so a caller passing its own
+ * document is passing an identical one.
+ */
+export function assembleWrappedFrom(
+  data: ScreenData,
+  opens: Awaited<ReturnType<typeof taggedOpensFor>>,
+  w?: string,
+): WrappedAssembly | null {
   if (!data.scores.length) return null;
 
   const now = new Date();
@@ -81,7 +104,7 @@ export async function assembleWrapped(
     streakDays: q == null ? currentStreak(data.scores) : longestStreak(scores),
     streakName: "Sessions inside your rules",
     weeklySessions: weeklySessions(dailyPnl),
-    conviction: convictionStats(trips, (await taggedOpensFor(userId)).opens),
+    conviction: convictionStats(trips, opens.opens),
   });
 
   const windows: WrappedWindow[] = [
