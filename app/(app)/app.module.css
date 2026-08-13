@@ -34,15 +34,22 @@
   flex-direction: column;
 }
 
-/* The drifting field. Pointer-events off, opacity low, and the whole thing
-   disappears under prefers-reduced-motion's animation kill without leaving a
-   half-scaled image behind — the static frame is the finished state. */
+/*
+ * The drifting field belongs to the dark mode and nowhere else. It is a ridge
+ * of light, and there is no such thing as a ridge of light on white — on the
+ * base field it read as a smudge, so it simply is not painted there.
+ */
 .field {
+  display: none;
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+}
+
+:global(html[data-mode="dark"]) .field {
+  display: block;
 }
 
 /*

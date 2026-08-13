@@ -1,7 +1,13 @@
+/*
+ * `--size` is the size the caller asked for; `--ring-size` lets the surface
+ * around it ask for less. A phone gets the same dial at half the diameter
+ * rather than a 208px circle eating a third of the fold, and because the
+ * geometry is a viewBox the arc is identical either way.
+ */
 .wrap {
   position: relative;
-  width: var(--size);
-  height: var(--size);
+  width: var(--ring-size, var(--size));
+  height: var(--ring-size, var(--size));
   display: grid;
   place-items: center;
   flex: none;
@@ -13,6 +19,8 @@
 
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   transform: rotate(-90deg);
 }
 

@@ -1,29 +1,30 @@
 /*
- * The shared screen frame, v2: sticky header, then ONE centred column.
- * The two-column dashboard read as a console; a single centred feed reads
- * as an instrument you hold. Everything a rail used to carry folds into the
- * flow, in order. On the black field a panel is a fill plus a 1px edge —
- * without the edge it dissolves into the canvas, with more it wireframes.
- * The block rhythm is not negotiable.
+ * The shared screen frame, v3: bigger, rounder, and far emptier.
+ *
+ * A panel is a white plate on a near-white ground — a fill, a hairline and
+ * the softest lift, at a 32px radius. Nothing here is dense: the block rhythm
+ * opened up, every plate got more padding than it needs, and the type inside
+ * grew, because the previous pass fitted more onto a screen than anyone reads
+ * at once.
  */
 .body {
   flex: 1;
-  padding: 16px var(--pad-page, 48px) 120px;
+  padding: 24px var(--pad-page, 56px) 140px;
 }
 
 .grid {
   display: flex;
   flex-direction: column;
-  gap: var(--gap-block, 46px);
+  gap: var(--gap-block, 34px);
   align-items: stretch;
-  max-width: 760px;
+  max-width: 820px;
   margin-inline: auto;
 }
 
 .column {
   display: flex;
   flex-direction: column;
-  gap: var(--gap-block, 46px);
+  gap: var(--gap-block, 34px);
   min-width: 0;
 }
 
@@ -37,11 +38,12 @@
 .panel {
   background: var(--s1);
   border: 1px solid var(--edge);
-  border-radius: 30px;
-  padding: var(--pad-panel, 32px);
+  border-radius: 32px;
+  box-shadow: var(--lift);
+  padding: var(--pad-panel, 40px);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 26px;
   animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }
 
@@ -50,8 +52,9 @@
  * saturated wash per surface, behind live data and nowhere else.
  */
 .hero {
-  border-radius: 34px;
-  padding: calc(var(--pad-panel, 32px) + 8px);
+  border-radius: 40px;
+  box-shadow: var(--lift-hero);
+  padding: calc(var(--pad-panel, 40px) + 12px);
   background-image: var(--halo, var(--halo-moss));
   background-color: var(--s1);
 }
@@ -106,15 +109,16 @@
 
 .eyebrow {
   font-family: var(--font-mono), monospace;
-  font-size: 10.5px;
-  letter-spacing: 0.15em;
+  font-size: 11px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--meta);
 }
 
 .h2 {
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 /* label -> number -> unit -> why. The one card object the whole surface
@@ -172,8 +176,9 @@
 }
 
 .tail {
-  font-size: 13.5px;
-  line-height: 1.55;
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 62ch;
 }
 
 .divider {
@@ -192,10 +197,11 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
+  min-height: 40px;
+  padding: 0 18px;
   border-radius: 999px;
   background: var(--control);
-  font-size: 13.5px;
+  font-size: 14.5px;
   color: var(--ink3);
   white-space: nowrap;
 }

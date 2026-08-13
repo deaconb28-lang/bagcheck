@@ -21,7 +21,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: start;
-  gap: 24px;
+  gap: 34px;
 }
 
 .span {
@@ -43,7 +43,7 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  gap: 12px 44px;
+  gap: 20px 58px;
   text-align: left;
 }
 
@@ -79,7 +79,7 @@
 
 /* The one number the product is about, at the size the landing sets a year. */
 .heroScore {
-  font-size: clamp(64px, 7vw, 104px);
+  font-size: clamp(76px, 8.4vw, 132px);
   line-height: 0.84;
   font-weight: 700;
   letter-spacing: -0.05em;
@@ -104,11 +104,11 @@
 }
 
 .sentence {
-  font-size: clamp(19px, 1.7vw, 24px);
+  font-size: clamp(20px, 1.8vw, 26px);
   font-weight: 500;
-  line-height: 1.38;
-  max-width: 40ch;
-  margin: 18px 0 0;
+  line-height: 1.42;
+  max-width: 38ch;
+  margin: 22px 0 0;
   color: var(--ink2);
   text-wrap: pretty;
 }
@@ -125,10 +125,10 @@
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 20px;
+  gap: 28px;
   width: 100%;
-  margin-top: 30px;
-  padding-top: 26px;
+  margin-top: 40px;
+  padding-top: 34px;
   border-top: 1px solid var(--line-light);
 }
 
@@ -140,17 +140,18 @@
 .readings {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  gap: 20px;
 }
 
 .reading {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  padding: 18px 20px;
-  border-radius: 22px;
+  padding: 26px 28px;
+  border-radius: 26px;
   background: var(--s1);
   border: 1px solid var(--edge);
+  box-shadow: var(--lift);
   transition: border-color 0.16s ease, background 0.16s ease;
 }
 
@@ -160,7 +161,7 @@
 }
 
 .readingValue {
-  font-size: 30px;
+  font-size: 38px;
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.03em;
@@ -194,11 +195,16 @@
  * for.
  */
 @media (max-width: 780px) {
+  /*
+   * Stacked, and still reading from the left. A centred lockup over a column
+   * of left-aligned panels makes the phone look like a different screen from
+   * the desktop, and a four-line sentence centred is four lines whose
+   * beginnings the eye has to hunt for.
+   */
   .hero {
     grid-template-columns: minmax(0, 1fr);
-    justify-items: center;
-    text-align: center;
-    gap: 24px;
+    justify-items: start;
+    gap: 22px;
   }
 
   .heroRing,
@@ -206,15 +212,16 @@
     grid-row: auto;
   }
 
-  .heroLockup {
-    align-items: center;
+  /* Half the diameter: stacked, the dial is a companion to the figure rather
+     than the thing that fills the fold. */
+  .heroRing {
+    --ring-size: 116px;
   }
 
-  .heroFigure,
-  .heroActions {
-    justify-content: center;
+  .componentGrid {
+    margin-top: 26px;
+    padding-top: 26px;
   }
-
 }
 
 @media (max-width: 980px) {

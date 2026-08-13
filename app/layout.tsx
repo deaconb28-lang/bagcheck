@@ -73,14 +73,14 @@ export const metadata: Metadata = {
 /*
  * `viewportFit: "cover"` is load-bearing on phones: without it,
  * env(safe-area-inset-bottom) resolves to zero and the bottom tab bar sits
- * under the iPhone home indicator. The theme colour keeps the browser
- * chrome black over the black field.
+ * under the iPhone home indicator. The theme colour matches the light field,
+ * which is the base mode.
  */
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#000000",
+  themeColor: "#f4f4f6",
 };
 
 export default function RootLayout({
@@ -91,7 +91,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-mode="dark"
+      data-mode="light"
       className={`${display.variable} ${serif.variable} ${body.variable} ${mono.variable} ${poster.variable}`}
     >
       <body>{children}</body>
