@@ -3073,3 +3073,30 @@
     width: min(312px, 88vw);
   }
 }
+
+/*
+ * Sign-in, in the nav. It sits in the link row rather than beside the CTA, so
+ * it matches those links exactly and the Google mark is the only thing that
+ * marks it out as an action.
+ */
+.navSignIn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0;
+  background: none;
+  border: 0;
+  font: inherit;
+  color: var(--mk-ink3);
+  cursor: pointer;
+  transition: color 0.16s ease;
+}
+
+.navSignIn:hover {
+  color: var(--mk-ink);
+}
+
+.navSignIn svg {
+  width: 15px;
+  height: 15px;
+}

@@ -24,10 +24,9 @@
   width: 36px;
   height: 36px;
   border-radius: 13px;
-  background: var(--moss-tint);
-  border: 1px solid var(--moss-line);
-  box-shadow: var(--glow-moss);
-  color: var(--moss);
+  background: var(--ink-fill);
+  border: 1px solid var(--ink-line);
+  color: var(--ink);
   display: grid;
   place-items: center;
   margin-bottom: 14px;
@@ -53,9 +52,9 @@
 /* Moss here is not decoration: the rail marks where you are in a product
    whose whole subject is discipline, and the active route is that signal. */
 .item[data-active] {
-  background: var(--moss-tint);
-  border: 1px solid var(--moss-line);
-  color: var(--moss);
+  background: var(--ink-fill);
+  border: 1px solid var(--ink-line);
+  color: var(--ink);
 }
 
 .spacer {
@@ -130,7 +129,7 @@
   }
 
   .tab[data-active] {
-    color: var(--moss);
+    color: var(--ink);
   }
 
   .tabLabel {

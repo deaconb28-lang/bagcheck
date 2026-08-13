@@ -132,3 +132,27 @@
     transition: none;
   }
 }
+
+/*
+ * The door out of onboarding. Setup ends by handing the reader the dashboard
+ * rather than leaving them on the screen the portal happened to return to.
+ */
+.enter {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-start;
+  margin-top: 30px;
+  height: 50px;
+  padding: 0 24px;
+  border-radius: 999px;
+  background: var(--mk-bg);
+  color: var(--mk-field);
+  font-size: 15px;
+  font-weight: 600;
+  transition: transform 0.16s ease;
+}
+
+.enter:hover {
+  transform: translateY(-1px);
+}

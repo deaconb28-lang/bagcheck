@@ -118,15 +118,20 @@
   --halo-accent: radial-gradient(60% 54% at 50% 26%, rgba(109, 63, 212, 0.06), transparent 72%);
 
   /*
-   * The consistency ramp. On white it starts almost invisible and only the
-   * top step is fully saturated — a hundred cells at full moss is a green
-   * wall, not a measurement.
+   * The consistency ramp, in the reserved violet.
+   *
+   * It used to be moss, which put a hundred green cells on a dashboard that
+   * already had a green ring and eight green meters — at that point the hue
+   * had stopped carrying information and was just the colour of the product.
+   * "Days inside your rules" is Bagcheck's own reading of the conduct, which
+   * is exactly what the violet is reserved for, and it leaves green meaning
+   * one thing on this screen: money went up.
    */
   --h0: rgba(14, 14, 18, 0.045);
-  --h1: #dcf0e4;
-  --h2: #a9dcbf;
-  --h3: #5cb886;
-  --h4: #12924f;
+  --h1: #f1ecfd;
+  --h2: #ddd0f8;
+  --h3: #b79ceb;
+  --h4: #6d3fd4;
 
   --lift: 0 1px 2px rgba(14, 14, 18, 0.05), 0 1px 1px rgba(14, 14, 18, 0.03);
   --lift-hero: 0 1px 2px rgba(14, 14, 18, 0.05), 0 18px 46px -30px rgba(14, 14, 18, 0.22);
@@ -313,10 +318,10 @@ html[data-mode="dark"] {
   --halo-accent: radial-gradient(60% 54% at 50% 26%, rgba(167, 139, 250, 0.1), transparent 72%);
 
   --h0: rgba(255, 255, 255, 0.06);
-  --h1: #1c3a28;
-  --h2: #2a6b44;
-  --h3: #38a866;
-  --h4: #4ade80;
+  --h1: #1d1832;
+  --h2: #2f2563;
+  --h3: #5443a4;
+  --h4: #a78bfa;
 
   --lift: 0 1px 2px rgba(0, 0, 0, 0.5);
   --lift-hero: 0 1px 2px rgba(0, 0, 0, 0.5), 0 24px 60px -34px rgba(0, 0, 0, 0.85);

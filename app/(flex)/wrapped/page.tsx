@@ -6,7 +6,8 @@ import { exampleLedger } from "@/lib/cards/exampleLedger";
 import { assembleWrapped } from "@/lib/wrapped/assemble";
 import { storedPhotos } from "@/lib/unsplash";
 import { BagMark } from "@/app/(marketing)/BagMark";
-import { Gallery } from "./Gallery";
+import { GoogleSignIn } from "@/components/app/GoogleSignIn";
+import { Deck } from "./Deck";
 import { FirstRun } from "./FirstRun";
 import { ComingSoon } from "./ComingSoon";
 import styles from "./wrapped.module.css";
@@ -69,7 +70,7 @@ export default async function WrappedPage({
   if (firstRun && (example || cards.length === 0)) {
     return (
       <>
-        <Bar label={String(year)} />
+        <Bar label={String(year)} signedIn={Boolean(userId)} />
         <main className={styles.main}>
           <div className={styles.page}>{firstRun}</div>
         </main>
@@ -80,7 +81,7 @@ export default async function WrappedPage({
   if (!example && cards.length === 0) {
     return (
       <>
-        <Bar label={String(year)} />
+        <Bar label={String(year)} signedIn={Boolean(userId)} />
         <main className={styles.empty}>
           <h1 className={styles.emptyTitle}>Nothing has been earned yet</h1>
           <p className={styles.emptyBody}>
@@ -116,11 +117,11 @@ export default async function WrappedPage({
 
   return (
     <>
-      <Bar label={label} example={example} />
+      <Bar label={label} example={example} signedIn={Boolean(userId)} />
       <main className={styles.main}>
         <div className={styles.page}>
           {firstRun}
-          <Gallery
+          <Deck
             cards={cards}
             example={example}
             provenance={provenance}
@@ -188,8 +189,24 @@ async function firstName(): Promise<string> {
   }
 }
 
-/** One line of chrome. The mark, what you are reading, and the way out. */
-function Bar({ label, example }: { label: string; example?: boolean }) {
+/**
+ * One line of chrome: the mark, what you are reading, and the way into the
+ * app.
+ *
+ * The way in is the part that was missing. A reader who arrived here from the
+ * landing had no door to the product and no way to sign in without going
+ * back — so a signed-out visitor gets one-click Google, and a signed-in one
+ * gets the dashboard.
+ */
+function Bar({
+  label,
+  example,
+  signedIn,
+}: {
+  label: string;
+  example?: boolean;
+  signedIn: boolean;
+}) {
   return (
     <header className={styles.bar}>
       <Link href="/" className={styles.brand} aria-label="bagcheck home">
@@ -199,6 +216,13 @@ function Bar({ label, example }: { label: string; example?: boolean }) {
       <span className={styles.barLabel}>
         {example ? "Sample year" : "Wrapped"} · {label}
       </span>
+      {signedIn ? (
+        <Link href="/home" className={styles.barCta}>
+          Dashboard
+        </Link>
+      ) : isAuthConfigured() ? (
+        <GoogleSignIn redirectTo="/home" className={styles.barCta}>Sign in</GoogleSignIn>
+      ) : null}
     </header>
   );
 }

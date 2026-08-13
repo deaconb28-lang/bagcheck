@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { appLocked } from "@/lib/launch";
+import { isAuthConfigured } from "@/auth";
+import { GoogleSignIn } from "@/components/app/GoogleSignIn";
 import { BagMark } from "./BagMark";
 import { FirstWeek } from "./FirstWeek";
 import { PnlChart } from "./PnlChart";
@@ -103,7 +105,20 @@ export default function LandingPage() {
           <a href="#deck">Wrapped</a>
           <a href="#soon">The score</a>
           <a href="#waitlist">Pricing</a>
-          {!locked && <Link href="/home">Login</Link>}
+          {/*
+            * One click, not two. The link used to go to /home, which for a
+            * signed-out visitor is a screen whose entire content is another
+            * sign-in button — so the nav posts the sign-in itself and comes
+            * back at the dashboard.
+            */}
+          {!locked &&
+            (isAuthConfigured() ? (
+              <GoogleSignIn redirectTo="/home" className={styles.navSignIn}>
+                Log in
+              </GoogleSignIn>
+            ) : (
+              <Link href="/home">Login</Link>
+            ))}
         </nav>
         <div className={styles.navActions}>
           <Link href="/start" className={styles.navCta}>
@@ -740,7 +755,20 @@ export default function LandingPage() {
           <div className={styles.footLinks}>
             <Link href="/legal/icons">Icon credits</Link>
             <Link href="/legal/photos">Photo credits</Link>
-            {!locked && <Link href="/home">Login</Link>}
+            {/*
+            * One click, not two. The link used to go to /home, which for a
+            * signed-out visitor is a screen whose entire content is another
+            * sign-in button — so the nav posts the sign-in itself and comes
+            * back at the dashboard.
+            */}
+          {!locked &&
+            (isAuthConfigured() ? (
+              <GoogleSignIn redirectTo="/home" className={styles.navSignIn}>
+                Log in
+              </GoogleSignIn>
+            ) : (
+              <Link href="/home">Login</Link>
+            ))}
           </div>
           <span className={styles.footNote}>© 2026 bagcheck</span>
         </div>

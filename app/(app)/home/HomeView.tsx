@@ -15,6 +15,8 @@ import { CORRELATION_FLOOR } from "@/lib/tags";
 import type { UntaggedEntry } from "@/lib/tags";
 import type { ScoreComponents } from "@/lib/score";
 import type { Finding } from "@/lib/engine";
+import type { CardSpec } from "@/lib/cards";
+import { WrappedPanel } from "./WrappedPanel";
 import type { SessionRecap, WaveSummary } from "../derive";
 import { signedMoney } from "../derive";
 import screen from "../screen.module.css";
@@ -46,13 +48,25 @@ export type HomeViewProps = {
   accountCount: number;
   transactionCount: number;
   pulse: { question: string; options: readonly string[] } | null;
+  /** The year's deck, so Wrapped is a panel here rather than a hidden route. */
+  wrapped: { year: string; cards: CardSpec[]; photos: Record<string, { url: string; color: string }> } | null;
 };
 
-/** Exposure is a comparison, so it takes signal. The rest are discipline. */
+/**
+ * The four meters read steel, not green.
+ *
+ * Green means money went up. It used to also mean discipline, which put four
+ * green bars in the hero, four more in the archetype panel, a green ring, a
+ * green streak chip and a hundred green heat cells on one screen — and a
+ * dashboard where the dominant colour is one hue is a dashboard where the hue
+ * has stopped carrying information. Exposure was already the step-down tone;
+ * now all four are, the figure beside each does the talking, and the only
+ * green left on the screen is a positive number of dollars.
+ */
 const COMPONENT_TONE: Record<string, "moss" | "signal"> = {
-  adherence: "moss",
-  consistency: "moss",
-  patience: "moss",
+  adherence: "signal",
+  consistency: "signal",
+  patience: "signal",
   exposure: "signal",
 };
 
@@ -114,6 +128,7 @@ export function HomeView(props: HomeViewProps) {
     transactionCount,
     pulse,
     date,
+    wrapped,
   } = props;
 
   return (
@@ -129,6 +144,72 @@ export function HomeView(props: HomeViewProps) {
       <div className={screen.body}>
         <div className={`${screen.grid} ${styles.wide}`}>
           <div className={styles.dash}>
+            {/*
+              * 0 — the summary row.
+              *
+              * The grammar every payments dashboard opens with, and it is the
+              * right one: four figures side by side on one plate, divided by
+              * hairlines, each with the period it covers under it. A reader
+              * who opens this screen wants to know how the account is doing
+              * before they want to know anything else, and four numbers in a
+              * row answers that in the height of one panel instead of the
+              * three screens of scrolling the stacked version cost.
+              */}
+            <div className={`${styles.kpis} ${styles.span}`} data-reveal>
+              {[
+                {
+                  label: "Realised P&L",
+                  value: signedMoney(summary.total),
+                  tone: summary.total >= 0 ? "moss" : "loss",
+                  tail: `${wave.length} sessions · ${summary.green} green, ${summary.red} red`,
+                },
+                {
+                  label: "Discipline",
+                  value: String(score),
+                  tone: "ink",
+                  tail:
+                    delta != null && delta !== 0
+                      ? `out of 100 · ${delta > 0 ? "+" : "−"}${Math.abs(delta)} this week`
+                      : "out of 100",
+                },
+                {
+                  label: "Streak",
+                  value: streak > 0 ? String(streak) : "—",
+                  tone: "ink",
+                  tail: longest > 0 ? `days inside your rules · longest ${longest}` : "days inside your rules",
+                },
+                {
+                  label: "Ledger",
+                  value: transactionCount.toLocaleString("en-US"),
+                  tone: "ink",
+                  tail: `entries across ${accountCount} ${accountCount === 1 ? "account" : "accounts"}`,
+                },
+              ].map((k) => (
+                <div key={k.label} className={styles.kpi}>
+                  <span className={styles.kpiLabel}>{k.label}</span>
+                  <span className={`num ${styles.kpiValue}`} data-tone={k.tone}>
+                    {k.value}
+                  </span>
+                  <span className={styles.kpiTail}>{k.tail}</span>
+                </div>
+              ))}
+            </div>
+
+            {/*
+              * 1 — Wrapped, as a first-class panel rather than a rail glyph.
+              * It is the surface people actually share, so it sits directly
+              * under the summary row instead of behind a tab.
+              */}
+            {wrapped ? (
+              <div className={styles.span}>
+                <WrappedPanel
+                  year={wrapped.year}
+                  cards={wrapped.cards}
+                  photos={wrapped.photos}
+                />
+              </div>
+            ) : null}
+
             {/*
               * 1 — the score, as a lockup rather than a centred stack.
               *
@@ -195,7 +276,6 @@ export function HomeView(props: HomeViewProps) {
               */}
             <div className={`${styles.readings} ${styles.span}`}>
               {[
-                { href: "/patterns", value: String(streak), label: "day streak", tone: "moss" },
                 age != null
                   ? { href: "/dna", value: String(age), label: "investor age", tone: "accent" }
                   : null,
@@ -210,7 +290,6 @@ export function HomeView(props: HomeViewProps) {
                       tone: "signal",
                     }
                   : null,
-                { href: "/ledger", value: longest > 0 ? String(longest) : "—", label: "longest run", tone: "ember" },
               ]
                 .filter((r): r is { href: string; value: string; label: string; tone: string } => r !== null)
                 .map((r) => (
@@ -350,8 +429,10 @@ export function HomeView(props: HomeViewProps) {
               </section>
             ) : null}
 
-            {/* 5 — consistency, as a grid. */}
-            <section data-reveal className={`${screen.panel} ${styles.span}`} style={{ animationDelay: "0.06s" }}>
+            {/* 5 — consistency, as a grid. Half a panel: the cells are small
+                on purpose, and a texture stretched across the full dashboard
+                is 900px of empty plate beside it. */}
+            <section data-reveal className={screen.panel} style={{ animationDelay: "0.06s" }}>
               <div className={screen.head}>
                 <div className={screen.headText}>
                   <span className={screen.eyebrow}>Days inside your rules</span>
@@ -365,7 +446,7 @@ export function HomeView(props: HomeViewProps) {
               <HeatGrid days={heat} />
 
               <div className={screen.chips}>
-                <span className={screen.chip} data-tone="moss">
+                <span className={screen.chip}>
                   <span className={screen.chipNum}>{streak}</span> day streak
                 </span>
                 <span className={screen.chip}>
@@ -437,17 +518,6 @@ export function HomeView(props: HomeViewProps) {
               </div>
             ) : null}
 
-            <div className={screen.panel}>
-              <span className={screen.eyebrow}>Ledger</span>
-              <p className={screen.tail}>
-                {transactionCount.toLocaleString("en-US")} trades and transfers across{" "}
-                {accountCount} {accountCount === 1 ? "account" : "accounts"}, exactly as
-                the brokerage reported them.
-              </p>
-              <Link href="/ledger" className={styles.railLink}>
-                Open the ledger
-              </Link>
-            </div>
           </div>
         </div>
       </div>

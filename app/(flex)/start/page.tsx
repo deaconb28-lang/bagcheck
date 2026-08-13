@@ -69,19 +69,25 @@ export default async function StartPage({
               linked to your Google account, so bagcheck keeps reading new
               fills on its own — there is nothing to connect again.
             </p>
+            {/*
+              * Setup ends in the dashboard. Wrapped is right there on it — a
+              * panel of its own directly under the summary row — so sending
+              * someone straight to the cards used to drop them on a screen
+              * with no way back into the product they had just set up.
+              */}
             <div className={styles.actions}>
-              <Link className={styles.primary} href="/wrapped">
-                Open your Wrapped
+              <Link className={styles.primary} href="/home">
+                Open your dashboard
                 <Arrow />
               </Link>
-              <a className={styles.secondary} href="/api/snaptrade/connect">
-                Link another brokerage
-              </a>
+              <Link className={styles.secondary} href="/wrapped">
+                See your Wrapped
+              </Link>
             </div>
             <p className={styles.fine}>
               {linked.lastSyncAt
                 ? `Last read ${linked.lastSyncAt.toISOString().slice(0, 10)}.`
-                : "First read runs when you open your Wrapped."}
+                : "First read runs when you open your dashboard."}
             </p>
           </div>
         </main>

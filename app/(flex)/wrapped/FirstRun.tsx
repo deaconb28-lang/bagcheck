@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { spanLabel, stepsFrom } from "@/lib/snaptrade/progress";
 import type { SyncProgress } from "@/lib/snaptrade/progress";
@@ -111,6 +112,25 @@ export function FirstRun({ name }: { name: string }) {
           </li>
         ))}
       </ol>
+
+      {/*
+        * Where onboarding ends. The greeting and the first read happen here
+        * because this is the screen the portal returns to, but the dashboard
+        * is where the product lives — so the last step of setup is a door
+        * into it rather than a screen the reader has to find their own way
+        * off. It appears only once the read is done: an invitation to open a
+        * dashboard that has nothing in it yet is a worse first visit than
+        * waiting four seconds.
+        */}
+      {done ? (
+        <Link className={styles.enter} href="/home">
+          Open your dashboard
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M5 12h13" />
+            <path d="M12 5l7 7-7 7" />
+          </svg>
+        </Link>
+      ) : null}
 
       {failed ? (
         <p className={styles.failed} role="status">

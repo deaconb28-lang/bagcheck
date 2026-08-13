@@ -4,18 +4,36 @@
   gap: 16px;
 }
 
+/*
+ * A density grid, capped so it stays a texture.
+ *
+ * At full width a hundred-odd cells become 24px tiles and the panel reads as
+ * one saturated block rather than a measurement — the same failure whatever
+ * hue it is in. Capping the column width keeps the cells small and the field
+ * quiet, which is the whole point of a grid you are meant to scan.
+ */
 .grid {
   display: grid;
   grid-auto-flow: column;
   grid-template-rows: repeat(7, 1fr);
+  grid-auto-columns: minmax(0, 15px);
+  justify-content: start;
   gap: 4px;
+  /* A long enough history outruns any panel; it scrolls rather than shrinking
+     the cells to the point where the ramp stops being readable. */
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.grid::-webkit-scrollbar {
+  display: none;
 }
 
 .cell {
   animation: popIn 0.45s cubic-bezier(0.2, 0.8, 0.3, 1) both;
 
   aspect-ratio: 1;
-  border-radius: 6px;
+  border-radius: 4px;
   transition: transform 0.16s ease;
 }
 

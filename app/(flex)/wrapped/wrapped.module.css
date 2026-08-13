@@ -39,7 +39,47 @@
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--mk-bg) 45%, transparent);
+  color: color-mix(in srgb, var(--mk-bg) 58%, transparent);
+  margin-left: auto;
+}
+
+/*
+ * The way in. A reader who arrived from the landing previously had no door to
+ * the product from this screen and no way to sign in without going back.
+ */
+.barCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--mk-bg) 24%, transparent);
+  color: var(--mk-bg);
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.16s ease, border-color 0.16s ease;
+}
+
+.barCta:hover {
+  background: color-mix(in srgb, var(--mk-bg) 10%, transparent);
+  border-color: color-mix(in srgb, var(--mk-bg) 38%, transparent);
+}
+
+.barCta svg {
+  width: 15px;
+  height: 15px;
+}
+
+@media (max-width: 560px) {
+  .barLabel {
+    display: none;
+  }
+
+  .barCta {
+    margin-left: auto;
+  }
 }
 
 /* The one measure the whole page is set to. */
@@ -50,226 +90,6 @@
   padding: 0 24px;
 }
 
-/* ── The hero: the cover, and what the year came to ──
-   The cover is the only card about the whole year, so it is the only one that
-   gets a lockup beside it. Everything else is a frame on the sheet below. */
-.hero {
-  display: grid;
-  grid-template-columns: minmax(0, 372px) minmax(0, 1fr);
-  align-items: center;
-  gap: 64px;
-  padding: 60px 0 72px;
-}
-
-.coverCard,
-.frameCard {
-  display: block;
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  border-radius: 30px;
-  /*
-   * A button centres its text and swaps in the UA font. The card inside is a
-   * poster with its own left-aligned lockup, so both are handed back — without
-   * this every card's lede, spine and headline sat centred.
-   */
-  font: inherit;
-  color: inherit;
-  text-align: left;
-  /* The card's own corners are 30px; the ring has to follow them. */
-  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.3, 1);
-}
-
-.coverCard {
-  box-shadow: 0 44px 90px -40px rgba(0, 0, 0, 0.9);
-}
-
-.coverCard:hover,
-.frameCard:hover {
-  transform: translateY(-5px) rotate(-0.5deg);
-}
-
-.coverCard:focus-visible,
-.frameCard:focus-visible {
-  outline: 2px solid var(--mk-violet-soft);
-  outline-offset: 5px;
-}
-
-.lockup {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  min-width: 0;
-}
-
-.kicker {
-  font-family: var(--font-mono), monospace;
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--mk-violet-soft);
-}
-
-/*
- * The year, set as large as the column allows. It is the one number on the
- * page that is not on a card, and it is what the reader came for.
- */
-.year {
-  font-size: clamp(60px, 8.6vw, 118px);
-  line-height: 0.86;
-  font-weight: 700;
-  letter-spacing: -0.05em;
-  margin: 10px 0 0;
-  font-variant-numeric: tabular-nums;
-}
-
-.stat {
-  font-size: 17px;
-  line-height: 1.5;
-  color: color-mix(in srgb, var(--mk-bg) 58%, transparent);
-  margin: 20px 0 0;
-  max-width: 34ch;
-  text-wrap: pretty;
-}
-
-.heroActions {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  margin-top: 30px;
-}
-
-/*
- * The brightest object on the page, spent on the one action the screen exists
- * for. Play is a filled white pill; sharing sits beside it in its own outline,
- * because a reader who wants one card should not have to watch thirteen.
- */
-.play {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 52px;
-  padding: 0 26px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--mk-bg);
-  color: var(--mk-field);
-  font-family: inherit;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.16s ease, opacity 0.16s ease;
-}
-
-.play:hover {
-  transform: translateY(-1px);
-}
-
-.play:focus-visible {
-  outline: 2px solid var(--mk-violet-soft);
-  outline-offset: 3px;
-}
-
-.prov {
-  font-family: var(--font-mono), monospace;
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--mk-bg) 38%, transparent);
-  margin: 26px 0 0;
-}
-
-/* ── The set ── */
-.set {
-  padding-bottom: 40px;
-}
-
-.setHead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid color-mix(in srgb, var(--mk-bg) 13%, transparent);
-}
-
-.setTitle {
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-
-.setCount,
-.no,
-.name,
-.scarce {
-  font-family: var(--font-mono), monospace;
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.setCount {
-  color: color-mix(in srgb, var(--mk-bg) 42%, transparent);
-}
-
-.sheet {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  /* Four across, so twelve cards fill three rows exactly rather than leaving
-     an orphan pair on a fourth. */
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 44px 30px;
-  padding-top: 36px;
-}
-
-.frame {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-width: 0;
-  animation: rise 0.5s ease-out both;
-}
-
-/*
- * The frame's edge marking: its number, its name, and scarcity where it was
- * earned. Three facts on one line — enough to pick a card out of thirteen
- * without reading every poster.
- */
-.caption {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  min-width: 0;
-}
-
-.no {
-  color: color-mix(in srgb, var(--mk-bg) 34%, transparent);
-  font-variant-numeric: tabular-nums;
-  flex: none;
-}
-
-.name {
-  color: color-mix(in srgb, var(--mk-bg) 78%, transparent);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Amber is scarcity everywhere else in the product; the word carries it. */
-.scarce {
-  color: var(--mk-amber);
-  flex: none;
-  margin-left: auto;
-}
-
-/* ── The tail ── */
 .tail {
   display: flex;
   align-items: center;
@@ -308,7 +128,6 @@
   background: color-mix(in srgb, var(--mk-bg) 10%, transparent);
 }
 
-/* ── Nothing earned yet ── */
 .empty {
   flex: 1;
   display: flex;
@@ -361,59 +180,3 @@
   border: 1px solid color-mix(in srgb, var(--mk-bg) 22%, transparent);
 }
 
-/* ── Narrow ──
-   The hero stacks and the cover comes first: the artefact is the argument,
-   and on a phone it should be the first thing on the screen. */
-@media (max-width: 860px) {
-  .hero {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 34px;
-    padding: 34px 0 44px;
-    max-width: 420px;
-    margin-inline: auto;
-  }
-
-  .lockup {
-    align-items: flex-start;
-  }
-
-  .sheet {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 34px 18px;
-  }
-
-  /* Two narrow columns cannot hold number, name and mark on one line, and a
-     name cut to "CONVICTION DEC…" has stopped being a name. It wraps. */
-  .caption {
-    flex-wrap: wrap;
-    gap: 4px 8px;
-  }
-
-  .name {
-    white-space: normal;
-    overflow: visible;
-  }
-
-  .scarce {
-    margin-left: 0;
-  }
-}
-
-/* Three across between the two, where four would squeeze the captions. */
-@media (min-width: 861px) and (max-width: 1120px) {
-  .sheet {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .frame {
-    animation: none;
-  }
-
-  .coverCard,
-  .frameCard,
-  .play {
-    transition: none;
-  }
-}

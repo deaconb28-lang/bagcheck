@@ -13,7 +13,7 @@ import { isAuthConfigured, signIn } from "@/auth";
  * sensible fallback to show in its place.
  */
 export function GoogleSignIn({
-  redirectTo = "/wrapped",
+  redirectTo = "/home",
   className,
   children = "Continue with Google",
 }: {

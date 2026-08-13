@@ -35,6 +35,98 @@
 }
 
 /*
+ * ── The summary row ──
+ *
+ * Four figures on one plate, divided by hairlines rather than boxed
+ * separately: a payments dashboard opens by telling you how the account is
+ * doing, and four numbers in a row do that in the height of one panel. Boxing
+ * each of them would be four small filled rectangles inside a big one, which
+ * is the tell this design system already warns about.
+ */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: var(--s1);
+  border: 1px solid var(--edge);
+  border-radius: 26px;
+  box-shadow: var(--lift);
+  overflow: hidden;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 26px 28px;
+  border-left: 1px solid var(--line-light);
+  min-width: 0;
+}
+
+.kpi:first-child {
+  border-left: 0;
+}
+
+.kpiLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.kpiValue {
+  font-size: clamp(28px, 2.4vw, 36px);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.032em;
+  color: var(--ink);
+}
+
+/* Colour reaches a figure only when the figure is money. */
+.kpiValue[data-tone="moss"] {
+  color: var(--moss);
+}
+
+.kpiValue[data-tone="loss"] {
+  color: var(--loss);
+}
+
+.kpiTail {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink3);
+}
+
+@media (max-width: 1080px) {
+  .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .kpi:nth-child(3) {
+    border-left: 0;
+  }
+
+  .kpi:nth-child(n + 3) {
+    border-top: 1px solid var(--line-light);
+  }
+}
+
+@media (max-width: 520px) {
+  .kpis {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .kpi {
+    border-left: 0;
+    padding: 20px 22px;
+  }
+
+  .kpi + .kpi {
+    border-top: 1px solid var(--line-light);
+  }
+}
+
+/*
  * The hero: ring on the left, the number and its sentence on the right, the
  * four components across the foot. The same lockup the Wrapped screen opens
  * with, which is what makes the two feel like one product.
@@ -47,10 +139,19 @@
   text-align: left;
 }
 
+/*
+ * The dial is violet, not green.
+ *
+ * The score is Bagcheck's own reading of the conduct — the same voice as the
+ * written insight and Investor Age — and green now means one thing on this
+ * screen: money went up. A green ring over a green eyebrow over four green
+ * meters was the whole complaint.
+ */
 .heroRing {
   grid-row: 1;
   display: grid;
   place-items: center;
+  --ring-stroke: var(--accent);
 }
 
 .heroLockup {
@@ -66,7 +167,7 @@
   font-size: 11px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--moss);
+  color: var(--accent);
 }
 
 .heroFigure {
@@ -94,20 +195,21 @@
   text-transform: uppercase;
   padding: 6px 11px;
   border-radius: 999px;
-  border: 1px solid var(--moss-line);
-  color: var(--moss);
+  border: 1px solid var(--line2);
+  color: var(--ink3);
 }
 
+/* A score is not money, so its delta is not red — it is just a direction. */
 .heroDelta[data-dir="down"] {
-  border-color: var(--loss-line);
-  color: var(--loss);
+  border-color: var(--line2);
+  color: var(--ink3);
 }
 
 .sentence {
   font-size: clamp(20px, 1.8vw, 26px);
   font-weight: 500;
   line-height: 1.42;
-  max-width: 38ch;
+  max-width: 52ch;
   margin: 22px 0 0;
   color: var(--ink2);
   text-wrap: pretty;
@@ -137,10 +239,19 @@
  * each a link to the screen that explains it — on the page, where a fact
  * belongs, rather than in chrome that has to carry it on all seven routes.
  */
+/*
+ * The readings the header used to carry. There are only ever two or three of
+ * them, so they are a row of compact tiles rather than a grid that stretches
+ * each one across half the dashboard.
+ */
 .readings {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 20px;
+}
+
+.reading {
+  flex: 0 1 236px;
 }
 
 .reading {
@@ -166,10 +277,6 @@
   line-height: 1;
   letter-spacing: -0.03em;
   color: var(--ink);
-}
-
-.reading[data-tone="moss"] .readingValue {
-  color: var(--moss);
 }
 
 .reading[data-tone="accent"] .readingValue {

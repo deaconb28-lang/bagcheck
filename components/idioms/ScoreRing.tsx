@@ -71,7 +71,7 @@ export function ScoreRing({ score, size = 246, label = "Health", bare = false }:
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="var(--moss)"
+          stroke="var(--ring-stroke, var(--moss))"
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={circumference.toFixed(1)}

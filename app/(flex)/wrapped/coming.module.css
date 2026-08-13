@@ -1,61 +1,71 @@
 /*
- * The workshop, below the cards.
+ * The roadmap, as a list.
  *
- * It is quieter than the sheet above it on purpose: the cards are the thing
- * that arrived and these are the things that have not. Every tile is one
- * surface — a fill, a hairline, a blurred readout that carries no data, and
- * three lines of type. No tile lifts, nothing pulses, and nothing counts down.
+ * Seventeen tiles each carrying a border, a blurred readout, a lock and three
+ * lines of type was a wall — the eye had nothing to move between, and the
+ * ghost readouts made a section about *not having data yet* look busy with
+ * data. Rows on hairlines, two columns, one status word each.
  */
 .coming {
-  padding: 20px 0 8px;
-  border-top: 1px solid color-mix(in srgb, var(--mk-bg) 12%, transparent);
-  margin-top: 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 52px;
+  padding: 64px 0 24px;
+  border-top: 1px solid color-mix(in srgb, var(--mk-bg) 10%, transparent);
+  margin-top: 52px;
 }
 
+/* ── Head: the argument on the left, the count of it on the right ── */
 .head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 48px;
+}
+
+.headText {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 44px 0 12px;
-  max-width: 62ch;
+  gap: 0;
+  max-width: 58ch;
 }
 
 .eyebrow {
   font-family: var(--font-mono), monospace;
-  font-size: 11px;
+  font-size: 10.5px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--mk-amber);
 }
 
 .title {
-  font-size: clamp(30px, 3.6vw, 46px);
-  line-height: 1.04;
-  font-weight: 700;
-  letter-spacing: -0.035em;
   margin: 14px 0 0;
-  text-wrap: balance;
+  font-size: clamp(30px, 3.4vw, 44px);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: var(--mk-bg);
 }
 
 .lede {
-  font-size: 17px;
-  line-height: 1.55;
-  color: color-mix(in srgb, var(--mk-bg) 58%, transparent);
   margin: 18px 0 0;
-  text-wrap: pretty;
+  font-size: 16px;
+  line-height: 1.62;
+  color: color-mix(in srgb, var(--mk-bg) 66%, transparent);
 }
 
 .cta {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  min-height: 50px;
-  padding: 0 24px;
-  margin-top: 28px;
+  margin-top: 26px;
+  height: 46px;
+  padding: 0 22px;
   border-radius: 999px;
   background: var(--mk-bg);
   color: var(--mk-field);
-  font-size: 16px;
+  font-size: 14.5px;
   font-weight: 600;
   transition: transform 0.16s ease;
 }
@@ -64,166 +74,172 @@
   transform: translateY(-1px);
 }
 
-/* ── One band per part of the instrument ── */
-.band {
-  padding-top: 46px;
-  animation: rise 0.5s ease-out both;
-}
-
-.bandHead {
+/* The three build states, counted. One small table instead of 17 badges. */
+.tally {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  padding-bottom: 20px;
+  gap: 0;
+  margin: 6px 0 0;
+  min-width: 172px;
+}
+
+.tallyRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 0;
   border-bottom: 1px solid color-mix(in srgb, var(--mk-bg) 10%, transparent);
-  max-width: 58ch;
+}
+
+.tallyRow:last-child {
+  border-bottom: 0;
+}
+
+.tallyLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.tallyValue {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--mk-bg);
+}
+
+/* ── The four groups ── */
+.bands {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 44px 56px;
+}
+
+.band {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bandTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 0 0 8px;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--mk-bg);
 }
 
 .bandEyebrow {
   font-family: var(--font-mono), monospace;
-  font-size: 11px;
+  font-size: 10px;
+  font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--mk-violet-soft);
 }
 
-.bandTitle {
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-
-.bandLede {
-  font-size: 15px;
-  line-height: 1.55;
-  color: color-mix(in srgb, var(--mk-bg) 50%, transparent);
-  margin: 0;
-  text-wrap: pretty;
-}
-
-.tiles {
+.rows {
   list-style: none;
   margin: 0;
-  padding: 24px 0 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 18px;
+  padding: 0;
 }
 
 /*
- * A locked tile occupies the slot its unlocked twin would. It is a fill plus a
- * hairline and nothing else — no lift on hover, because there is nothing here
- * to open yet and an affordance that refuses is worse than none.
+ * One row: name, status, and the line under both. The status sits on the
+ * name's baseline rather than in a column of its own — a right-aligned
+ * status column across a 300px measure leaves a river down the middle.
  */
-.tile {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 22px 20px 20px;
-  border-radius: 22px;
-  background: color-mix(in srgb, var(--mk-bg) 4%, transparent);
-  border: 1px solid color-mix(in srgb, var(--mk-bg) 11%, transparent);
-}
-
-/*
- * The shape of the answer, not an answer. Blurred hard and held at low
- * opacity — a locked tile carrying a legible figure would be inventing a fact
- * about someone's own behaviour.
- */
-.ghost {
-  position: absolute;
-  right: -14px;
-  top: -10px;
-  z-index: 0;
-  width: 152px;
-  color: var(--mk-bg);
-  opacity: 0.12;
-  filter: blur(3px);
-  pointer-events: none;
-}
-
-.ghost svg {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.lock,
-.tileName,
-.tileLine,
-.status {
-  position: relative;
-  z-index: 1;
-}
-
-.lock {
+.row {
   display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--mk-bg) 9%, transparent);
-  color: color-mix(in srgb, var(--mk-bg) 55%, transparent);
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: 14px;
+  padding: 15px 0;
+  border-top: 1px solid color-mix(in srgb, var(--mk-bg) 9%, transparent);
 }
 
-.tileName {
-  font-size: 17px;
+.rowName {
+  font-size: 15.5px;
   font-weight: 600;
-  letter-spacing: -0.015em;
-  margin: 4px 0 0;
+  color: var(--mk-bg);
 }
 
-.tileLine {
-  font-size: 14.5px;
-  line-height: 1.5;
-  color: color-mix(in srgb, var(--mk-bg) 52%, transparent);
-  margin: 0;
-  text-wrap: pretty;
+.rowLine {
+  grid-column: 1 / -1;
+  margin: 5px 0 0;
+  font-size: 13.5px;
+  line-height: 1.58;
+  color: color-mix(in srgb, var(--mk-bg) 58%, transparent);
 }
 
 /*
- * Build state, not scarcity. Three words, no dates — a shipped date is a
- * promise this file cannot keep. The word carries the state; the colour only
- * agrees with it.
+ * Build state, never scarcity. The word carries the meaning; the colour only
+ * separates the three at a glance, which is why each one also says itself.
  */
+.status,
+.tallyLabel {
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--mk-bg) 58%, transparent);
+}
+
 .status {
-  align-self: flex-start;
-  margin-top: 6px;
   font-family: var(--font-mono), monospace;
-  font-size: 10.5px;
+  font-size: 9.5px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  padding: 5px 10px;
-  border-radius: 999px;
-  border: 1px solid currentColor;
-  color: color-mix(in srgb, var(--mk-bg) 40%, transparent);
 }
 
-.status[data-status="In build"] {
+.status[data-status="In build"],
+.tallyLabel[data-status="In build"] {
   color: var(--mk-green-soft);
 }
 
-.status[data-status="Designed"] {
+.status[data-status="Designed"],
+.tallyLabel[data-status="Designed"] {
   color: var(--mk-violet-soft);
 }
 
-@media (max-width: 640px) {
-  .tiles {
-    grid-template-columns: minmax(0, 1fr);
-  }
+.status[data-status="Next"],
+.tallyLabel[data-status="Next"] {
+  color: color-mix(in srgb, var(--mk-bg) 58%, transparent);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .band {
-    animation: none;
+@media (max-width: 900px) {
+  .coming {
+    padding-top: 68px;
+    margin-top: 64px;
+    gap: 40px;
   }
 
-  .cta {
-    transition: none;
+  .head {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 30px;
+  }
+
+  .tally {
+    flex-direction: row;
+    gap: 0;
+    min-width: 0;
+  }
+
+  .tallyRow {
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 0 16px 0 0;
+    border-bottom: 0;
+  }
+
+  .bands {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
   }
 }

@@ -11,6 +11,8 @@ import {
   syncClock,
 } from "@/lib/db";
 import { untaggedQueue } from "@/lib/tags";
+import { assembleWrapped } from "@/lib/wrapped/assemble";
+import { storedPhotos } from "@/lib/unsplash";
 import type { UntaggedEntry } from "@/lib/tags";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
@@ -110,7 +112,14 @@ export default async function HomePage({
   }
 
   const { transactions, tags } = await getCollections();
-  const [recent, taggedDocs, pulse, insight] = await Promise.all([
+  /*
+   * Wrapped is a first-class panel on the dashboard now rather than a route
+   * you have to know about, so the deck is assembled here alongside
+   * everything else. It costs one more read of the score history; the year's
+   * cards are the product's most-shared surface and burying them behind a
+   * tab is what kept people from ever seeing them.
+   */
+  const [recent, taggedDocs, pulse, insight, wrapped, photos] = await Promise.all([
     transactions
       .find({ userId, type: { $regex: /buy/i } })
       .sort({ date: -1 })
@@ -137,6 +146,8 @@ export default async function HomePage({
         data.connection?.accounts.length ?? 0,
       ),
     ),
+    assembleWrapped(userId),
+    storedPhotos(),
   ]);
 
   /*
@@ -188,6 +199,11 @@ export default async function HomePage({
         transactionCount={data.transactionCount}
         pulse={pulse ? null : { question: question.question, options: question.options }}
         date={latest.date}
+        wrapped={
+          wrapped
+            ? { year: wrapped.label, cards: wrapped.cards, photos }
+            : null
+        }
       />
     </>
   );
