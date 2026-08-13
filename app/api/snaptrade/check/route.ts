@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
   const callback = absoluteUrl(req, "/api/snaptrade/callback");
   const snaptrade = getSnapTrade();
   const probeUser = "diagnostic-probe";
-  const out: Record<string, unknown> = { callback };
+  const out: Record<string, unknown> = { callback, shape: credentialShape() };
 
   let userSecret: string | null = null;
   try {
@@ -101,6 +101,30 @@ async function attempt(run: () => Promise<{ data: unknown }>): Promise<unknown> 
   } catch (err) {
     return { ok: false, error: describe(err) };
   }
+}
+
+/**
+ * The shape of each credential, never its value.
+ *
+ * SnapTrade's 401s cannot tell a wrong key from a right one wrapped in quotes
+ * or carrying a newline, and neither can anyone reading them. Length and two
+ * flags separate those without printing a secret into a log.
+ */
+function credentialShape(): Record<string, unknown> {
+  const look = (name: string) => {
+    const raw = process.env[name] ?? "";
+    const trimmed = raw.trim();
+    return {
+      length: trimmed.length,
+      hadSurroundingWhitespace: raw !== trimmed,
+      looksQuoted: /^["'].*["']$/.test(trimmed),
+      hasInnerWhitespace: /\s/.test(trimmed),
+    };
+  };
+  return {
+    SNAPTRADE_CLIENT_ID: look("SNAPTRADE_CLIENT_ID"),
+    SNAPTRADE_CONSUMER_KEY: look("SNAPTRADE_CONSUMER_KEY"),
+  };
 }
 
 /** Whatever the SDK threw, as something readable — never the credentials. */
