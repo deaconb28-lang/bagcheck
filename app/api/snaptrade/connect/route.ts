@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getUserId } from "@/auth";
 import { getPortalUrl } from "@/lib/snaptrade";
+import { absoluteUrl } from "@/lib/origin";
 
 /**
  * Browser-navigable: redirects into the SnapTrade connection portal.
@@ -14,15 +15,15 @@ import { getPortalUrl } from "@/lib/snaptrade";
 export async function GET(req: NextRequest) {
   const userId = await getUserId();
   if (!userId) {
-    return NextResponse.redirect(new URL("/start?error=session", req.url));
+    return NextResponse.redirect(absoluteUrl(req, "/start?error=session"));
   }
   try {
-    const callback = new URL("/api/snaptrade/callback", req.url).toString();
+    const callback = absoluteUrl(req, "/api/snaptrade/callback");
     const portalUrl = await getPortalUrl(userId, callback);
     return NextResponse.redirect(portalUrl);
   } catch (err) {
     // The reason goes to the server log; the screen gets a code it can speak.
     console.error("[snaptrade] portal session failed", err);
-    return NextResponse.redirect(new URL("/start?error=portal", req.url));
+    return NextResponse.redirect(absoluteUrl(req, "/start?error=portal"));
   }
 }

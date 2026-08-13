@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getUserId } from "@/auth";
+import { absoluteUrl } from "@/lib/origin";
 
 /**
  * Return leg of the connection portal.
@@ -20,7 +21,7 @@ import { getUserId } from "@/auth";
 export async function GET(req: NextRequest) {
   const userId = await getUserId();
   if (!userId) {
-    return NextResponse.redirect(new URL("/start?error=session", req.url));
+    return NextResponse.redirect(absoluteUrl(req, "/start?error=session"));
   }
-  return NextResponse.redirect(new URL("/wrapped?connected=1", req.url));
+  return NextResponse.redirect(absoluteUrl(req, "/wrapped?connected=1"));
 }

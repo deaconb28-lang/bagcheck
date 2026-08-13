@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "tsx --test lib/**/*.test.ts",
+    "test": "tsx --test \"lib/**/*.test.ts\"",
     "avatars": "node --import tsx scripts/generate-avatars.mjs",
     "avatars:manifest": "node --import tsx scripts/avatar-manifest.mjs",
     "avatars:sheet": "node --import tsx scripts/avatar-sheet.mjs",

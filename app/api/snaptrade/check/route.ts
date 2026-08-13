@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSnapTrade, isSnapTradeConfigured } from "@/lib/snaptrade/client";
+import { absoluteUrl } from "@/lib/origin";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "SnapTrade is not configured" }, { status: 503 });
   }
 
-  const callback = new URL("/api/snaptrade/callback", req.url).toString();
+  const callback = absoluteUrl(req, "/api/snaptrade/callback");
   const snaptrade = getSnapTrade();
   const probeUser = "diagnostic-probe";
   const out: Record<string, unknown> = { callback };

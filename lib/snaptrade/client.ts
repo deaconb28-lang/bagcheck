@@ -4,8 +4,19 @@ type SnapTradeClient = InstanceType<typeof Snaptrade<ReturnType<typeof Snaptrade
 
 let cached: SnapTradeClient | null = null;
 
+/**
+ * Trimmed on read. A credential pasted into a dashboard commonly arrives with
+ * a trailing space or newline, and SnapTrade rejects that with the same
+ * "Invalid clientId" it uses for a genuinely wrong one — so the two are
+ * indistinguishable from the error alone. Trimming removes the cheaper of the
+ * two explanations for good.
+ */
+function credential(name: string): string {
+  return (process.env[name] ?? "").trim();
+}
+
 export function isSnapTradeConfigured(): boolean {
-  return Boolean(process.env.SNAPTRADE_CLIENT_ID && process.env.SNAPTRADE_CONSUMER_KEY);
+  return Boolean(credential("SNAPTRADE_CLIENT_ID") && credential("SNAPTRADE_CONSUMER_KEY"));
 }
 
 export function getSnapTrade(): SnapTradeClient {
@@ -17,8 +28,8 @@ export function getSnapTrade(): SnapTradeClient {
   if (!cached) {
     cached = new Snaptrade({
       auth: SnaptradeAuth.commercialApiKey({
-        clientId: process.env.SNAPTRADE_CLIENT_ID!,
-        consumerKey: process.env.SNAPTRADE_CONSUMER_KEY!,
+        clientId: credential("SNAPTRADE_CLIENT_ID"),
+        consumerKey: credential("SNAPTRADE_CONSUMER_KEY"),
       }),
     });
   }
