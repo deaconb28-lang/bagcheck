@@ -4,39 +4,48 @@
  *
  * ── The system ────────────────────────────────────────────────────────────
  *
- * Black and white. One pure-black field, one white ink, and a neutral grey
- * ramp between them — the instrument reduced to its readout. Hierarchy is
- * carried by lightness, weight and size, never by hue: the score is the
- * whitest thing on screen, comparisons sit a step down, losses recede into
- * grey. High contrast and negative space do the work colour used to do.
+ * **One product, one world.** The landing, the onboarding and the instrument
+ * are the same dark field with the same five meanings on it. They used to be
+ * two: a pure-black monochrome app behind a coloured marketing site, which
+ * meant the screen someone saw after connecting looked like a different
+ * company from the one that sold them.
  *
- * There is no light mode. A fitness tracker for money is a night instrument;
- * a second mode doubles the polish cost and halves the identity.
+ * The field is #0B0B12, not #000. A true black smears on OLED as a panel
+ * scrolls and leaves the darkest surfaces indistinguishable from the gaps
+ * between them; a hair of blue in the ground gives every tile an edge to sit
+ * on. There is no light mode — a fitness tracker for money is a night
+ * instrument, and a second mode doubles the polish cost and halves the
+ * identity.
  *
- * The old hue families survive as *lightness grades* with their meanings
- * intact. Colour was never variety; now it is not even colour:
- *   moss    #FFFFFF  discipline — the score, the ring, sessions inside rules
- *   signal  #ABABAB  exposure, comparison, percentile — a step quieter
- *   ember   #D9D9D9  streaks, PRs, scarcity — lit, but not the lead
- *   accent  #FFFFFF  Bagcheck's own voice — distinguished by the strongest
- *                    edge and fill in the system, never by a hue
- * Loss is recessed grey, on negative P&L and literally nowhere else — the
- * sign and the word carry the meaning, the dimness carries the mood.
+ * Hue carries meaning and never variety. Five families, each with one job:
+ *   moss    #4ADE80  discipline and profit — the score, the ring, sessions
+ *                    inside your rules, every positive figure
+ *   loss    #F26D6D  negative P&L and nothing else
+ *   signal  #A4B0BD  exposure, comparison, percentile — a deliberate step down
+ *   ember   #F59E0B  streaks, records, scarcity, and the live — the same amber
+ *                    the landing uses for exactly these
+ *   accent  #A78BFA  Bagcheck's own voice — the written insight, the nightly
+ *                    score arriving, Wrapped, Investor Age. Never a hover
+ *                    fill, never decoration.
  *
- * Glow is legal here and rationed: white light marks *live data* — the score
- * ring, the sync dot, an active streak — never chrome, never a heading. A
- * panel carries a 1px inside edge at low alpha; on a black field edges are
- * what borders were not on paper.
+ * Glow is rationed to live data — the score ring, the sync dot, an active
+ * streak — never chrome, never a heading. A panel is a fill plus a 1px edge;
+ * on a dark field the edge is what whitespace was on paper.
  */
 
 :root {
-  /* ── Field ── */
-  --bg: #000000;
-  --s1: #0d0d0d;
-  --sunken: #050505;
-  --inset: #171717;
-  --tile: #121212;
-  --track: rgba(255, 255, 255, 0.09);
+  /*
+   * ── Field ──
+   * The same ground the landing and the Wrapped flow stand on, so crossing
+   * from one into the other is not a change of company. Panels sit above it,
+   * the rail sits below it.
+   */
+  --bg: #0b0b12;
+  --s1: #13131c;
+  --sunken: #08080e;
+  --inset: #1b1b26;
+  --tile: #17171f;
+  --track: rgba(255, 255, 255, 0.1);
   --control: rgba(255, 255, 255, 0.07);
 
   /* ── Ink ── */
@@ -82,10 +91,10 @@
   --signal-tint: rgba(164, 176, 189, 0.1);
   --signal-line: rgba(164, 176, 189, 0.3);
 
-  /* ── Ember — streaks, PRs, scarcity. Lit, warmed a breath. ── */
-  --ember: #e3d5c3;
-  --ember-tint: rgba(227, 213, 195, 0.1);
-  --ember-line: rgba(227, 213, 195, 0.3);
+  /* ── Ember — streaks, records, scarcity, the live. The landing's amber. ── */
+  --ember: #f59e0b;
+  --ember-tint: rgba(245, 158, 11, 0.12);
+  --ember-line: rgba(245, 158, 11, 0.34);
 
   /* ── Loss — negative P&L, nothing else. A clear red, never a siren. ── */
   --loss: #f26d6d;
@@ -99,11 +108,11 @@
    * not a hue — it is the strongest edge and densest tint in the system.
    * Never a hover fill, never decoration.
    */
-  --accent: #e2d9f5;
-  --accent-deep: #e9e2f8;
-  --accent-tint: rgba(226, 217, 245, 0.12);
-  --accent-line: rgba(226, 217, 245, 0.42);
-  --accent-wash: rgba(226, 217, 245, 0.05);
+  --accent: #a78bfa;
+  --accent-deep: #c4b5fd;
+  --accent-tint: rgba(167, 139, 250, 0.14);
+  --accent-line: rgba(167, 139, 250, 0.42);
+  --accent-wash: rgba(167, 139, 250, 0.07);
 
   /*
    * ── Glow — rationed to live data ──
@@ -112,13 +121,13 @@
    * The halo variants are background washes for a hero panel's key metric.
    */
   --glow-moss: 0 0 34px -4px rgba(74, 222, 128, 0.4);
-  --glow-ember: 0 0 34px -4px rgba(227, 213, 195, 0.22);
+  --glow-ember: 0 0 34px -4px rgba(245, 158, 11, 0.3);
   --glow-azure: 0 0 34px -4px rgba(164, 176, 189, 0.24);
-  --glow-accent: 0 0 34px -4px rgba(226, 217, 245, 0.32);
+  --glow-accent: 0 0 34px -4px rgba(167, 139, 250, 0.36);
   --halo-moss: radial-gradient(58% 52% at 50% 30%, rgba(74, 222, 128, 0.1), transparent 72%);
-  --halo-ember: radial-gradient(58% 52% at 50% 30%, rgba(227, 213, 195, 0.07), transparent 72%);
+  --halo-ember: radial-gradient(58% 52% at 50% 30%, rgba(245, 158, 11, 0.09), transparent 72%);
   --halo-azure: radial-gradient(58% 52% at 50% 30%, rgba(164, 176, 189, 0.08), transparent 72%);
-  --halo-accent: radial-gradient(58% 52% at 50% 30%, rgba(226, 217, 245, 0.08), transparent 72%);
+  --halo-accent: radial-gradient(58% 52% at 50% 30%, rgba(167, 139, 250, 0.11), transparent 72%);
 
   /* Elevation: dark fields lift with darkness, not with grey. */
   --lift: 0 1px 2px rgba(0, 0, 0, 0.4);

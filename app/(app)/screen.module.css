@@ -74,12 +74,18 @@
   padding: 24px;
 }
 
-/* Centred lockups: the eyebrow-title stack centres; a trailing control
-   (share button) rides beside it rather than pushing it off-axis. */
+/*
+ * Panels read from the left, like the hero above them and like every surface
+ * on the landing. They used to centre — which suited a 760px column of
+ * single statements and stopped working the moment the dashboard took the
+ * full measure and put two panels side by side: a centred lockup floating in
+ * the middle of a half-width panel has no edge to start from, and the eye has
+ * to find the beginning of every line twice.
+ */
 .head {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
 }
@@ -87,15 +93,13 @@
 .headText {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
   gap: 4px;
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   max-width: 100%;
   min-width: 0;
 }
 
-/* In a centred head the spacer no longer pushes — it just breathes. */
 .spacer {
   flex: 0 0 4px;
 }
@@ -118,8 +122,7 @@
 .stat {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
   gap: 12px;
   min-width: 0;
 }
@@ -171,7 +174,6 @@
 .tail {
   font-size: 13.5px;
   line-height: 1.55;
-  text-align: center;
 }
 
 .divider {
@@ -183,7 +185,6 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  justify-content: center;
 }
 
 .chip {

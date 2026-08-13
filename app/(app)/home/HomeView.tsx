@@ -119,39 +119,55 @@ export function HomeView(props: HomeViewProps) {
   return (
     <>
       <ScreenHeader
-        title={`${greeting()}`}
+        title={greeting()}
         meta={`${date} · ${scoredDays} scored days · day ${streak} inside your rules`}
-        score={score}
-        delta={delta}
+        score={null}
         syncedAt={syncedAt}
-        age={age}
-        streak={streak}
-        leak={leakSummary(findings)}
         tier={tier}
       />
 
       <div className={screen.body}>
-        <div className={screen.grid}>
-          <div className={screen.column}>
-            {/* 1 — the score, centred. Nothing above the fold is prose. */}
-            <section data-reveal className={`${screen.panel} ${screen.hero} ${styles.heroPanel}`}>
-              <ScoreRing score={score} />
-
-              <div className={styles.heroChips}>
-                <span className={screen.chip} data-tone="accent">
-                  Written by Bagcheck
-                </span>
-                {delta != null && delta !== 0 ? (
-                  <span className={screen.chip}>
-                    {delta > 0 ? "+" : "−"}
-                    {Math.abs(delta)} this week
-                  </span>
-                ) : null}
-                <ShareButton type="health" label="your score" />
+        <div className={`${screen.grid} ${styles.wide}`}>
+          <div className={styles.dash}>
+            {/*
+              * 1 — the score, as a lockup rather than a centred stack.
+              *
+              * The ring beside the figure is the same grammar the Wrapped
+              * screen opens with and the landing sells: an object on the left,
+              * an enormous number and its sentence on the right. Centring all
+              * of it stacked the screen a thousand pixels deep for one
+              * measurement and left the reader scrolling to reach anything
+              * they could act on.
+              */}
+            <section data-reveal className={`${screen.panel} ${screen.hero} ${styles.hero} ${styles.span}`}>
+              <div className={styles.heroRing}>
+                {/* A dial, not a second readout — the figure is beside it. */}
+                <ScoreRing score={score} size={208} bare />
               </div>
 
-              <p className={`disp ${styles.sentence}`}>{insight.sentence}</p>
+              <div className={styles.heroLockup}>
+                <span className={styles.heroEyebrow}>Health today</span>
+                <div className={styles.heroFigure}>
+                  <span className={styles.heroScore}>{score}</span>
+                  {delta != null && delta !== 0 ? (
+                    <span className={styles.heroDelta} data-dir={delta > 0 ? "up" : "down"}>
+                      {delta > 0 ? "+" : "−"}
+                      {Math.abs(delta)} this week
+                    </span>
+                  ) : null}
+                </div>
 
+                <p className={`disp ${styles.sentence}`}>{insight.sentence}</p>
+
+                <div className={styles.heroActions}>
+                  <span className={screen.chip} data-tone="accent">
+                    Written by Bagcheck
+                  </span>
+                  <ShareButton type="health" label="your score" />
+                </div>
+              </div>
+
+              {/* The four things that move the number, across the full width. */}
               <div className={styles.componentGrid}>
                 {(Object.entries(components) as Array<[string, number]>).map(
                   ([name, value], i) => (
@@ -171,6 +187,39 @@ export function HomeView(props: HomeViewProps) {
                 )}
               </div>
             </section>
+
+            {/*
+              * The readings that used to crowd the header. They are facts about
+              * the reader rather than chrome, so they sit on the page — and the
+              * header goes back to being one line and an account cluster.
+              */}
+            <div className={`${styles.readings} ${styles.span}`}>
+              {[
+                { href: "/patterns", value: String(streak), label: "day streak", tone: "moss" },
+                age != null
+                  ? { href: "/dna", value: String(age), label: "investor age", tone: "accent" }
+                  : null,
+                leakSummary(findings)
+                  ? {
+                      href: "/patterns",
+                      value: String(leakSummary(findings)!.count),
+                      label:
+                        leakSummary(findings)!.worst != null
+                          ? `patterns · ${signedMoney(leakSummary(findings)!.worst!)}`
+                          : "patterns on file",
+                      tone: "signal",
+                    }
+                  : null,
+                { href: "/ledger", value: longest > 0 ? String(longest) : "—", label: "longest run", tone: "ember" },
+              ]
+                .filter((r): r is { href: string; value: string; label: string; tone: string } => r !== null)
+                .map((r) => (
+                  <Link key={r.label} href={r.href} className={styles.reading} data-tone={r.tone}>
+                    <span className={`num ${styles.readingValue}`}>{r.value}</span>
+                    <span className={styles.readingLabel}>{r.label}</span>
+                  </Link>
+                ))}
+            </div>
 
             {/*
               * 2 — where the money went. The engine's findings denominated in
@@ -218,16 +267,10 @@ export function HomeView(props: HomeViewProps) {
               </section>
             ) : null}
 
-            {/* 3 — the loop the engine runs on: two taps here become the
-                next dollar figure above. */}
-            <section data-reveal className={screen.panel} style={{ animationDelay: "0.03s" }}>
-              <TagPrompt queue={queue} tagged={tagged} total={Math.max(taggable, tagged)} />
-            </section>
-
-            {/* 3 — identity, in the column rather than the rail. */}
+            {/* 3 — identity, beside the money read. */}
             <section
               data-reveal
-              className={`${screen.panel} ${styles.archetype}`}
+              className={`${screen.panel} ${styles.archetype} ${findings.length ? "" : styles.span}`}
               style={{ animationDelay: "0.04s" }}
             >
               <div className={styles.archText}>
@@ -262,9 +305,16 @@ export function HomeView(props: HomeViewProps) {
               </div>
             </section>
 
+            {/* 4 — the loop the engine runs on: two taps here become the
+                next dollar figure above. It spans, because the queue is a row
+                of choices and half a row is a cramped one. */}
+            <section data-reveal className={`${screen.panel} ${styles.span}`} style={{ animationDelay: "0.03s" }}>
+              <TagPrompt queue={queue} tagged={tagged} total={Math.max(taggable, tagged)} />
+            </section>
+
             {/* 4 — P&L, mirrored. */}
             {wave.length > 1 ? (
-              <section data-reveal className={screen.panel} style={{ animationDelay: "0.05s" }}>
+              <section data-reveal className={`${screen.panel} ${styles.span}`} style={{ animationDelay: "0.05s" }}>
                 <div className={screen.head}>
                   <div className={screen.headText}>
                     <span className={screen.eyebrow}>
@@ -301,7 +351,7 @@ export function HomeView(props: HomeViewProps) {
             ) : null}
 
             {/* 5 — consistency, as a grid. */}
-            <section data-reveal className={screen.panel} style={{ animationDelay: "0.06s" }}>
+            <section data-reveal className={`${screen.panel} ${styles.span}`} style={{ animationDelay: "0.06s" }}>
               <div className={screen.head}>
                 <div className={screen.headText}>
                   <span className={screen.eyebrow}>Days inside your rules</span>
@@ -380,11 +430,9 @@ export function HomeView(props: HomeViewProps) {
                 </Locked>
               </section>
             ) : null}
-          </div>
 
-          <aside className={screen.rail}>
             {pulse ? (
-              <div className={screen.panel}>
+              <div className={`${screen.panel} ${styles.span}`}>
                 <PulseSurvey date={date} question={pulse.question} options={pulse.options} />
               </div>
             ) : null}
@@ -400,7 +448,7 @@ export function HomeView(props: HomeViewProps) {
                 Open the ledger
               </Link>
             </div>
-          </aside>
+          </div>
         </div>
       </div>
     </>

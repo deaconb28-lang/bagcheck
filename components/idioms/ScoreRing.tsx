@@ -7,6 +7,15 @@ type ScoreRingProps = {
   score: number;
   size?: number;
   label?: string;
+  /**
+   * Draw the arc alone.
+   *
+   * Where the screen already sets the score as its hero figure, the ring
+   * printing it again is the same measurement twice, three inches apart. The
+   * arc on its own is a dial: it says how far along the number is without
+   * repeating what it is.
+   */
+  bare?: boolean;
 };
 
 /**
@@ -17,7 +26,7 @@ type ScoreRingProps = {
  * effect never runs — under reduced motion the offset is set immediately and
  * the transition is suppressed, so the ring is simply right.
  */
-export function ScoreRing({ score, size = 246, label = "Health" }: ScoreRingProps) {
+export function ScoreRing({ score, size = 246, label = "Health", bare = false }: ScoreRingProps) {
   const stroke = Math.round(size * 0.053);
   const r = size / 2 - stroke / 2 - 8;
   const circumference = 2 * Math.PI * r;
@@ -70,12 +79,14 @@ export function ScoreRing({ score, size = 246, label = "Health" }: ScoreRingProp
           className={styles.arc}
         />
       </svg>
-      <div className={styles.inner}>
-        <div className={`num ${styles.value}`} style={{ fontSize: Math.round(size * 0.358) }}>
-          {shown}
+      {bare ? null : (
+        <div className={styles.inner}>
+          <div className={`num ${styles.value}`} style={{ fontSize: Math.round(size * 0.358) }}>
+            {shown}
+          </div>
+          <div className={styles.label}>{label}</div>
         </div>
-        <div className={styles.label}>{label}</div>
-      </div>
+      )}
     </div>
   );
 }

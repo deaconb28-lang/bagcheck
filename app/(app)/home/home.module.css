@@ -1,33 +1,232 @@
-/* V2: the hero is a centred lockup — ring, voice, sentence, decomposition. */
-.heroPanel {
-  align-items: center;
-  text-align: center;
+/*
+ * V3: the dashboard reads at the width it is given.
+ *
+ * A 760px column centred in a 1440px window left a third of the screen empty
+ * on either side and pushed everything actionable below the fold. Home is the
+ * one screen that is a dashboard rather than a document, so it takes the same
+ * 1240px measure the landing and the Wrapped sheet do, and its panels sit two
+ * across once there is room for two.
+ */
+.wide {
+  max-width: 1240px;
+}
+
+/*
+ * The dashboard grid. Two columns once there is room for two, and a panel
+ * says for itself whether it needs both — the hero, the reading row, the tag
+ * loop, the P&L and the consistency grid all do; the money read, the
+ * archetype, the recap and the ledger sit happily in half.
+ */
+.dash {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
   gap: 24px;
 }
 
-.heroChips {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
+.span {
+  grid-column: 1 / -1;
 }
 
-.sentence {
-  font-size: 28px;
+@media (max-width: 980px) {
+  .dash {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/*
+ * The hero: ring on the left, the number and its sentence on the right, the
+ * four components across the foot. The same lockup the Wrapped screen opens
+ * with, which is what makes the two feel like one product.
+ */
+.hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px 44px;
+  text-align: left;
+}
+
+.heroRing {
+  grid-row: 1;
+  display: grid;
+  place-items: center;
+}
+
+.heroLockup {
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.heroEyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--moss);
+}
+
+.heroFigure {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+/* The one number the product is about, at the size the landing sets a year. */
+.heroScore {
+  font-size: clamp(64px, 7vw, 104px);
+  line-height: 0.84;
   font-weight: 700;
-  line-height: 1.22;
-  max-width: 24ch;
-  margin-inline: auto;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
 
+.heroDelta {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 6px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--moss-line);
+  color: var(--moss);
+}
+
+.heroDelta[data-dir="down"] {
+  border-color: var(--loss-line);
+  color: var(--loss);
+}
+
+.sentence {
+  font-size: clamp(19px, 1.7vw, 24px);
+  font-weight: 500;
+  line-height: 1.38;
+  max-width: 40ch;
+  margin: 18px 0 0;
+  color: var(--ink2);
+  text-wrap: pretty;
+}
+
+.heroActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
 .componentGrid {
+  grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
   width: 100%;
-  padding-top: 8px;
+  margin-top: 30px;
+  padding-top: 26px;
+  border-top: 1px solid var(--line-light);
+}
+
+/*
+ * The readings that used to crowd the header. Four facts about the reader,
+ * each a link to the screen that explains it — on the page, where a fact
+ * belongs, rather than in chrome that has to carry it on all seven routes.
+ */
+.readings {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.reading {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: var(--s1);
+  border: 1px solid var(--edge);
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+
+.reading:hover {
+  border-color: var(--line2);
+  background: var(--tile);
+}
+
+.readingValue {
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.reading[data-tone="moss"] .readingValue {
+  color: var(--moss);
+}
+
+.reading[data-tone="accent"] .readingValue {
+  color: var(--accent);
+}
+
+.reading[data-tone="ember"] .readingValue {
+  color: var(--ember);
+}
+
+.readingLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+/*
+ * The lockup stacks only when it genuinely runs out of room. The rail takes
+ * 76px and the page 48 a side, so a 1024px window still has 850 for a 208px
+ * dial and its sentence — stacking there wasted the width the redesign was
+ * for.
+ */
+@media (max-width: 780px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    text-align: center;
+    gap: 24px;
+  }
+
+  .heroRing,
+  .heroLockup {
+    grid-row: auto;
+  }
+
+  .heroLockup {
+    align-items: center;
+  }
+
+  .heroFigure,
+  .heroActions {
+    justify-content: center;
+  }
+
+}
+
+@media (max-width: 980px) {
+  .readings {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .componentGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /*
@@ -46,10 +245,9 @@
   animation: rise 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) both;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
   gap: 6px;
-  padding: 20px 0;
+  padding: 18px 0;
   border-bottom: 1px solid var(--line-light);
 }
 
@@ -75,7 +273,7 @@
 .leakText {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 4px;
 }
 
@@ -94,25 +292,28 @@
   color: var(--meta);
 }
 
-/* V2: identity is a centred lockup too — mark, name, then the meters. */
+/*
+ * Identity reads from the left, and the character sits beside its name rather
+ * than above it — the same row the profile screen uses, so an archetype looks
+ * the same wherever it appears.
+ */
 .archetype {
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 24px;
+  align-items: flex-start;
+  gap: 22px;
 }
 
 .archText {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
+  width: 100%;
 }
 
 .archTextBody {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 4px;
   min-width: 0;
 }
@@ -137,7 +338,6 @@
 
 .archBars {
   width: 100%;
-  max-width: 460px;
   display: flex;
   flex-direction: column;
   gap: 10px;

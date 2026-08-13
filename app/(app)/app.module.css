@@ -1,9 +1,29 @@
+/*
+ * The instrument, on the same ground the landing and the onboarding stand on.
+ *
+ * General Sans is the app's face now, as it is theirs. The three-family rule
+ * still holds — one voice for sentences and headings, mono for labels and
+ * timestamps, and the poster faces confined to share cards — but the voice is
+ * the product's rather than a second one nobody outside the app ever saw.
+ */
 .shell {
   min-height: 100svh;
   display: grid;
   grid-template-columns: 76px minmax(0, 1fr);
   background: var(--bg);
   color: var(--ink);
+  font-family: "General Sans", "Public Sans", system-ui, sans-serif;
+}
+
+/*
+ * Headings and hero figures take the same face at 600–700, which is what
+ * makes a score read like the year on the Wrapped screen. Tabular figures in
+ * rows keep the grotesque: a ledger column has to line up, and that is what
+ * `.num` is for.
+ */
+.shell :global(.disp) {
+  font-family: "General Sans", "Public Sans", system-ui, sans-serif;
+  font-weight: 600;
 }
 
 .canvas {
