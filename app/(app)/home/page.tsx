@@ -16,6 +16,7 @@ import { assembleWrappedFrom } from "@/lib/wrapped/assemble";
 import { storedPhotos } from "@/lib/unsplash";
 import type { UntaggedEntry } from "@/lib/tags";
 import { EmptyState } from "@/components/app/EmptyState";
+import { FirstScore } from "@/components/app/FirstScore";
 import { PageGrid } from "@/components/app/PageGrid";
 import { SignInCta } from "@/components/app/SignInCta";
 import { SyncDialog } from "@/components/app/SyncDialog";
@@ -102,11 +103,23 @@ export default async function HomePage({
           title={data.connection ? "No score yet" : "Connect a brokerage"}
           body={
             data.connection
-              ? `Your ledger holds ${data.transactionCount} transactions. Recompute builds your first score from them.`
+              ? `Your ledger holds ${data.transactionCount.toLocaleString("en-US")} transactions. Scoring reads them and builds the dashboard.`
               : "One tap via SnapTrade, read-only. Your history arrives in full, and the first score follows."
           }
-          actions={[{ label: "Open the ledger view", href: "/debug" }]}
-        />
+          actions={
+            data.connection
+              ? [{ label: "See your Wrapped", href: "/wrapped", ghost: true }]
+              : [{ label: "Connect a brokerage", href: "/start" }]
+          }
+        >
+          {/*
+            * A connected account with no score is a screen the reader can act
+            * on, not a note telling them to wait for a cron. The first sync
+            * scores as it finishes, so this is the fallback rather than the
+            * usual path.
+            */}
+          {data.connection ? <FirstScore /> : null}
+        </EmptyState>
         {syncDialog}
       </PageGrid>
     );

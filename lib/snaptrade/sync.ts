@@ -1,6 +1,7 @@
 import type { LoginRedirectURI } from "snaptrade-typescript-sdk";
 import { ensureIndexes, getCollections } from "@/lib/db";
 import { rebuildDerived } from "@/lib/db/derived";
+import { scoreUser } from "@/lib/db/scoring";
 import { beginSync, failSync, finishSync, markPhase } from "@/lib/db/sync-progress";
 import type { ConnectionDoc } from "@/lib/db";
 import { getSnapTrade } from "./client";
@@ -214,6 +215,25 @@ async function runSync(userId: string, startedAt: number): Promise<SyncResult> {
   await rebuildDerived(userId).catch((err) =>
     console.error("[sync] derived rebuild failed", err),
   );
+
+  /*
+   * And score it, here, for the same reason.
+   *
+   * Scoring used to happen only in the nightly cron and behind a button on
+   * /debug, which meant a brand-new account finished onboarding, pressed
+   * "Open your dashboard" and got "No score yet" — the dashboard has nothing
+   * to draw without a score doc, so the last step of setup led to an empty
+   * state whose only way out was a route nobody is meant to find. The ledger
+   * is right here and the engine is pure; there is no reason to make someone
+   * wait a day to see the screen they just connected a brokerage for.
+   *
+   * Logged rather than thrown, like the rebuild above: the sync itself
+   * succeeded, and a score that failed to compute is recomputed tonight.
+   */
+  await scoreUser(userId).catch((err) =>
+    console.error("[sync] first score failed", err),
+  );
+
   await finishSync(userId, startedAt);
 
   return {
