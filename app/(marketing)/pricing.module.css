@@ -7,11 +7,27 @@
  * app's tokens do either.
  */
 
+/*
+ * The head reads as one lockup across the measure, not a headline with an
+ * empty right half. At 1440 the h1 alone left about 600px of nothing beside
+ * it and pushed the plans a full fold down — the same two-column, baseline-
+ * aligned shape the landing uses for its section heads fixes both.
+ */
 .head {
   max-width: 1560px;
   margin-inline: auto;
   width: 100%;
-  padding: 96px 40px 104px;
+  padding: 84px 40px 88px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 64px;
+  flex-wrap: wrap;
+}
+
+.headCopy {
+  flex: 1 1 520px;
+  min-width: 0;
 }
 
 /*
@@ -36,10 +52,11 @@
 }
 
 .lede {
-  margin: 26px 0 0;
-  max-width: 60ch;
-  font-size: clamp(18px, 1.5vw, 22px);
-  line-height: 1.5;
+  flex: 0 1 46ch;
+  margin: 0;
+  padding-bottom: 12px;
+  font-size: clamp(18px, 1.4vw, 21px);
+  line-height: 1.55;
   color: var(--mk-ink2);
   text-wrap: pretty;
 }
@@ -133,7 +150,7 @@
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.16em;
-  color: color-mix(in srgb, var(--mk-bg) 45%, transparent);
+  color: color-mix(in srgb, var(--mk-bg) 52%, transparent);
 }
 
 .card[data-paid] .label {
@@ -172,7 +189,7 @@
 }
 
 .note[data-mute] {
-  color: color-mix(in srgb, var(--mk-bg) 45%, transparent);
+  color: color-mix(in srgb, var(--mk-bg) 52%, transparent);
 }
 
 .list {
@@ -328,6 +345,13 @@
 @media (max-width: 900px) {
   .head {
     padding: 56px 24px 64px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 26px;
+  }
+
+  .lede {
+    padding-bottom: 0;
   }
 
   .plans {

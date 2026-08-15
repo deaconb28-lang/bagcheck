@@ -198,8 +198,15 @@
   --mk-ink: #0b0b0c;
   --mk-ink2: #4b4b52;
   --mk-ink3: #6b7280;
-  --mk-meta: #8a8a93;
-  --mk-meta2: #9a9aa2;
+  /*
+   * Both greys were set by eye and neither cleared 4.5:1 on --mk-fill, the
+   * plate the phone mocks are drawn on — 3.2 and 2.6. The mocks are
+   * aria-hidden illustrations, but a sighted reader still has to read them,
+   * and "you cannot make out the labels" is a bug wherever it happens.
+   * Darkened to 5.4 and 4.5 so the two-step ladder survives.
+   */
+  --mk-meta: #62626b;
+  --mk-meta2: #71717a;
   --mk-line: #e6e6ea;
   --mk-line2: #dedee3;
   --mk-line3: #eaeaee;
@@ -216,6 +223,10 @@
   --mk-screen-2: #1a1b20;
 
   --mk-green: #12a150;
+  /* Green and red set for text on the white side, where the chart hues are
+     3.1:1 and unreadable at label size. Never used as a fill. */
+  --mk-green-ink: #0c6f37;
+  --mk-red-ink: #b3132f;
   --mk-green-deep: #1e7a3c;
   --mk-green-bright: #00c805;
   --mk-green-soft: #4ade80;

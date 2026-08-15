@@ -648,8 +648,10 @@ export default function LandingPage() {
         <div className={styles.waitInner}>
           <div className={styles.waitHead}>
             <div>
+              {/* Not the pricing page's own headline — a reader who clicks
+                  through should not meet the same sentence twice. */}
               <span className={styles.eyebrow}>THE PLANS</span>
-              <h2 className={styles.h2}>Free to use. Nine dollars to publish.</h2>
+              <h2 className={styles.h2}>Two plans. One of them is free.</h2>
             </div>
             <p className={styles.waitCount}>Every card you earn is yours on either one</p>
           </div>

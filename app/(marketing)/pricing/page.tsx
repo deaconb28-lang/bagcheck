@@ -89,8 +89,10 @@ export default async function PricingPage() {
       <MarketingNav current="pricing" />
 
       <section className={styles.head}>
-        <span className={styles.eyebrow}>PRICING</span>
-        <h1 className={styles.h1}>Free to use. Nine dollars to publish.</h1>
+        <div className={styles.headCopy}>
+          <span className={styles.eyebrow}>PRICING</span>
+          <h1 className={styles.h1}>Free to use. Nine dollars to publish.</h1>
+        </div>
         <p className={styles.lede}>
           Bagcheck reads your brokerage and turns the year into something worth
           posting. That part is free and stays free. Pro is for the formats —
