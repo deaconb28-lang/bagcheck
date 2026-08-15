@@ -1,20 +1,36 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getUserId } from "@/auth";
-import { getCollections, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
+import { getUserId, isAuthConfigured } from "@/auth";
+import {
+  factsFrom,
+  getCollections,
+  getDailyInsight,
+  isDbConfigured,
+  loadScreen,
+  syncClock,
+  taggedOpensFor,
+} from "@/lib/db";
 import type { CardDoc } from "@/lib/db";
 import { isMarketConfigured, refreshHoldings } from "@/lib/market";
-import { EquityCurve, HeatGrid } from "@/components/idioms";
+import { untaggedQueue } from "@/lib/tags";
+import type { UntaggedEntry } from "@/lib/tags";
+import { assembleWrappedFrom } from "@/lib/wrapped/assemble";
+import { storedPhotos } from "@/lib/unsplash";
+import { EquityCurve, HeatGrid, ScoreRing, ZeroBarChart } from "@/components/idioms";
+import type { WaveDay } from "@/components/idioms";
 import { TrophyCard } from "@/components/cards/TrophyCard";
 import { Avatar, Logo } from "@/components/primitives";
 import { BadgeMint } from "@/components/app/BadgeMint";
 import { EmptyState } from "@/components/app/EmptyState";
+import { FirstScore } from "@/components/app/FirstScore";
 import { PageGrid } from "@/components/app/PageGrid";
 import { ScreenHeader } from "@/components/app/ScreenHeader";
 import { ShareButton } from "@/components/app/ShareButton";
 import { SignInCta } from "@/components/app/SignInCta";
+import { SyncDialog } from "@/components/app/SyncDialog";
+import { TagPrompt } from "@/components/app/TagPrompt";
 import { strongLine } from "@/lib/archetypes";
-import { TIER_PRICE, can } from "@/lib/tiers";
+import { TIER_PRICE, can, trialLine, trialState } from "@/lib/tiers";
 import {
   archetypeOf,
   currentStreak,
@@ -22,43 +38,80 @@ import {
   longestStreak,
   money,
   signedMoney,
+  waveSummary,
   weekDelta,
 } from "../derive";
+import { YearBlock } from "./YearBlock";
 import screen from "../screen.module.css";
 import styles from "./you.module.css";
 
-export const metadata: Metadata = { title: "You" };
+function greeting(): string {
+  const h = new Date().getUTCHours();
+  return h < 12 ? "Morning" : h < 18 ? "Afternoon" : "Evening";
+}
+
+export const metadata: Metadata = { title: "Dashboard" };
 export const dynamic = "force-dynamic";
 
 /**
- * Everything the ledger concluded about you, on one page.
+ * The dashboard. One screen, and the only one.
  *
- * It replaces four screens — DNA, Patterns, Insights and Cards — which
+ * It began as the merge of four — DNA, Patterns, Insights and Cards — which
  * between them held maybe two pages of real content and a great deal of
- * repetition: the archetype rendered on three of them, the components on two,
- * and a third of the tiles were locked panels showing invented figures.
+ * repetition. It has now absorbed Home as well, because the split that
+ * survived that merge was still a split: `/home` answered "how is it going"
+ * and `/you` answered "what does my history say about me", and a reader who
+ * opens a portfolio app is asking one question with two halves. Two dashboards
+ * meant the money lived on one screen and everything that explains the money
+ * lived on another, with a quiet link between them that most people never
+ * followed.
  *
- * The split was wrong in the first place. `/home` answers "how is it going",
- * `/wrapped` is the artefact, and everything else is one question — *what does
- * my own history say about me* — which does not need four tabs to ask.
+ * The order is the order a reader asks in. What did I make, what am I holding,
+ * how am I behaving, what does the year look like, who does that make me, and
+ * what have I got to show for it. Money first, because that is the first
+ * question; the artefact fourth, because an artefact is what you reach for
+ * once you know where you stand.
+ *
+ * `/wrapped` is the subpage this opens into rather than a rail destination —
+ * the deck block is the door, and reading a card is still its job.
  *
  * Nothing here invents anything. The findings section is absent rather than
  * empty when the engine has nothing that clears a sample floor, and the
  * equity curve is absent until there are two snapshots to draw a line between.
  */
-export default async function YouPage() {
+export default async function YouPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ connected?: string }>;
+}) {
   const userId = await getUserId();
+  const { connected } = await searchParams;
+  /*
+   * The brokerage callback lands here with ?connected=1 and nothing synced
+   * yet, so the dialog is what starts the sync as well as what reports it. It
+   * renders over whichever branch below is showing — usually the "no score
+   * yet" empty state, which is exactly what it is about to fill in.
+   */
+  const syncDialog =
+    connected === "1" && userId ? (
+      <SyncDialog
+        today={new Date().toISOString().slice(0, 10)}
+        trialLine={trialLine(trialState(new Date(), new Date()))}
+      />
+    ) : null;
   if (!userId || !isDbConfigured()) {
     return (
       <PageGrid>
         <EmptyState
-          eyebrow="Bagcheck · you"
+          eyebrow="Bagcheck"
           icon={userId ? "setup" : "signin"}
-          title={userId ? "Configure the ledger store" : "Sign in to see your read"}
+          title={userId ? "Configure the ledger store" : "Sign in to see your dashboard"}
           body={
             userId
               ? "Set MONGODB_URI on this deployment to store synced history and scores."
-              : "Holdings, archetype and the patterns your own history is hiding."
+              : isAuthConfigured()
+                ? "Your P&L, your holdings, your year and the patterns your own history is hiding."
+                : "Sign-in is not configured on this deployment yet."
           }
           actions={[{ label: "Connect a brokerage", href: "/start", ghost: true }]}
         >
@@ -75,16 +128,29 @@ export default async function YouPage() {
     return (
       <PageGrid>
         <EmptyState
-          eyebrow="Bagcheck · you"
+          eyebrow="Bagcheck"
           icon={data.connection ? "waiting" : "connect"}
           title={data.connection ? "Nothing read yet" : "Connect a brokerage"}
           body={
             data.connection
-              ? "Run a sync and your positions, archetype and patterns fill in together."
+              ? `Your ledger holds ${data.transactionCount.toLocaleString("en-US")} transactions. Scoring reads them and builds the dashboard.`
               : "One tap via SnapTrade, read-only. Positions and history arrive together."
           }
-          actions={[{ label: "Connect a brokerage", href: "/start" }]}
-        />
+          actions={
+            data.connection
+              ? [{ label: "See your Wrapped", href: "/wrapped", ghost: true }]
+              : [{ label: "Connect a brokerage", href: "/start" }]
+          }
+        >
+          {/*
+            * A connected account with nothing read is a screen the reader can
+            * act on, not a note telling them to wait for a cron. The first
+            * sync scores as it finishes, so this is the fallback rather than
+            * the usual path.
+            */}
+          {data.connection ? <FirstScore /> : null}
+        </EmptyState>
+        {syncDialog}
       </PageGrid>
     );
   }
@@ -173,20 +239,115 @@ export default async function YouPage() {
   const pro = can({ tier: data.tier }, "publicationExport");
   const newest = minted[0] ?? null;
 
+  /*
+   * Everything Home used to load, off the screen this page already holds.
+   *
+   * `assembleWrapped` would re-read the same 400 scores for the same document;
+   * `assembleWrappedFrom` takes the one in hand and the tag opens it needs for
+   * conviction, which is the only read the deck adds. Merging the two screens
+   * merged their queries too — the pair used to load the same ledger twice, on
+   * two navigations, to answer two halves of one question.
+   */
+  const { transactions, tags } = await getCollections();
+  const [recent, taggedDocs, insight, opens, photos] = await Promise.all([
+    transactions
+      .find({ userId, type: { $regex: /buy/i } })
+      .sort({ date: -1 })
+      .limit(60)
+      .project<UntaggedEntry & { externalId: string }>({
+        _id: 0,
+        externalId: 1,
+        symbol: 1,
+        date: 1,
+        amount: 1,
+        units: 1,
+        currency: 1,
+      })
+      .toArray(),
+    tags.find({ userId }).project<{ transactionId: string }>({ _id: 0, transactionId: 1 }).toArray(),
+    latest
+      ? getDailyInsight(
+          userId,
+          factsFrom(
+            latest,
+            data.scores[1] ?? null,
+            data.scores.slice(0, 7).at(-1) ?? null,
+            data.transactionCount,
+            data.connection?.accounts.length ?? 0,
+          ),
+        )
+      : Promise.resolve(null),
+    taggedOpensFor(userId),
+    storedPhotos(),
+  ]);
+
+  const wrapped = assembleWrappedFrom(data, opens);
+
+  /*
+   * The wave is read, not computed. This used to pull four thousand rows on
+   * every navigation; the derived document holds the same series, rebuilt only
+   * when the ledger actually moves.
+   */
+  const wave: WaveDay[] = (data.derived?.dailyPnl ?? [])
+    .slice(-63)
+    .map((d) => ({ date: d.date, amount: d.realised }));
+  const summary = waveSummary(wave);
+  const queue = untaggedQueue(
+    recent.map((r) => ({
+      externalId: r.externalId,
+      symbol: r.symbol ?? "—",
+      date: r.date ?? "",
+      amount: r.amount ?? null,
+      units: r.units ?? null,
+      currency: r.currency ?? null,
+    })),
+    new Set(taggedDocs.map((t) => t.transactionId)),
+  );
+  const delta = weekDelta(data.scores);
+
   return (
     <>
+      {syncDialog}
       <ScreenHeader
-        title="You"
+        title={greeting()}
         meta={`${holdings.length} positions · ${data.scores.length} scored days · ${data.transactionCount.toLocaleString("en-US")} transactions`}
-        score={latest?.score ?? null}
-        delta={weekDelta(data.scores)}
+        /*
+          * Null, like Home's used to be. The read block sets the score at
+          * 62px with its own dial a third of the way down this page; a third
+          * copy of the same number in the chrome above it is noise.
+          */
+        score={null}
         syncedAt={syncClock(data.connection?.lastSyncAt)}
         tier={data.tier}
       />
 
       <div className={screen.body}>
         <div className={`${screen.grid} ${styles.wide}`}>
-          {/* ── 1 · What you are worth ── */}
+          {/* ── 1 · The money ── */}
+          {wave.length > 1 ? (
+            <section id="money" data-reveal className={styles.block}>
+              <span className={styles.eyebrow}>Realised P&amp;L</span>
+              <div className={styles.headRow}>
+                <h2
+                  className={`num ${styles.h2}`}
+                  data-tone={summary.total >= 0 ? "moss" : "loss"}
+                >
+                  {signedMoney(summary.total)}
+                </h2>
+                <ShareButton type="monthlyPnl" label="this chart" size={44} />
+              </div>
+              <p className={styles.lede}>
+                Across {wave.length} sessions — {summary.green} green, {summary.red}{" "}
+                red. Best {signedMoney(summary.best)}, worst {signedMoney(summary.worst)}.
+              </p>
+
+              <div className={styles.chart}>
+                <ZeroBarChart days={wave} />
+              </div>
+            </section>
+          ) : null}
+
+          {/* ── 2 · What you are worth ── */}
           <section data-reveal className={styles.block}>
             <span className={styles.eyebrow}>Portfolio</span>
             <h2 className={styles.h2}>{money(totalValue)}</h2>
@@ -232,7 +393,62 @@ export default async function YouPage() {
             <p className={styles.prov}>{provenance}</p>
           </section>
 
-          {/* ── 2 · What you are holding ── */}
+          {/* ── 3 · The read ── */}
+          {latest && insight ? (
+            <section id="read" data-reveal className={styles.block} style={{ animationDelay: "0.03s" }}>
+              <span className={styles.eyebrow}>Health today</span>
+              <div className={styles.headRow} data-dial>
+                {/*
+                  * The dial, drawn bare. The figure is set at 62px an inch
+                  * away, so a ring printing it again would be the same
+                  * measurement twice — the arc alone says how far along the
+                  * number is. It is the one place on this page that gets a
+                  * halo, because it is the one number that is live.
+                  */}
+                <span className={styles.dial}>
+                  <ScoreRing score={latest.score} size={92} bare />
+                </span>
+                <h2 className={`num ${styles.h2}`}>{latest.score}</h2>
+                {delta != null && delta !== 0 ? (
+                  <span className={styles.delta}>
+                    {delta > 0 ? "+" : "−"}
+                    {Math.abs(delta)} this week
+                  </span>
+                ) : null}
+              </div>
+              <p className={styles.lede}>{insight.sentence}</p>
+
+              {/*
+                * The four readings as figures on one hairline. They were
+                * meters here and meters again in the archetype block below —
+                * eight saturated bars on one screen, when the figure beside
+                * each is what carries the reading.
+                */}
+              <div className={styles.figures}>
+                {(Object.entries(latest.components) as Array<[string, number]>).map(
+                  ([name, value]) => (
+                    <div key={name} className={styles.figure}>
+                      <span className={styles.figLabel}>{name}</span>
+                      <span className={`num ${styles.figValue}`}>{value}</span>
+                      <span className={styles.figTail}>{COMPARISON[name] ?? ""}</span>
+                    </div>
+                  ),
+                )}
+              </div>
+
+              <div className={styles.actions}>
+                <span className={styles.written}>Written by Bagcheck</span>
+                <ShareButton type="health" label="your score" size={44} />
+              </div>
+            </section>
+          ) : null}
+
+          {/* ── 4 · The year, and the door into it ── */}
+          {wrapped ? (
+            <YearBlock year={wrapped.label} cards={wrapped.cards} photos={photos} />
+          ) : null}
+
+          {/* ── 5 · What you are holding ── */}
           <section data-reveal className={styles.block} style={{ animationDelay: "0.04s" }}>
             <span className={styles.eyebrow}>Holdings</span>
             <h2 className={styles.h2}>What you are holding</h2>
@@ -269,7 +485,7 @@ export default async function YouPage() {
             </div>
           </section>
 
-          {/* ── 3 · Who the ledger says you are ── */}
+          {/* ── 6 · Who the ledger says you are ── */}
           {components ? (
             <section data-reveal className={styles.block} style={{ animationDelay: "0.06s" }}>
               <span className={styles.eyebrow}>Identity</span>
@@ -310,7 +526,7 @@ export default async function YouPage() {
             </section>
           ) : null}
 
-          {/* ── 4 · How steadily. ── */}
+          {/* ── 7 · How steadily ── */}
           {data.scores.length > 1 ? (
             <section id="consistency" data-reveal className={styles.block} style={{ animationDelay: "0.07s" }}>
               <span className={styles.eyebrow}>Consistency</span>
@@ -336,7 +552,7 @@ export default async function YouPage() {
             </section>
           ) : null}
 
-          {/* ── 5 · What the P&L hides. Absent when nothing clears a floor. ── */}
+          {/* ── 8 · What the P&L hides. Absent when nothing clears a floor. ── */}
           {findings.length ? (
             <section data-reveal className={styles.block} style={{ animationDelay: "0.08s" }}>
               <span className={styles.eyebrow}>Patterns</span>
@@ -374,7 +590,19 @@ export default async function YouPage() {
             </section>
           ) : null}
 
-          {/* ── 6 · What you have minted ── */}
+          {/*
+            * ── 9 · The loop ──
+            *
+            * The only input a brokerage cannot supply, and every correlation
+            * on this page is downstream of it. Two taps, no text field: a
+            * free-text reason cannot be grouped, and a reason that cannot be
+            * grouped cannot become a finding.
+            */}
+          <section data-reveal className={styles.block} style={{ animationDelay: "0.09s" }}>
+            <TagPrompt queue={queue} tagged={data.tagged} total={Math.max(data.taggable, data.tagged)} />
+          </section>
+
+          {/* ── 10 · What you have minted ── */}
           <section id="cards" data-reveal className={styles.block} style={{ animationDelay: "0.1s" }}>
             <span className={styles.eyebrow}>Cards</span>
             <h2 className={styles.h2}>
@@ -418,7 +646,7 @@ export default async function YouPage() {
           </section>
 
           {/*
-            * ── 7 · The formats ──
+            * ── 11 · The formats ──
             *
             * The paid plan's whole surface, and until now it had none: the four
             * capabilities were enforced in API routes that nothing in the app

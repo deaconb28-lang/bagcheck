@@ -112,23 +112,36 @@ export type RouteDef = {
 };
 
 /**
- * Three tabs, plus the avatar at the foot for settings.
+ * One destination, plus the avatar at the foot for settings.
  *
- * There were seven. Four of them — DNA, Patterns, Insights and Cards — asked
- * one question between them and are now one screen, and the Ledger was a
- * settings page for a public profile that does not exist. Seven 48px targets
- * across a 390px phone leaves 55px each, which is a tab bar you mis-tap;
- * three is a tab bar you hit.
+ * There were seven, then three, and now one. Four of the original seven — DNA,
+ * Patterns, Insights and Cards — asked one question between them and became
+ * `/you`; then Home merged into it too, because "how is it going" and "what
+ * does my history say" are one question with two halves and splitting them put
+ * the money on one screen and its explanation on another.
  *
- * Home is how it is going, Wrapped is the artefact, You is what the history
- * concluded. Every route retired from this list still resolves — they are
- * redirect stubs, because those URLs are in bookmarks and in minted links.
+ * Wrapped came off this list deliberately. It is the subpage the dashboard's
+ * year block opens into — a destination you go to *from* the product rather
+ * than a tab beside it, which is what it always was in practice. Navigation is
+ * furniture: with a single screen there is nothing to navigate between, and a
+ * rail that pretends otherwise is chrome asking to be read.
+ *
+ * Every route retired from this list still resolves. They are redirect stubs,
+ * because those URLs are in bookmarks and in links minted before the renames.
  */
 export const ROUTES: RouteDef[] = [
-  { href: "/home", label: "Home", Glyph: HomeGlyph },
-  { href: "/wrapped", label: "Wrapped", Glyph: WrappedGlyph },
-  { href: "/you", label: "You", Glyph: DnaGlyph },
+  { href: "/you", label: "Dashboard", Glyph: HomeGlyph },
 ];
 
-/** The phone gets the same three — there is nothing left to drop. */
-export const MOBILE_ROUTES: RouteDef[] = ROUTES;
+/**
+ * The phone gets the dashboard and the account.
+ *
+ * The rail's foot carries the avatar on a desktop, and below 900px the rail is
+ * gone — so a phone with a one-item tab bar would have no way to reach
+ * settings, the linked institution or sign-out at all. Two 48px targets across
+ * 390px is not a tab bar anyone mis-taps.
+ */
+export const MOBILE_ROUTES: RouteDef[] = [
+  ...ROUTES,
+  { href: "/profile", label: "Account", Glyph: DnaGlyph },
+];

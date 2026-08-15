@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CAPABILITY_LABEL, FREE_ALWAYS, TIER_PRICE, TRIAL_DAYS } from "@/lib/tiers";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 import { MarketingFooter, MarketingNav } from "./Chrome";
+import { GoToApp, isSignedIn } from "./GoToApp";
 import { FirstWeek } from "./FirstWeek";
 import { PnlChart } from "./PnlChart";
 import { WaitlistForm } from "./WaitlistForm";
@@ -92,7 +93,9 @@ const WRAP_TILES = [
   { label: "ONE THAT GOT AWAY", value: "TSLA", tail: "Sold 9 days early", tone: "red" },
 ] as const;
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  /* Whether to say "Get started free" or "Go to app" at the top of the page. */
+  const signedIn = await isSignedIn();
   /*
    * Wrapped is open; the score is not. So the primary CTA hands off to the
    * connect flow and the waitlist keeps its own button for the second act —
@@ -137,14 +140,31 @@ export default function LandingPage() {
             the numbers and turns your year into a Wrapped worth posting —
             returns, top bags, best trades, and the ones that got away.
           </p>
+          {/*
+            * The hero's first action depends on whether the reader has an
+            * account. "Get started free" is what you say to someone who has
+            * not started; a returning reader who lands here has, and used to
+            * have no way into the product from the page that sells it.
+            */}
           <div className={styles.heroActions}>
-            <Link href="/start" className={styles.ctaDark}>
-              Get started free
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M5 12h14" />
-                <path d="M13 5l7 7-7 7" />
-              </svg>
-            </Link>
+            {signedIn ? (
+              <Link href="/you" className={styles.ctaDark}>
+                Go to app
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14" />
+                  <path d="M13 5l7 7-7 7" />
+                </svg>
+              </Link>
+            ) : (
+              <Link href="/start" className={styles.ctaDark}>
+                Get started free
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14" />
+                  <path d="M13 5l7 7-7 7" />
+                </svg>
+              </Link>
+            )}
+            {signedIn ? null : <GoToApp />}
             <a href="#waitlist" className={styles.ctaGhost}>
               Join the waitlist
             </a>

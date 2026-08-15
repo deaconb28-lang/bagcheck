@@ -58,7 +58,7 @@ export function ScreenHeader({
       <div className={styles.spacer} />
 
       {score != null ? (
-        <Link href="/home" className={styles.scorePill} title="Health — open Home">
+        <Link href="/you" className={styles.scorePill} title="Health — open the dashboard">
           <span className={styles.scoreDot}>{score}</span>
           <span className={styles.scoreLabel}>
             Health{delta != null && delta !== 0 ? ` ${delta > 0 ? "+" : "−"}${Math.abs(delta)}` : ""}

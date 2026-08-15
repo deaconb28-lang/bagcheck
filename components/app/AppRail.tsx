@@ -29,7 +29,7 @@ export function AppRail({ user }: { user: ShellUser | null }) {
 
   return (
     <nav className={styles.rail} aria-label="Sections">
-      <Link href="/home" className={styles.mark} aria-label="Bagcheck">
+      <Link href="/you" className={styles.mark} aria-label="Bagcheck">
         <MarkGlyph />
       </Link>
 

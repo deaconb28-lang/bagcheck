@@ -80,7 +80,7 @@ export default async function StartPage({
               *
               * Unless the dashboard is not open. This screen is in `(flex)`,
               * which sits outside the launch lock so a signed-out visitor can
-              * reach it; `/home` is in `(app)`, which sits behind it. While
+              * reach it; `/you` is in `(app)`, which sits behind it. While
               * the flag is off, offering this door produces exactly the loop
               * the flag's own documentation warns about — connect, sync,
               * press "Open your dashboard", land back on the marketing page
@@ -91,7 +91,7 @@ export default async function StartPage({
             <div className={styles.actions}>
               {dashboardOpen ? (
                 <>
-                  <Link className={styles.primary} href="/home">
+                  <Link className={styles.primary} href="/you">
                     Open your dashboard
                     <Arrow />
                   </Link>

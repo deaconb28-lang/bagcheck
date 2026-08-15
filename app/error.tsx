@@ -36,8 +36,8 @@ export default function Error({
       </p>
       <div className={styles.actions}>
         <Button onClick={reset}>Try again</Button>
-        <Button href="/home" ghost>
-          Go to Home
+        <Button href="/you" ghost>
+          Go to the dashboard
         </Button>
       </div>
       {error.digest ? <p className={styles.digest}>Reference: {error.digest}</p> : null}

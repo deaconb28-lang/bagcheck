@@ -35,15 +35,15 @@ const GROUPS = [
     match: (n) => n.startsWith("pricing"),
   },
   {
-    key: "home",
+    key: "home-retired",
     title: "Home",
     note: "Four blocks and the money leads: P&L, the year, the read, the loop. Was eleven blocks over 3,600px. Two of them are shot on their own, because a block three thousand pixels down never appears in a viewport shot.",
     match: (n) => n.startsWith("home"),
   },
   {
     key: "you",
-    title: "You",
-    note: "One page replacing /dna, /patterns, /insights and /cards. The consistency grid is shot on its own — it is the first time the score has had a history rather than a value, and it sits below the fold.",
+    title: "The dashboard",
+    note: "The dashboard, and the only screen. Eleven blocks in the order a reader asks in — money, portfolio, the read, the year, holdings, identity, consistency, findings, the loop, cards, formats. Blocks below the fold are shot on their own.",
     match: (n) => n.startsWith("you"),
   },
   {
@@ -92,8 +92,8 @@ const WIDTH_LABEL = { 1440: "Desktop · 1440", 1024: "Laptop · 1024", 390: "Pho
 
 /* Section shots whose bare name would read as a fragment. */
 const SECTION_LABEL = {
-  "home-money": "1 · The money",
-  "home-read": "3 · The read",
+  "you-money": "1 · The money",
+  "you-read": "3 · The read",
   "you-consistency": "Consistency",
   "you-cards": "The case",
 };

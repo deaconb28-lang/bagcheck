@@ -10,8 +10,14 @@
  * space and, where a section has internal rows, by hairlines. The old screens
  * put filled panels inside a filled grid inside a filled page.
  */
+/*
+ * 1240, not 1080. This measure was set when the page was a document about the
+ * reader; it is the dashboard now and carries two charts, a deck rail and a
+ * holdings table, and the narrower column left a strip of empty canvas down
+ * the right of every one of them.
+ */
 .wide {
-  max-width: 1080px;
+  max-width: 1240px;
   display: flex;
   flex-direction: column;
   gap: 96px;
@@ -482,5 +488,103 @@
     grid-column: 2;
     grid-row: 1 / span 2;
     align-self: center;
+  }
+}
+
+/*
+ * ── Carried over when Home merged in ──
+ *
+ * The money block, the read, and the tag loop used to live on their own
+ * screen. Their grammar is this file's already — an eyebrow, one figure, a
+ * sentence, one idiom — so what came across is the handful of classes those
+ * three blocks need and nothing else.
+ */
+.headRow {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+/*
+ * The read's head carries a dial, so it centres rather than sitting on a
+ * baseline — a circle has no baseline to sit on, and aligning its box to one
+ * drops it below the figure it belongs to.
+ */
+.headRow[data-dial] {
+  align-items: center;
+  gap: 26px;
+}
+
+.dial {
+  display: flex;
+  flex: none;
+  /* Violet: the score is Bagcheck's own reading, not money and not exposure. */
+  --ring-stroke: var(--accent);
+}
+
+/* Colour reaches a figure only when the figure is money. */
+.h2[data-tone="moss"] {
+  color: var(--moss);
+}
+
+.h2[data-tone="loss"] {
+  color: var(--loss);
+}
+
+/* A score is not money, so its delta is a direction rather than a verdict. */
+.delta {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line2);
+  color: var(--ink3);
+}
+
+.chart {
+  width: 100%;
+  margin-top: 44px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 32px;
+}
+
+/* The product's own voice, stated once, in the reserved violet. */
+.written {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-line);
+  background: var(--accent-tint);
+}
+
+@media (max-width: 860px) {
+  /*
+   * The dial halves on the phone rather than wrapping onto its own line — the
+   * figure and its arc are one lockup, and a circle alone above a number is
+   * two readings of the same thing.
+   */
+  .dial {
+    --ring-size: 58px;
+  }
+
+  .headRow[data-dial] {
+    gap: 18px;
+  }
+
+  .actions {
+    flex-wrap: wrap;
   }
 }

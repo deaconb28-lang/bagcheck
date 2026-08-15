@@ -6,12 +6,13 @@ import type { CardSpec, Frame } from "@/lib/cards";
 import styles from "./year-block.module.css";
 
 /**
- * The year, leading the dashboard.
+ * The year, on the dashboard.
  *
  * Wrapped was a route you had to already know about, reachable from one glyph
  * on a seven-glyph rail — which made the product's most shareable surface, and
  * the thing the landing page actually sells, the least-visited screen in it.
- * It is the first thing on Home now.
+ * It is a block on the dashboard now, and `/wrapped` is the subpage it opens
+ * into rather than a destination the reader has to find on a rail.
  *
  * It shows **the whole set**, earned and unearned, for the same reason
  * `/wrapped` does: a young account earns three or four cards, and a strip that

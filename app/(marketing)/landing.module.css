@@ -70,6 +70,18 @@
   gap: 12px;
 }
 
+/*
+ * Three actions fit a wide window and not a laptop. The waitlist is the one
+ * that goes: it is for the score, which is the second act, and it has its own
+ * section and its own nav link two items to the left. "Go to app" and "Get
+ * started free" are the two doors into the product that exists.
+ */
+@media (max-width: 1180px) {
+  .navActions [data-hide-narrow] {
+    display: none;
+  }
+}
+
 .navCta,
 .navGhost {
   display: inline-flex;

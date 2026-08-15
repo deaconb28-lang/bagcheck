@@ -14,7 +14,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: `${SITE_NAME} — fitness tracking for your portfolio`,
     short_name: SITE_NAME,
     description: SITE_DESCRIPTION,
-    start_url: "/home",
+    start_url: "/you",
     display: "standalone",
     orientation: "portrait",
     background_color: "#f4f4f6",

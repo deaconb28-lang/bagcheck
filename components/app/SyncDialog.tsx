@@ -55,7 +55,7 @@ export function SyncDialog({
    */
   const close = useCallback(() => {
     setDismissed(true);
-    router.replace("/home");
+    router.replace("/you");
     router.refresh();
   }, [router]);
 

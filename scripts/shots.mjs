@@ -47,7 +47,6 @@ const SCREENS = [
   { key: "icons", path: "/legal/icons", modes: ["light"] },
   { key: "photos", path: "/legal/photos", modes: ["light"] },
   { key: "start", path: "/start", modes: ["light"] },
-  { key: "home", path: "/home", modes: ["light", "dark"] },
   { key: "you", path: "/you", modes: ["light", "dark"] },
   { key: "wrapped", path: "/wrapped", modes: ["light"] },
   { key: "profile", path: "/profile", modes: ["light", "dark"] },
@@ -69,8 +68,8 @@ const SECTIONS = [
    * which is right for judging a screen and useless for judging a block three
    * thousand pixels down — the consistency grid had never been looked at.
    */
-  { key: "home-money", path: "/home", selector: "#money" },
-  { key: "home-read", path: "/home", selector: "#read" },
+  { key: "you-money", path: "/you", selector: "#money" },
+  { key: "you-read", path: "/you", selector: "#read" },
   { key: "you-consistency", path: "/you", selector: "#consistency" },
   { key: "you-cards", path: "/you", selector: "#cards" },
 ];

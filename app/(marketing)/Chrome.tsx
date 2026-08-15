@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { appLocked } from "@/lib/launch";
-import { isAuthConfigured } from "@/auth";
-import { GoogleSignIn } from "@/components/app/GoogleSignIn";
+import { GoToApp } from "./GoToApp";
 import { BagMark } from "./BagMark";
 import styles from "./landing.module.css";
 
@@ -14,14 +13,7 @@ import styles from "./landing.module.css";
  * apart.
  */
 
-export function MarketingNav({ current }: { current?: "pricing" }) {
-  /*
-   * While the app is locked there is no Login link, because there is nothing
-   * to log in to. When it is open the link posts the sign-in itself and comes
-   * back at the dashboard — one click, not two.
-   */
-  const locked = appLocked();
-
+export async function MarketingNav({ current }: { current?: "pricing" }) {
   return (
     <header className={styles.nav}>
       <Link href="/" className={styles.brand}>
@@ -34,20 +26,19 @@ export function MarketingNav({ current }: { current?: "pricing" }) {
         <Link href="/pricing" aria-current={current === "pricing" ? "page" : undefined}>
           Pricing
         </Link>
-        {!locked &&
-          (isAuthConfigured() ? (
-            <GoogleSignIn redirectTo="/home" className={styles.navSignIn}>
-              Log in
-            </GoogleSignIn>
-          ) : (
-            <Link href="/home">Login</Link>
-          ))}
       </nav>
       <div className={styles.navActions}>
-        <Link href="/start" className={styles.navCta}>
+        {/*
+          * "Go to app" took the Log in link's place rather than sitting beside
+          * it. Two entries that both end at the same screen is one entry and a
+          * synonym, and the nav is already tight at 1024 — "The score" wraps
+          * to two lines there.
+          */}
+        <GoToApp variant="primary" />
+        <Link href="/start" className={styles.navGhost}>
           Get started free
         </Link>
-        <Link href="/#waitlist" className={styles.navGhost}>
+        <Link href="/#waitlist" className={styles.navGhost} data-hide-narrow="">
           Join the waitlist
         </Link>
       </div>
@@ -55,7 +46,7 @@ export function MarketingNav({ current }: { current?: "pricing" }) {
   );
 }
 
-export function MarketingFooter() {
+export async function MarketingFooter() {
   const locked = appLocked();
 
   return (
@@ -73,14 +64,7 @@ export function MarketingFooter() {
           <Link href="/legal/terms">Terms</Link>
           <Link href="/legal/icons">Icon credits</Link>
           <Link href="/legal/photos">Photo credits</Link>
-          {!locked &&
-            (isAuthConfigured() ? (
-              <GoogleSignIn redirectTo="/home" className={styles.navSignIn}>
-                Log in
-              </GoogleSignIn>
-            ) : (
-              <Link href="/home">Login</Link>
-            ))}
+          {!locked ? <Link href="/you">Go to app</Link> : null}
         </div>
         <span className={styles.footNote}>© 2026 bagcheck</span>
       </div>

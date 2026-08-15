@@ -11,7 +11,7 @@ export default function NotFound() {
         your DNA, Wrapped and the ledger are all one tap from there.
       </p>
       <div className={styles.actions}>
-        <Button href="/home">Go to Home</Button>
+        <Button href="/you">Go to the dashboard</Button>
         <Button href="/" ghost>
           Landing page
         </Button>

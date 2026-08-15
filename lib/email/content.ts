@@ -79,7 +79,7 @@ export function dailyBrief(input: BriefInput): EmailContent {
     lede: input.sentence || `Your Health score read ${input.score} today.`,
     blocks,
     provenance: `Read from your brokerage · ${input.date}`,
-    cta: { label: "Open your score", href: `${BASE}/home` },
+    cta: { label: "Open your score", href: `${BASE}/you` },
   };
 }
 

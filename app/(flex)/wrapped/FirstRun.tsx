@@ -41,7 +41,7 @@ export function FirstRun({
 }: {
   name: string;
   /**
-   * Whether `/home` will actually open.
+   * Whether the dashboard will actually open.
    *
    * `(flex)` sits outside the launch lock so a signed-out visitor can reach
    * it; `(app)` sits behind it. That asymmetry is deliberate and it means
@@ -139,7 +139,7 @@ export function FirstRun({
         * waiting four seconds.
         */}
       {done && dashboardOpen ? (
-        <Link className={styles.enter} href="/home">
+        <Link className={styles.enter} href="/you">
           Open your dashboard
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M5 12h13" />

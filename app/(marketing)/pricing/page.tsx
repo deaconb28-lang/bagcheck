@@ -122,7 +122,7 @@ export default async function PricingPage() {
                   </li>
                 ))}
               </ul>
-              <Link href={userId ? "/home" : "/start"} className={styles.cta}>
+              <Link href={userId ? "/you" : "/start"} className={styles.cta}>
                 {userId ? "Open your dashboard" : "Connect a brokerage"}
               </Link>
             </div>

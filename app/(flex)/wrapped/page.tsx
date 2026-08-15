@@ -221,11 +221,11 @@ function Bar({
         {example ? "Sample year" : "Wrapped"} · {label}
       </span>
       {signedIn ? (
-        <Link href="/home" className={styles.barCta}>
+        <Link href="/you" className={styles.barCta}>
           Dashboard
         </Link>
       ) : isAuthConfigured() ? (
-        <GoogleSignIn redirectTo="/home" className={styles.barCta}>Sign in</GoogleSignIn>
+        <GoogleSignIn redirectTo="/you" className={styles.barCta}>Sign in</GoogleSignIn>
       ) : null}
     </header>
   );
