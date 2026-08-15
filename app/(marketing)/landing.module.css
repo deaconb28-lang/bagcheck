@@ -115,8 +115,19 @@
    */
   grid-template-columns: minmax(min-content, 1fr) minmax(0, 1.05fr);
   gap: 40px;
-  align-items: center;
-  padding: 70px 40px 90px 60px;
+  /*
+   * The copy starts under the nav, not in the middle of the row.
+   *
+   * The two columns are wildly different heights — the art is two staged
+   * phones at about 900px, the copy is a pill, a headline, a paragraph and
+   * two buttons at about 620 — so centring pushed the headline down by half
+   * the difference. On top of 70px of padding that put "Meet bagcheck" a
+   * quarter of the way down the window and the buttons at the fold, which on
+   * a laptop meant scrolling to reach the thing the page is asking you to do.
+   * The phones are the illustration; they can hang below.
+   */
+  align-items: start;
+  padding: 44px 40px 90px 60px;
   max-width: 1900px;
   margin-inline: auto;
   width: 100%;

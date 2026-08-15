@@ -17,20 +17,15 @@
 }
 
 /*
- * The case borrows WrappedCard's own hue family rather than a palette of its
- * own: a rarer trophy's edge steps through the same moss/azure/ember a
- * minted card's tag would wear. Common carries none — there is nothing to
- * signal yet.
+ * A scarce trophy's edge borrows the same ember a minted card's own tag
+ * wears; an ordinary one carries none, because there is nothing to signal.
+ *
+ * This had three tiers — uncommon, rare, scarce, in moss, azure and ember —
+ * against a store that records `"rare" | null`. Two of the three could never
+ * be reached, and a vocabulary the data cannot express is one somebody will
+ * eventually feel obliged to invent values for.
  */
-.card:has(.rarity[data-rarity="uncommon"]) {
-  border-color: color-mix(in srgb, var(--card-moss-lit) 30%, transparent);
-}
-
 .card:has(.rarity[data-rarity="rare"]) {
-  border-color: color-mix(in srgb, var(--card-azure-lit) 32%, transparent);
-}
-
-.card:has(.rarity[data-rarity="scarce"]) {
   border-color: color-mix(in srgb, var(--card-ember-lit) 34%, transparent);
 }
 
@@ -66,17 +61,7 @@
   color: var(--share-dim);
 }
 
-.rarity[data-rarity="uncommon"] {
-  color: var(--card-moss-lit);
-  background: color-mix(in srgb, var(--card-moss-lit) 16%, transparent);
-}
-
 .rarity[data-rarity="rare"] {
-  color: var(--card-azure-lit);
-  background: color-mix(in srgb, var(--card-azure-lit) 16%, transparent);
-}
-
-.rarity[data-rarity="scarce"] {
   color: var(--card-ember-lit);
   background: color-mix(in srgb, var(--card-ember-lit) 16%, transparent);
 }
@@ -91,12 +76,6 @@
   flex-direction: column;
   gap: 10px;
   flex: 1;
-}
-
-.body[data-blur] {
-  filter: blur(4px);
-  opacity: 0.4;
-  user-select: none;
 }
 
 .symbolMark {
@@ -136,19 +115,11 @@
   border-top: 1px solid var(--share-line);
 }
 
-.unlock {
-  min-height: 34px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 14px;
-  border-radius: 12px;
-  background: var(--share-fill);
-  color: var(--share-ink);
-  font-size: 13px;
-  font-weight: 600;
-  transition: background 0.16s ease;
+/* The line is the card's own link — the slug is its whole access model. */
+.held {
+  transition: color 0.16s ease;
 }
 
-.unlock:hover {
-  background: var(--share-fill-hover);
+.held:hover {
+  color: var(--share-ink);
 }

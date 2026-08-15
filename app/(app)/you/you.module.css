@@ -300,38 +300,24 @@
 }
 
 /* ── Minted cards ── */
+/*
+ * The case.
+ *
+ * This was a hairline-ruled list of names and truncated slugs, which is the
+ * right shape for the formats block below — a list of things you can do — and
+ * the wrong one for a shelf of artefacts. A card is the one object in this
+ * product designed to be looked at, so the block shows the cards.
+ *
+ * They keep their own ground rather than the page's: a share card is an
+ * artefact with its own palette, saturated well past anything the app uses,
+ * and it does not flip with the reader's mode.
+ */
 .minted {
   width: 100%;
   margin-top: 36px;
-  border-top: 1px solid var(--line-light);
-}
-
-.mintedRow {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 20px;
-  padding: 15px 0;
-  border-bottom: 1px solid var(--line-light);
-  transition: color 0.16s ease;
-}
-
-.mintedRow:hover .mintedName {
-  color: var(--accent);
-}
-
-.mintedName {
-  font-size: 15.5px;
-  font-weight: 500;
-  color: var(--ink);
-  transition: color 0.16s ease;
-}
-
-.mintedSlug {
-  font-family: var(--font-mono), monospace;
-  font-size: 10.5px;
-  letter-spacing: 0.1em;
-  color: var(--meta);
 }
 
 /*

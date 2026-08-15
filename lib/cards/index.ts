@@ -9,5 +9,6 @@ export { ROSTER, deckFrames, earnedCount, firstEarned } from "./roster";
 export type { Frame, RosterEntry } from "./roster";
 export { stripCells } from "./mint";
 export type { StoredCard } from "./types";
+export { storedFrom } from "./types";
 export { shareTargets, shareText, imageUrl, downloadName, FORMAT_SIZE } from "./share";
 export type { ShareFormat, ShareTarget } from "./share";

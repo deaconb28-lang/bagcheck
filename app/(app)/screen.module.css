@@ -170,12 +170,25 @@
   font-variant-numeric: tabular-nums;
 }
 
-.body p,
-.tail {
+/*
+ * Zero specificity on the descendant half.
+ *
+ * `.body p` is (0,1,1), which out-ranks a component's own single class — so
+ * anything with its own colour system dropped inside a screen quietly lost
+ * it. The trophy cards on /you set their tail to the card palette's dim ink
+ * and rendered it in the app's `--ink3` instead: slate grey on a near-black
+ * card, 2.49:1, effectively invisible in light mode. A screen may state a
+ * default for its paragraphs; it must not out-rank the thing it contains.
+ *
+ * `:where()` is the same device `:where(.page a)` uses on the landing, and
+ * for the same reason.
+ */
+:where(.body) p {
   color: var(--ink3);
 }
 
 .tail {
+  color: var(--ink3);
   font-size: 15px;
   line-height: 1.6;
   max-width: 62ch;

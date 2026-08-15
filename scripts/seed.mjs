@@ -32,6 +32,9 @@ import { MongoClient } from "mongodb";
 import { ensureIndexes } from "../lib/db/collections.ts";
 import { rebuildDerived } from "../lib/db/derived.ts";
 import { backfillScores } from "../lib/db/scoring.ts";
+import { mintCard } from "../lib/db/cards.ts";
+import { assembleWrapped } from "../lib/wrapped/assemble.ts";
+import { storedFrom } from "../lib/cards/types.ts";
 
 const USER_ID = "000000000000000000000001";
 const DB = "bagcheck";
@@ -243,11 +246,28 @@ export async function seed({ quiet = false } = {}) {
   const scored = await backfillScores(USER_ID);
   await rebuildDerived(USER_ID);
 
+  /*
+   * A few cards in the case.
+   *
+   * The minted block on /you had never been shot with anything in it, because
+   * a seeded account mints nothing — so its grid went out unverified while its
+   * empty state was the only thing anyone ever saw. These are minted through
+   * the app's own path from the app's own assembly: the specs come off
+   * `assembleWrapped`, so the figures on them are the ledger's, not the
+   * seed's.
+   */
+  const assembly = await assembleWrapped(USER_ID);
+  const mintable = (assembly?.cards ?? []).slice(0, 4);
+  for (const card of mintable) {
+    await mintCard(USER_ID, storedFrom(card), isoDay(today));
+  }
+
 
   if (!quiet) {
     console.log(`seeded ${txns.length} transactions, ${snapshots.length} snapshots`);
     console.log(`window ${isoDay(from)} → ${isoDay(today)}`);
     console.log(`scored ${scored.written} days (${scored.from} → ${scored.to}), derived rebuilt`);
+    console.log(`minted ${mintable.length} cards`);
   }
   return { mongod, uri, userId: USER_ID };
 }

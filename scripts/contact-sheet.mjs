@@ -95,6 +95,7 @@ const SECTION_LABEL = {
   "home-money": "1 · The money",
   "home-read": "3 · The read",
   "you-consistency": "Consistency",
+  "you-cards": "The case",
 };
 
 async function encode(dir, name) {

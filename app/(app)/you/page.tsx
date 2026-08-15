@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getUserId } from "@/auth";
 import { getCollections, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
+import type { CardDoc } from "@/lib/db";
 import { isMarketConfigured, refreshHoldings } from "@/lib/market";
 import { EquityCurve, HeatGrid } from "@/components/idioms";
+import { TrophyCard } from "@/components/cards/TrophyCard";
 import { Avatar, Logo } from "@/components/primitives";
 import { BadgeMint } from "@/components/app/BadgeMint";
 import { EmptyState } from "@/components/app/EmptyState";
@@ -136,16 +138,30 @@ export default async function YouPage() {
    */
   const findings = data.derived?.findings ?? [];
 
+  /*
+   * The minted cards, with what they actually say on them.
+   *
+   * This projected `title`, which is not a field on a card document — the
+   * label is `label` — so `m.title ?? m.type` fell through to the kind slug
+   * on every row and the block rendered "roundTrip · /c/9f2ab1c4…". A list of
+   * internal names and truncated URLs is a debug view of the one surface in
+   * the product whose whole point is that it is worth looking at.
+   */
   const { cards } = await getCollections();
   const minted = await cards
     .find({ userId })
     .sort({ mintedAt: -1 })
     .limit(8)
-    .project<{ type: string; slug: string; title: string | null }>({
+    .project<Pick<CardDoc, "type" | "slug" | "label" | "value" | "tail" | "rarity" | "symbol" | "date">>({
       _id: 0,
       type: 1,
       slug: 1,
-      title: 1,
+      label: 1,
+      value: 1,
+      tail: 1,
+      rarity: 1,
+      symbol: 1,
+      date: 1,
     })
     .toArray();
 
@@ -358,8 +374,8 @@ export default async function YouPage() {
             </section>
           ) : null}
 
-          {/* ── 5 · What you have minted ── */}
-          <section data-reveal className={styles.block} style={{ animationDelay: "0.1s" }}>
+          {/* ── 6 · What you have minted ── */}
+          <section id="cards" data-reveal className={styles.block} style={{ animationDelay: "0.1s" }}>
             <span className={styles.eyebrow}>Cards</span>
             <h2 className={styles.h2}>
               {minted.length
@@ -375,10 +391,19 @@ export default async function YouPage() {
             {minted.length ? (
               <div className={styles.minted}>
                 {minted.map((m) => (
-                  <a key={m.slug} className={styles.mintedRow} href={`/c/${m.slug}`}>
-                    <span className={styles.mintedName}>{m.title ?? m.type}</span>
-                    <span className={styles.mintedSlug}>/c/{m.slug.slice(0, 8)}…</span>
-                  </a>
+                  <TrophyCard
+                    key={m.slug}
+                    trophy={{
+                      slug: m.slug,
+                      type: m.type,
+                      rarity: m.rarity,
+                      year: m.date.slice(0, 4),
+                      value: m.value,
+                      title: m.label,
+                      tail: m.tail,
+                      symbol: m.symbol,
+                    }}
+                  />
                 ))}
               </div>
             ) : null}
@@ -393,7 +418,7 @@ export default async function YouPage() {
           </section>
 
           {/*
-            * ── 6 · The formats ──
+            * ── 7 · The formats ──
             *
             * The paid plan's whole surface, and until now it had none: the four
             * capabilities were enforced in API routes that nothing in the app

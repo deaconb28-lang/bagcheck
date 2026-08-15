@@ -1,53 +1,54 @@
 import { ShareButton } from "@/components/app/ShareButton";
 import { Logo } from "@/components/primitives";
-import { TIER_LABEL, tierFor } from "@/lib/tiers";
-import type { Capability } from "@/lib/tiers";
 import styles from "./TrophyCard.module.css";
 
-export type Rarity = "common" | "uncommon" | "rare" | "scarce";
+/**
+ * What the store records about a card. `rare` or nothing — a card is either
+ * scarce enough to say so or it is simply a card, and there is no third word
+ * the data can support.
+ */
+export type Rarity = "rare" | null;
 
 export type Trophy = {
-  id: string;
-  /** The minted card's slug, when it has one. */
-  slug?: string;
+  /** The minted card's slug — the card's whole access model and its URL. */
+  slug: string;
   type: string;
   rarity: Rarity;
   year: string;
   value: string;
   title: string;
   tail: string;
-  /** Share of members holding this card. Rarity means nothing without one. */
-  heldBy: number | null;
   /** The instrument the card is about, when it is about one. */
   symbol?: string | null;
 };
 
-type TrophyCardProps =
-  | { trophy: Trophy; locked?: false; capability?: never }
-  | { trophy: Trophy; locked: true; capability: Capability };
-
 /**
  * A card in the case, on the ink field in both modes.
  *
- * Rarity is carried by the word, not by a colour — "Scarce" is the label and
- * the label is the whole signal. A locked card blurs and offers the category;
- * it does not offer a share button, because the affordance must be absent
- * rather than refuse.
+ * Rarity is carried by the word, not by a colour — "Rare" is the label and
+ * the label is the whole signal. There is no locked variant: this component
+ * used to take a `capability` and blur itself behind a "category" paywall,
+ * which is a gate `Capability` deliberately has no member for. Minting,
+ * sharing and rarity are never paywalled, and a component that can express a
+ * gate the tier model refuses to write is a component that will get one
+ * written.
+ *
+ * It also used to print "Held by N% of members", which is a claim about a
+ * member base nothing measures. What a card is held by is the reader's own
+ * conduct, and that is what it says.
  */
-export function TrophyCard(props: TrophyCardProps) {
-  const { trophy } = props;
-  const locked = props.locked === true;
-
+export function TrophyCard({ trophy }: { trophy: Trophy }) {
   return (
-    <article className={styles.card} data-locked={locked || undefined}>
+    <article className={styles.card}>
       <div className={styles.top}>
-        <span className={styles.rarity} data-rarity={trophy.rarity}>
-          {locked ? `${TIER_LABEL[tierFor(props.capability!)]} category` : trophy.rarity}
+        {/* The same word the card itself wears, so one thing has one name. */}
+        <span className={styles.rarity} data-rarity={trophy.rarity ?? undefined}>
+          {trophy.rarity ? "Scarce" : "Minted"}
         </span>
         <span className={styles.year}>{trophy.year}</span>
       </div>
 
-      <div className={styles.body} data-blur={locked || undefined}>
+      <div className={styles.body}>
         {trophy.symbol ? (
           <span className={styles.symbolMark}>
             <Logo symbol={trophy.symbol} size={26} />
@@ -60,20 +61,16 @@ export function TrophyCard(props: TrophyCardProps) {
       </div>
 
       <div className={styles.foot}>
-        <span className={styles.held}>
-          {locked
-            ? "Unlock the category"
-            : trophy.heldBy != null
-              ? `Held by ${trophy.heldBy < 1 ? "<1" : Math.round(trophy.heldBy)}% of members`
-              : "Earned by your conduct"}
-        </span>
-        {locked ? (
-          <a className={styles.unlock} href="/profile#plan">
-            Unlock category
-          </a>
-        ) : (
-          <ShareButton type={trophy.type} slug={trophy.slug} label={trophy.title} size={34} onInk />
-        )}
+        <a className={styles.held} href={`/c/${trophy.slug}`}>
+          Earned by your conduct
+        </a>
+        <ShareButton
+          type={trophy.type}
+          slug={trophy.slug}
+          label={trophy.title}
+          size={34}
+          onInk
+        />
       </div>
     </article>
   );

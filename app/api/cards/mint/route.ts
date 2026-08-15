@@ -10,7 +10,7 @@ import {
   tierFor,
 } from "@/lib/db";
 import { buildCards } from "@/lib/cards/kinds";
-import type { CardSpec } from "@/lib/cards/kinds";
+import { storedFrom } from "@/lib/cards";
 import { archetypeFor } from "@/lib/archetypes";
 import { convictionStats } from "@/lib/engine";
 import { can } from "@/lib/tiers";
@@ -118,31 +118,10 @@ export async function POST(req: Request) {
 
   const slug = await mintCard(
     userId,
-    stored(spec),
+    storedFrom(spec),
     latest?.date ?? new Date().toISOString().slice(0, 10),
   );
   return NextResponse.json({ slug, url: `/c/${slug}` });
 }
 
-/**
- * The stored shape, for `/c/[slug]` and the OpenGraph render.
- *
- * A card document is what a *stranger* sees, so it holds only what the public
- * page draws: the label, the figure, the sentence and the tone. The layout,
- * the hue family and the art shape stay behind — they are how the card was
- * made, not what it says.
- */
-function stored(spec: CardSpec) {
-  const value =
-    spec.body.kind === "figure" || spec.body.kind === "chart" ? spec.body.value : spec.headline;
-  return {
-    kind: spec.kind,
-    label: spec.eyebrow,
-    value,
-    tail: spec.lede,
-    // The public card has two tones; the four card hues fold onto them.
-    tone: (spec.hue === "azure" || spec.hue === "violet" ? "signal" : "moss") as "moss" | "signal",
-    rarity: spec.rarity,
-    symbol: spec.symbol,
-  };
-}
+

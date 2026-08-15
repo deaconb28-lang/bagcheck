@@ -72,6 +72,7 @@ const SECTIONS = [
   { key: "home-money", path: "/home", selector: "#money" },
   { key: "home-read", path: "/home", selector: "#read" },
   { key: "you-consistency", path: "/you", selector: "#consistency" },
+  { key: "you-cards", path: "/you", selector: "#cards" },
 ];
 
 /* ── Probes ──────────────────────────────────────────────────────────────── */
@@ -153,6 +154,7 @@ function sample() {
     const bg = ground(el);
     const weight = Number(cs.fontWeight) || 400;
     samples.push({
+      where: `${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]}`,
       text: text.slice(0, 48),
       size,
       large: size >= 24 || (size >= 18.66 && weight >= 700),
@@ -335,7 +337,18 @@ async function shoot(name, path, { width, height, mode, selector, full }) {
 
   if (overflow) failures.push(`${name}: horizontal overflow (${probe.scrollWidth} > ${probe.clientWidth})\n     ${(probe.wide || []).slice(0, 12).join("\n     ")}`);
   for (const s of bad) {
-    failures.push(`${name}: "${s.text}" at ${s.size}px reads ${s.ratio.toFixed(2)}:1, needs ${s.need}`);
+    /*
+     * The ground, not just the ratio. A failure that reports only a number
+     * sends you tuning a colour that was never the problem — the trophy
+     * cards' tails read as failing for two rounds because the composite was
+     * landing on the page's ground rather than the card's, which no amount
+     * of lightening the text would have fixed.
+     */
+    const rgb = (c) => `rgb(${c.map((v) => Math.round(v)).join(",")})`;
+    failures.push(
+      `${name}: "${s.text}" at ${s.size}px reads ${s.ratio.toFixed(2)}:1, needs ${s.need}` +
+        `\n     ${rgb(s.fg)} on ${rgb(s.bg)}${s.where ? ` — ${s.where}` : ""}`,
+    );
   }
   for (const e of errors) failures.push(`${name}: page error — ${e}`);
 
