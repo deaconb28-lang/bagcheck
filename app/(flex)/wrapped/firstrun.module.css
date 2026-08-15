@@ -156,3 +156,32 @@
 .enter:hover {
   transform: translateY(-1px);
 }
+
+/* A failed read, and the way out of it. */
+.failedBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 26px;
+}
+
+.retry {
+  display: inline-flex;
+  align-items: center;
+  height: 46px;
+  padding: 0 22px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--mk-bg) 28%, transparent);
+  color: var(--mk-bg);
+  background: transparent;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.16s ease, border-color 0.16s ease;
+}
+
+.retry:hover {
+  background: color-mix(in srgb, var(--mk-bg) 10%, transparent);
+  border-color: color-mix(in srgb, var(--mk-bg) 40%, transparent);
+}

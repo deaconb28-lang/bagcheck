@@ -1,5 +1,6 @@
 import { getCollections } from "./collections";
 import type { SyncProgressDoc } from "./types";
+import { isStale } from "@/lib/snaptrade/progress";
 import type { SyncPhase, SyncProgress } from "@/lib/snaptrade/progress";
 
 /**
@@ -65,15 +66,27 @@ export async function failSync(userId: string, message: string): Promise<void> {
 /**
  * What the dialog polls. Returns null when no run has ever been recorded —
  * the caller shows nothing rather than an empty checklist.
+ *
+ * **A run that died without saying so is reported as failed.** A sync killed
+ * mid-flight — a platform timeout, a redeploy, a dropped container — never
+ * writes its own failure, because the process that would have written it is
+ * gone. The board then says `running` forever and both polling clients wait
+ * on that word, so a reader's first screen after connecting a brokerage
+ * becomes a spinner with no exit. Deciding it here means the one place that
+ * reads the board is the one place that has to know the rule.
  */
 export async function getSyncProgress(userId: string): Promise<SyncProgress | null> {
   const { syncProgress } = await getCollections();
   const doc = await syncProgress.findOne({ userId });
   if (!doc) return null;
+
+  const stale = isStale(doc.status, doc.startedAt ?? null);
   return {
     phase: doc.phase,
-    status: doc.status,
-    error: doc.error,
+    status: stale ? "failed" : doc.status,
+    error: stale
+      ? "The read stopped partway and did not report back."
+      : doc.error,
     accountsTotal: doc.accountsTotal,
     accountsDone: doc.accountsDone,
     positions: doc.positions,

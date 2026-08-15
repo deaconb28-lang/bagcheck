@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { arrivalLine, spanLabel, stepsFrom } from "./progress";
+import { arrivalLine, isStale, spanLabel, stepsFrom } from "./progress";
 import type { SyncProgress } from "./progress";
 
 const base: SyncProgress = {
@@ -121,4 +121,39 @@ test("no copy here carries an exclamation mark or a coaching verb", () => {
     assert.ok(!line.includes("!"), line);
     assert.ok(!/\b(you should|consider|unlock|supercharge)\b/i.test(line), line);
   }
+});
+
+/*
+ * Staleness. A sync killed mid-run never writes its own failure, so the board
+ * is left saying "running" and every poller waits on it forever.
+ */
+test("a running sync inside the window is not stale", () => {
+  const began = new Date("2026-08-15T10:00:00Z");
+  const now = new Date("2026-08-15T10:04:00Z");
+  assert.equal(isStale("running", began, now), false);
+});
+
+test("a running sync past the window is stale", () => {
+  const began = new Date("2026-08-15T10:00:00Z");
+  const now = new Date("2026-08-15T10:11:00Z");
+  assert.equal(isStale("running", began, now), true);
+});
+
+test("a finished sync is never stale, however old", () => {
+  const began = new Date("2026-01-01T00:00:00Z");
+  const now = new Date("2026-08-15T10:00:00Z");
+  assert.equal(isStale("done", began, now), false);
+  assert.equal(isStale("failed", began, now), false);
+});
+
+test("a run with no start time is left alone rather than guessed at", () => {
+  assert.equal(isStale("running", null, new Date()), false);
+});
+
+test("an unparseable start time is left alone", () => {
+  assert.equal(isStale("running", "not a date", new Date()), false);
+});
+
+test("staleness accepts an ISO string, as Mongo hands it back", () => {
+  assert.equal(isStale("running", "2026-08-15T10:00:00.000Z", new Date("2026-08-15T10:20:00Z")), true);
 });

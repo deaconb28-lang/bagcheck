@@ -65,8 +65,15 @@ export interface SyncResult {
  */
 export async function syncUser(userId: string): Promise<SyncResult> {
   const startedAt = Date.now();
-  await ensureIndexes();
+  /*
+   * Claim the board first. `ensureIndexes` is twenty round trips to Atlas, and
+   * both clients fire their first poll the moment they POST — so resetting the
+   * board after it meant a re-sync served the *previous* run's document in
+   * that window. If that document read `done`, onboarding announced "your
+   * history is in" before a single row had been read.
+   */
   await beginSync(userId);
+  await ensureIndexes();
   try {
     return await runSync(userId, startedAt);
   } catch (err) {

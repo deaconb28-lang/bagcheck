@@ -52,37 +52,37 @@ export function FirstRun({ name }: { name: string }) {
     }
   }, []);
 
-  useEffect(() => {
-    if (started.current) return;
-    started.current = true;
-
+  const run = useCallback(async () => {
+    setFailed(null);
     const timer = setInterval(poll, POLL_MS);
     void poll();
 
-    void (async () => {
-      try {
-        const res = await fetch("/api/snaptrade/sync", { method: "POST" });
-        if (!res.ok) {
-          const body = (await res.json().catch(() => null)) as { error?: string } | null;
-          setFailed(body?.error ?? `The read stopped with a ${res.status}.`);
-          return;
-        }
-        await poll();
-        /*
-         * The cards are rendered on the server from what the sync just wrote,
-         * so the page has to be asked again. Refreshing rather than navigating
-         * keeps the reader on this screen, which is the whole point of it.
-         */
-        router.refresh();
-      } catch (err) {
-        setFailed(err instanceof Error ? err.message : String(err));
-      } finally {
-        clearInterval(timer);
+    try {
+      const res = await fetch("/api/snaptrade/sync", { method: "POST" });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => null)) as { error?: string } | null;
+        setFailed(body?.error ?? `The read stopped with a ${res.status}.`);
+        return;
       }
-    })();
-
-    return () => clearInterval(timer);
+      await poll();
+      /*
+       * The cards are rendered on the server from what the sync just wrote,
+       * so the page has to be asked again. Refreshing rather than navigating
+       * keeps the reader on this screen, which is the whole point of it.
+       */
+      router.refresh();
+    } catch (err) {
+      setFailed(err instanceof Error ? err.message : String(err));
+    } finally {
+      clearInterval(timer);
+    }
   }, [poll, router]);
+
+  useEffect(() => {
+    if (started.current) return;
+    started.current = true;
+    void run();
+  }, [run]);
 
   const steps = stepsFrom(failed ? { ...progress, status: "failed" } : progress);
   const done = progress.status === "done";
@@ -132,11 +132,21 @@ export function FirstRun({ name }: { name: string }) {
         </Link>
       ) : null}
 
+      {/*
+        * A failed read gets a way forward rather than an explanation and a
+        * dead end. The brokerage is still linked, so the only thing that
+        * failed is one attempt at reading it.
+        */}
       {failed ? (
-        <p className={styles.failed} role="status">
-          {failed} Your brokerage is still linked — nothing needs connecting
-          again. Reloading this page starts the read over.
-        </p>
+        <div className={styles.failedBlock} role="status">
+          <p className={styles.failed}>
+            {failed} Your brokerage is still linked — nothing needs connecting
+            again.
+          </p>
+          <button type="button" className={styles.retry} onClick={() => void run()}>
+            Try the read again
+          </button>
+        </div>
       ) : null}
     </section>
   );

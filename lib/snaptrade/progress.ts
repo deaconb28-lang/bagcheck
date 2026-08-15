@@ -28,6 +28,40 @@ export interface SyncProgress {
   elapsedMs: number | null;
 }
 
+/**
+ * How long a run may sit unfinished before a reader should stop believing it.
+ *
+ * A sync that is killed mid-run — a platform timeout, a redeploy, a dropped
+ * container — never gets to write its failure, because the process that would
+ * have written it is gone. The board is left saying `running` forever, and
+ * both polling clients wait on exactly that word: a reader's first screen
+ * after connecting a brokerage becomes a spinner with no exit.
+ *
+ * So staleness is decided at read time instead. Ten minutes is far longer than
+ * any real sync (a heavy ledger is a couple of minutes including the score
+ * backfill) and far longer than any proxy will hold a connection, so nothing
+ * healthy trips it.
+ */
+export const STALE_MS = 10 * 60_000;
+
+/**
+ * True when a run claims to be going but started too long ago to believe.
+ * Pure, so the rule is one testable line rather than a condition buried in a
+ * database read.
+ */
+export function isStale(
+  status: SyncStatus,
+  startedAt: Date | string | null,
+  now: Date = new Date(),
+  limitMs: number = STALE_MS,
+): boolean {
+  if (status !== "running") return false;
+  if (!startedAt) return false;
+  const began = startedAt instanceof Date ? startedAt.getTime() : Date.parse(startedAt);
+  if (!Number.isFinite(began)) return false;
+  return now.getTime() - began > limitMs;
+}
+
 export type StepState = "waiting" | "running" | "done" | "failed";
 
 export interface SyncStep {
