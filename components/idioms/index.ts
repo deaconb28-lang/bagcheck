@@ -1,14 +1,9 @@
 export { Distribution } from "./Distribution";
-export { SegmentRing } from "./SegmentRing";
 export { DAY_FILL } from "./types";
-export type { DayState } from "./types";
+export type { DayState, WaveDay } from "./types";
 export { EquityCurve } from "./EquityCurve";
 export type { CurvePoint } from "./EquityCurve";
 export { HeatGrid } from "./HeatGrid";
 export type { HeatDay } from "./HeatGrid";
-export { HourHeat } from "./HourHeat";
-export type { HourCell } from "./HourHeat";
 export { ScoreRing } from "./ScoreRing";
-export { WaveChart } from "./WaveChart";
 export { ZeroBarChart } from "./ZeroBarChart";
-export type { WaveDay } from "./WaveChart";

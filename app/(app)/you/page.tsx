@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getUserId } from "@/auth";
 import { getCollections, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
 import { isMarketConfigured, refreshHoldings } from "@/lib/market";
-import { EquityCurve } from "@/components/idioms";
+import { EquityCurve, HeatGrid } from "@/components/idioms";
 import { Avatar, Logo } from "@/components/primitives";
 import { BadgeMint } from "@/components/app/BadgeMint";
 import { EmptyState } from "@/components/app/EmptyState";
@@ -13,7 +13,15 @@ import { ShareButton } from "@/components/app/ShareButton";
 import { SignInCta } from "@/components/app/SignInCta";
 import { strongLine } from "@/lib/archetypes";
 import { TIER_PRICE, can } from "@/lib/tiers";
-import { archetypeOf, money, signedMoney, weekDelta } from "../derive";
+import {
+  archetypeOf,
+  currentStreak,
+  heatFromScores,
+  longestStreak,
+  money,
+  signedMoney,
+  weekDelta,
+} from "../derive";
 import screen from "../screen.module.css";
 import styles from "./you.module.css";
 
@@ -111,6 +119,16 @@ export default async function YouPage() {
 
   const components = (latest?.components ?? null) as unknown as Record<string, number> | null;
   const archetype = archetypeOf(components);
+
+  /*
+   * Half a year of readings. This is the one place in the product the score
+   * has a history rather than a value — the backfill writes one score per day
+   * across the whole ledger, so the grid fills in on the first sync instead of
+   * growing a cell a day from the moment someone signed up.
+   */
+  const heat = heatFromScores(data.scores);
+  const streak = currentStreak(data.scores);
+  const longest = longestStreak(data.scores);
 
   /*
    * Materialised per sync, so this is a read rather than the full-ledger scan
@@ -276,7 +294,33 @@ export default async function YouPage() {
             </section>
           ) : null}
 
-          {/* ── 4 · What the P&L hides. Absent when nothing clears a floor. ── */}
+          {/* ── 4 · How steadily. ── */}
+          {data.scores.length > 1 ? (
+            <section id="consistency" data-reveal className={styles.block} style={{ animationDelay: "0.07s" }}>
+              <span className={styles.eyebrow}>Consistency</span>
+              <h2 className={styles.h2}>
+                {streak > 0 ? `${streak} days inside your rules` : "Your scored days"}
+              </h2>
+              <p className={styles.lede}>
+                {longest > streak
+                  ? `Half a year of readings, one cell a day. Your longest run so far is ${longest} days.`
+                  : "Half a year of readings, one cell a day. A pale cell is a day the score came in low; an empty one is a day with nothing to score."}
+              </p>
+
+              {/*
+                * A density grid is a texture, not a fill: the cells cap at
+                * 15px and the row scrolls past the block rather than
+                * stretching to it, or a hundred-odd cells at full width
+                * become tiles and the whole section reads as one saturated
+                * rectangle.
+                */}
+              <div className={styles.heat}>
+                <HeatGrid days={heat} />
+              </div>
+            </section>
+          ) : null}
+
+          {/* ── 5 · What the P&L hides. Absent when nothing clears a floor. ── */}
           {findings.length ? (
             <section data-reveal className={styles.block} style={{ animationDelay: "0.08s" }}>
               <span className={styles.eyebrow}>Patterns</span>

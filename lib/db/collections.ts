@@ -9,6 +9,7 @@ import type {
   DerivedDoc,
   IconDoc,
   InsightDoc,
+  LogoDoc,
   MarketCacheDoc,
   PhotoDoc,
   PositionSnapshotDoc,
@@ -33,6 +34,13 @@ export async function getCollections() {
     transactions: db.collection<TransactionDoc>("transactions"),
     positionSnapshots: db.collection<PositionSnapshotDoc>("positionSnapshots"),
     scores: db.collection<ScoreDoc>("scores"),
+    /*
+     * Retired. The daily pulse asked how the market felt and nothing ever
+     * read the answers — a second input loop competing with the tag loop,
+     * which is the only input a brokerage cannot supply. The collection
+     * stays declared so `deleteAccount` still erases anything written while
+     * it was live; nothing writes to it now.
+     */
     pulses: db.collection<PulseDoc>("pulses"),
     tags: db.collection<TagDoc>("tags"),
     insights: db.collection<InsightDoc>("insights"),
@@ -42,6 +50,7 @@ export async function getCollections() {
     subscriptions: db.collection<SubscriptionDoc>("subscriptions"),
     marketCache: db.collection<MarketCacheDoc>("marketCache"),
     icons: db.collection<IconDoc>("icons"),
+    logos: db.collection<LogoDoc>("logos"),
     photos: db.collection<PhotoDoc>("photos"),
     prefs: db.collection<PrefsDoc>("prefs"),
     emailLog: db.collection<EmailLogDoc>("emailLog"),
@@ -73,6 +82,9 @@ export async function ensureIndexes() {
     // Mongo sweeps expired entries; nothing has to remember to.
     c.marketCache.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
     c.icons.createIndex({ name: 1 }, { unique: true }),
+    // A mark is fetched per size, so the pair is the key — and the uniqueness
+    // is what makes the write-through idempotent under concurrent renders.
+    c.logos.createIndex({ symbol: 1, size: 1 }, { unique: true }),
     c.photos.createIndex({ kind: 1 }, { unique: true }),
     c.prefs.createIndex({ userId: 1 }, { unique: true }),
     // Deliberately not keyed on kind: this index is what enforces one

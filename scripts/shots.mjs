@@ -64,6 +64,14 @@ const SECTIONS = [
   { key: "landing-first-week", path: "/", selector: "#demo" },
   { key: "landing-plans", path: "/", selector: "#waitlist" },
   { key: "pricing-plans", path: "/pricing", selector: "section:nth-of-type(2)" },
+  /*
+   * App blocks that sit below the fold. Every other shot here is a viewport,
+   * which is right for judging a screen and useless for judging a block three
+   * thousand pixels down — the consistency grid had never been looked at.
+   */
+  { key: "home-money", path: "/home", selector: "#money" },
+  { key: "home-read", path: "/home", selector: "#read" },
+  { key: "you-consistency", path: "/you", selector: "#consistency" },
 ];
 
 /* ── Probes ──────────────────────────────────────────────────────────────── */
@@ -153,8 +161,22 @@ function sample() {
     });
   }
 
+  /*
+   * Naming the culprit, not just the fact. "393 > 390" sends you hunting; the
+   * element that sticks out ends the hunt — it was the header's upgrade
+   * button, three pixels past the fold, and nothing about the number said so.
+   */
+  const wide = [];
+  for (const el of document.querySelectorAll("*")) {
+    const r = el.getBoundingClientRect();
+    if (r.right > document.documentElement.clientWidth + 0.5 && r.width > 0) {
+      wide.push(`${el.tagName}.${el.className}`.slice(0, 90) + ` right=${Math.round(r.right)} w=${Math.round(r.width)}`);
+    }
+  }
+
   return {
     samples,
+    wide,
     scrollWidth: document.documentElement.scrollWidth,
     clientWidth: document.documentElement.clientWidth,
     scrollHeight: document.documentElement.scrollHeight,
@@ -311,7 +333,7 @@ async function shoot(name, path, { width, height, mode, selector, full }) {
     .filter((s) => s.ratio < s.need);
   const overflow = probe.scrollWidth > probe.clientWidth;
 
-  if (overflow) failures.push(`${name}: horizontal overflow (${probe.scrollWidth} > ${probe.clientWidth})`);
+  if (overflow) failures.push(`${name}: horizontal overflow (${probe.scrollWidth} > ${probe.clientWidth})\n     ${(probe.wide || []).slice(0, 12).join("\n     ")}`);
   for (const s of bad) {
     failures.push(`${name}: "${s.text}" at ${s.size}px reads ${s.ratio.toFixed(2)}:1, needs ${s.need}`);
   }

@@ -42,6 +42,23 @@
   margin-top: 14px;
 }
 
+/*
+ * The read's head carries a dial, so it centres rather than sitting on a
+ * baseline — a circle has no baseline to sit on, and aligning its box to one
+ * drops it below the figure it belongs to.
+ */
+.headRow[data-dial] {
+  align-items: center;
+  gap: 26px;
+}
+
+.dial {
+  display: flex;
+  flex: none;
+  /* Violet: the score is Bagcheck's own reading, not money and not exposure. */
+  --ring-stroke: var(--accent);
+}
+
 .h2 {
   margin: 0;
   font-size: clamp(38px, 4.4vw, 62px);
@@ -171,6 +188,19 @@
 @media (max-width: 860px) {
   .wide {
     gap: 64px;
+  }
+
+  /*
+   * The dial halves on the phone rather than wrapping onto its own line —
+   * the figure and its arc are one lockup, and a circle alone above a number
+   * is two readings of the same thing.
+   */
+  .dial {
+    --ring-size: 58px;
+  }
+
+  .headRow[data-dial] {
+    gap: 18px;
   }
 
 /* Stacked, the divider is between rows rather than a stray vertical rule. */

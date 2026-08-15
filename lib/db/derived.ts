@@ -45,17 +45,45 @@ export interface HoldTime {
   losers: number;
 }
 
+/**
+ * The five facts the fingerprint is made of.
+ *
+ * Split out because they can be read from five cheap indexed queries as well
+ * as from a loaded ledger — which is the whole point of a fingerprint. It
+ * existed as a whole-ledger function only, so nothing could afford to compare
+ * it, so nothing did.
+ */
+export interface LedgerProbe {
+  count: number;
+  oldest: Pick<TxnLite, "date" | "symbol" | "amount"> | null;
+  newest: Pick<TxnLite, "date" | "symbol" | "amount"> | null;
+  /** Distinct snapshot *dates*, not documents — a day with three accounts is one. */
+  snapshotDates: number;
+  lastSnapshot: string | null;
+}
+
 /** A fingerprint of the inputs. Same ledger, same hash, no recompute. */
-export function ledgerHash(rows: TxnLite[], snapshotDates: string[]): string {
+export function hashLedger(probe: LedgerProbe): string {
   const h = createHash("sha1");
-  h.update(String(rows.length));
+  h.update(String(probe.count));
   // The newest and oldest rows plus the count catch every append and every
   // backfill without hashing megabytes.
-  for (const row of [rows[0], rows[rows.length - 1]]) {
+  for (const row of [probe.oldest, probe.newest]) {
     h.update(`|${row?.date ?? ""}:${row?.symbol ?? ""}:${row?.amount ?? ""}`);
   }
-  h.update(`|${snapshotDates.length}:${snapshotDates[snapshotDates.length - 1] ?? ""}`);
+  h.update(`|${probe.snapshotDates}:${probe.lastSnapshot ?? ""}`);
   return h.digest("hex").slice(0, 16);
+}
+
+/** The same fingerprint, taken off a ledger already in memory. */
+export function ledgerHash(rows: TxnLite[], snapshotDates: string[]): string {
+  return hashLedger({
+    count: rows.length,
+    oldest: rows[0] ?? null,
+    newest: rows[rows.length - 1] ?? null,
+    snapshotDates: snapshotDates.length,
+    lastSnapshot: snapshotDates[snapshotDates.length - 1] ?? null,
+  });
 }
 
 /** Realised P&L per session. A buy is not a result, so only sells and dividends count. */
@@ -183,20 +211,56 @@ export function buildDerived(input: BuildInput): Omit<DerivedDoc, "userId" | "co
 }
 
 /**
+ * The fingerprint, taken without loading the ledger.
+ *
+ * Five indexed reads: the count, the two ends, and the snapshot dates. Each
+ * is served by `{userId, date}` — the point is that this costs about as much
+ * as the count alone did, so the check can afford to be the real one.
+ *
+ * Ties on the boundary date resolve consistently because Mongo walks the same
+ * index forward here and in `rebuildDerived`, and reverses it for `newest`.
+ * If that ever stopped holding, the cost is a rebuild that was not needed —
+ * never a stale document served as fresh, which is the direction that matters.
+ */
+async function probeLedger(userId: string): Promise<LedgerProbe> {
+  const { transactions, positionSnapshots } = await getCollections();
+  const ends = { _id: 0, date: 1, symbol: 1, amount: 1 } as const;
+
+  const [count, oldest, newest, dates] = await Promise.all([
+    transactions.countDocuments({ userId }),
+    transactions.find({ userId }).sort({ date: 1 }).limit(1).project<TxnLite>(ends).next(),
+    transactions.find({ userId }).sort({ date: -1 }).limit(1).project<TxnLite>(ends).next(),
+    positionSnapshots.distinct("date", { userId }),
+  ]);
+
+  const sorted = [...dates].sort();
+  return {
+    count,
+    oldest,
+    newest,
+    snapshotDates: sorted.length,
+    lastSnapshot: sorted[sorted.length - 1] ?? null,
+  };
+}
+
+/**
  * Read the derived document, rebuilding it only when the version moved or the
  * ledger changed. Every screen calls this instead of scanning.
+ *
+ * The staleness check used to compare `transactionCount` and nothing else,
+ * while `ledgerHash` was computed, stored, and never looked at — so a sync
+ * that added a position snapshot without adding a transaction left the equity
+ * curve frozen, which is every sync on an account that is not trading. The
+ * hash covers both ends of the ledger and the snapshot dates, and it is the
+ * comparison now.
  */
 export async function getDerived(userId: string): Promise<DerivedDoc | null> {
-  const { derived, transactions } = await getCollections();
+  const { derived } = await getCollections();
 
   const existing = await derived.findOne({ userId });
   if (existing && existing.version === DERIVED_VERSION) {
-    // Cheap staleness probe: count plus newest row, no full scan.
-    const [count, newest] = await Promise.all([
-      transactions.countDocuments({ userId }),
-      transactions.find({ userId }).sort({ date: -1 }).limit(1).next(),
-    ]);
-    if (count === existing.transactionCount && count > 0 && newest) {
+    const probe = await probeLedger(userId);
+    if (probe.count > 0 && existing.ledgerHash === hashLedger(probe)) {
       return existing;
     }
   }

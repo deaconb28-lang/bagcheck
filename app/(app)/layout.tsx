@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth, getUserId, isAuthConfigured } from "@/auth";
 import { appLocked } from "@/lib/launch";
-import { isDbConfigured, loadShellConnection } from "@/lib/db";
 import { AppRail, MobileTabs, type ShellUser } from "@/components/app/AppRail";
 import styles from "./app.module.css";
 
@@ -26,8 +25,7 @@ async function shellUser(): Promise<ShellUser | null> {
     }
   }
 
-  const connection = isDbConfigured() ? await loadShellConnection(userId) : null;
-  return { name, initials: initialsOf(name), institution: connection?.institution ?? null };
+  return { name, initials: initialsOf(name) };
 }
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {

@@ -1,0 +1,91 @@
+/*
+ * The waiting state. Plates where plates go, at the ground's own weight —
+ * a skeleton that is louder than the screen it stands in for makes the arrival
+ * feel like a correction.
+ *
+ * `--inset` is the chip fill, which is exactly one step off the panel: enough
+ * to read as a surface, not enough to read as content.
+ */
+.wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 30px var(--pad-page, 56px) 26px;
+  border-bottom: 1px solid var(--edge);
+}
+
+.bar {
+  display: block;
+  border-radius: 999px;
+  background: var(--inset);
+}
+
+.title {
+  width: min(280px, 46%);
+  height: 26px;
+}
+
+.meta {
+  width: min(420px, 68%);
+  height: 11px;
+}
+
+.plate {
+  height: 240px;
+  border-radius: 32px;
+  border: 1px solid var(--edge);
+  background: var(--s1);
+  box-shadow: var(--lift);
+}
+
+.tall {
+  height: 420px;
+  border-radius: 40px;
+  box-shadow: var(--lift-hero);
+}
+
+/*
+ * One slow breath across the whole set, not a shimmer sweeping each plate.
+ * A travelling highlight is an ambient loop on a surface, which this system
+ * does not do — and at three plates it reads as three separate things
+ * loading rather than one screen.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .wrap {
+    animation: settle 1.4s ease-in-out infinite alternate;
+  }
+
+  @keyframes settle {
+    from {
+      opacity: 0.62;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+@media (max-width: 780px) {
+  .plate {
+    height: 200px;
+  }
+
+  .tall {
+    height: 320px;
+  }
+}

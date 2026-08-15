@@ -258,3 +258,45 @@
     font-size: 13px;
   }
 }
+
+/*
+ * The score keeps its ring and loses its word.
+ *
+ * At 390 the cluster is the score pill, the sync pill and the one commerce
+ * action, and together they ran three pixels past the viewport — which the
+ * page then scrolls sideways to accommodate, on the screen whose header is
+ * supposed to be the fixed thing. The ringed figure is the score with or
+ * without "Health" beside it, and the label is the only part of the lockup
+ * that is not the measurement.
+ */
+@media (max-width: 560px) {
+  .scoreLabel {
+    display: none;
+  }
+
+  .scorePill {
+    padding-right: 5px;
+  }
+
+  /*
+   * And the cluster drops to its own row.
+   *
+   * Squeezed beside three pills, the title's column was about 150px wide, so
+   * the machine line clamped to "2026-08-15 · 400 scored…" — a fact cut in
+   * half, which is precisely what the two-line clamp above exists to prevent.
+   * The clamp was doing its job; the column was too narrow for it to matter.
+   * Full width for the sentence, then the pills underneath.
+   */
+  .head {
+    flex-wrap: wrap;
+    row-gap: 12px;
+  }
+
+  .text {
+    flex: 1 1 100%;
+  }
+
+  .spacer {
+    display: none;
+  }
+}

@@ -1,5 +1,5 @@
 import styles from "./ZeroBarChart.module.css";
-import type { WaveDay } from "./WaveChart";
+import type { WaveDay } from "./types";
 
 /**
  * Realised P&L, as columns off a zero line.

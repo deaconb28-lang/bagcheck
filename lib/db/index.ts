@@ -2,8 +2,6 @@ export { dbName, getMongoClient, isDbConfigured } from "./client";
 export { ensureIndexes, getCollections, getDb } from "./collections";
 export { cardBySlug, cardsFor, mintCard } from "./cards";
 export { factsFrom, getDailyInsight } from "./insights";
-export { getPulse, isValidAnswer, questionFor, savePulse } from "./pulse";
-export type { PulseQuestion } from "./pulse";
 export { holdingsFrom, linkedBrokerage, loadActivity, loadAppData, loadShellConnection } from "./queries";
 export type { ActivityPage, ActivityRow, AppData, HoldingRow } from "./queries";
 export { BACKFILL_DAYS, backfillScores, backfillSpan, scoreUser } from "./scoring";
@@ -37,5 +35,7 @@ export {
   exportAccount,
 } from "./account";
 export type { AccountExport, DeletionResult, Footprint } from "./account";
+export { logoFor } from "./logos";
+export type { ResolvedLogo } from "./logos";
 export { connectedCount, cronState, nextBatch, saveCursor, sweep } from "./cron";
 export type { CronState, SweepOptions, SweepResult } from "./cron";

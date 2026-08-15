@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ScreenHeader } from "@/components/app/ScreenHeader";
 import { ShareButton } from "@/components/app/ShareButton";
 import { TagPrompt } from "@/components/app/TagPrompt";
-import { ZeroBarChart } from "@/components/idioms";
+import { ScoreRing, ZeroBarChart } from "@/components/idioms";
 import type { WaveDay } from "@/components/idioms";
 import type { Tier } from "@/lib/tiers";
 import type { UntaggedEntry } from "@/lib/tags";
@@ -64,7 +64,10 @@ function greeting(): string {
  * the next. The analysis moved to `/you`, which is where a reader goes to be
  * told about themselves rather than told how today went.
  *
- * The deck leads, because Wrapped is what this product is for.
+ * The money leads. A dashboard's first answer is how the account is doing,
+ * and a reader who opens this screen is asking that before they are asking
+ * anything else — the deck is the artefact, and an artefact is what you go to
+ * once you know where you stand.
  */
 export function HomeView(props: HomeViewProps) {
   const {
@@ -97,14 +100,9 @@ export function HomeView(props: HomeViewProps) {
 
       <div className={screen.body}>
         <div className={`${screen.grid} ${styles.wide}`}>
-          {/* ── 1 · The year ── */}
-          {wrapped ? (
-            <YearBlock year={wrapped.year} cards={wrapped.cards} photos={wrapped.photos} />
-          ) : null}
-
-          {/* ── 2 · The money ── */}
+          {/* ── 1 · The money ── */}
           {wave.length > 1 ? (
-            <section data-reveal className={styles.block}>
+            <section id="money" data-reveal className={styles.block}>
               <span className={styles.eyebrow}>Realised P&amp;L</span>
               <div className={styles.headRow}>
                 <h2
@@ -126,10 +124,25 @@ export function HomeView(props: HomeViewProps) {
             </section>
           ) : null}
 
+          {/* ── 2 · The year ── */}
+          {wrapped ? (
+            <YearBlock year={wrapped.year} cards={wrapped.cards} photos={wrapped.photos} />
+          ) : null}
+
           {/* ── 3 · The read ── */}
-          <section data-reveal className={styles.block} style={{ animationDelay: "0.04s" }}>
+          <section id="read" data-reveal className={styles.block} style={{ animationDelay: "0.04s" }}>
             <span className={styles.eyebrow}>Health today</span>
-            <div className={styles.headRow}>
+            <div className={styles.headRow} data-dial>
+              {/*
+                * The dial, drawn bare. The figure is set at 62px an inch
+                * away, so a ring printing it again would be the same
+                * measurement twice — the arc alone says how far along the
+                * number is. It is the one place in the app that gets a halo,
+                * because it is the one number that is live.
+                */}
+              <span className={styles.dial}>
+                <ScoreRing score={score} size={92} bare />
+              </span>
               <h2 className={`num ${styles.h2}`}>{score}</h2>
               {delta != null && delta !== 0 ? (
                 <span className={styles.delta}>

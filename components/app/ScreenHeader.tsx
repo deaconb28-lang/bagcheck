@@ -76,9 +76,9 @@ export function ScreenHeader({
       {/* The engine's read, denominated in dollars — why the app pays rent. */}
       {leak && leak.count > 0 ? (
         <Link
-          href="/patterns"
+          href="/you"
           className={styles.leakPill}
-          title="Patterns the engine has on file — open Patterns"
+          title="Patterns the engine has on file — open You"
         >
           <span className={styles.leakNum}>{leak.count}</span>
           <span className={styles.ageLabel}>
@@ -95,7 +95,7 @@ export function ScreenHeader({
         * the same reserved voice as the insight and the nightly score.
         */}
       {age != null ? (
-        <Link href="/dna" className={styles.agePill} title="Investor Age — how old your conduct reads. Open DNA.">
+        <Link href="/you" className={styles.agePill} title="Investor Age — how old your conduct reads. Open You.">
           <span className={styles.ageNum}>{age}</span>
           <span className={styles.ageLabel}>Investor age</span>
         </Link>

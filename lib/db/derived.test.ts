@@ -4,6 +4,7 @@ import {
   dailyPnlFrom,
   equityFrom,
   holdTimeFrom,
+  hashLedger,
   ledgerHash,
   reconcile,
 } from "./derived";
@@ -131,4 +132,48 @@ test("the hash moves when the ledger does and holds when it does not", () => {
   assert.equal(base, ledgerHash(rows, ["2026-08-01"]), "same ledger, same hash");
   assert.notEqual(base, ledgerHash([...rows, txn({ date: "2026-08-02" })], ["2026-08-01"]));
   assert.notEqual(base, ledgerHash(rows, ["2026-08-01", "2026-08-02"]));
+});
+
+/*
+ * The staleness check compared `transactionCount` and nothing else, which is
+ * exactly the case this asserts against: a sync that reads a new position
+ * snapshot without reading a new transaction — every sync on an account that
+ * is holding rather than trading — moved the equity curve and nothing noticed.
+ */
+test("a new snapshot alone moves the hash", () => {
+  const rows = [txn({ date: "2026-01-01" }), txn({ date: "2026-08-01" })];
+  assert.notEqual(
+    ledgerHash(rows, ["2026-08-01"]),
+    ledgerHash(rows, ["2026-08-01", "2026-08-14"]),
+  );
+});
+
+/*
+ * The probe reads the two ends off the database rather than the whole ledger.
+ * If it disagreed with the in-memory version for the same ledger, every page
+ * view would rebuild — so the two have to be the same function.
+ */
+test("the probe and the loaded ledger agree", () => {
+  const rows = [
+    txn({ date: "2026-01-01", symbol: "NVDA", amount: -100 }),
+    txn({ date: "2026-04-01", symbol: "AAPL", amount: 40 }),
+    txn({ date: "2026-08-01", symbol: "MSFT", amount: 250 }),
+  ];
+  const dates = ["2026-07-30", "2026-08-01"];
+  assert.equal(
+    ledgerHash(rows, dates),
+    hashLedger({
+      count: rows.length,
+      oldest: rows[0],
+      newest: rows[rows.length - 1],
+      snapshotDates: dates.length,
+      lastSnapshot: "2026-08-01",
+    }),
+  );
+});
+
+/* The probe runs before the rebuild, so it meets an empty ledger first. */
+test("an empty ledger hashes without throwing", () => {
+  assert.equal(typeof ledgerHash([], []), "string");
+  assert.equal(ledgerHash([], []).length, 16);
 });

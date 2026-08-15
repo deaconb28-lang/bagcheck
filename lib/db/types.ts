@@ -1,3 +1,4 @@
+import type { Binary } from "mongodb";
 import type { AccountUniversalActivity, Position } from "snaptrade-typescript-sdk";
 import type { Contributor, RoundTrip, ScoreComponents, StyleBaseline } from "@/lib/score";
 import type { SyncPhase, SyncStatus } from "@/lib/snaptrade/progress";
@@ -207,6 +208,31 @@ export interface IconDoc {
   /** The CC-BY credit line, rendered on /legal/icons. */
   credit: string;
   nounId: string | null;
+}
+
+/**
+ * A company's mark, fetched once and kept.
+ *
+ * The bytes are stored, unlike the photographs — Unsplash's terms require
+ * hotlinking, logo providers' do not, and a ticker's mark has to be on the
+ * first paint of a holdings table rather than three round trips into it.
+ * Keyed by `{symbol, size}` because the sources render per size, so a 256px
+ * card mark and a 32px row mark are two different images.
+ *
+ * A miss is stored too, with `bytes: null`. Without that, one holding nobody
+ * has a logo for would call three third parties on every page view. Misses
+ * expire (`MISS_TTL_MS`); hits never do.
+ */
+export interface LogoDoc {
+  /** Normalised ticker — uppercase, `normalizeSymbol` already applied. */
+  symbol: string;
+  size: number;
+  bytes: Binary | null;
+  /** The response's own content type, echoed back by the proxy. */
+  type: string | null;
+  /** Which link in the chain answered. Null on a miss. */
+  source: string | null;
+  fetchedAt: Date;
 }
 
 /**

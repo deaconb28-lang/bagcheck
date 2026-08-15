@@ -2,7 +2,8 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { FORMAT_SIZE, type ShareFormat } from "@/lib/cards/share";
-import { fetchLogoPng, monogram, normalizeSymbol, TILE, toneIndex } from "@/lib/logos";
+import { logoFor } from "@/lib/db";
+import { monogram, normalizeSymbol, TILE, toneIndex } from "@/lib/logos";
 
 export const runtime = "nodejs";
 
@@ -73,9 +74,9 @@ async function logoTile(symbol: string | null | undefined, size: number) {
   const ticker = normalizeSymbol(symbol);
   if (!ticker) return null;
 
-  const png = await fetchLogoPng(ticker, 128);
-  if (png) {
-    const src = `data:image/png;base64,${Buffer.from(png).toString("base64")}`;
+  const logo = await logoFor(ticker, 128);
+  if (logo) {
+    const src = `data:${logo.type};base64,${logo.bytes.toString("base64")}`;
     return (
       <img
         src={src}

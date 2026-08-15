@@ -2,6 +2,12 @@
  * The rail is a fill and a hairline, nothing else. No border on the buttons,
  * no resting shadow — a surface is a fill, and the active state is the only
  * thing carrying colour.
+ *
+ * It was 76px and icon-only, which meant three destinations identified by
+ * three drawn glyphs and a `title` attribute nobody hovers for. With three
+ * routes there is no crowding argument for hiding their names: the rail is
+ * wide enough to say them, and a navigation whose labels are visible is one
+ * fewer thing to learn.
  */
 .rail {
   position: sticky;
@@ -9,39 +15,47 @@
   z-index: 20;
   height: 100vh;
   height: 100svh;
-  width: 76px;
+  width: var(--rail-w);
   flex: none;
   background: var(--sunken);
   border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 24px 0 20px;
+  align-items: stretch;
+  gap: 4px;
+  padding: 24px 12px 20px;
 }
 
 .mark {
-  width: 36px;
-  height: 36px;
-  border-radius: 13px;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
   background: var(--ink-fill);
   border: 1px solid var(--ink-line);
   color: var(--ink);
   display: grid;
   place-items: center;
-  margin-bottom: 14px;
+  margin: 0 0 24px 4px;
   flex: none;
 }
 
 .item {
-  width: 46px;
-  height: 46px;
-  border-radius: 16px;
-  display: grid;
-  place-items: center;
+  min-height: 46px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
   color: var(--ink3);
   flex: none;
+  font-size: 14.5px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
   transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.item svg {
+  flex: none;
 }
 
 .item:hover {
@@ -49,16 +63,39 @@
   transform: translateY(-1px);
 }
 
-/* Moss here is not decoration: the rail marks where you are in a product
-   whose whole subject is discipline, and the active route is that signal. */
+/*
+ * The active tab is `--ink-fill`, not a hue. Navigation furniture is the
+ * clearest case of chrome there is, and hue in this product means something.
+ */
 .item[data-active] {
   background: var(--ink-fill);
   border: 1px solid var(--ink-line);
   color: var(--ink);
+  font-weight: 600;
+}
+
+/* The label rides the item; screen readers already have it from the text. */
+.label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .spacer {
   flex: 1;
+}
+
+/*
+ * The foot is a row rather than a stack: with 220px to work in, the mode
+ * switch and the avatar sitting side by side reads as one cluster of account
+ * furniture instead of two more items in the navigation list.
+ */
+.foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 4px;
 }
 
 .avatar {
@@ -76,6 +113,25 @@
   letter-spacing: -0.008em;
   flex: none;
   transition: transform 0.18s ease;
+}
+
+/*
+ * The name, and only the name.
+ *
+ * It carried the linked institution underneath, which at this width ellipsed
+ * to "INTERACTIV…" — a truncated word reads as a layout failure, and the
+ * institution is already stated in full on /you where it belongs. Dropping it
+ * also took a Mongo round trip off the render path of every app screen.
+ */
+.who {
+  min-width: 0;
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .avatar:hover {

@@ -1,4 +1,7 @@
-// Company marks for tickers. logo.ts is pure; fetch.ts is the only caller of
-// logo.dev, and the token never reaches the client.
+// Company marks for tickers. logo.ts and sources.ts are pure; fetch.ts is the
+// only caller of the network, and the token never reaches the client.
 export { logoSrc, monogram, normalizeSymbol, toneIndex } from "./logo";
-export { fetchLogoPng, isLogosConfigured, monogramSvg, TILE } from "./fetch";
+export { fetchLogo, fetchLogoPng, logoToken, monogramSvg, TILE } from "./fetch";
+export type { FetchedLogo } from "./fetch";
+export { MIN_LOGO_BYTES, MISS_TTL_MS, isLogoResponse, logoSources, missIsStale } from "./sources";
+export type { LogoSource } from "./sources";

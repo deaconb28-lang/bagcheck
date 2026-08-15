@@ -113,6 +113,17 @@
   margin-top: 40px;
 }
 
+/*
+ * The consistency ramp is already stated twice in tokens.css — once for each
+ * mode — because a violet legible on white is not the violet that reads on
+ * black. Nothing is redeclared here; the grid just needs its own top margin
+ * and permission to run past the block rather than stretch to it.
+ */
+.heat {
+  width: 100%;
+  margin-top: 40px;
+}
+
 .prov {
   margin: 22px 0 0;
   font-family: var(--font-mono), monospace;

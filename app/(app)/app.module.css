@@ -9,7 +9,7 @@
 .shell {
   min-height: 100svh;
   display: grid;
-  grid-template-columns: 76px minmax(0, 1fr);
+  grid-template-columns: var(--rail-w) minmax(0, 1fr);
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-voice), var(--font-body), system-ui, sans-serif;

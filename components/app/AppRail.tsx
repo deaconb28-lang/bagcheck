@@ -9,7 +9,6 @@ import styles from "./AppRail.module.css";
 export type ShellUser = {
   name: string;
   initials: string;
-  institution: string | null;
 };
 
 function useIsActive() {
@@ -18,8 +17,12 @@ function useIsActive() {
 }
 
 /**
- * 76px icon rail. Native `title` tooltips are enough — a tooltip system is a
- * lot of machinery for seven words that the browser already renders.
+ * The rail. Three routes, each with its glyph and its name.
+ *
+ * It was 76px and icon-only, with a native `title` doing the explaining —
+ * which is a tooltip nobody hovers for, on a product where the three
+ * destinations are not self-evident from a drawn mark. Three items is far too
+ * few to need the space back, so they say what they are.
  */
 export function AppRail({ user }: { user: ShellUser | null }) {
   const isActive = useIsActive();
@@ -34,27 +37,28 @@ export function AppRail({ user }: { user: ShellUser | null }) {
         <Link
           key={href}
           href={href}
-          title={label}
           className={styles.item}
           data-active={isActive(href) || undefined}
           aria-current={isActive(href) ? "page" : undefined}
         >
           <Glyph />
-          <span className={styles.sr}>{label}</span>
+          <span className={styles.label}>{label}</span>
         </Link>
       ))}
 
       <div className={styles.spacer} />
 
-      <ModeSwitch />
-
-      <Link
-        href="/profile"
-        title={user ? `${user.name} — settings` : "Settings"}
-        className={styles.avatar}
-      >
-        {user?.initials ?? "—"}
-      </Link>
+      <div className={styles.foot}>
+        <Link
+          href="/profile"
+          title={user ? `${user.name} — settings` : "Settings"}
+          className={styles.avatar}
+        >
+          {user?.initials ?? "—"}
+        </Link>
+        {user ? <span className={styles.who}>{user.name}</span> : <span className={styles.spacer} />}
+        <ModeSwitch />
+      </div>
     </nav>
   );
 }

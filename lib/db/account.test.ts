@@ -31,6 +31,7 @@ const NOT_PERSONAL: Record<string, string> = {
   waitlist: "keyed by email, before an account exists",
   marketCache: "keyed by request, shared across users — the rate limit is per key",
   icons: "third-party artwork, shared, no userId",
+  logos: "company marks, keyed by ticker and shared — AAPL is not personal data",
   photos: "third-party photographs, shared, no userId",
 };
 

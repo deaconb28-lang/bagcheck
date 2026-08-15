@@ -34,6 +34,14 @@
   color-scheme: light;
 
   /* ── Field ── */
+  /*
+   * The app rail's width. The shell grid, the rail and the Home deck's
+   * full-bleed inset all read it — they used to hardcode 76px in three
+   * places, and the deck's inset being wrong by the rail's width is exactly
+   * what made the dashboard scroll sideways once already.
+   */
+  --rail-w: 220px;
+
   --bg: #f4f4f6;
   --s1: #ffffff;
   --sunken: #ffffff;

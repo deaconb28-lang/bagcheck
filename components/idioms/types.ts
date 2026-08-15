@@ -20,3 +20,16 @@ export const DAY_FILL: Record<DayState, string> = {
   exposed: "var(--signal)",
   empty: "var(--track)",
 };
+
+/**
+ * One session's realised P&L.
+ *
+ * It lived in `WaveChart.tsx`, which `ZeroBarChart` replaced — a mirrored
+ * wave reads as a shape, and this chart is money, so the columns hang off a
+ * zero line instead. The type outlived the component that named it.
+ */
+export type WaveDay = {
+  date: string;
+  /** Signed P&L for the session. */
+  amount: number;
+};
