@@ -31,7 +31,7 @@ export default async function DnaPage() {
               ? "Set MONGODB_URI on this deployment to store synced history and scores."
               : "Holdings, hold pattern and equity curve, read from your own brokerage history."
           }
-          actions={[{ label: "Open the ledger view", href: "/debug", ghost: true }]}
+          actions={[{ label: "Connect a brokerage", href: "/start", ghost: true }]}
         >
           {userId ? null : <SignInCta />}
         </EmptyState>
@@ -53,7 +53,7 @@ export default async function DnaPage() {
               ? "Run a sync to pull your current positions from the brokerage."
               : "One tap via SnapTrade, read-only. Positions and history arrive together."
           }
-          actions={[{ label: "Open the ledger view", href: "/debug" }]}
+          actions={[{ label: "Connect a brokerage", href: "/start" }]}
         />
       </PageGrid>
     );

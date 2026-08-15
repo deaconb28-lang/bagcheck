@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { auth, isAuthConfigured, isDevIdentity, signIn, signOut } from "@/auth";
-import { appLocked } from "@/lib/launch";
+import { debugEnabled } from "@/lib/launch";
 import { getCollections, isDbConfigured } from "@/lib/db";
 import type {
   ConnectionDoc,
@@ -73,7 +73,14 @@ async function signOutAction() {
 }
 
 export default async function DebugPage() {
-  if (appLocked()) redirect("/");
+  /*
+   * Its own flag, not the launch flag. Gating this on `appLocked()` meant the
+   * act of opening the product to the public also opened a page naming
+   * fourteen secrets, printing the raw ledger, and carrying live Sync and
+   * Score buttons — the two gates have opposite senses. `notFound()` rather
+   * than a redirect, so an unset deployment does not even admit it exists.
+   */
+  if (!debugEnabled()) notFound();
 
   let userId: string | null = null;
   let userEmail: string | null = null;

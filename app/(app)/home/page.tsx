@@ -85,7 +85,7 @@ export default async function HomePage({
           icon="setup"
           title="Configure the ledger store"
           body="Set MONGODB_URI on this deployment to store synced history and scores."
-          actions={[{ label: "Open the ledger view", href: "/debug" }]}
+          actions={[{ label: "Connect a brokerage", href: "/start" }]}
         />
       </PageGrid>
     );

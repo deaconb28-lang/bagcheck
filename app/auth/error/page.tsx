@@ -65,9 +65,6 @@ export default async function AuthErrorPage({
 
       <div className={styles.actions}>
         <Button href="/">Back to the landing page</Button>
-        <Button href="/debug" ghost>
-          Environment checklist
-        </Button>
       </div>
 
       {error ? <p className={styles.digest}>Error code: {error}</p> : null}

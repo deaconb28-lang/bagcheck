@@ -9,3 +9,19 @@
 export function appLocked(): boolean {
   return process.env.APP_UNLOCKED !== "1";
 }
+
+/**
+ * The diagnostics gate, which is deliberately *not* the launch gate.
+ *
+ * `/debug` used to be gated on `appLocked()`, which meant the single act of
+ * opening the product to the public — setting `APP_UNLOCKED=1` — also exposed
+ * a page that names fourteen secrets, prints the raw ledger, and carries live
+ * Sync and Score buttons. The two have opposite senses: the app opens at
+ * launch, diagnostics close.
+ *
+ * So it has its own flag and it is off unless explicitly set. There is no
+ * combination of launch settings that opens it by accident.
+ */
+export function debugEnabled(): boolean {
+  return process.env.DEBUG_PAGE === "1";
+}

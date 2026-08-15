@@ -56,7 +56,7 @@ export default async function InsightsPage() {
           icon={data.connection ? "waiting" : "connect"}
           title={data.connection ? "No score yet" : "Connect a brokerage"}
           body="The nightly insight is written from your scored days. It starts once the first one exists."
-          actions={[{ label: "Open the ledger view", href: "/debug" }]}
+          actions={[{ label: "Connect a brokerage", href: "/start" }]}
         />
       </PageGrid>
     );

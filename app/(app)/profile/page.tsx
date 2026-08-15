@@ -106,9 +106,6 @@ export default async function ProfilePage() {
           </p>
           <p className={styles.railBody}>{transactionCount} transactions on file.</p>
           <div className={styles.railActions}>
-            <Button href="/debug" ghost>
-              Raw ledger
-            </Button>
             {isAuthConfigured() && !isDevIdentity() ? (
               <form action={signOutAction}>
                 <Button ghost type="submit">
