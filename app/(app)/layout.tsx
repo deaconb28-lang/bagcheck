@@ -39,11 +39,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className={styles.shell} data-surface>
-      {/* The product's face, loaded for the group that reads it. */}
-      <link
-        href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap"
-        rel="stylesheet"
-      />
       {/*
         The field — the same ridge the landing page runs, drawn in CSS rather
         than loaded as an image. It renders at any size, costs nothing, has no

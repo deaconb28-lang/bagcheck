@@ -21,23 +21,31 @@ const MOSS = "#4FB287";
 const SIGNAL = "#7BA6C4";
 
 /**
- * Outfit, fetched once per lambda. A font failure must never take the card
- * down — Satori falls back to its built-in face and the card still renders,
- * so this returns undefined rather than throwing.
+ * Outfit, read off disk once per lambda.
+ *
+ * Two things were wrong with fetching it from Google per cold start. It put a
+ * third party in the path of every card render — on artefacts whose whole
+ * claim is that the numbers came off a brokerage. And **Satori cannot parse
+ * woff2**: it takes TTF, OTF or WOFF, so the woff2 that fetch returned was
+ * never usable and every card has been quietly setting its type in Satori's
+ * built-in fallback rather than in Outfit. The vendored file is a TTF, so the
+ * cards get the face they were designed with.
+ *
+ * The fallback stays, because a font failure must never take a card down. It
+ * should now never fire.
  */
 let fontCache: ArrayBuffer | null | undefined;
 async function displayFont(): Promise<ArrayBuffer | null> {
   if (fontCache !== undefined) return fontCache;
   try {
-    const css = await fetch(
-      "https://fonts.googleapis.com/css2?family=Outfit:wght@800&display=swap",
-      { headers: { "User-Agent": "Mozilla/5.0" } },
-    ).then((r) => r.text());
-    const url = css.match(/src:\s*url\(([^)]+)\)/)?.[1];
-    if (!url) throw new Error("no font url in css");
-    fontCache = await fetch(url).then((r) => r.arrayBuffer());
+    const file = join(process.cwd(), "public", "fonts", "outfit-800.ttf");
+    const bytes = await readFile(file);
+    fontCache = bytes.buffer.slice(
+      bytes.byteOffset,
+      bytes.byteOffset + bytes.byteLength,
+    ) as ArrayBuffer;
   } catch (err) {
-    console.error("[og] font fetch failed, falling back", err);
+    console.error("[og] font read failed, falling back", err);
     fontCache = null;
   }
   return fontCache ?? null;

@@ -14,7 +14,8 @@
     "avatars:manifest": "node --import tsx scripts/avatar-manifest.mjs",
     "avatars:sheet": "node --import tsx scripts/avatar-sheet.mjs",
     "backdrops": "node --import tsx scripts/generate-backdrops.mjs",
-    "photos": "node --import tsx scripts/fetch-photos.mjs"
+    "photos": "node --import tsx scripts/fetch-photos.mjs",
+    "fonts": "node scripts/vendor-fonts.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",

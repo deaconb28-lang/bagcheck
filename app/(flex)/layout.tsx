@@ -20,13 +20,6 @@ export const metadata: Metadata = {
 
 export default function FlexLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className={styles.shell}>
-      {/* The marketing face, loaded for the one group that speaks it. */}
-      <link
-        href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap"
-        rel="stylesheet"
-      />
-      {children}
-    </div>
+    <div className={styles.shell}>{children}</div>
   );
 }

@@ -9,13 +9,6 @@ export default function MarketingLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <link rel="preconnect" href="https://api.fontshare.com" />
-      <link
-        href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap"
-        rel="stylesheet"
-      />
-      {children}
-    </>
+    <>{children}</>
   );
 }

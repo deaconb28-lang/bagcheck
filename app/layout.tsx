@@ -1,19 +1,40 @@
 import type { Metadata, Viewport } from "next";
-import { Anton, JetBrains_Mono, Playfair_Display, Public_Sans, Space_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, siteOrigin } from "@/lib/site";
 import "../styles/tokens.css";
 import "./globals.css";
 
 /*
- * Display — figures, headings, hero numbers. A geometric grotesque with
- * enough personality to carry a 96px score and enough restraint to sit in a
- * header. This is the voice of the instrument; the serif that used to hold
- * this job read as a financial newspaper, which is the opposite of a product
- * people screenshot.
+ * ── Every face, served by us ──
+ *
+ * These were five `next/font/google` declarations, which download their woff2
+ * files from `fonts.gstatic.com` **during the build**. That made every build a
+ * coin flip on a third party answering, and it came up tails on CI run
+ * 31859584940: "Failed to fetch `Playfair Display` from Google Fonts. > Build
+ * failed because of webpack errors." The two runs either side of it passed.
+ *
+ * `.env.example` is the contract and CI compiles with no secrets at all,
+ * precisely so nothing external can break a build. A build that needs Google
+ * to answer is the same fault in different clothes, so the files live in
+ * `public/fonts` and `npm run fonts` is what refreshes them.
+ *
+ * Only the latin and latin-ext cuts are vendored — the whole set is 450kB.
+ *
+ * Every path below is written out in full because `next/font/local` parses
+ * this call statically and rejects anything it cannot read as a literal — a
+ * shared `FONT_DIR` constant fails the build with "Font loader values must be
+ * explicitly written literals."
  */
-const display = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+
+/*
+ * Display — the tabular figures inside rows and tables, where a column has to
+ * line up. `.num` is its whole job.
+ */
+const display = localFont({
+  src: [
+    { path: "../public/fonts/space-grotesk-latin.woff2", weight: "300 700", style: "normal" },
+    { path: "../public/fonts/space-grotesk-latin-ext.woff2", weight: "300 700", style: "normal" },
+  ],
   variable: "--font-display",
   display: "swap",
 });
@@ -23,16 +44,21 @@ const display = Space_Grotesk({
  * editorial templates), one of four; in the app it is retired. Enforced by
  * scope: the variable is only read inside components/cards and app/c.
  */
-const serif = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["700", "800"],
+const serif = localFont({
+  src: [
+    { path: "../public/fonts/playfair-display-latin.woff2", weight: "400 900", style: "normal" },
+    { path: "../public/fonts/playfair-display-latin-ext.woff2", weight: "400 900", style: "normal" },
+  ],
   variable: "--font-serif",
   display: "swap",
 });
 
-// UI and body — every sentence, label, button, input.
-const body = Public_Sans({
-  subsets: ["latin"],
+/* The fallback under General Sans, and the face the share cards set ledes in. */
+const body = localFont({
+  src: [
+    { path: "../public/fonts/public-sans-latin.woff2", weight: "100 900", style: "normal" },
+    { path: "../public/fonts/public-sans-latin-ext.woff2", weight: "100 900", style: "normal" },
+  ],
   variable: "--font-body",
   display: "swap",
 });
@@ -40,9 +66,11 @@ const body = Public_Sans({
 // Labels, eyebrows, timestamps, counts, comparatives. Never body copy,
 // never headings. The moment a metric label renders in the body face the
 // system starts to smear.
-const mono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const mono = localFont({
+  src: [
+    { path: "../public/fonts/jetbrains-mono-latin.woff2", weight: "100 800", style: "normal" },
+    { path: "../public/fonts/jetbrains-mono-latin-ext.woff2", weight: "100 800", style: "normal" },
+  ],
   variable: "--font-mono",
   display: "swap",
 });
@@ -59,10 +87,34 @@ const mono = JetBrains_Mono({
  * Enforced by scope rather than by discipline — the variable is only read
  * inside components/cards and app/og.
  */
-const poster = Anton({
-  subsets: ["latin"],
-  weight: ["400"],
+const poster = localFont({
+  src: [
+    { path: "../public/fonts/anton-latin.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/anton-latin-ext.woff2", weight: "400", style: "normal" },
+  ],
   variable: "--font-poster",
+  display: "swap",
+});
+
+/*
+ * **General Sans — the product's voice, declared once.**
+ *
+ * It was a `<link rel="stylesheet">` to `api.fontshare.com`, duplicated in
+ * three group layouts. That put a third party in the critical render path of
+ * every page and handed it every reader's IP — while `/legal/privacy` says no
+ * trackers run here and names every other processor. One local declaration
+ * replaces all three, and the claim on that page becomes true.
+ *
+ * ITF Free Font Licence, which permits self-hosting; see public/fonts/LICENCES.
+ */
+const voice = localFont({
+  src: [
+    { path: "../public/fonts/general-sans-400.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/general-sans-500.woff2", weight: "500", style: "normal" },
+    { path: "../public/fonts/general-sans-600.woff2", weight: "600", style: "normal" },
+    { path: "../public/fonts/general-sans-700.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-voice",
   display: "swap",
 });
 
@@ -119,7 +171,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-mode="light"
-      className={`${display.variable} ${serif.variable} ${body.variable} ${mono.variable} ${poster.variable}`}
+      className={`${display.variable} ${serif.variable} ${body.variable} ${mono.variable} ${poster.variable} ${voice.variable}`}
     >
       <body>{children}</body>
     </html>

@@ -9,7 +9,7 @@
   flex-direction: column;
   background: var(--mk-field);
   color: var(--mk-bg);
-  font-family: "General Sans", "Public Sans", system-ui, sans-serif;
+  font-family: var(--font-voice), var(--font-body), system-ui, sans-serif;
   overflow-x: hidden;
 }
 
