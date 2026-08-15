@@ -2757,6 +2757,41 @@
   border-color: transparent;
 }
 
+/*
+ * A plan card ends in a link rather than a form. Same shape as the waitlist
+ * button so the three cards end on one line — only the fill differs, and it
+ * differs on the card that is actually being sold.
+ */
+.tierCta {
+  margin-top: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 56px;
+  border-radius: 999px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--mk-bg);
+  border: 1px solid color-mix(in srgb, var(--mk-bg) 25%, transparent);
+  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.tierCta:hover {
+  border-color: var(--mk-bg);
+}
+
+.tierCta[data-solid] {
+  background: var(--mk-bg);
+  color: var(--mk-violet-abyss);
+  border-color: transparent;
+}
+
+.tierCta[data-solid]:hover {
+  opacity: 0.88;
+}
+
 /* ── Footer ── */
 .foot {
   border-top: 1px solid color-mix(in srgb, var(--mk-bg) 9%, transparent);

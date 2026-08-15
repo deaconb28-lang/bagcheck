@@ -1,5 +1,5 @@
 import { getCollections } from "./collections";
-import { tierFromStatus, type Tier } from "@/lib/billing/tiers";
+import { normaliseTier, tierFromStatus, type Tier } from "@/lib/tiers";
 import { effectiveTier, trialState } from "@/lib/tiers";
 import type { TrialState } from "@/lib/tiers";
 import type { SubscriptionDoc } from "./types";
@@ -19,7 +19,7 @@ export async function tierFor(userId: string): Promise<Tier> {
     subscriptions.findOne({ userId }, { projection: { _id: 0, tier: 1, status: 1 } }),
     connections.findOne({ userId }, { projection: { _id: 0, createdAt: 1 } }),
   ]);
-  const paid = doc ? tierFromStatus(doc.tier, doc.status) : "free";
+  const paid = doc ? tierFromStatus(normaliseTier(doc.tier), doc.status) : "free";
   return effectiveTier(paid, trialState(connection?.createdAt ?? null, new Date()));
 }
 

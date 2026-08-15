@@ -5,12 +5,14 @@ import { getCollections, isDbConfigured, loadScreen, syncClock } from "@/lib/db"
 import { isMarketConfigured, refreshHoldings } from "@/lib/market";
 import { EquityCurve } from "@/components/idioms";
 import { Avatar, Logo } from "@/components/primitives";
+import { BadgeMint } from "@/components/app/BadgeMint";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { ScreenHeader } from "@/components/app/ScreenHeader";
 import { ShareButton } from "@/components/app/ShareButton";
 import { SignInCta } from "@/components/app/SignInCta";
 import { strongLine } from "@/lib/archetypes";
+import { TIER_PRICE, can } from "@/lib/tiers";
 import { archetypeOf, money, signedMoney, weekDelta } from "../derive";
 import screen from "../screen.module.css";
 import styles from "./you.module.css";
@@ -122,6 +124,14 @@ export default async function YouPage() {
       title: 1,
     })
     .toArray();
+
+  /*
+   * One capability stands for the plan here: the five move together, so a
+   * screen asking about five of them five times would be asking one question
+   * badly. The routes still check their own.
+   */
+  const pro = can({ tier: data.tier }, "publicationExport");
+  const newest = minted[0] ?? null;
 
   return (
     <>
@@ -330,6 +340,94 @@ export default async function YouPage() {
                 <path d="M12 5l7 7-7 7" />
               </svg>
             </Link>
+          </section>
+
+          {/*
+            * ── 6 · The formats ──
+            *
+            * The paid plan's whole surface, and until now it had none: the four
+            * capabilities were enforced in API routes that nothing in the app
+            * linked to, so Pro was a feature list with no button behind it.
+            *
+            * Locked rows state the format and nothing else. There is no
+            * fabricated preview here — a plausible figure under a blur is the
+            * one thing this product must not print.
+            */}
+          <section data-reveal className={styles.block} style={{ animationDelay: "0.12s" }}>
+            <span className={styles.eyebrow}>Formats</span>
+            <h2 className={styles.h2}>
+              {pro ? "Publish it anywhere" : "Formats for publishing"}
+            </h2>
+            <p className={styles.lede}>
+              {pro
+                ? "Every card you have minted, at press size, on any ground, in one archive or one URL."
+                : `Sharing a card is free and always will be. Pro adds the export formats — $${TIER_PRICE.pro.monthly} a month.`}
+            </p>
+
+            <div className={styles.formats}>
+              <div className={styles.format}>
+                <span className={styles.formatName}>Your year as a carousel</span>
+                <span className={styles.formatBody}>
+                  One ZIP, one feed-sized slide per card you earned.
+                </span>
+                {pro ? (
+                  <a className={styles.formatGo} href="/api/cards/carousel">
+                    Download the ZIP
+                  </a>
+                ) : (
+                  <span className={styles.formatLock}>Pro</span>
+                )}
+              </div>
+
+              <div className={styles.format}>
+                <span className={styles.formatName}>Publication export</span>
+                <span className={styles.formatBody}>
+                  {newest
+                    ? `Your latest card at 4×, or on a transparent ground.`
+                    : "Mint a card and it exports at 4×, or on a transparent ground."}
+                </span>
+                {pro && newest ? (
+                  <span className={styles.formatPair}>
+                    <a
+                      className={styles.formatGo}
+                      href={`/api/cards/export/${newest.slug}?format=feed&scale=4`}
+                    >
+                      4× PNG
+                    </a>
+                    <a
+                      className={styles.formatGo}
+                      href={`/api/cards/export/${newest.slug}?format=feed&scale=4&variant=transparent`}
+                    >
+                      Transparent
+                    </a>
+                  </span>
+                ) : pro ? (
+                  <span className={styles.formatLock} data-quiet="">
+                    No card yet
+                  </span>
+                ) : (
+                  <span className={styles.formatLock}>Pro</span>
+                )}
+              </div>
+
+              <div className={styles.format}>
+                <span className={styles.formatName}>Live badge</span>
+                <span className={styles.formatBody}>
+                  An SVG at its own URL that redraws as the score moves.
+                </span>
+                {pro ? <BadgeMint /> : <span className={styles.formatLock}>Pro</span>}
+              </div>
+            </div>
+
+            {pro ? null : (
+              <Link href="/pricing" className={styles.out}>
+                See what Pro adds
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h13" />
+                  <path d="M12 5l7 7-7 7" />
+                </svg>
+              </Link>
+            )}
           </section>
         </div>
       </div>

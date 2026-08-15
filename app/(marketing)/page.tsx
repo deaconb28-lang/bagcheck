@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { appLocked } from "@/lib/launch";
-import { isAuthConfigured } from "@/auth";
-import { GoogleSignIn } from "@/components/app/GoogleSignIn";
-import { BagMark } from "./BagMark";
+import { CAPABILITY_LABEL, FREE_ALWAYS, TIER_PRICE, TRIAL_DAYS } from "@/lib/tiers";
+import { MarketingFooter, MarketingNav } from "./Chrome";
 import { FirstWeek } from "./FirstWeek";
 import { PnlChart } from "./PnlChart";
 import { WaitlistForm } from "./WaitlistForm";
@@ -23,6 +21,15 @@ export const metadata: Metadata = {
  * measured ones.
  */
 const SOCIAL = { lovedBy: "320K", rating: "4.9", ahead: "4,281", investors: "12,408" };
+
+/*
+ * The nav reads the launch lock and whether sign-in is configured, and a
+ * statically prerendered page freezes both at build time — the same failure
+ * that made every redirect stub answer with the locked landing until it was
+ * marked dynamic. Flipping APP_UNLOCKED must take effect on the next request,
+ * not on the next build.
+ */
+export const dynamic = "force-dynamic";
 
 function Check({ tone }: { tone: "green" | "violet" | "white" }) {
   const stroke =
@@ -89,46 +96,11 @@ export default function LandingPage() {
   /*
    * Wrapped is open; the score is not. So the primary CTA hands off to the
    * connect flow and the waitlist keeps its own button for the second act —
-   * two doors, each labelled with what is actually behind it. While the app
-   * is locked there is no Login link, because there is nothing to log in to.
+   * two doors, each labelled with what is actually behind it.
    */
-  const locked = appLocked();
-
   return (
     <main className={styles.page}>
-      <header className={styles.nav}>
-        <Link href="/" className={styles.brand}>
-          <BagMark />
-          <span className={styles.wordmark}>bagcheck</span>
-        </Link>
-        <nav className={styles.navLinks} aria-label="Sections">
-          <a href="#deck">Wrapped</a>
-          <a href="#soon">The score</a>
-          <a href="#waitlist">Pricing</a>
-          {/*
-            * One click, not two. The link used to go to /home, which for a
-            * signed-out visitor is a screen whose entire content is another
-            * sign-in button — so the nav posts the sign-in itself and comes
-            * back at the dashboard.
-            */}
-          {!locked &&
-            (isAuthConfigured() ? (
-              <GoogleSignIn redirectTo="/home" className={styles.navSignIn}>
-                Log in
-              </GoogleSignIn>
-            ) : (
-              <Link href="/home">Login</Link>
-            ))}
-        </nav>
-        <div className={styles.navActions}>
-          <Link href="/start" className={styles.navCta}>
-            Get started free
-          </Link>
-          <a href="#waitlist" className={styles.navGhost}>
-            Join the waitlist
-          </a>
-        </div>
-      </header>
+      <MarketingNav />
 
       {/* ── Hero ── */}
       <section className={styles.hero}>
@@ -660,77 +632,87 @@ export default function LandingPage() {
       {/* ── The first week, day by day ── */}
       <FirstWeek investors={SOCIAL.investors} />
 
-      {/* ── The waitlist ── */}
+      {/*
+       * ── The plans ──
+       *
+       * This was three waitlist tiers with prices nobody could pay: $5 once
+       * "refunded if we miss our launch window", $9/mo "with early access",
+       * $18/mo "at launch". Checkout is live now and charges $9, so those
+       * three cards were selling a different product from the one behind the
+       * button. Two real plans and the score's waitlist, which is the only
+       * thing here that is genuinely still coming.
+       */}
       <section id="waitlist" className={styles.waitlist}>
         <div className={styles.waitGlow} aria-hidden="true" />
         <div className={styles.waitInner}>
           <div className={styles.waitHead}>
             <div>
-              <span className={styles.eyebrow}>THE WAITLIST</span>
-              <h2 className={styles.h2}>Get in early.</h2>
+              <span className={styles.eyebrow}>THE PLANS</span>
+              <h2 className={styles.h2}>Free to use. Nine dollars to publish.</h2>
             </div>
-            <p className={styles.waitCount}>{SOCIAL.ahead} investors ahead of you</p>
+            <p className={styles.waitCount}>Every card you earn is yours on either one</p>
           </div>
 
           <div className={styles.tiers}>
             <div className={styles.tier}>
-              <span className={styles.tierLabel}>WAITLIST</span>
+              <span className={styles.tierLabel}>FREE</span>
               <div className={styles.tierPrice}>
-                <b>Free</b>
+                <b>$0</b>
+                <span>forever</span>
               </div>
+              <p className={styles.tierNote} data-mute="">
+                No card to start
+              </p>
               <ul className={styles.tierList}>
-                {["Wrapped the day it ships", "Monthly score preview", "No card required"].map((f) => (
+                {FREE_ALWAYS.map((f) => (
                   <li key={f}>
                     <Check tone="green" />
                     <span>{f}</span>
                   </li>
                 ))}
               </ul>
-              <WaitlistForm tier="waitlist" cta="Join the waitlist" />
+              <Link href="/start" className={styles.tierCta}>
+                Get started free
+              </Link>
             </div>
 
             <div className={styles.tier} data-popular="">
               <span className={styles.popular}>
                 <i />
-                MOST POPULAR
+                {TRIAL_DAYS} DAYS FREE
               </span>
-              <span className={styles.tierLabel}>EARLY ACCESS</span>
+              <span className={styles.tierLabel}>PRO</span>
               <div className={styles.tierPrice}>
-                <b>$5</b>
-                <span>once</span>
+                <b>${TIER_PRICE.pro.monthly}</b>
+                <span>/mo</span>
               </div>
-              <p className={styles.tierNote}>Refunded if we miss our launch window</p>
+              <p className={styles.tierNote}>Everything free has, plus the formats</p>
               <ul className={styles.tierList}>
-                {[
-                  "Skip the line — first 1,000 accounts",
-                  "50% off Premium for 12 months",
-                  "Founding badge on every Wrapped",
-                  "Input on what we build next",
-                ].map((f) => (
+                {Object.values(CAPABILITY_LABEL).map((f) => (
                   <li key={f}>
                     <Check tone="white" />
                     <span>{f}</span>
                   </li>
                 ))}
               </ul>
-              <WaitlistForm tier="early" cta="Get early access" />
+              <Link href="/pricing" className={styles.tierCta} data-solid="">
+                What Pro adds
+              </Link>
             </div>
 
             <div className={styles.tier}>
-              <span className={styles.tierLabel}>PREMIUM</span>
+              <span className={styles.tierLabel}>THE SCORE</span>
               <div className={styles.tierPrice}>
-                <b>$9</b>
-                <span>/mo with early access</span>
+                <b>Soon</b>
               </div>
               <p className={styles.tierNote} data-mute="">
-                $18/mo at launch
+                Wrapped is live today; the score is the second act
               </p>
               <ul className={styles.tierList}>
                 {[
-                  "Daily score, strain and recovery",
-                  "Full P&L history and drawdowns",
-                  "Behaviour insights, weekly",
-                  "Unlimited Wrapped remixes",
+                  "A daily read on how you are handling the account",
+                  "Four components, each one measured",
+                  "An email the day it opens",
                 ].map((f) => (
                   <li key={f}>
                     <Check tone="violet" />
@@ -738,41 +720,13 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <WaitlistForm tier="premium" cta="Notify me at launch" />
+              <WaitlistForm tier="waitlist" cta="Join the waitlist" />
             </div>
           </div>
         </div>
       </section>
 
-      <footer className={styles.foot}>
-        <div className={styles.footInner}>
-          <span className={styles.brand} data-foot="">
-            <BagMark size={28} check="var(--mk-field)" />
-            <span className={styles.wordmark} data-small="">
-              bagcheck
-            </span>
-          </span>
-          <div className={styles.footLinks}>
-            <Link href="/legal/icons">Icon credits</Link>
-            <Link href="/legal/photos">Photo credits</Link>
-            {/*
-            * One click, not two. The link used to go to /home, which for a
-            * signed-out visitor is a screen whose entire content is another
-            * sign-in button — so the nav posts the sign-in itself and comes
-            * back at the dashboard.
-            */}
-          {!locked &&
-            (isAuthConfigured() ? (
-              <GoogleSignIn redirectTo="/home" className={styles.navSignIn}>
-                Log in
-              </GoogleSignIn>
-            ) : (
-              <Link href="/home">Login</Link>
-            ))}
-          </div>
-          <span className={styles.footNote}>© 2026 bagcheck</span>
-        </div>
-      </footer>
+      <MarketingFooter />
     </main>
   );
 }

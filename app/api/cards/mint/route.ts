@@ -94,13 +94,13 @@ export async function POST(req: Request) {
   }
 
   /*
-   * The correlation card is a Plus *format*: the finding is free on
+   * The correlation card is a Pro *format*: the finding is free on
    * Patterns, the mintable artefact is the paid category. Enforced here
    * because the client only ever names a kind.
    */
   if (spec.kind === "correlation" && !can({ tier }, "correlationCard")) {
     return NextResponse.json(
-      { error: "the correlation card is a Plus format" },
+      { error: "the correlation card is a Pro format" },
       { status: 403 },
     );
   }

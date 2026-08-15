@@ -141,7 +141,13 @@ export interface CardDoc {
 export interface SubscriptionDoc {
   userId: string;
   /** The tier the price maps to, before status is considered. */
-  tier: "free" | "plus" | "trader";
+  /*
+   * The stored plan name. The legacy values survive here on purpose: live
+   * Stripe subscriptions are attached to those price objects, and rewriting
+   * history to match a rename would be a migration with no upside. Reads go
+   * through `normaliseTier`.
+   */
+  tier: "free" | "plus" | "trader" | "pro";
   /** Stripe's subscription status verbatim. */
   status: string | null;
   stripeCustomerId: string;

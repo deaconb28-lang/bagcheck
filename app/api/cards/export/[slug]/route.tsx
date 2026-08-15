@@ -9,7 +9,7 @@ import { renderCard } from "@/app/og/[slug]/render";
 export const runtime = "nodejs";
 
 /**
- * Publication-grade export — the Plus format for people who write.
+ * Publication-grade export — the Pro format for people who write.
  *
  * The card itself is public by slug; what this route adds is the press
  * asset: the same composition at up to 4×, and a rounded variant with
@@ -29,7 +29,7 @@ export async function GET(
 
   const tier = await tierFor(userId);
   if (!can({ tier }, "publicationExport")) {
-    return NextResponse.json({ error: "publication exports are a Plus format" }, { status: 403 });
+    return NextResponse.json({ error: "publication exports are a Pro format" }, { status: 403 });
   }
 
   const url = new URL(req.url);
@@ -41,7 +41,7 @@ export async function GET(
   const scale = url.searchParams.get("scale") === "2" ? 2 : 4;
   const transparent = url.searchParams.get("variant") === "transparent";
   if (transparent && !can({ tier }, "transparentExport")) {
-    return NextResponse.json({ error: "transparent exports are a Plus format" }, { status: 403 });
+    return NextResponse.json({ error: "transparent exports are a Pro format" }, { status: 403 });
   }
 
   const { slug } = await params;

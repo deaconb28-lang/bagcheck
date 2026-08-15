@@ -12,7 +12,7 @@ export const runtime = "nodejs";
 export const maxDuration = 60;
 
 /**
- * The quarterly report as a carousel — the Plus format for people who write.
+ * The quarterly report as a carousel — the Pro format for people who write.
  *
  * One ZIP of feed-format PNGs, one slide per card the window earned, built
  * by the same assembly the Wrapped screen renders. Nothing is designed here:
@@ -26,7 +26,7 @@ export async function GET(req: Request) {
   }
   const tier = await tierFor(userId);
   if (!can({ tier }, "reportCarousel")) {
-    return NextResponse.json({ error: "the carousel is a Plus format" }, { status: 403 });
+    return NextResponse.json({ error: "the carousel is a Pro format" }, { status: 403 });
   }
 
   const w = new URL(req.url).searchParams.get("w") ?? undefined;

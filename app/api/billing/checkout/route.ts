@@ -4,6 +4,7 @@ import { isDbConfigured, subscriptionFor } from "@/lib/db";
 import { isStripeConfigured, isTier, priceFor, siteUrl, stripe } from "@/lib/billing";
 
 export const runtime = "nodejs";
+export const maxDuration = 30;
 
 /**
  * Start a Stripe Checkout session.

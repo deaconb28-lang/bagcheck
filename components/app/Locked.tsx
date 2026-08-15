@@ -47,7 +47,8 @@ export function Locked({ capability, eyebrow, readiness = null, children }: Lock
         ) : (
           <span className={styles.ready} />
         )}
-        <a className={styles.unlock} href="/profile#plan">
+        {/* The upgrade path from a lock is the pricing page, not a modal. */}
+        <a className={styles.unlock} href="/pricing">
           Unlock {TIER_LABEL[tier]}
         </a>
       </div>

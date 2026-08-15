@@ -110,9 +110,9 @@ export function ScreenHeader({
 
       <div className={styles.tier}>{TIER_LABEL[tier]}</div>
 
-      {tier !== "trader" ? (
-        <Link href="/profile#plan" className={styles.upgrade}>
-          {tier === "free" ? "Unlock Plus" : "Unlock Trader"}
+      {tier === "free" ? (
+        <Link href="/pricing" className={styles.upgrade}>
+          Go Pro
         </Link>
       ) : null}
     </header>

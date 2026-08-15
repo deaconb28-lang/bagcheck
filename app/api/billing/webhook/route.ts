@@ -4,6 +4,7 @@ import { saveSubscription, userIdForCustomer } from "@/lib/db";
 import { isStripeConfigured, stripe, tierForPrice } from "@/lib/billing";
 
 export const runtime = "nodejs";
+export const maxDuration = 30;
 // Signature verification runs over the exact bytes Stripe signed, so this
 // route must never be cached or statically analysed into one.
 export const dynamic = "force-dynamic";

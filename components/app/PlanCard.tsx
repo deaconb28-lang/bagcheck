@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button, Chip, Eyebrow } from "@/components/primitives";
-import { TIER_LABEL, type Tier } from "@/lib/billing/tiers";
+import { TIER_LABEL, TIER_PRICE, type Tier } from "@/lib/tiers";
 import styles from "./PlanCard.module.css";
 
 type Props = {
@@ -20,11 +21,6 @@ type Props = {
   /** True while the trial is what is granting access. */
   onTrial?: boolean;
 };
-
-const UPGRADES: Array<{ tier: Exclude<Tier, "free">; price: string; who: string }> = [
-  { tier: "plus", price: "$9/mo", who: "Depth for people who write" },
-  { tier: "trader", price: "$29/mo", who: "Cadence and proof" },
-];
 
 export function PlanCard({
   tier,
@@ -71,8 +67,8 @@ export function PlanCard({
       </div>
 
       <p className={styles.body}>
-        Every card your behaviour earns is yours to post on any tier, rare ones
-        included. Paid tiers add formats.
+        Every card your behaviour earns is yours to post on either plan, rare ones
+        included. Pro adds formats.
       </p>
 
       {trialLine ? <p className={styles.meta}>{trialLine}</p> : null}
@@ -87,14 +83,20 @@ export function PlanCard({
         <p className={styles.meta}>Billing is not configured on this deployment.</p>
       ) : (
         <div className={styles.actions}>
-          {UPGRADES.filter((u) => u.tier !== tier).map((u) => (
-            <div key={u.tier} className={styles.option}>
-              <Button ghost onClick={() => go("/api/billing/checkout", { tier: u.tier })}>
-                {busy ? "Opening…" : `${TIER_LABEL[u.tier]} — ${u.price}`}
+          {/*
+           * One paid plan, so one button. The two-tier version rendered a row
+           * per plan off a shared `busy` flag, which put "Opening…" on both.
+           */}
+          {tier === "free" ? (
+            <div className={styles.option}>
+              <Button ghost onClick={() => go("/api/billing/checkout", { tier: "pro" })}>
+                {busy ? "Opening…" : `Go Pro — $${TIER_PRICE.pro.monthly}/mo`}
               </Button>
-              <span className={styles.who}>{u.who}</span>
+              <Link className={styles.who} href="/pricing">
+                What Pro adds
+              </Link>
             </div>
-          ))}
+          ) : null}
           {hasCustomer ? (
             <button
               type="button"

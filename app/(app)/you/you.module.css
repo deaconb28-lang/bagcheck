@@ -323,6 +323,90 @@
   color: var(--meta);
 }
 
+/*
+ * ── The formats ──
+ *
+ * Hairline-ruled rows, not tiles. Three filled plates inside a page that is
+ * already a plate is the tell this file's neighbours keep warning about, and
+ * a locked row here states a word rather than blurring a picture of a number.
+ */
+.formats {
+  width: 100%;
+  margin-top: 36px;
+  border-top: 1px solid var(--line-light);
+}
+
+.format {
+  display: grid;
+  grid-template-columns: minmax(0, 22ch) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  min-height: 64px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.format:last-child {
+  border-bottom: 0;
+}
+
+.formatName {
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.formatBody {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink3);
+}
+
+.formatPair {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.formatGo {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line2);
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink2);
+  white-space: nowrap;
+  transition: border-color 0.16s ease, color 0.16s ease;
+}
+
+.formatGo:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+/* The plan name is a word, in the reserved violet, and never a fill. */
+.formatLock {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-line);
+  white-space: nowrap;
+}
+
+.formatLock[data-quiet] {
+  color: var(--meta);
+  border-color: var(--line2);
+}
+
 /* The one filled control on the page. */
 .out {
   display: inline-flex;
@@ -381,5 +465,25 @@
 
   .findFigure {
     min-width: 0;
+  }
+
+  .format {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 8px 16px;
+  }
+
+  .formatName {
+    grid-column: 1;
+  }
+
+  .formatBody {
+    grid-column: 1;
+  }
+
+  .format > :last-child {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
   }
 }

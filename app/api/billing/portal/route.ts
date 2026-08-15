@@ -4,6 +4,7 @@ import { isDbConfigured, subscriptionFor } from "@/lib/db";
 import { isStripeConfigured, siteUrl, stripe } from "@/lib/billing";
 
 export const runtime = "nodejs";
+export const maxDuration = 30;
 
 /** Stripe's own billing portal — cancelling and card changes live there. */
 export async function POST() {
