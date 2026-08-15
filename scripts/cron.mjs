@@ -47,6 +47,17 @@ for (const job of jobs) {
     const body = await res.text();
     const took = Date.now() - started;
 
+    /*
+     * 503 means the job's integration is not configured on this deployment —
+     * no Resend key, no Mongo URI. That is a state, not a failure, and every
+     * integration in this app is built to degrade into it. Exiting non-zero
+     * would paint every scheduled run red until someone stopped reading the
+     * log, which is the opposite of what a failing job should do.
+     */
+    if (res.status === 503) {
+      console.log(`[cron] ${job} → skipped in ${took}ms: ${body.slice(0, 200)}`);
+      continue;
+    }
     if (!res.ok) {
       failed += 1;
       console.error(`[cron] ${job} → ${res.status} in ${took}ms: ${body.slice(0, 400)}`);

@@ -8,16 +8,22 @@ import { monogram, toneIndex } from "./logo";
  */
 
 /**
- * The token is a logo.dev API key. `LOGO_DEV_TOKEN` is canonical; the aliases
- * are accepted because the same key gets named a few different ways in
- * practice and a mismatch would silently render every logo as a monogram.
+ * The token is a logo.dev API key. `LOGO_DEV_TOKEN` is canonical; the two
+ * aliases are accepted because the same key gets named a few different ways
+ * in practice and a mismatch would silently render every logo as a monogram.
+ *
+ * **`NEXT_PUBLIC_LOGO_DEV_TOKEN` is deliberately not among them.** It used to
+ * be, and it was a trap: Next inlines any `NEXT_PUBLIC_` variable into the
+ * client bundle, so accepting that spelling invited someone to set a secret
+ * under a name that publishes it. Reading the token at all is the reason
+ * `/api/logo/[symbol]` exists — the key stays on this side and the browser
+ * only ever sees an image.
  */
 export function logoToken(): string | null {
   return (
     process.env.LOGO_DEV_TOKEN ||
     process.env.LOGODEV_TOKEN ||
     process.env.LOGO_DEV_API_KEY ||
-    process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN ||
     null
   );
 }
