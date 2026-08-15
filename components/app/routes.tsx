@@ -111,21 +111,24 @@ export type RouteDef = {
   Glyph: (props: GlyphProps) => React.ReactElement;
 };
 
+/**
+ * Three tabs, plus the avatar at the foot for settings.
+ *
+ * There were seven. Four of them — DNA, Patterns, Insights and Cards — asked
+ * one question between them and are now one screen, and the Ledger was a
+ * settings page for a public profile that does not exist. Seven 48px targets
+ * across a 390px phone leaves 55px each, which is a tab bar you mis-tap;
+ * three is a tab bar you hit.
+ *
+ * Home is how it is going, Wrapped is the artefact, You is what the history
+ * concluded. Every route retired from this list still resolves — they are
+ * redirect stubs, because those URLs are in bookmarks and in minted links.
+ */
 export const ROUTES: RouteDef[] = [
   { href: "/home", label: "Home", Glyph: HomeGlyph },
-  { href: "/dna", label: "DNA", Glyph: DnaGlyph },
   { href: "/wrapped", label: "Wrapped", Glyph: WrappedGlyph },
-  { href: "/patterns", label: "Patterns", Glyph: PatternsGlyph },
-  { href: "/insights", label: "Insights", Glyph: InsightsGlyph },
-  { href: "/ledger", label: "Ledger", Glyph: LedgerGlyph },
-  { href: "/cards", label: "Cards", Glyph: CardsGlyph },
+  { href: "/you", label: "You", Glyph: DnaGlyph },
 ];
 
-/**
- * Five on mobile. Patterns and Ledger reach the phone through links on Home
- * rather than a sixth tab — seven 48px targets across 390px leaves 55px each,
- * which is a tab bar you mis-tap.
- */
-export const MOBILE_ROUTES: RouteDef[] = ROUTES.filter(
-  (route) => !["/patterns", "/ledger"].includes(route.href),
-);
+/** The phone gets the same three — there is nothing left to drop. */
+export const MOBILE_ROUTES: RouteDef[] = ROUTES;

@@ -1,90 +1,22 @@
-import type { Metadata } from "next";
-import { getUserId } from "@/auth";
-import { isDbConfigured, loadActivity, loadScreen, syncClock } from "@/lib/db";
-import { getCollections } from "@/lib/db";
-import { EmptyState } from "@/components/app/EmptyState";
-import { PageGrid } from "@/components/app/PageGrid";
-import { ScreenHeader } from "@/components/app/ScreenHeader";
-import { SignInCta } from "@/components/app/SignInCta";
-import { LedgerView } from "./LedgerView";
-import { archetypeOf, currentStreak, dailyPnl, weekDelta } from "../derive";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "Bagcheck — ledger" };
+/**
+ * /ledger is not in v1. It was a settings screen for a public page that does
+ * not exist — its toggles never persisted — and it read four thousand rows to
+ * build a wave the derived document already held.
+ *
+ * Temporary rather than permanent: the raw record is a screen worth having,
+ * and this URL should still be free when it comes back.
+ */
+/*
+ * Per request, not at build time. Without this Next prerenders the stub, and
+ * the (app) layout it renders inside evaluates `appLocked()` with whatever
+ * the *build* environment had — so a locked build bakes `redirect("/")` into
+ * the static output and every one of these URLs lands on the marketing page
+ * forever, whatever the deployment is set to afterwards.
+ */
 export const dynamic = "force-dynamic";
 
-export default async function LedgerPage() {
-  const userId = await getUserId();
-  if (!userId || !isDbConfigured()) {
-    return (
-      <PageGrid>
-        <EmptyState
-          eyebrow="Bagcheck · ledger"
-          icon={userId ? "setup" : "signin"}
-          title={userId ? "Configure the ledger store" : "Sign in to open your ledger"}
-          body={
-            userId
-              ? "Set MONGODB_URI on this deployment to store synced history and scores."
-              : "Every trade and transfer, exactly as the brokerage reported them."
-          }
-          actions={[{ label: "Back to the landing page", href: "/", ghost: true }]}
-        >
-          {userId ? null : <SignInCta />}
-        </EmptyState>
-      </PageGrid>
-    );
-  }
-
-  const [data, page] = await Promise.all([
-    loadScreen(userId, 400),
-    loadActivity(userId, { limit: 40 }),
-  ]);
-
-  if (page.total === 0) {
-    return (
-      <PageGrid>
-        <EmptyState
-          eyebrow="Bagcheck · ledger"
-          icon={data.connection ? "sync" : "connect"}
-          title={data.connection ? "No transactions synced" : "Connect a brokerage"}
-          body={
-            data.connection
-              ? "Run a sync to pull your full transaction history from the brokerage."
-              : "One tap via SnapTrade, read-only. Years of history arrive in about ninety seconds."
-          }
-          actions={[{ label: "Open DNA", href: "/dna" }]}
-        />
-      </PageGrid>
-    );
-  }
-
-  const { transactions } = await getCollections();
-  const all = await transactions.find({ userId }).sort({ date: -1 }).limit(4000).toArray();
-  const latest = data.scores[0] ?? null;
-
-  return (
-    <>
-      <ScreenHeader
-        title="Ledger"
-        meta={`${page.total.toLocaleString("en-US")} entries · read-only attestation`}
-        score={latest?.score ?? null}
-        delta={weekDelta(data.scores)}
-        syncedAt={syncClock(data.connection?.lastSyncAt)}
-        age={data.investorAge}
-        tier={data.tier}
-      />
-      <LedgerView
-        rows={page.rows}
-        kinds={page.kinds}
-        total={page.total}
-        tier={data.tier}
-        score={latest?.score ?? null}
-        archetype={archetypeOf(
-          (latest?.components as unknown as Record<string, number>) ?? null,
-        )}
-        streak={currentStreak(data.scores)}
-        wave={dailyPnl(all, 40)}
-        scoredDays={data.scores.length}
-      />
-    </>
-  );
+export default function Page() {
+  redirect("/you");
 }

@@ -1,0 +1,378 @@
+/*
+ * /you — the landing's rhythm, in the app's tokens.
+ *
+ * One idea per block, a real heading above each, and 96px of nothing between
+ * them. The four screens this replaces stacked panels at 34px with a 24px
+ * heading, which is why they read as a list of widgets rather than as a
+ * document about someone.
+ *
+ * A block is not a card. There is no fill and no border — sections divide by
+ * space and, where a section has internal rows, by hairlines. The old screens
+ * put filled panels inside a filled grid inside a filled page.
+ */
+.wide {
+  max-width: 1080px;
+  display: flex;
+  flex-direction: column;
+  gap: 96px;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* ── The section head: eyebrow → heading → lede ── */
+.eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.h2 {
+  margin: 14px 0 0;
+  font-size: clamp(32px, 3.6vw, 52px);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.lede {
+  margin: 20px 0 0;
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--ink3);
+  max-width: 54ch;
+  text-wrap: pretty;
+}
+
+/* ── A row of figures, divided by hairlines rather than boxed ── */
+.figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0;
+  width: 100%;
+  margin-top: 44px;
+  border-top: 1px solid var(--line-light);
+}
+
+.figure {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 24px 26px 24px 0;
+  border-right: 1px solid var(--line-light);
+  min-width: 0;
+}
+
+.figure:last-child {
+  border-right: 0;
+}
+
+.figLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.figValue {
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.figValue[data-tone="moss"] {
+  color: var(--moss);
+}
+
+.figValue[data-tone="loss"] {
+  color: var(--loss);
+}
+
+.figValue[data-tone="accent"] {
+  color: var(--accent);
+}
+
+.figTail {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink3);
+}
+
+.curve {
+  width: 100%;
+  margin-top: 40px;
+}
+
+.prov {
+  margin: 22px 0 0;
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+/* ── Holdings ── */
+.holdings {
+  width: 100%;
+  margin-top: 40px;
+  border-top: 1px solid var(--line-light);
+}
+
+.holding {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1.5fr) minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.holdingName {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.symbol {
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.desc {
+  font-size: 12.5px;
+  color: var(--meta);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Size, not judgement — so it takes ink rather than a hue. */
+.weight {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.weight i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--ink-fill-active);
+}
+
+.units,
+.value,
+.ret {
+  font-size: 14px;
+  text-align: right;
+  color: var(--ink2);
+  white-space: nowrap;
+}
+
+.units {
+  min-width: 68px;
+  color: var(--meta);
+}
+
+.value {
+  min-width: 96px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.ret {
+  min-width: 68px;
+}
+
+.ret[data-tone="moss"] {
+  color: var(--moss);
+}
+
+.ret[data-tone="loss"] {
+  color: var(--loss);
+}
+
+/* ── Identity ── */
+.archHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+  width: 100%;
+  margin-top: 14px;
+}
+
+.archText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 0;
+}
+
+.archText .h2 {
+  margin-top: 0;
+}
+
+.archStrong {
+  margin-top: 14px;
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+/* ── Findings ── */
+.findings {
+  width: 100%;
+  margin-top: 40px;
+  border-top: 1px solid var(--line-light);
+}
+
+.finding {
+  display: flex;
+  align-items: baseline;
+  gap: 28px;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.findFigure {
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  min-width: 148px;
+  color: var(--ink);
+}
+
+.findFigure[data-tone="moss"] {
+  color: var(--moss);
+}
+
+.findFigure[data-tone="loss"] {
+  color: var(--loss);
+}
+
+.findText {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.findSentence {
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--ink2);
+}
+
+.findEvidence {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+/* ── Minted cards ── */
+.minted {
+  width: 100%;
+  margin-top: 36px;
+  border-top: 1px solid var(--line-light);
+}
+
+.mintedRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line-light);
+  transition: color 0.16s ease;
+}
+
+.mintedRow:hover .mintedName {
+  color: var(--accent);
+}
+
+.mintedName {
+  font-size: 15.5px;
+  font-weight: 500;
+  color: var(--ink);
+  transition: color 0.16s ease;
+}
+
+.mintedSlug {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--meta);
+}
+
+/* The one filled control on the page. */
+.out {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 40px;
+  height: 46px;
+  padding: 0 22px;
+  border-radius: 14px;
+  background: var(--ink-field);
+  color: var(--on-ink);
+  font-size: 14.5px;
+  font-weight: 600;
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+
+.out:hover {
+  background: var(--ink-field-hover);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 860px) {
+  .wide {
+    gap: 64px;
+  }
+
+  .figure {
+    padding-right: 18px;
+  }
+
+  .holding {
+    grid-template-columns: 26px minmax(0, 1fr) auto auto;
+    gap: 12px;
+  }
+
+  .weight,
+  .units {
+    display: none;
+  }
+
+  .archHead {
+    flex-wrap: wrap;
+  }
+
+  .finding {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .findFigure {
+    min-width: 0;
+  }
+}
