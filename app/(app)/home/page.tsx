@@ -4,10 +4,8 @@ import {
   factsFrom,
   getCollections,
   getDailyInsight,
-  getPulse,
   isDbConfigured,
   loadScreen,
-  questionFor,
   syncClock,
   taggedOpensFor,
 } from "@/lib/db";
@@ -24,11 +22,7 @@ import { trialLine, trialState } from "@/lib/tiers";
 import { HomeView } from "./HomeView";
 import type { WaveDay } from "@/components/idioms";
 import {
-  archetypeOf,
   currentStreak,
-  heatFromScores,
-  longestStreak,
-  sessionRecap,
   waveSummary,
   weekDelta,
 } from "../derive";
@@ -134,7 +128,7 @@ export default async function HomePage({
    * document; `assembleWrappedFrom` takes the one in hand and the tag opens
    * it needs for conviction, which is the only read this panel adds.
    */
-  const [recent, taggedDocs, pulse, insight, opens, photos] = await Promise.all([
+  const [recent, taggedDocs, insight, opens, photos] = await Promise.all([
     transactions
       .find({ userId, type: { $regex: /buy/i } })
       .sort({ date: -1 })
@@ -150,7 +144,6 @@ export default async function HomePage({
       })
       .toArray(),
     tags.find({ userId }).project<{ transactionId: string }>({ _id: 0, transactionId: 1 }).toArray(),
-    getPulse(userId, latest.date),
     getDailyInsight(
       userId,
       factsFrom(
@@ -187,8 +180,6 @@ export default async function HomePage({
     new Set(taggedDocs.map((t) => t.transactionId)),
   );
 
-  const question = questionFor(latest.date);
-
   return (
     <>
       {syncDialog}
@@ -197,24 +188,15 @@ export default async function HomePage({
         delta={weekDelta(data.scores)}
         components={latest.components}
         insight={insight}
-        archetype={archetypeOf(latest.components as unknown as Record<string, number>)}
         wave={wave}
         waveSummary={waveSummary(wave)}
-        findings={data.derived?.findings ?? []}
-        recap={sessionRecap(data.derived?.roundTrips ?? [], data.derived?.dailyPnl ?? [])}
-        heat={heatFromScores(data.scores)}
         streak={currentStreak(data.scores)}
-        longest={longestStreak(data.scores)}
         scoredDays={data.scores.length}
         queue={queue}
         tagged={data.tagged}
         taggable={data.taggable}
         tier={data.tier}
-        age={data.investorAge}
         syncedAt={syncClock(data.connection?.lastSyncAt)}
-        accountCount={data.connection?.accounts.length ?? 0}
-        transactionCount={data.transactionCount}
-        pulse={pulse ? null : { question: question.question, options: question.options }}
         date={latest.date}
         wrapped={
           wrapped

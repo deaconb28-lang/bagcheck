@@ -43,7 +43,7 @@ export function buildUserPrompt(facts: InsightFacts): string {
   const lines: string[] = [
     `Date: ${facts.date}`,
     `Their declared style: ${facts.baseline}`,
-    `Discipline score today: ${facts.score} out of 100`,
+    `Health score today: ${facts.score} out of 100`,
   ];
 
   if (facts.previousScore != null) {

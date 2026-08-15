@@ -273,7 +273,7 @@ function healthCard(i: CardInput): CardSpec | null {
   return {
     kind: "health",
     eyebrow: "Bagcheck · health",
-    kicker: "Discipline",
+    kicker: "Health",
     headline: "Score",
     lede: "Scored against your own baseline, not against a model investor.",
     body: { kind: "figure", label: "Health today", value: String(i.score), unit: "/100" },

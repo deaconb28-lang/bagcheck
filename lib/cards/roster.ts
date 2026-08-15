@@ -47,7 +47,7 @@ export interface RosterEntry {
 export const ROSTER: readonly RosterEntry[] = [
   { kind: "wrapped", name: "Your year", requires: "365 scored days", teaser: "cardFan" },
   { kind: "archetype", name: "Your archetype", requires: "one scored day", teaser: "archetypes" },
-  { kind: "health", name: "Discipline score", requires: "one scored day", teaser: "ring" },
+  { kind: "health", name: "Health score", requires: "one scored day", teaser: "ring" },
   { kind: "streak", name: "Current streak", requires: "14 consecutive sessions inside your rules", teaser: "streak" },
   { kind: "longestHold", name: "Longest hold", requires: "a position held 30 days", teaser: "hold" },
   { kind: "holdRatio", name: "Winners run", requires: "8 closed winners and 8 closed losers", teaser: "exitSpeed" },

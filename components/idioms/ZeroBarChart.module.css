@@ -1,0 +1,91 @@
+/*
+ * Columns off a zero line. The line is the only chrome — no axis, no grid, no
+ * ticks. The figure this chart illustrates is stated in type above it, so the
+ * chart's job is the shape of the period and nothing else.
+ */
+.chart {
+  position: relative;
+  width: 100%;
+}
+
+.zero {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--line-light);
+}
+
+.cols {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* Each column is the full height; the bar inside it grows from the middle. */
+.col {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-radius: 3px;
+  transform-origin: center top;
+  animation: growDown 0.7s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+.bar[data-dir="up"] {
+  bottom: 50%;
+  transform-origin: center bottom;
+  animation-name: growUp;
+  /* Ordinary sessions sit back; the outlier takes the hue at full strength. */
+  background: color-mix(in srgb, var(--moss) 46%, transparent);
+}
+
+.bar[data-dir="down"] {
+  top: 50%;
+  background: color-mix(in srgb, var(--loss) 46%, transparent);
+}
+
+.bar[data-dir="up"][data-strong] {
+  background: var(--moss);
+}
+
+.bar[data-dir="down"][data-strong] {
+  background: var(--loss);
+}
+
+@keyframes growUp {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes growDown {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    animation: none;
+  }
+}

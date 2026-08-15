@@ -257,7 +257,7 @@ export default async function DebugPage() {
           </section>
 
           <section className={styles.section}>
-            <Eyebrow>Discipline score · latest {ledger.scores.length}</Eyebrow>
+            <Eyebrow>Health score · latest {ledger.scores.length}</Eyebrow>
             {ledger.scores.length ? (
               <div className={styles.tableWrap}>
                 <table className={styles.table}>

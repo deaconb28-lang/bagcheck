@@ -10,4 +10,5 @@ export { HourHeat } from "./HourHeat";
 export type { HourCell } from "./HourHeat";
 export { ScoreRing } from "./ScoreRing";
 export { WaveChart } from "./WaveChart";
+export { ZeroBarChart } from "./ZeroBarChart";
 export type { WaveDay } from "./WaveChart";

@@ -4,7 +4,7 @@ import type { Contributor, ScoreInput, ScoreResult } from "./types";
 import { clamp } from "./util";
 
 /**
- * Discipline — one number, decomposed. Weights: consistency .3,
+ * Health — one number, decomposed. Weights: consistency .3,
  * patience .3, adherence .2, exposure .2. Every input is windowed over
  * 4–12 weeks, so the score is slow-moving by construction: if a user
  * could spike it in a day, we built the wrong number.

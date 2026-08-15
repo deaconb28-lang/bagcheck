@@ -349,8 +349,15 @@
     gap: 64px;
   }
 
+/* Stacked, the divider is between rows rather than a stray vertical rule. */
   .figure {
-    padding-right: 18px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line-light);
+    padding: 20px 0;
+  }
+
+  .figure:last-child {
+    border-bottom: 0;
   }
 
   .holding {
