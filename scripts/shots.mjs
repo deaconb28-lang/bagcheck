@@ -225,7 +225,11 @@ async function waitFor(url, tries = 60) {
   return false;
 }
 
-await rm(OUT, { recursive: true, force: true });
+/*
+ * A full run starts clean; `--only` must not, or re-shooting one screen
+ * deletes the other fifty and the contact sheet silently loses them.
+ */
+if (!only) await rm(OUT, { recursive: true, force: true });
 await mkdir(OUT, { recursive: true });
 
 await freePort();
