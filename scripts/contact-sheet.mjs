@@ -37,13 +37,13 @@ const GROUPS = [
   {
     key: "home",
     title: "Home",
-    note: "Four blocks: the year, the money, the read, the loop. Was eleven blocks over 3,600px.",
+    note: "Four blocks and the money leads: P&L, the year, the read, the loop. Was eleven blocks over 3,600px. Two of them are shot on their own, because a block three thousand pixels down never appears in a viewport shot.",
     match: (n) => n.startsWith("home"),
   },
   {
     key: "you",
     title: "You",
-    note: "One page replacing /dna, /patterns, /insights and /cards.",
+    note: "One page replacing /dna, /patterns, /insights and /cards. The consistency grid is shot on its own — it is the first time the score has had a history rather than a value, and it sits below the fold.",
     match: (n) => n.startsWith("you"),
   },
   {
@@ -89,6 +89,13 @@ const PAIRS = [
 ];
 
 const WIDTH_LABEL = { 1440: "Desktop · 1440", 1024: "Laptop · 1024", 390: "Phone · 390" };
+
+/* Section shots whose bare name would read as a fragment. */
+const SECTION_LABEL = {
+  "home-money": "1 · The money",
+  "home-read": "3 · The read",
+  "you-consistency": "Consistency",
+};
 
 async function encode(dir, name) {
   /* sharp takes a path, not a URL object. */
@@ -169,7 +176,13 @@ const groupHtml = GROUPS.map((g) => {
     ...sized.map((p) =>
       figure(p.name, WIDTH_LABEL[p.width] ?? String(p.width), p.mode ? `${p.mode} mode` : null),
     ),
-    ...sections.map((p) => figure(p.name, p.screen.replace(/^[a-z]+-/, "").replace(/-/g, " "), "section")),
+    ...sections.map((p) =>
+      figure(
+        p.name,
+        SECTION_LABEL[p.name] ?? p.screen.replace(/^[a-z]+-/, "").replace(/-/g, " "),
+        "section",
+      ),
+    ),
   ].join("\n");
 
   return `<section class="group" id="${g.key}">
