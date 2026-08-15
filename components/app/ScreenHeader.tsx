@@ -13,7 +13,7 @@ export type ScreenHeaderProps = {
   score: number | null;
   /** Signed weekly delta, when there is one. */
   delta?: number | null;
-  /** "06:14", or null when the ledger has never synced. */
+  /** How long ago the ledger was read — "2h ago". Null if it never was. */
   syncedAt?: string | null;
   /** Investor Age — how old the conduct reads. Null before a first score. */
   age?: number | null;

@@ -26,6 +26,7 @@ const POLL_MS = 1000;
  * — a meter that advanced on its own would be inventing a fact about
  * someone's own history.
  */
+/** `syncedAt` is elapsed time — "2h ago" — so it reads the same in every timezone. */
 export function SyncNow({ syncedAt }: { syncedAt: string | null }) {
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState<SyncProgress | null>(null);

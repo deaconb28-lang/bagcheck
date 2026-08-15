@@ -81,6 +81,23 @@
  * that scrolls and clips at the block's own edge reads as a deck without
  * needing to slide under the chrome.
  */
+/*
+ * The rail scrolls, and it has to look like it does.
+ *
+ * With the scrollbar hidden and the last card cut hard at the container edge,
+ * the deck read as a broken layout rather than a scrollable one — a card
+ * sliced mid-word at exactly the window edge is the shape of an overflow bug,
+ * which is the one thing this rail is not.
+ *
+ * A mask fades the trailing edge, so the cut is deliberate and the rail says
+ * "there is more this way". The static state is the finished design: the rail
+ * loads scrolled to the start, which is exactly when the trailing fade alone
+ * is correct.
+ *
+ * `--fade` is the width and belongs to the breakpoint; `--lead` and `--trail`
+ * are 0-or-1 and belong to the scroll position. Keeping them apart is what
+ * lets the phone use a narrower fade without the keyframes overriding it.
+ */
 .rail {
   display: flex;
   gap: 18px;
@@ -92,11 +109,63 @@
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
+  --fade: 72px;
+  --lead: 0;
+  --trail: 1;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 calc(var(--lead) * var(--fade)),
+    #000 calc(100% - var(--trail) * var(--fade)),
+    transparent 100%
+  );
 }
 
 .rail::-webkit-scrollbar {
   display: none;
 }
+
+@property --lead {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --trail {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
+/*
+ * Where scroll-driven animation exists, the two edges follow the scroll
+ * position: the leading fade arrives once you have moved off the first card,
+ * the trailing one retires at the end so the last card is not dimmed. One
+ * timeline drives both, so they cannot disagree.
+ */
+@supports (animation-timeline: scroll(self inline)) {
+  .rail {
+    animation: rail-fade linear both;
+    animation-timeline: scroll(self inline);
+  }
+
+  @keyframes rail-fade {
+    0% {
+      --lead: 0;
+      --trail: 1;
+    }
+    8%,
+    92% {
+      --lead: 1;
+      --trail: 1;
+    }
+    100% {
+      --lead: 1;
+      --trail: 0;
+    }
+  }
+}
+
 
 .frame {
   flex: 0 0 auto;
@@ -190,6 +259,14 @@
 }
 
 @media (max-width: 860px) {
+  /*
+   * A 72px fade against a 178px card eats a third of it. The rail shows one
+   * card and a shoulder at this width, so the hint can be much lighter.
+   */
+  .rail {
+    --fade: 38px;
+  }
+
   .rail {
     gap: 14px;
   }

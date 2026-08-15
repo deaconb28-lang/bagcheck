@@ -64,8 +64,33 @@ export async function loadScreen(userId: string, scoreLimit = 400): Promise<Scre
   };
 }
 
-/** "06:14" — the header's sync pill. Null when the ledger never synced. */
-export function syncClock(at: Date | null | undefined): string | null {
+/**
+ * How long ago the ledger was last read — "just now", "2h ago", "3d ago".
+ * Null when it never has been.
+ *
+ * This used to print `at.toISOString().slice(11, 16)`, which is a UTC wall
+ * clock: a reader in California who synced at 5pm saw "SYNCED 00:00" and had
+ * no way to tell whether that was recent. The page renders on the server, so
+ * there is no reader timezone to format into — but an elapsed time needs
+ * none, and answers the question the pill is actually being asked.
+ *
+ * Rounds down, so it never claims a sync is fresher than it is.
+ */
+export function syncClock(at: Date | null | undefined, now = new Date()): string | null {
   if (!at) return null;
-  return at.toISOString().slice(11, 16);
+  const seconds = Math.floor((now.getTime() - at.getTime()) / 1000);
+
+  /* A clock skew between the writer and the reader must not read as the future. */
+  if (seconds < 90) return "just now";
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d ago`;
+
+  return `${Math.floor(days / 30)}mo ago`;
 }

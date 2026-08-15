@@ -232,6 +232,22 @@
     gap: 10px;
   }
 
+  /*
+   * The machine line wraps and then clamps. It used to ellipsise on one line,
+   * which landed mid-number — "2026-08-15 · 4…" — and a fact cut in half
+   * reads as a broken value rather than an omission. Wrapping alone ran to
+   * five lines of mono at the top of a phone, so it stops at two: whole facts
+   * drop off the end, never half of one.
+   */
+  .meta {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.45;
+  }
+
   .tier,
   .leakPill {
     display: none;
