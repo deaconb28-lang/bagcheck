@@ -1,0 +1,106 @@
+/*
+ * A legal page is a document, not a screen. One narrow measure, generous
+ * leading, and no chrome — the same shape as the credits pages next door.
+ */
+.page {
+  min-height: 100svh;
+  background: var(--bg);
+  padding: 56px 30px 140px;
+}
+
+.wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.title {
+  font-size: 38px;
+  letter-spacing: -0.035em;
+  margin: 0;
+}
+
+.updated {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.lede {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink2);
+  text-wrap: pretty;
+  margin: 6px 0 0;
+}
+
+.section {
+  margin-top: 22px;
+  padding-top: 26px;
+  border-top: 1px solid var(--line-light);
+}
+
+.section h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.section p {
+  margin: 12px 0 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink3);
+  text-wrap: pretty;
+}
+
+.section ul {
+  margin: 12px 0 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section li {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink3);
+}
+
+.section a {
+  color: var(--ink2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.section a:hover {
+  color: var(--ink);
+}
+
+.back {
+  font-size: 13.5px;
+  color: var(--ink2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  align-self: flex-start;
+  margin-top: 30px;
+}
+
+.back:hover {
+  color: var(--ink);
+}

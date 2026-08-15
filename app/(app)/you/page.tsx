@@ -17,7 +17,7 @@ import { archetypeOf, money, signedMoney, weekDelta } from "../derive";
 import screen from "../screen.module.css";
 import styles from "./you.module.css";
 
-export const metadata: Metadata = { title: "Bagcheck — you" };
+export const metadata: Metadata = { title: "You" };
 export const dynamic = "force-dynamic";
 
 /**

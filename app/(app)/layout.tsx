@@ -39,8 +39,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className={styles.shell} data-surface>
-      {/* eslint-disable-next-line @next/next/no-page-custom-font -- the
-          product's face, loaded for the group that reads it. */}
+      {/* The product's face, loaded for the group that reads it. */}
       <link
         href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap"
         rel="stylesheet"

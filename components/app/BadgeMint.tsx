@@ -37,7 +37,7 @@ export function BadgeMint() {
       </button>
       {state === "failed" ? <span className={styles.note}>That did not mint.</span> : null}
       {url ? (
-        // eslint-disable-next-line @next/next/no-img-element
+        // An SVG our own route renders at a known size.
         <img src={url} alt="Your live Bagcheck badge" width={232} height={64} />
       ) : null}
     </div>

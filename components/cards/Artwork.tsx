@@ -270,8 +270,8 @@ export function Artwork({
   return (
     <div className={styles.frame} data-hue={hue} data-bare={onGround || undefined}>
       {photo ? (
-        // eslint-disable-next-line @next/next/no-img-element -- hotlinked from
-        // Unsplash's CDN, as their terms require; next/image would proxy it.
+        // Hotlinked from Unsplash's CDN, as their terms require.
+        // next/image would proxy it, which those terms do not allow.
         <img
           className={styles.photo}
           src={photo.url}

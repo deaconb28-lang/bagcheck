@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+# A second push to the same branch cancels the first — a queue of stale runs
+# on a branch under active development tells you nothing and costs minutes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      # The build is the last gate because it is the slowest, and because the
+      # three above catch nearly everything it would. No secrets are set here
+      # on purpose: every integration in this app has to degrade gracefully
+      # when its variables are missing, and a build that needs a key to
+      # compile would be a regression in that.
+      - name: Build
+        run: npm run build

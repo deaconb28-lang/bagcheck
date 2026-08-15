@@ -21,8 +21,7 @@ export const metadata: Metadata = {
 export default function FlexLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className={styles.shell}>
-      {/* eslint-disable-next-line @next/next/no-page-custom-font -- the
-          marketing face, loaded for the one group that speaks it. */}
+      {/* The marketing face, loaded for the one group that speaks it. */}
       <link
         href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap"
         rel="stylesheet"

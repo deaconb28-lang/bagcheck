@@ -4,7 +4,7 @@ import { isDbConfigured } from "@/lib/db";
 import { storedPhotos } from "@/lib/unsplash";
 import styles from "../icons/credits.module.css";
 
-export const metadata: Metadata = { title: "Bagcheck — photo credits" };
+export const metadata: Metadata = { title: "Photo credits" };
 export const dynamic = "force-dynamic";
 
 /**

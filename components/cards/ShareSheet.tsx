@@ -152,7 +152,6 @@ export function ShareSheet({ type, slug, label, onClose }: ShareSheetProps) {
 
         {/* The unfurl, drawn by the same route a paste will hit. */}
         <div className={styles.preview}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={image} alt="" width={1200} height={630} />
         </div>
 

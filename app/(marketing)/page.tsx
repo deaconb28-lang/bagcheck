@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CAPABILITY_LABEL, FREE_ALWAYS, TIER_PRICE, TRIAL_DAYS } from "@/lib/tiers";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 import { MarketingFooter, MarketingNav } from "./Chrome";
 import { FirstWeek } from "./FirstWeek";
 import { PnlChart } from "./PnlChart";
@@ -8,21 +9,20 @@ import { WaitlistForm } from "./WaitlistForm";
 import { WrappedDeck } from "./WrappedDeck";
 import styles from "./landing.module.css";
 
+/*
+ * The one page whose title is not run through the root template — a landing
+ * called "bagcheck · bagcheck" is what a template does when nobody checks.
+ */
 export const metadata: Metadata = {
-  title: "bagcheck — turn your portfolio into a flex",
-  description:
-    "Connect your brokerage in two taps through SnapTrade. bagcheck reads the numbers and turns your year into a Wrapped worth posting — returns, top bags, best trades, and the ones that got away.",
+  title: { absolute: `${SITE_NAME} — ${SITE_TAGLINE.toLowerCase()}` },
+  description: SITE_DESCRIPTION,
+  alternates: { canonical: "/" },
 };
 
 /*
- * The landing, built to the design handoff: a white hero over a dark field
- * that runs from the Wrapped deck to the footer. The social numbers below are
- * the design's placeholders — swap them for measured ones the day there are
- * measured ones.
- */
-const SOCIAL = { lovedBy: "320K", rating: "4.9", ahead: "4,281", investors: "12,408" };
-
-/*
+ * The landing: a white hero over a dark field that runs from the Wrapped deck
+ * to the footer.
+ *
  * The nav reads the launch lock and whether sign-in is configured, and a
  * statically prerendered page freezes both at build time — the same failure
  * that made every redirect stub answer with the locked landing until it was
@@ -105,19 +105,20 @@ export default function LandingPage() {
       {/* ── Hero ── */}
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
+          {/*
+            * This was "Loved by 320K investors · 4.9 rating" over three
+            * invented faces, on the launch day of a product with no users. A
+            * fabricated review count is a bad idea on any landing and a
+            * liability on a financial one, so the pill states the thing that
+            * is both true and the actual objection someone has at this point
+            * in the page: what does connecting a brokerage let you do to me.
+            */}
           <div className={styles.ratingPill}>
-            <span className={styles.avatars} aria-hidden="true">
-              <i data-a="1">JR</i>
-              <i data-a="2">MK</i>
-              <i data-a="3">AD</i>
-            </span>
-            <span>
-              Loved by {SOCIAL.lovedBy} investors with{" "}
-              <svg width="21" height="21" viewBox="0 0 24 24" fill="var(--mk-amber)" aria-hidden="true">
-                <path d="M12 2.5l2.9 5.9 6.6.9-4.8 4.6 1.2 6.5-5.9-3.1-5.9 3.1 1.2-6.5L2.5 9.3l6.6-.9z" />
-              </svg>{" "}
-              {SOCIAL.rating} rating
-            </span>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--mk-green)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 2.6l7.5 3.2v6c0 4.6-3.1 8.4-7.5 9.6-4.4-1.2-7.5-5-7.5-9.6v-6z" />
+              <path d="M8.8 12.2l2.3 2.3 4.3-4.8" />
+            </svg>
+            <span>Read-only through SnapTrade · no trades, ever</span>
           </div>
           <h1 className={styles.h1}>
             <span className={styles.h1Strong}>Meet bagcheck</span>
@@ -630,7 +631,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── The first week, day by day ── */}
-      <FirstWeek investors={SOCIAL.investors} />
+      <FirstWeek />
 
       {/*
        * ── The plans ──

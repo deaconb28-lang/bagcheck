@@ -27,7 +27,7 @@ import {
   weekDelta,
 } from "../derive";
 
-export const metadata: Metadata = { title: "Bagcheck — home" };
+export const metadata: Metadata = { title: "Home" };
 export const dynamic = "force-dynamic";
 
 export default async function HomePage({

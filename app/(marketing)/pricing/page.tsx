@@ -16,7 +16,7 @@ import landing from "../landing.module.css";
 import styles from "../pricing.module.css";
 
 export const metadata: Metadata = {
-  title: "Pricing — bagcheck",
+  title: "Pricing",
   description:
     "Bagcheck is free to use and $9 a month to publish. Every card your behaviour earns is yours to post on either plan, rare ones included.",
 };

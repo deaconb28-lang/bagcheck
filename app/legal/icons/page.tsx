@@ -4,7 +4,7 @@ import { isDbConfigured } from "@/lib/db";
 import { iconsEnabled, storedIcons } from "@/lib/icons";
 import styles from "./credits.module.css";
 
-export const metadata: Metadata = { title: "Bagcheck — icon credits" };
+export const metadata: Metadata = { title: "Icon credits" };
 export const dynamic = "force-dynamic";
 
 /**

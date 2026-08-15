@@ -187,7 +187,7 @@ export function buildDerived(input: BuildInput): Omit<DerivedDoc, "userId" | "co
  * ledger changed. Every screen calls this instead of scanning.
  */
 export async function getDerived(userId: string): Promise<DerivedDoc | null> {
-  const { derived, transactions, positionSnapshots } = await getCollections();
+  const { derived, transactions } = await getCollections();
 
   const existing = await derived.findOne({ userId });
   if (existing && existing.version === DERIVED_VERSION) {

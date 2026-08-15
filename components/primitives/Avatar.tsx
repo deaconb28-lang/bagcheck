@@ -35,8 +35,8 @@ export function Avatar({
       data-family={avatarFamily(meta)}
     >
       {hasGeneratedAvatar(archetype) ? (
-        // eslint-disable-next-line @next/next/no-img-element -- a static file
-        // at a fixed path, sized by the caller; next/image buys nothing.
+        // A static file at a fixed path, sized by the caller; next/image
+        // buys nothing here.
         <img
           src={avatarSrc(archetype)}
           alt=""

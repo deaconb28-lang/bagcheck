@@ -177,7 +177,12 @@ function BriefingScreen() {
   );
 }
 
-function StandingScreen({ investors }: { investors: string }) {
+/*
+ * Peer comparison is the one screen in this stepper that is not shipped yet,
+ * so its sub-line names the comparison rather than counting the people in it.
+ * It used to print a fabricated cohort size.
+ */
+function StandingScreen() {
   const ranks = [
     { label: "Return", value: "Top 3%", tone: "green", width: 97 },
     { label: "Patience", value: "Top 8%", tone: "violet", width: 92 },
@@ -187,7 +192,7 @@ function StandingScreen({ investors }: { investors: string }) {
   return (
     <div className={styles.fwScreen}>
       <div className={styles.fwTitle}>You vs everyone</div>
-      <p className={styles.fwSub}>{investors} investors, same 45 days</p>
+      <p className={styles.fwSub}>Against investors trading like you</p>
       <div className={styles.fwCurve}>
         <svg viewBox="0 0 260 118" preserveAspectRatio="none">
           <defs>
@@ -234,7 +239,7 @@ function StandingScreen({ investors }: { investors: string }) {
   );
 }
 
-export function FirstWeek({ investors }: { investors: string }) {
+export function FirstWeek() {
   const [step, setStep] = useState(0);
   const [auto, setAuto] = useState(false);
 
@@ -253,7 +258,7 @@ export function FirstWeek({ investors }: { investors: string }) {
     <ConnectScreen key="connect" />,
     <WrappedScreen key="wrapped" />,
     <BriefingScreen key="briefing" />,
-    <StandingScreen key="standing" investors={investors} />,
+    <StandingScreen key="standing" />,
   ];
 
   return (

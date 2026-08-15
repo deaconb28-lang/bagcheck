@@ -33,7 +33,8 @@ export function WrappedDeck({ faces }: { faces: React.ReactNode[] }) {
     if (!auto) return;
     const t = setInterval(() => throwTop(1), HOLD_MS);
     return () => clearInterval(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Deliberately keyed on `auto` alone: re-running this on every render of
+    // throwTop would restart the timer and the deck would never advance.
   }, [auto]);
 
   function throwTop(dir: number) {

@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
 import { getUserId, isAuthConfigured, isDevIdentity, signOut } from "@/auth";
-import { getCollections, isDbConfigured, loadAppData, subscriptionFor, tierFor, trialFor } from "@/lib/db";
+import {
+  accountFootprint,
+  getCollections,
+  isDbConfigured,
+  loadAppData,
+  subscriptionFor,
+  tierFor,
+  trialFor,
+} from "@/lib/db";
 import { isStripeConfigured } from "@/lib/billing";
 import type { ScoreDoc } from "@/lib/db";
 import { selfPercentile } from "@/lib/score";
@@ -8,6 +16,7 @@ import type { StyleBaseline } from "@/lib/score";
 import { Avatar, Button, Card, Eyebrow, Stat } from "@/components/primitives";
 import { archetypeFor, strongLine } from "@/lib/archetypes";
 import { Distribution } from "@/components/idioms";
+import { AccountData } from "@/components/app/AccountData";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
 import { PageHeader } from "@/components/app/PageHeader";
@@ -19,7 +28,7 @@ import { BaselinePicker } from "./BaselinePicker";
 import { EmailPrefs } from "./EmailPrefs";
 import styles from "./profile.module.css";
 
-export const metadata: Metadata = { title: "Bagcheck — profile" };
+export const metadata: Metadata = { title: "Profile" };
 export const dynamic = "force-dynamic";
 
 async function signOutAction() {
@@ -51,11 +60,12 @@ export default async function ProfilePage() {
   }
 
   const { connection, scores, transactionCount } = await loadAppData(userId, 90);
-  const [tier, subscription, emailPrefs, trial] = await Promise.all([
+  const [tier, subscription, emailPrefs, trial, footprint] = await Promise.all([
     tierFor(userId),
     subscriptionFor(userId),
     getCollections().then((c) => c.prefs.findOne({ userId })),
     trialFor(userId),
+    accountFootprint(userId),
   ]);
   const latest = scores[0] ?? null;
   const archetype = archetypeFor(latest?.components ?? null);
@@ -199,6 +209,16 @@ export default async function ProfilePage() {
             configured={isEmailConfigured()}
           />
         </div>
+      </Card>
+
+      {/*
+        * Export and erasure. They live at the foot of settings rather than
+        * behind a support address, because a product that reads someone's
+        * whole brokerage history should be able to hand it back and let go
+        * of it without anyone having to ask twice.
+        */}
+      <Card>
+        <AccountData footprint={footprint} />
       </Card>
     </PageGrid>
   );

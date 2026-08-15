@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Button, Eyebrow } from "@/components/primitives";
 import styles from "@/app/status.module.css";
 
-export const metadata: Metadata = { title: "Bagcheck — sign-in problem" };
+export const metadata: Metadata = { title: "Sign-in problem" };
 export const dynamic = "force-dynamic";
 
 /** What each Auth.js error code actually means for this deployment. */

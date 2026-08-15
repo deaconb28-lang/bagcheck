@@ -1,13 +1,25 @@
 import { ObjectId } from "mongodb";
 import { NextResponse, type NextRequest } from "next/server";
-import { getCollections, getDb, getDerived, isDbConfigured, loadAppData } from "@/lib/db";
+import {
+  connectedCount,
+  getCollections,
+  getDb,
+  getDerived,
+  isDbConfigured,
+  loadAppData,
+  sweep,
+} from "@/lib/db";
 import { notify, wantsEmail } from "@/lib/db/notify";
 import { dailyBrief, weeklyRecap } from "@/lib/email/content";
 import { isEmailConfigured } from "@/lib/email/send";
 import { unsubscribeUrl } from "@/lib/email/token";
 import { archetypeFor } from "@/lib/archetypes";
 
-export const maxDuration = 60;
+export const runtime = "nodejs";
+export const maxDuration = 300;
+export const dynamic = "force-dynamic";
+
+const JOB = "notify";
 
 /**
  * The one send a day.
@@ -17,7 +29,10 @@ export const maxDuration = 60;
  * that even if this route is called twice. There is no third message and no
  * place in this file to add one that fires on a price.
  *
- * Runs after the nightly score, so the figures it reports are today's.
+ * Runs after the nightly score, so the figures it reports are today's, and it
+ * sweeps the same resumable way — it had the identical loop-every-user-under-a
+ * -60-second-cap shape, which on any real mailing list would have sent to the
+ * first handful of addresses and quietly dropped the rest.
  */
 export async function GET(req: NextRequest) {
   const secret = process.env.CRON_SECRET;
@@ -33,57 +48,54 @@ export async function GET(req: NextRequest) {
   const kind = now.getUTCDay() === 1 ? "recap" : "brief";
   const base = process.env.APP_URL || req.nextUrl.origin;
 
-  const { connections, insights, tags, transactions } = await getCollections();
-  const users = await connections
-    .find({})
-    .project<{ userId: string }>({ _id: 0, userId: 1 })
-    .toArray();
+  const { insights, tags, transactions } = await getCollections();
 
   let sent = 0;
   let skipped = 0;
-  const errors: string[] = [];
 
-  for (const { userId } of users) {
-    try {
-      if (!(await wantsEmail(userId, kind))) {
-        skipped += 1;
-        continue;
-      }
-
-      const to = await emailFor(userId);
-      if (!to) {
-        skipped += 1;
-        continue;
-      }
-
-      const { scores } = await loadAppData(userId, 90);
-      const latest = scores[0] ?? null;
-      if (!latest) {
-        skipped += 1;
-        continue;
-      }
-
-      const content =
-        kind === "brief"
-          ? dailyBrief({
-              date: latest.date,
-              score: latest.score,
-              previousScore: scores[1]?.score ?? null,
-              ...(await writtenInsight(insights, userId, latest.date)),
-              untagged: await untaggedCount(transactions, tags, userId),
-              streak: streakOf(scores.map((s) => s.score)),
-            })
-          : weeklyRecap(await recapInput(userId, scores));
-
-      const result = await notify(userId, to, date, kind, content, unsubscribeUrl(userId, base));
-      if (result.sent) sent += 1;
-      else skipped += 1;
-    } catch (err) {
-      errors.push(`${userId}: ${err instanceof Error ? err.message : String(err)}`);
+  const result = await sweep(JOB, async (userId) => {
+    if (!(await wantsEmail(userId, kind))) {
+      skipped += 1;
+      return;
     }
-  }
 
-  return NextResponse.json({ kind, users: users.length, sent, skipped, errors });
+    const to = await emailFor(userId);
+    if (!to) {
+      skipped += 1;
+      return;
+    }
+
+    const { scores } = await loadAppData(userId, 90);
+    const latest = scores[0] ?? null;
+    if (!latest) {
+      skipped += 1;
+      return;
+    }
+
+    const content =
+      kind === "brief"
+        ? dailyBrief({
+            date: latest.date,
+            score: latest.score,
+            previousScore: scores[1]?.score ?? null,
+            ...(await writtenInsight(insights, userId, latest.date)),
+            untagged: await untaggedCount(transactions, tags, userId),
+            streak: streakOf(scores.map((s) => s.score)),
+          })
+        : weeklyRecap(await recapInput(userId, scores));
+
+    const outcome = await notify(userId, to, date, kind, content, unsubscribeUrl(userId, base));
+    if (outcome.sent) sent += 1;
+    else skipped += 1;
+  });
+
+  return NextResponse.json({
+    ...result,
+    kind,
+    sent,
+    skipped,
+    connected: await connectedCount(),
+  });
 }
 
 /**

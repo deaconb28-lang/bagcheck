@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Anton, JetBrains_Mono, Playfair_Display, Public_Sans, Space_Grotesk } from "next/font/google";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, siteOrigin } from "@/lib/site";
 import "../styles/tokens.css";
 import "./globals.css";
 
@@ -65,9 +66,35 @@ const poster = Anton({
   display: "swap",
 });
 
+/*
+ * Site-wide metadata.
+ *
+ * `metadataBase` is what every relative OpenGraph URL resolves against — and
+ * without it, the `opengraph-image` convention emits a relative path that no
+ * unfurler can fetch. On a product whose entire pitch is that people post it,
+ * a link that does not unfurl is a broken feature rather than a nicety.
+ */
 export const metadata: Metadata = {
-  title: "Bagcheck",
-  description: "Fitness tracking for your investment portfolio.",
+  metadataBase: new URL(siteOrigin()),
+  title: {
+    default: `${SITE_NAME} — ${SITE_TAGLINE.toLowerCase()}`,
+    template: `%s · ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} — ${SITE_TAGLINE.toLowerCase()}`,
+    description: SITE_DESCRIPTION,
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} — ${SITE_TAGLINE.toLowerCase()}`,
+    description: SITE_DESCRIPTION,
+  },
+  robots: { index: true, follow: true },
 };
 
 /*

@@ -16,7 +16,7 @@ import { ScoreButton } from "./ScoreButton";
 import { SyncButton } from "./SyncButton";
 import styles from "./debug.module.css";
 
-export const metadata: Metadata = { title: "Bagcheck — debug" };
+export const metadata: Metadata = { title: "Debug" };
 export const dynamic = "force-dynamic";
 
 const ENV_KEYS = [
