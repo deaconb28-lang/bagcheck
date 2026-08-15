@@ -16,3 +16,4 @@ __pycache__/
 # The avatar contact sheet is a review artefact, not a product asset.
 public/archetypes/_sheet.png
 .shots/
+.shots-before/
