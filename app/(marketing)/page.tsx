@@ -106,19 +106,26 @@ export default function LandingPage() {
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
           {/*
-            * This was "Loved by 320K investors · 4.9 rating" over three
-            * invented faces, on the launch day of a product with no users. A
-            * fabricated review count is a bad idea on any landing and a
-            * liability on a financial one, so the pill states the thing that
-            * is both true and the actual objection someone has at this point
-            * in the page: what does connecting a brokerage let you do to me.
+            * The stacked-circle pill, kept — but the circles are broker marks
+            * rather than invented faces.
+            *
+            * It read "Loved by 320K investors · 4.9 rating" over three drawn
+            * people, on the launch day of a product with no users. The
+            * treatment was the good part; the content was a fabricated review
+            * count, which is a bad idea on any landing and a liability on a
+            * financial one.
+            *
+            * Broker coverage is what actually answers the first question a
+            * visitor has, and the number is the one `/start` already states
+            * rather than a new claim invented for the hero.
             */}
           <div className={styles.ratingPill}>
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--mk-green)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M12 2.6l7.5 3.2v6c0 4.6-3.1 8.4-7.5 9.6-4.4-1.2-7.5-5-7.5-9.6v-6z" />
-              <path d="M8.8 12.2l2.3 2.3 4.3-4.8" />
-            </svg>
-            <span>Read-only through SnapTrade · no trades, ever</span>
+            <span className={styles.brokers} aria-hidden="true">
+              <i data-broker="rh">RH</i>
+              <i data-broker="fid">FID</i>
+              <i data-broker="sch">SCH</i>
+            </span>
+            <span>Robinhood, Fidelity, Schwab and 20+ more</span>
           </div>
           <h1 className={styles.h1}>
             <span className={styles.h1Strong}>Meet bagcheck</span>
