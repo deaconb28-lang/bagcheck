@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getUserId, isAuthConfigured } from "@/auth";
 import { isDbConfigured, linkedBrokerage } from "@/lib/db";
 import { isSnapTradeConfigured } from "@/lib/snaptrade";
+import { appLocked } from "@/lib/launch";
 import { BagMark } from "@/app/(marketing)/BagMark";
 import { GoogleSignIn } from "@/components/app/GoogleSignIn";
 import { DancingCards } from "./DancingCards";
@@ -44,6 +45,8 @@ export default async function StartPage({
   const userId = await getUserId();
   const linked = userId && isDbConfigured() ? await linkedBrokerage(userId) : null;
   const canLink = isSnapTradeConfigured() && (Boolean(userId) || isAuthConfigured());
+  /* Read per request, server-side. The flag never reaches the client. */
+  const dashboardOpen = !appLocked();
   const problem = error ? ERRORS[error] : null;
 
   /*
@@ -74,15 +77,34 @@ export default async function StartPage({
               * panel of its own directly under the summary row — so sending
               * someone straight to the cards used to drop them on a screen
               * with no way back into the product they had just set up.
+              *
+              * Unless the dashboard is not open. This screen is in `(flex)`,
+              * which sits outside the launch lock so a signed-out visitor can
+              * reach it; `/home` is in `(app)`, which sits behind it. While
+              * the flag is off, offering this door produces exactly the loop
+              * the flag's own documentation warns about — connect, sync,
+              * press "Open your dashboard", land back on the marketing page
+              * with nothing said. An affordance that will refuse you is
+              * absent, not present, which is the rule the locked cards
+              * already follow.
               */}
             <div className={styles.actions}>
-              <Link className={styles.primary} href="/home">
-                Open your dashboard
-                <Arrow />
-              </Link>
-              <Link className={styles.secondary} href="/wrapped">
-                See your Wrapped
-              </Link>
+              {dashboardOpen ? (
+                <>
+                  <Link className={styles.primary} href="/home">
+                    Open your dashboard
+                    <Arrow />
+                  </Link>
+                  <Link className={styles.secondary} href="/wrapped">
+                    See your Wrapped
+                  </Link>
+                </>
+              ) : (
+                <Link className={styles.primary} href="/wrapped">
+                  See your Wrapped
+                  <Arrow />
+                </Link>
+              )}
             </div>
             <p className={styles.fine}>
               {linked.lastSyncAt

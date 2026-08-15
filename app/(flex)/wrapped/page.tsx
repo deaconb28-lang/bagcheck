@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { auth, getUserId, isAuthConfigured } from "@/auth";
 import { isDbConfigured } from "@/lib/db";
+import { appLocked } from "@/lib/launch";
 import { buildCards } from "@/lib/cards";
 import { exampleLedger } from "@/lib/cards/exampleLedger";
 import { assembleWrapped } from "@/lib/wrapped/assemble";
@@ -58,7 +59,10 @@ export default async function WrappedPage({
    * knows the reader's name, and it is the moment the connect-once promise
    * becomes true, so it is made here as well as on the screen before.
    */
-  const firstRun = connected === "1" && userId ? <FirstRun name={await firstName()} /> : null;
+  const firstRun =
+    connected === "1" && userId ? (
+      <FirstRun name={await firstName()} dashboardOpen={!appLocked()} />
+    ) : null;
 
   /*
    * Mid-first-read there is nothing of the reader's to show yet, and the

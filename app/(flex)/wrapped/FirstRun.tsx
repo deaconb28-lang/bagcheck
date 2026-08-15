@@ -35,7 +35,23 @@ const IDLE: SyncProgress = {
  * The connect-once promise is made here rather than only on the screen
  * before, because this is the first moment it is true.
  */
-export function FirstRun({ name }: { name: string }) {
+export function FirstRun({
+  name,
+  dashboardOpen,
+}: {
+  name: string;
+  /**
+   * Whether `/home` will actually open.
+   *
+   * `(flex)` sits outside the launch lock so a signed-out visitor can reach
+   * it; `(app)` sits behind it. That asymmetry is deliberate and it means
+   * this screen can be live while the door it offers is shut — which is
+   * exactly the loop the flag's own documentation warns about: connect, sync,
+   * press "Open your dashboard", land back on the marketing page with no
+   * explanation. An affordance that will refuse you is absent, not present.
+   */
+  dashboardOpen: boolean;
+}) {
   const [progress, setProgress] = useState<SyncProgress>(IDLE);
   const [failed, setFailed] = useState<string | null>(null);
   const started = useRef(false);
@@ -122,7 +138,7 @@ export function FirstRun({ name }: { name: string }) {
         * dashboard that has nothing in it yet is a worse first visit than
         * waiting four seconds.
         */}
-      {done ? (
+      {done && dashboardOpen ? (
         <Link className={styles.enter} href="/home">
           Open your dashboard
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
