@@ -6,7 +6,7 @@ export { getPulse, isValidAnswer, questionFor, savePulse } from "./pulse";
 export type { PulseQuestion } from "./pulse";
 export { holdingsFrom, linkedBrokerage, loadActivity, loadAppData, loadShellConnection } from "./queries";
 export type { ActivityPage, ActivityRow, AppData, HoldingRow } from "./queries";
-export { scoreUser } from "./scoring";
+export { BACKFILL_DAYS, backfillScores, backfillSpan, scoreUser } from "./scoring";
 export { saveSubscription, subscriptionFor, tierFor, trialFor, userIdForCustomer } from "./subscriptions";
 export type {
   CardDoc,

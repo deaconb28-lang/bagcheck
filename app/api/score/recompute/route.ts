@@ -1,20 +1,28 @@
 import { NextResponse } from "next/server";
 import { getUserId } from "@/auth";
 import {
+  backfillScores,
   factsFrom,
   getCollections,
   getDailyInsight,
-  scoreUser,
 } from "@/lib/db";
 
-/** Recompute today's score, then redraft the readout that describes it. */
+/**
+ * Rebuild the score history, then redraft the readout that describes it.
+ *
+ * This is the escape hatch behind "Score my ledger now" on an account that
+ * has none, so it backfills rather than writing today alone — landing on a
+ * dashboard with a single score and an empty streak is the state the reader
+ * pressed the button to get out of. Days already stored are skipped, so
+ * pressing it twice is cheap.
+ */
 export async function POST() {
   const userId = await getUserId();
   if (!userId) {
     return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
   try {
-    const score = await scoreUser(userId);
+    const { written, from, to } = await backfillScores(userId);
 
     const { scores, connections, transactions } = await getCollections();
     const [recent, connection, transactionCount] = await Promise.all([
@@ -40,11 +48,14 @@ export async function POST() {
       : null;
 
     return NextResponse.json({
-      date: score.date,
-      score: score.score,
-      baseline: score.baseline,
-      components: score.components,
-      contributors: score.contributors,
+      scored: written,
+      from,
+      to,
+      date: latest?.date ?? to,
+      score: latest?.score ?? null,
+      baseline: latest?.baseline ?? null,
+      components: latest?.components ?? null,
+      contributors: latest?.contributors ?? [],
       insight,
     });
   } catch (err) {

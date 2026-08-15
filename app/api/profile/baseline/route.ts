@@ -1,11 +1,18 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getUserId } from "@/auth";
-import { getCollections, scoreUser } from "@/lib/db";
+import { backfillScores, getCollections } from "@/lib/db";
 import type { StyleBaseline } from "@/lib/score";
 
 const VALID: StyleBaseline[] = ["long-term", "swing", "active"];
 
-/** Set the style the score measures against, then rescore immediately. */
+/**
+ * Set the style the score measures against, then rescore immediately.
+ *
+ * The whole history, not just today: the baseline feeds patience and exposure,
+ * so changing it invalidates every score behind it. Leaving those in place
+ * would show a run of scores measured against a style the reader has just said
+ * is not theirs.
+ */
 export async function POST(req: NextRequest) {
   const userId = await getUserId();
   if (!userId) {
@@ -38,8 +45,8 @@ export async function POST(req: NextRequest) {
         { status: 409 },
       );
     }
-    const score = await scoreUser(userId);
-    return NextResponse.json({ baseline, score: score.score });
+    const { written } = await backfillScores(userId, { force: true });
+    return NextResponse.json({ baseline, rescored: written });
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : String(err) },

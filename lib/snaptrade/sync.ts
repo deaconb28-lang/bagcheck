@@ -1,7 +1,7 @@
 import type { LoginRedirectURI } from "snaptrade-typescript-sdk";
 import { ensureIndexes, getCollections } from "@/lib/db";
 import { rebuildDerived } from "@/lib/db/derived";
-import { scoreUser } from "@/lib/db/scoring";
+import { backfillScores } from "@/lib/db/scoring";
 import { beginSync, failSync, finishSync, markPhase } from "@/lib/db/sync-progress";
 import type { ConnectionDoc } from "@/lib/db";
 import { getSnapTrade } from "./client";
@@ -217,21 +217,20 @@ async function runSync(userId: string, startedAt: number): Promise<SyncResult> {
   );
 
   /*
-   * And score it, here, for the same reason.
+   * And score it — every day of it, not just today.
    *
    * Scoring used to happen only in the nightly cron and behind a button on
-   * /debug, which meant a brand-new account finished onboarding, pressed
-   * "Open your dashboard" and got "No score yet" — the dashboard has nothing
-   * to draw without a score doc, so the last step of setup led to an empty
-   * state whose only way out was a route nobody is meant to find. The ledger
-   * is right here and the engine is pure; there is no reason to make someone
-   * wait a day to see the screen they just connected a brokerage for.
+   * /debug, so a brand-new account finished onboarding and got "No score yet".
+   * Writing today's score fixed that screen but not the product: one document
+   * is not a history, and the streak, the consistency grid, the weekly delta
+   * and the cards gated on 14, 60 and 180 scored days were all still empty.
+   * The ledger has always known what happened on those days.
    *
    * Logged rather than thrown, like the rebuild above: the sync itself
-   * succeeded, and a score that failed to compute is recomputed tonight.
+   * succeeded, and anything that failed to compute is recomputed tonight.
    */
-  await scoreUser(userId).catch((err) =>
-    console.error("[sync] first score failed", err),
+  await backfillScores(userId).catch((err) =>
+    console.error("[sync] score backfill failed", err),
   );
 
   await finishSync(userId, startedAt);
