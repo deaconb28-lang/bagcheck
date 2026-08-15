@@ -125,7 +125,7 @@
   text-align: center;
   font-size: 15px;
   font-weight: 500;
-  color: color-mix(in srgb, var(--mk-bg) 50%, transparent);
+  color: color-mix(in srgb, var(--mk-bg) 52%, transparent);
   padding: 6px;
   transition: color 0.16s ease;
 }
@@ -137,14 +137,15 @@
 .warn {
   font-size: 14px;
   line-height: 1.5;
-  color: color-mix(in srgb, var(--mk-bg) 45%, transparent);
+  color: color-mix(in srgb, var(--mk-bg) 52%, transparent);
 }
 
 .fine {
   margin-top: 22px;
   text-align: center;
   font-size: 14px;
-  color: color-mix(in srgb, var(--mk-bg) 38%, transparent);
+  /* 38% was 3.5:1 on the field. 52% is the floor the whole dark side uses. */
+  color: color-mix(in srgb, var(--mk-bg) 52%, transparent);
 }
 
 /* ── The drifting deck ── */

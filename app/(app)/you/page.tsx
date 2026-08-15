@@ -93,15 +93,21 @@ export default async function YouPage() {
   const returnPct = totalCost ? ((totalValue - totalCost) / totalCost) * 100 : null;
   const winners = holdings.filter((h) => (h.pnlPct ?? 0) > 0).length;
 
-  /* One point per day a sync ran, so the line only exists once there are two. */
-  const byDate = new Map<string, number>();
-  for (const snap of data.snapshots) {
-    const v = (snap.positions ?? []).reduce((s, p) => s + (p.price ?? 0) * (p.units ?? 0), 0);
-    byDate.set(snap.date, (byDate.get(snap.date) ?? 0) + v);
-  }
-  const series = [...byDate.entries()]
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([date, value]) => ({ date, value }));
+  /*
+   * The materialised series, not a scan.
+   *
+   * This block used to rebuild the curve from `data.snapshots`, which
+   * `loadAppData` caps at the twenty most recent — so on an account with
+   * fourteen months of history the "equity curve" silently drew nineteen
+   * days and labelled its own axis with them. Screens read derived; that is
+   * the rule, and this is what it is for. The materialised series also
+   * forward-fills across days no sync ran, so the line is a picture of the
+   * market rather than of when the reader opened the app.
+   */
+  const series = (data.derived?.equitySeries ?? []).map((p) => ({
+    date: p.date,
+    value: p.value,
+  }));
 
   const components = (latest?.components ?? null) as unknown as Record<string, number> | null;
   const archetype = archetypeOf(components);

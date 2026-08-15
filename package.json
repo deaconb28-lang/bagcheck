@@ -15,7 +15,9 @@
     "avatars:sheet": "node --import tsx scripts/avatar-sheet.mjs",
     "backdrops": "node --import tsx scripts/generate-backdrops.mjs",
     "photos": "node --import tsx scripts/fetch-photos.mjs",
-    "fonts": "node scripts/vendor-fonts.mjs"
+    "fonts": "node scripts/vendor-fonts.mjs",
+    "seed": "node --import tsx scripts/seed.mjs",
+    "shots": "node --import tsx scripts/shots.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
@@ -37,6 +39,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9.39.5",
     "eslint-config-next": "^15.5.23",
+    "mongodb-memory-server": "^11.2.0",
     "playwright-core": "^1.62.1",
     "sharp": "^0.34.5",
     "tsx": "^4.23.9",

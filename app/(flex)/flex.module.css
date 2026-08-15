@@ -47,5 +47,5 @@
 .barNote {
   font-size: 14px;
   font-weight: 500;
-  color: color-mix(in srgb, var(--mk-bg) 45%, transparent);
+  color: color-mix(in srgb, var(--mk-bg) 52%, transparent);
 }
