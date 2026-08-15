@@ -49,7 +49,6 @@
 .agePill,
 .streakPill,
 .leakPill,
-.sync,
 .tier,
 .upgrade {
   /* The pill arrival — chrome settles in a third of a second, oldest first. */
@@ -60,7 +59,6 @@
 .streakPill { animation-delay: 0.06s; }
 .leakPill { animation-delay: 0.1s; }
 .agePill { animation-delay: 0.14s; }
-.sync { animation-delay: 0.18s; }
 .tier { animation-delay: 0.22s; }
 .upgrade { animation-delay: 0.26s; }
 
@@ -68,7 +66,6 @@
 .agePill,
 .streakPill,
 .leakPill,
-.sync,
 .tier {
   display: flex;
   align-items: center;
@@ -108,7 +105,6 @@
 
 .scoreLabel,
 .ageLabel,
-.sync span:last-child,
 .tier {
   font-family: var(--font-mono), monospace;
   font-size: 10px;
@@ -190,20 +186,6 @@
   color: var(--accent-deep);
 }
 
-.sync {
-  padding: 8px 12px 8px 10px;
-}
-
-/* The accent, earned: a sync is work the product did on its own. */
-.syncDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: var(--moss);
-  box-shadow: 0 0 10px 1px var(--moss-line);
-  flex: none;
-}
-
 .tier {
   padding: 8px 12px;
   background: var(--control);
@@ -250,7 +232,6 @@
     gap: 10px;
   }
 
-  .sync,
   .tier,
   .leakPill {
     display: none;

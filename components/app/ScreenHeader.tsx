@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SyncNow } from "./SyncNow";
 import { TIER_LABEL } from "@/lib/tiers";
 import type { Tier } from "@/lib/tiers";
 import styles from "./ScreenHeader.module.css";
@@ -100,10 +101,12 @@ export function ScreenHeader({
         </Link>
       ) : null}
 
-      <div className={styles.sync}>
-        <span className={styles.syncDot} aria-hidden="true" />
-        <span>{syncedAt ? `Synced ${syncedAt}` : "Never synced"}</span>
-      </div>
+      {/*
+        * The pill reads the brokerage again when pressed. Until it did, the
+        * only way to run a sync was to reconnect or find /debug — so a
+        * reader whose screen looked stale had nothing to press.
+        */}
+      <SyncNow syncedAt={syncedAt} />
 
       <div className={styles.tier}>{TIER_LABEL[tier]}</div>
 

@@ -1,0 +1,74 @@
+/*
+ * The sync pill, made pressable.
+ *
+ * It is the same object it always was — a dot marking live data and a line
+ * saying when the ledger was last read — so it keeps the chrome's quiet
+ * treatment and gains only the affordances a button needs. Chrome does not
+ * get a second element for a job the first one already describes.
+ */
+.sync {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px 8px 10px;
+  border-radius: 999px;
+  background: var(--s1);
+  border: 1px solid var(--edge);
+  color: var(--ink3);
+  white-space: nowrap;
+  flex: none;
+  cursor: pointer;
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+
+.sync:hover:not(:disabled) {
+  border-color: var(--line2);
+  background: var(--tile);
+}
+
+.sync:disabled {
+  cursor: progress;
+}
+
+.label {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink3);
+}
+
+/* Live data earns the one glow in the chrome. */
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--moss);
+  box-shadow: 0 0 10px 1px var(--moss-line);
+  flex: none;
+}
+
+/*
+ * Running is the one ambient loop allowed here, and it is on the dot rather
+ * than on the type a reader is parsing.
+ */
+.sync[data-running] .dot {
+  background: var(--accent);
+  box-shadow: 0 0 10px 1px var(--accent-line);
+  animation: breathe 1.4s ease-in-out infinite;
+}
+
+.sync[data-failed] .dot {
+  background: var(--loss);
+  box-shadow: none;
+}
+
+.sync[data-failed] .label {
+  color: var(--loss);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sync[data-running] .dot {
+    animation: none;
+  }
+}
