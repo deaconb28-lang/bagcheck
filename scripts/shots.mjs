@@ -195,7 +195,7 @@ function serve(uri, userId) {
         ...process.env,
         NODE_ENV: "production",
         PORT: String(PORT),
-        APP_UNLOCKED: "1",
+        APP_LOCKED: "",
         APP_URL: BASE,
         MONGODB_URI: uri,
         MONGODB_DB: "bagcheck",

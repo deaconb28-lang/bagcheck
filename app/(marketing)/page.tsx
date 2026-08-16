@@ -27,7 +27,7 @@ export const metadata: Metadata = {
  * The nav reads the launch lock and whether sign-in is configured, and a
  * statically prerendered page freezes both at build time — the same failure
  * that made every redirect stub answer with the locked landing until it was
- * marked dynamic. Flipping APP_UNLOCKED must take effect on the next request,
+ * marked dynamic. Flipping APP_LOCKED must take effect on the next request,
  * not on the next build.
  */
 export const dynamic = "force-dynamic";
