@@ -1,0 +1,194 @@
+/*
+ * Six cards on a two-column grid. Every card is the same object — head, art,
+ * headline, body, then a footer pinned to the bottom by a flexible spacer, so
+ * two cards side by side rule their footers against each other whatever their
+ * copy does.
+ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 34px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--edge);
+  background: var(--s1);
+  border-radius: 30px;
+  padding: 30px 32px;
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+/*
+ * The tag names what the pattern is doing to you, and takes the hue that means
+ * it. An outline, never a fill — a filled chip at this size is a button.
+ */
+.tag {
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 5px 12px;
+  white-space: nowrap;
+  background: transparent;
+  color: var(--meta);
+  border: 1px solid var(--line2);
+}
+
+.tag[data-tone="loss"] {
+  color: var(--loss);
+  border-color: var(--loss-line);
+}
+
+.tag[data-tone="moss"] {
+  color: var(--moss);
+  border-color: var(--moss-line);
+}
+
+.tag[data-tone="accent"] {
+  color: var(--accent);
+  border-color: var(--accent-line);
+}
+
+.art {
+  margin-top: 26px;
+  min-height: 132px;
+  display: flex;
+  align-items: center;
+}
+
+/* The thumbnail runs full width here rather than at its 104px row size. */
+.weekArt {
+  width: 100%;
+}
+
+.weekArt > * {
+  width: 100%;
+}
+
+.bigFigure {
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.bigFigure[data-tone="moss"] {
+  color: var(--moss);
+}
+
+.bigFigure[data-tone="loss"] {
+  color: var(--loss);
+}
+
+.title {
+  margin: 26px 0 0;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.body {
+  margin: 10px 0 0;
+  font-size: 17px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.spacer {
+  flex: 1;
+  min-height: 22px;
+}
+
+.foot {
+  padding-top: 20px;
+  border-top: 1px solid var(--edge);
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.foot[data-tone="loss"] {
+  color: var(--loss);
+}
+
+.foot[data-tone="moss"] {
+  color: var(--moss);
+}
+
+/* ── The archetype card's readout ── */
+.type {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+}
+
+.typeList {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  margin: 0;
+  min-width: 0;
+}
+
+.typeRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.typeRow dt {
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: capitalize;
+}
+
+.typeRow dd {
+  margin: 0;
+  color: var(--ink);
+}
+
+.prov {
+  margin: 24px 0 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--meta);
+  max-width: 78ch;
+}
+
+@media (max-width: 1080px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .card {
+    border-radius: 24px;
+    padding: 24px 20px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+}

@@ -63,7 +63,7 @@ export function renderHtml(content: EmailContent, unsubscribeUrl: string): strin
   <tr><td align="center" style="padding:32px 16px">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:${S1};border-radius:26px">
       <tr><td style="padding:32px 30px 0">
-        <div style="font-family:${MONO};font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:${DIM}">Canopy</div>
+        <div style="font-family:${MONO};font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:${DIM}">Bagcheck</div>
       </td></tr>
       <tr><td style="padding:18px 30px 26px">
         <div style="font-family:${SANS};font-size:16px;line-height:1.65;color:${INK}">${esc(content.lede)}</div>

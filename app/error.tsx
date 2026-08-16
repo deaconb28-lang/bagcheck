@@ -28,7 +28,7 @@ export default function Error({
    */
   return (
     <main className={styles.page}>
-      <Eyebrow>Canopy</Eyebrow>
+      <Eyebrow>Bagcheck</Eyebrow>
       <h1 className={`disp ${styles.title}`}>This screen could not load</h1>
       <p className={styles.body}>
         Something failed before the page finished. Nothing was written, and

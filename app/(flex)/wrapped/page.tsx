@@ -3,7 +3,7 @@ import { auth, getUserId, isAuthConfigured } from "@/auth";
 import { isDbConfigured } from "@/lib/db";
 import { appLocked } from "@/lib/launch";
 import { wrappedDeck } from "@/lib/wrapped/year";
-import { CanopyMark } from "@/app/(marketing)/CanopyMark";
+import { BagcheckMark } from "@/components/brand/BagcheckMark";
 import { GoogleSignIn } from "@/components/app/GoogleSignIn";
 import { CardFonts } from "@/components/cards/CardFonts";
 import { StillToCome } from "./StillToCome";
@@ -214,9 +214,9 @@ function Bar({
 }) {
   return (
     <header className={styles.bar}>
-      <Link href="/" className={styles.brand} aria-label="canopy home">
-        <CanopyMark size={24} />
-        <span>canopy</span>
+      <Link href="/" className={styles.brand} aria-label="bagcheck home">
+        <BagcheckMark size={24} />
+        <span>bagcheck</span>
       </Link>
       <span className={styles.barLabel}>
         {example ? "Sample year" : "Wrapped"} · {label}

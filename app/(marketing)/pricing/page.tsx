@@ -18,7 +18,7 @@ import styles from "../pricing.module.css";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Canopy is free to use and $9 a month to publish. Every card your behaviour earns is yours to post on either plan, rare ones included.",
+    "Bagcheck is free to use and $9 a month to publish. Every card your behaviour earns is yours to post on either plan, rare ones included.",
 };
 
 /*
@@ -64,8 +64,8 @@ const QA: Array<[string, string]> = [
     "Any time, from your profile. Stripe handles it directly and the plan runs to the end of the period you have already paid for.",
   ],
   [
-    "Does canopy touch my money?",
-    "No. The brokerage connection is read-only through SnapTrade — canopy can see what you did and cannot place a trade, move a dollar, or hold a credential.",
+    "Does bagcheck touch my money?",
+    "No. The brokerage connection is read-only through SnapTrade — bagcheck can see what you did and cannot place a trade, move a dollar, or hold a credential.",
   ],
   [
     "Can I delete it all?",
@@ -94,7 +94,7 @@ export default async function PricingPage() {
           <h1 className={styles.h1}>Free to use. Nine dollars to publish.</h1>
         </div>
         <p className={styles.lede}>
-          Canopy reads your brokerage and turns the year into something worth
+          Bagcheck reads your brokerage and turns the year into something worth
           posting. That part is free and stays free. Pro is for the formats —
           publication-size exports, the carousel, a live badge — and it is the
           only thing there is to buy.
@@ -189,7 +189,7 @@ export default async function PricingPage() {
           <div className={styles.neverItem}>
             <h3>Read-only, permanently</h3>
             <p>
-              Canopy describes what you did. It never places a trade, never
+              Bagcheck describes what you did. It never places a trade, never
               recommends one, and never sends a price alert.
             </p>
           </div>

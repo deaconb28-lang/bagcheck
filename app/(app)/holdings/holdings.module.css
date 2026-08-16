@@ -1,0 +1,231 @@
+/*
+ * The position table. One grid, stated once, used by the header and every row
+ * — a table whose header and body declare their own columns is a table that
+ * will one day disagree with itself.
+ */
+.table {
+  border: 1px solid var(--edge);
+  background: var(--s1);
+  border-radius: 30px;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+.headRow,
+.row {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 250px) 110px 120px 120px 140px 110px 150px 90px;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 26px;
+}
+
+.headRow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.row {
+  border-top: 1px solid var(--line-light);
+  animation: rowIn 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.position {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+}
+
+.name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.symbol {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.desc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell {
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.value {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.weight {
+  min-width: 0;
+}
+
+.weightPct {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.weightTrack {
+  display: block;
+  margin-top: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.weightFill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transform-origin: left;
+  animation: weightGrow 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes weightGrow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.unrealised {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.unrealisedMoney {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.unrealisedPct {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.unrealisedMoney[data-tone="moss"] {
+  color: var(--moss);
+}
+
+.unrealisedMoney[data-tone="loss"] {
+  color: var(--loss);
+}
+
+.unrealisedPct[data-tone="moss"] {
+  /* 65% of the hue on this ground reads 3.6:1 and fails; 82% clears. */
+  color: color-mix(in srgb, var(--moss) 82%, transparent);
+}
+
+.unrealisedPct[data-tone="loss"] {
+  color: color-mix(in srgb, var(--loss) 82%, transparent);
+}
+
+.end {
+  justify-self: end;
+}
+
+/* ── The concentration note ── */
+.warn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+  border: 1px solid var(--loss-line);
+  background: var(--loss-tint);
+  border-radius: 22px;
+  padding: 20px 26px;
+}
+
+.warn svg {
+  flex: none;
+}
+
+.warn p {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row,
+  .weightFill {
+    animation: none;
+  }
+}
+
+/*
+ * Below the wide breakpoint the table stops being a table. Eight columns on a
+ * phone is a horizontal scrollbar nobody finds, so each position becomes a
+ * block: the name and its value on one line, everything else labelled under it.
+ */
+@media (max-width: 1080px) {
+  .headRow {
+    display: none;
+  }
+
+  .row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px 16px;
+    padding: 18px 20px;
+  }
+
+  .position {
+    grid-column: 1;
+  }
+
+  .value {
+    grid-column: 2;
+    text-align: right;
+  }
+
+  .cell {
+    display: none;
+  }
+
+  .weight {
+    grid-column: 1;
+  }
+
+  .unrealised {
+    grid-column: 2;
+    align-items: flex-end;
+  }
+
+  .end {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+
+  .end svg {
+    width: 100%;
+  }
+}

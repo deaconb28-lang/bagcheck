@@ -60,7 +60,13 @@
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 12px;
   letter-spacing: 0.16em;
-  color: color-mix(in srgb, var(--mk-bg) 40%, transparent);
+  /*
+   * 55%, not 40%. A 12px mono numeral is small text and needs 4.5:1; at 40% of
+   * the card ground it reads 3.79 and fails, which no eye catches and every
+   * probe does. The number is the structural device these rows are ordered by,
+   * so it is the last thing that should be hard to read.
+   */
+  color: color-mix(in srgb, var(--mk-bg) 55%, transparent);
 }
 
 /*

@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { appLocked } from "@/lib/launch";
-import { MobileTabs } from "@/components/app/AppRail";
 import styles from "./app.module.css";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -23,7 +22,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       </div>
 
       <div className={styles.canvas}>{children}</div>
-      <MobileTabs />
     </div>
   );
 }

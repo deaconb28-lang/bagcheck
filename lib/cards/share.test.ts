@@ -9,7 +9,7 @@ import {
   xIntent,
 } from "./share";
 
-const URL_ = "https://canopy.app/c/abc123";
+const URL_ = "https://bagcheck.app/c/abc123";
 const TEXT = "Longest hold — 412 days on ASML";
 
 test("X gets a real intent, and it is x.com rather than a redirect", () => {
@@ -82,7 +82,7 @@ test("the unfurl size carries no query — it is the default render", () => {
 });
 
 test("a saved file is nameable in a camera roll", () => {
-  assert.equal(downloadName("longestHold", "story"), "canopy-longestHold-story.png");
+  assert.equal(downloadName("longestHold", "story"), "bagcheck-longestHold-story.png");
 });
 
 test("every target says what the tap will actually do", () => {

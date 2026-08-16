@@ -141,7 +141,7 @@ export function SyncDialog({
             ? progress.error || "The brokerage did not answer. Nothing was lost — try the sync again."
             : done
               ? arrivalLine(progress, today)
-              : "Read-only, permanently. Canopy never places a trade."}
+              : "Read-only, permanently. Bagcheck never places a trade."}
         </p>
 
         {/*

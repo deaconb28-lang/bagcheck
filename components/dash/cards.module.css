@@ -1,0 +1,320 @@
+/* ── The Wrapped promo: the one gradient surface in the app ─────────────── */
+.promo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 30px;
+  padding: 30px 32px;
+  overflow: hidden;
+  color: #fff;
+  /*
+   * The amber stop sits past the box on purpose, so only its leading edge
+   * reaches the bottom-right corner. A gradient that lands its last stop
+   * inside the frame reads as two colours meeting; this one reads as light.
+   */
+  background: linear-gradient(160deg, var(--card-violet-mid) 0%, #7c3aed 52%, var(--ember) 130%);
+  border: 0;
+}
+
+/* Clipped by the card, so it reads as an arc bleeding off the corner. */
+.promoOrb {
+  position: absolute;
+  right: -60px;
+  top: -60px;
+  width: 230px;
+  height: 230px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.promoBody {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.promoTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.promoLabel {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.promoState {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.promoFigure {
+  margin-top: 26px;
+  font-size: 62px;
+  line-height: 0.9;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+}
+
+.promoSub {
+  margin-top: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.promoPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.promoPill {
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 7px 13px;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.promoPill[data-solid] {
+  background: #fff;
+  color: var(--card-violet-deep);
+  border-color: #fff;
+}
+
+.promoSpacer {
+  flex: 1;
+  min-height: 26px;
+}
+
+.promoActions {
+  display: flex;
+  gap: 10px;
+}
+
+.promoGhost,
+.promoSolid {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 14px 18px;
+  transition: background 0.16s ease, opacity 0.16s ease;
+}
+
+.promoGhost {
+  flex: none;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+.promoGhost:hover {
+  background: rgba(255, 255, 255, 0.26);
+  color: #fff;
+}
+
+.promoSolid {
+  flex: 1;
+  justify-content: center;
+  background: #fff;
+  color: var(--card-violet-deep);
+}
+
+.promoSolid:hover {
+  opacity: 0.88;
+  color: var(--card-violet-deep);
+}
+
+/* ── Insight rows ───────────────────────────────────────────────────────── */
+.insight {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 20px 22px;
+  animation: insightRise 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes insightRise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.insightThumb {
+  width: 104px;
+  flex: none;
+}
+
+.insightText {
+  flex: 1;
+  min-width: 0;
+}
+
+.insightTitle {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.insightBody {
+  margin: 5px 0 0;
+  font-size: 16px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.insightRange {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  flex: none;
+}
+
+/* ── The locked tile ────────────────────────────────────────────────────── */
+.locked {
+  display: flex;
+  flex-direction: column;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.018);
+  border-radius: 30px;
+  padding: 30px 32px;
+  min-width: 0;
+}
+
+.lockedHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.lockedEyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.lockedTag {
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 5px 12px;
+  color: var(--meta);
+  border: 1px solid var(--line2);
+  white-space: nowrap;
+}
+
+/*
+ * The drawing sits back, because it is a description of a thing rather than
+ * the thing. It carries no numerals — see the note in `Cards.tsx`.
+ */
+.lockedArt {
+  margin-top: 26px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.teaser {
+  display: block;
+  width: 100%;
+  height: 64px;
+}
+
+.teaserRing {
+  display: block;
+  width: 64px;
+  height: 64px;
+}
+
+.lockedTitle {
+  margin: 26px 0 0;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.lockedBody {
+  margin: 10px 0 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.lockedSpacer {
+  flex: 1;
+  min-height: 22px;
+}
+
+.lockedFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 20px;
+  border-top: 1px solid var(--edge);
+}
+
+.lockedNeeds {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--meta);
+}
+
+.lockedGo {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.lockedGo:hover {
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .insight {
+    animation: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .promo,
+  .locked {
+    border-radius: 24px;
+    padding: 24px 20px;
+  }
+
+  .promoFigure {
+    font-size: 46px;
+  }
+
+  .insight {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .insightRange {
+    order: -1;
+  }
+}

@@ -26,8 +26,20 @@ const POLL_MS = 1000;
  * — a meter that advanced on its own would be inventing a fact about
  * someone's own history.
  */
-/** `syncedAt` is elapsed time — "2h ago" — so it reads the same in every timezone. */
-export function SyncNow({ syncedAt }: { syncedAt: string | null }) {
+/**
+ * `syncedAt` is elapsed time — "2h ago" — so it reads the same in every
+ * timezone. `accounts` swaps the resting label to how many are linked, which
+ * is what the nav wants: on a screen whose figures are pooled across accounts,
+ * how many were pooled is the more useful fact, and the age is still one hover
+ * away. The pill still reads the brokerage again when pressed either way.
+ */
+export function SyncNow({
+  syncedAt,
+  accounts,
+}: {
+  syncedAt: string | null;
+  accounts?: number;
+}) {
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState<SyncProgress | null>(null);
   const [failed, setFailed] = useState(false);
@@ -76,13 +88,18 @@ export function SyncNow({ syncedAt }: { syncedAt: string | null }) {
     }
   }
 
+  const resting =
+    accounts && accounts > 0
+      ? `${accounts} ${accounts === 1 ? "account" : "accounts"} synced`
+      : syncedAt
+        ? `Synced ${syncedAt}`
+        : "Never synced";
+
   const label = running
     ? runningLabel(progress)
     : failed
       ? "Sync failed — try again"
-      : syncedAt
-        ? `Synced ${syncedAt}`
-        : "Never synced";
+      : resting;
 
   return (
     <button
@@ -92,7 +109,13 @@ export function SyncNow({ syncedAt }: { syncedAt: string | null }) {
       disabled={running}
       data-running={running || undefined}
       data-failed={failed || undefined}
-      title={running ? "Reading your brokerage" : "Read your brokerage again"}
+      title={
+        running
+          ? "Reading your brokerage"
+          : syncedAt
+            ? `Last read ${syncedAt} — read again`
+            : "Read your brokerage again"
+      }
     >
       <span className={styles.dot} aria-hidden="true" />
       <span className={styles.label}>{label}</span>

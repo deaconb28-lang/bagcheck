@@ -152,14 +152,17 @@ export const metadata: Metadata = {
 /*
  * `viewportFit: "cover"` is load-bearing on phones: without it,
  * env(safe-area-inset-bottom) resolves to zero and the bottom tab bar sits
- * under the iPhone home indicator. The theme colour matches the light field,
- * which is the base mode.
+ * under the iPhone home indicator.
+ *
+ * The theme colour is the app's field. It is written out because a meta tag
+ * cannot cite a custom property, which makes this the one place `--bg`'s value
+ * is stated twice and the two have to be kept in step by hand.
  */
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#f4f4f6",
+  themeColor: "#08080d",
 };
 
 export default function RootLayout({
@@ -168,9 +171,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+    /*
+     * Dark, and only dark.
+     *
+     * The app was light-with-a-dark-mode and a switch on the header. The
+     * dashboard this now implements is a dark instrument — the field, the
+     * race, the gradient artefact card and the saturated allocation ring were
+     * all drawn on #08080D, and half of them have no legible light twin. A
+     * mode switch whose other position is a design nobody drew is a switch
+     * that ships a second, worse product.
+     *
+     * The light values stay in `tokens.css` rather than being deleted: they
+     * are simply not selected. Marketing is unaffected either way — it speaks
+     * `--mk-*`, which is stated once and never flipped by mode.
+     */
     <html
       lang="en"
-      data-mode="light"
+      data-mode="dark"
       className={`${display.variable} ${serif.variable} ${body.variable} ${mono.variable} ${poster.variable} ${voice.variable}`}
     >
       <body>{children}</body>

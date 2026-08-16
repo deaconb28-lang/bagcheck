@@ -1,0 +1,134 @@
+/*
+ * The nav bar. Sticky, frosted over the field, and one hairline deep.
+ *
+ * It frosts rather than fills because the page beneath it is a dark field with
+ * a gradient card on it — an opaque bar would cut a hard grey line across the
+ * artefact every time the page scrolled under it.
+ */
+.head {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 26px 44px;
+  border-bottom: 1px solid var(--line-light);
+  background: var(--chrome);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  min-width: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  flex: none;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/*
+ * The rule is always drawn and only ever changes colour. A border that appears
+ * on the active tab and is absent on the others moves every label by two
+ * pixels the moment you navigate, which reads as the page mis-landing.
+ */
+.tab {
+  padding-bottom: 3px;
+  border-bottom: 2px solid transparent;
+  color: var(--nav-dim);
+  white-space: nowrap;
+  transition: color 0.24s ease, border-color 0.24s ease;
+}
+
+.tab:hover {
+  color: var(--ink);
+}
+
+.tab[data-active] {
+  color: var(--ink);
+  border-bottom-color: var(--ember);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: none;
+}
+
+/*
+ * The one gradient in the app chrome, and it is an identity rather than a
+ * decoration: an avatar with no photograph still has to be a person's mark.
+ */
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--avatar-grad);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  flex: none;
+  transition: transform 0.16s ease;
+}
+
+.avatar:hover {
+  transform: translateY(-1px);
+}
+
+/*
+ * Below the wide breakpoint the tabs keep their row and the bar scrolls with
+ * the page rather than sticking — a sticky bar that wraps to two lines eats a
+ * third of a phone screen and never gives it back.
+ */
+@media (max-width: 1080px) {
+  .head {
+    position: static;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding: 18px 20px;
+  }
+
+  .left {
+    gap: 22px;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .tabs {
+    gap: 22px;
+    font-size: 15px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .right {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

@@ -38,7 +38,7 @@ export function BadgeMint() {
       {state === "failed" ? <span className={styles.note}>That did not mint.</span> : null}
       {url ? (
         // An SVG our own route renders at a known size.
-        <img src={url} alt="Your live Canopy badge" width={232} height={64} />
+        <img src={url} alt="Your live Bagcheck badge" width={232} height={64} />
       ) : null}
     </div>
   );

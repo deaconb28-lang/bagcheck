@@ -182,7 +182,7 @@ export function effectiveTier(paid: Tier, trial: TrialState): Tier {
 /** The one line the trial is allowed to say. A date, not a countdown. */
 export function trialLine(trial: TrialState): string | null {
   if (trial.active && trial.endsOn) {
-    return `Full access through ${trial.endsOn}. After that, Canopy stays free and the paid formats lock.`;
+    return `Full access through ${trial.endsOn}. After that, Bagcheck stays free and the paid formats lock.`;
   }
   if (trial.expired && trial.endsOn) {
     return `Your full-access window ended ${trial.endsOn}. Everything you have minted stays yours.`;

@@ -280,3 +280,88 @@ button {
     animation: none !important;
   }
 }
+
+/*
+ * ── Dashboard odds and ends ──
+ *
+ * The four app pages are built from `components/dash`, which carries its own
+ * modules. These are the handful of one-off lockups a page states inline
+ * rather than making a component of — a figure over a chart, an empty line, a
+ * sentence under a donut.
+ */
+.dashFigureRow {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.dashFigure {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+
+.dashFigurePct {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.dashFigurePct[data-tone="moss"] {
+  color: var(--moss);
+}
+
+.dashFigurePct[data-tone="loss"] {
+  color: var(--loss);
+}
+
+.dashSentence {
+  margin: 24px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--edge);
+  font-size: 15px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.dashEmpty {
+  margin: 24px 0 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 54ch;
+}
+
+.dashNew {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ember);
+}
+
+.dashInsights {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+/* A finding with no chart states its dollars instead — that is its shape. */
+.dashImpact {
+  display: block;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.dashImpact[data-tone="moss"] {
+  color: var(--moss);
+}
+
+.dashImpact[data-tone="loss"] {
+  color: var(--loss);
+}

@@ -292,7 +292,7 @@ export async function renderCard(
               color: DIM,
             }}
           >
-            <div>{`canopy.app/c/${card.slug}`}</div>
+            <div>{`bagcheck.app/c/${card.slug}`}</div>
             <div style={{ letterSpacing: px(3), textTransform: "uppercase" }}>verified</div>
           </div>
         </div>

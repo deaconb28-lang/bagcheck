@@ -1,0 +1,215 @@
+import styles from "./chrome.module.css";
+
+/**
+ * The pieces every dashboard page is built from.
+ *
+ * All server components, all presentational. They exist so that four pages
+ * share one panel, one stat card and one chip rather than four near-copies
+ * that drift a pixel at a time.
+ */
+
+export function Page({ children }: { children: React.ReactNode }) {
+  return <div className={styles.page}>{children}</div>;
+}
+
+export function PageHead({
+  eyebrow,
+  title,
+  voice,
+  meta,
+  children,
+}: {
+  eyebrow: string;
+  title: React.ReactNode;
+  /** Violet eyebrow: the block is the product's own reading, not a measure. */
+  voice?: boolean;
+  /** A quiet line opposite the headline. */
+  meta?: React.ReactNode;
+  /** Chips or buttons, opposite the headline. */
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className={styles.head}>
+      <div>
+        <div className={styles.eyebrow} data-voice={voice || undefined}>
+          {eyebrow}
+        </div>
+        <h1 className={styles.headline}>{title}</h1>
+      </div>
+      {meta ? <div className={styles.headMeta}>{meta}</div> : null}
+      {children}
+    </div>
+  );
+}
+
+/**
+ * The hero figure, with its cents stepped back rather than shrunk.
+ *
+ * Splitting on the decimal is done here so no page has to: a figure that
+ * arrives as a formatted string and gets sliced at the call site is a figure
+ * that will one day be sliced in the wrong place by a locale that puts the
+ * separator somewhere else.
+ */
+export function TotalValue({
+  value,
+  delta,
+  deltaPct,
+}: {
+  value: number;
+  /** Money made over the window, flows removed. Null when unknowable. */
+  delta: number | null;
+  deltaPct: number | null;
+}) {
+  const [dollars, cents] = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  })
+    .format(value)
+    .split(".");
+
+  return (
+    <div className={styles.total}>
+      <span className={`num ${styles.totalFigure}`}>
+        {dollars}
+        <span className={styles.cents}>.{cents}</span>
+      </span>
+      {delta != null ? (
+        <span
+          className={`num ${styles.delta}`}
+          data-tone={delta >= 0 ? "moss" : "loss"}
+        >
+          {delta >= 0 ? "▲" : "▼"} {money(Math.abs(delta))}
+          {deltaPct != null
+            ? ` · ${deltaPct >= 0 ? "+" : "−"}${Math.abs(deltaPct * 100).toFixed(2)}%`
+            : ""}
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
+export function Chips({ children }: { children: React.ReactNode }) {
+  return <div className={styles.chips}>{children}</div>;
+}
+
+/** A chip is a link, not a button: a range is a place you can be sent to. */
+export function Chip({
+  href,
+  active,
+  children,
+}: {
+  href: string;
+  active?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <a href={href} className={styles.chip} data-active={active || undefined}>
+      {children}
+    </a>
+  );
+}
+
+export function Panel({
+  children,
+  span,
+  className,
+}: {
+  children: React.ReactNode;
+  /** Take two of three columns in a thirds row. */
+  span?: boolean;
+  className?: string;
+}) {
+  return (
+    <section
+      className={className ? `${styles.panel} ${className}` : styles.panel}
+      data-span={span || undefined}
+      data-reveal
+    >
+      {children}
+    </section>
+  );
+}
+
+export function PanelHead({
+  eyebrow,
+  title,
+  children,
+}: {
+  eyebrow: string;
+  title?: React.ReactNode;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className={styles.panelHead}>
+      <div>
+        <div className={styles.panelEyebrow}>{eyebrow}</div>
+        {title ? <h2 className={styles.panelTitle}>{title}</h2> : null}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+export function PanelNote({ children }: { children: React.ReactNode }) {
+  return <span className={styles.panelNote}>{children}</span>;
+}
+
+export function Stats({ children }: { children: React.ReactNode }) {
+  return <div className={styles.stats}>{children}</div>;
+}
+
+export function Stat({
+  label,
+  value,
+  tone,
+  tail,
+}: {
+  label: string;
+  value: React.ReactNode;
+  tone?: "moss" | "loss";
+  tail?: React.ReactNode;
+}) {
+  return (
+    <div className={styles.stat}>
+      <div className={styles.statLabel}>{label}</div>
+      <div className={`num ${styles.statValue}`} data-tone={tone}>
+        {value}
+      </div>
+      {tail ? <div className={styles.statTail}>{tail}</div> : null}
+    </div>
+  );
+}
+
+export function Row({
+  kind,
+  children,
+}: {
+  kind: "wide" | "thirds" | "halves" | "full";
+  children: React.ReactNode;
+}) {
+  const shape =
+    kind === "wide"
+      ? styles.rowWide
+      : kind === "thirds"
+        ? styles.rowThirds
+        : kind === "halves"
+          ? styles.rowHalves
+          : styles.rowFull;
+  return <div className={`${styles.row} ${shape}`}>{children}</div>;
+}
+
+export const money = (value: number | null, digits = 0) =>
+  value == null
+    ? "—"
+    : new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: digits,
+      }).format(value);
+
+export const signedMoney = (value: number | null) =>
+  value == null ? "—" : `${value >= 0 ? "+" : "−"}${money(Math.abs(value))}`;
+
+export const signedPct = (value: number | null, digits = 1) =>
+  value == null ? "—" : `${value >= 0 ? "+" : "−"}${Math.abs(value).toFixed(digits)}%`;

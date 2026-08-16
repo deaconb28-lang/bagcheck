@@ -7,7 +7,7 @@ import styles from "../legal.module.css";
 export const metadata: Metadata = {
   title: "Terms",
   description:
-    "The terms of using Canopy: what it is, what it explicitly is not, how the plan works, and how to leave.",
+    "The terms of using Bagcheck: what it is, what it explicitly is not, how the plan works, and how to leave.",
 };
 
 export const dynamic = "force-dynamic";
@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
  * Terms of service.
  *
  * The section that matters most on a product like this is the second one.
- * Canopy describes what someone already did; it is not advice, and saying
+ * Bagcheck describes what someone already did; it is not advice, and saying
  * so in one unambiguous paragraph is worth more than ten of boilerplate.
  */
 export default function TermsPage() {
@@ -30,14 +30,14 @@ export default function TermsPage() {
         <span className={styles.updated}>Last updated {POLICY_UPDATED}</span>
 
         <p className={styles.lede}>
-          These terms cover your use of Canopy. Using the product means you
+          These terms cover your use of Bagcheck. Using the product means you
           accept them. They are written to be read.
         </p>
 
         <section className={styles.section}>
-          <h2>What Canopy is</h2>
+          <h2>What Bagcheck is</h2>
           <p>
-            Canopy connects to your brokerage through SnapTrade, read-only,
+            Bagcheck connects to your brokerage through SnapTrade, read-only,
             and describes what you did with it: a daily score, the patterns your
             own history contains, and a set of cards you can share. It is a
             record and a mirror.
@@ -45,10 +45,10 @@ export default function TermsPage() {
         </section>
 
         <section className={styles.section}>
-          <h2>What Canopy is not</h2>
+          <h2>What Bagcheck is not</h2>
           <p>
             <strong>
-              Nothing in Canopy is financial, investment, tax or legal advice.
+              Nothing in Bagcheck is financial, investment, tax or legal advice.
             </strong>{" "}
             It does not recommend a security, a trade, an allocation or a
             strategy, and it does not tell you what to do next. It is not a
@@ -68,7 +68,7 @@ export default function TermsPage() {
           <p>
             You need a Google account to sign in and you must be 18 or older.
             Keep your sign-in secure — anyone with it can see everything
-            Canopy holds about you. One person per account.
+            Bagcheck holds about you. One person per account.
           </p>
           <p>
             Do not attempt to reach another person&rsquo;s data, disrupt the
@@ -80,7 +80,7 @@ export default function TermsPage() {
         <section className={styles.section}>
           <h2>Your data and your cards</h2>
           <p>
-            Your brokerage history is yours. Canopy stores and processes it to
+            Your brokerage history is yours. Bagcheck stores and processes it to
             run the product, as described in the{" "}
             <Link href="/legal/privacy">privacy policy</Link>. You keep every
             right you already had in it.
@@ -102,7 +102,7 @@ export default function TermsPage() {
         <section className={styles.section}>
           <h2>The plan</h2>
           <p>
-            Canopy is free to use. Pro costs ${TIER_PRICE.pro.monthly} a month,
+            Bagcheck is free to use. Pro costs ${TIER_PRICE.pro.monthly} a month,
             is billed by Stripe, and adds export formats — nothing behind it is
             data you would not otherwise see. Connecting a brokerage opens{" "}
             {TRIAL_DAYS} days of full access with no card required; when the
@@ -121,14 +121,14 @@ export default function TermsPage() {
         <section className={styles.section}>
           <h2>Third parties</h2>
           <p>
-            Canopy depends on SnapTrade, your broker, Stripe, Google and the
+            Bagcheck depends on SnapTrade, your broker, Stripe, Google and the
             data providers named in the privacy policy. If one of them is down,
             changes what it returns, or ends its relationship with us, parts of
-            Canopy stop working, and that is outside our control. Your
+            Bagcheck stop working, and that is outside our control. Your
             agreement with your broker is between you and them.
           </p>
           <p>
-            Market data shown in Canopy is used only to correct a stale mark
+            Market data shown in Bagcheck is used only to correct a stale mark
             from your broker; the broker stays the account of record. Figures
             here are not a statement, are not audited, and should not be used
             for tax filing.
@@ -138,7 +138,7 @@ export default function TermsPage() {
         <section className={styles.section}>
           <h2>No warranty</h2>
           <p>
-            Canopy is provided as it is. We do not warrant that it will be
+            Bagcheck is provided as it is. We do not warrant that it will be
             uninterrupted, that a computed figure is free of error, or that it
             fits a particular purpose. Where the ledger cannot answer something
             honestly the product shows nothing rather than a guess, but a bug is
@@ -149,7 +149,7 @@ export default function TermsPage() {
         <section className={styles.section}>
           <h2>Limits</h2>
           <p>
-            To the extent the law allows, Canopy is not liable for indirect or
+            To the extent the law allows, Bagcheck is not liable for indirect or
             consequential loss, or for investment losses. Our total liability to
             you is capped at what you have paid us in the twelve months before
             the claim. Nothing here limits liability that cannot be limited by

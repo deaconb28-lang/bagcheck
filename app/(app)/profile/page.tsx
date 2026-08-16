@@ -7,6 +7,7 @@ import {
   loadAppData,
   subscriptionFor,
   tierFor,
+  syncClock,
   trialFor,
 } from "@/lib/db";
 import { isStripeConfigured } from "@/lib/billing";
@@ -19,6 +20,8 @@ import { Distribution } from "@/components/idioms";
 import { AccountData } from "@/components/app/AccountData";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
+import { AppNav } from "@/components/app/AppNav";
+import { shellUser } from "@/components/app/shellUser";
 import { PageHeader } from "@/components/app/PageHeader";
 import { PlanCard } from "@/components/app/PlanCard";
 import { SignInCta } from "@/components/app/SignInCta";
@@ -43,7 +46,7 @@ export default async function ProfilePage() {
     return (
       <PageGrid>
         <EmptyState
-          eyebrow="Canopy · profile"
+          eyebrow="Bagcheck · profile"
           icon={userId ? "setup" : "signin"}
           title={userId ? "Configure the ledger store" : "Sign in to open your profile"}
           body={
@@ -130,6 +133,13 @@ export default async function ProfilePage() {
   );
 
   return (
+    <>
+      {/* The nav rides every app page; settings is behind the avatar on it. */}
+      <AppNav
+        accounts={connection?.accounts.length ?? 0}
+        syncedAt={syncClock(connection?.lastSyncAt)}
+        user={await shellUser()}
+      />
     <PageGrid rail={rail}>
       <PageHeader
         title="Profile"
@@ -186,7 +196,7 @@ export default async function ProfilePage() {
                 .
               </p>
               <p className={styles.note}>
-                Canopy can see what you did. It cannot place, cancel, or modify
+                Bagcheck can see what you did. It cannot place, cancel, or modify
                 an order.
               </p>
             </div>
@@ -202,7 +212,7 @@ export default async function ProfilePage() {
       <Card>
         <div className={styles.block}>
           <Eyebrow>Notifications</Eyebrow>
-          <h2 className={`disp ${styles.h2}`}>What Canopy sends you</h2>
+          <h2 className={`disp ${styles.h2}`}>What Bagcheck sends you</h2>
           <EmailPrefs
             daily={Boolean(emailPrefs?.emailDaily)}
             weekly={Boolean(emailPrefs?.emailWeekly)}
@@ -221,5 +231,6 @@ export default async function ProfilePage() {
         <AccountData footprint={footprint} />
       </Card>
     </PageGrid>
+    </>
   );
 }

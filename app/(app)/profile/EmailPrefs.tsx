@@ -6,7 +6,7 @@ import styles from "./profile.module.css";
 type Kind = "brief" | "recap";
 
 /**
- * The only two switches that cause Canopy to contact anyone.
+ * The only two switches that cause Bagcheck to contact anyone.
  *
  * Both start off. The copy states what arrives and when, and says the thing
  * that matters most about it — one message a day, and never a price. There is

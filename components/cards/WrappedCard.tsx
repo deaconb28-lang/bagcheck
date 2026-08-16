@@ -259,7 +259,7 @@ export function WrappedCard({
         <footer className={styles.foot}>
           <span className={styles.footDetail}>{provenance}</span>
           <span className={styles.url}>
-            {slug ? `canopy.app/c/${slug}` : "minted when you share"}
+            {slug ? `bagcheck.app/c/${slug}` : "minted when you share"}
           </span>
         </footer>
       </div>

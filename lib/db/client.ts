@@ -28,8 +28,8 @@ export function dbName(): string {
   /*
    * Still "bagcheck", and deliberately.
    *
-   * The product was renamed to Canopy; its storage was not. A database name is
-   * an address, not a brand — pointing the fallback at "canopy" would aim a
+   * The product was renamed to Bagcheck; its storage was not. A database name is
+   * an address, not a brand — pointing the fallback at "bagcheck" would aim a
    * fresh deployment at an empty database and read every live account as a new
    * one. `MONGODB_DB` is set explicitly in production; this is the local and
    * CI default, and it has to keep matching what the seed script writes.

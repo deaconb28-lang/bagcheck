@@ -26,7 +26,7 @@ export async function GET(
   const reading = isDbConfigured() ? await badgeBySlug(slug) : null;
   if (!reading) return new Response("Not found", { status: 404 });
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="232" height="64" viewBox="0 0 232 64" role="img" aria-label="Canopy Health ${reading.score}">
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="232" height="64" viewBox="0 0 232 64" role="img" aria-label="Bagcheck Health ${reading.score}">
   <rect x="0.5" y="0.5" width="231" height="63" rx="15.5" fill="${FIELD}" stroke="${EDGE}"/>
   <circle cx="32" cy="32" r="17" fill="none" stroke="${EDGE}" stroke-width="3.5"/>
   <circle cx="32" cy="32" r="17" fill="none" stroke="${MOSS}" stroke-width="3.5"

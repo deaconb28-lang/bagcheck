@@ -47,9 +47,11 @@ const SCREENS = [
   { key: "icons", path: "/legal/icons", modes: ["light"] },
   { key: "photos", path: "/legal/photos", modes: ["light"] },
   { key: "start", path: "/start", modes: ["light"] },
-  { key: "you", path: "/you", modes: ["light", "dark"] },
+  { key: "you", path: "/you", modes: ["dark"] },
+  { key: "holdings", path: "/holdings", modes: ["dark"] },
+  { key: "insights", path: "/insights", modes: ["dark"] },
   { key: "wrapped", path: "/wrapped", modes: ["light"] },
-  { key: "profile", path: "/profile", modes: ["light", "dark"] },
+  { key: "profile", path: "/profile", modes: ["dark"] },
 ];
 
 /**
@@ -64,20 +66,13 @@ const SECTIONS = [
   { key: "landing-plans", path: "/", selector: "#waitlist" },
   { key: "pricing-plans", path: "/pricing", selector: "section:nth-of-type(2)" },
   /*
-   * App blocks that sit below the fold. Every other shot here is a viewport,
-   * which is right for judging a screen and useless for judging a block three
-   * thousand pixels down — the consistency grid had never been looked at.
+   * The four app pages, whole. Every other shot here is a viewport, which is
+   * right for judging a fold and useless for judging a page that runs to four
+   * thousand pixels — the insight grid had never been looked at below the fold.
    */
-  { key: "you-money", path: "/you", selector: "#money" },
-  { key: "you-exposure", path: "/you", selector: "#exposure" },
-  { key: "you-standing", path: "/you", selector: "#standing" },
-  { key: "you-race", path: "/you", selector: "#race" },
-  { key: "you-holdings", path: "/you", selector: "#holdings" },
-  { key: "you-read", path: "/you", selector: "#read" },
-  { key: "you-patterns", path: "/you", selector: "#patterns" },
-  { key: "you-consistency", path: "/you", selector: "#consistency" },
-  { key: "you-identity", path: "/you", selector: "#identity" },
-  { key: "you-cards", path: "/you", selector: "#cards" },
+  { key: "page-dash", path: "/you", selector: '[class*="chrome_page"]', mode: "dark" },
+  { key: "page-holdings", path: "/holdings", selector: '[class*="chrome_page"]', mode: "dark" },
+  { key: "page-insights", path: "/insights", selector: '[class*="chrome_page"]', mode: "dark" },
 ];
 
 /* ── Probes ──────────────────────────────────────────────────────────────── */
@@ -410,7 +405,7 @@ for (const section of SECTIONS) {
   await shoot(section.key, section.path, {
     width: 1440,
     height: 900,
-    mode: "light",
+    mode: section.mode ?? "light",
     selector: section.selector,
   });
 }

@@ -1,5 +1,5 @@
 /*
- * Canopy colour tokens — the single source of colour.
+ * Bagcheck colour tokens — the single source of colour.
  * A palette hex anywhere else in the repo's source is a bug.
  *
  * ── The system ────────────────────────────────────────────────────────────
@@ -16,7 +16,7 @@
  *   moss    green   money up, and discipline — the score, sessions inside
  *                   your rules, a positive figure
  *   loss    red     money down, and nothing else
- *   accent  violet  Canopy's own voice — the written insight, the nightly
+ *   accent  violet  Bagcheck's own voice — the written insight, the nightly
  *                   score arriving, Investor Age
  *   ember   amber   scarcity and the live
  *   signal  steel   comparison and exposure, a deliberate step down
@@ -104,7 +104,7 @@
   --loss-tint: rgba(198, 47, 55, 0.09);
   --loss-line: rgba(198, 47, 55, 0.28);
 
-  /* ── The accent, reserved: Canopy's own voice. ── */
+  /* ── The accent, reserved: Bagcheck's own voice. ── */
   --accent: #6d3fd4;
   --accent-deep: #5a2fbe;
   --accent-tint: rgba(109, 63, 212, 0.1);
@@ -131,7 +131,7 @@
    * It used to be moss, which put a hundred green cells on a dashboard that
    * already had a green ring and eight green meters — at that point the hue
    * had stopped carrying information and was just the colour of the product.
-   * "Days inside your rules" is Canopy's own reading of the conduct, which
+   * "Days inside your rules" is Bagcheck's own reading of the conduct, which
    * is exactly what the violet is reserved for, and it leaves green meaning
    * one thing on this screen: money went up.
    */
@@ -302,23 +302,32 @@
 html[data-mode="dark"] {
   color-scheme: dark;
 
-  --bg: #0b0b0e;
-  --s1: #141419;
-  --sunken: #08080b;
-  --inset: #1c1c22;
-  --tile: #18181e;
+  /*
+   * The field is #08080D, and every surface above it is white at a fraction
+   * rather than a mixed grey. That is the whole reason the panels read as one
+   * material: a translucent plate picks up whatever is behind it, so a card
+   * over the field and a card over a gradient are the same object rather than
+   * two greys that nearly match. It is not #000 — a true black smears on OLED
+   * as a panel scrolls, and leaves the darkest surfaces indistinguishable from
+   * the gaps between them.
+   */
+  --bg: #08080d;
+  --s1: rgba(255, 255, 255, 0.035);
+  --sunken: rgba(255, 255, 255, 0.022);
+  --inset: rgba(255, 255, 255, 0.055);
+  --tile: rgba(255, 255, 255, 0.03);
   --track: rgba(255, 255, 255, 0.1);
   --control: rgba(255, 255, 255, 0.07);
 
-  --ink: #f7f7f8;
-  --ink2: #cfcfd6;
-  --ink3: #a8a8b2;
-  --meta: #82828d;
+  --ink: #ffffff;
+  --ink2: rgba(255, 255, 255, 0.78);
+  --ink3: rgba(255, 255, 255, 0.66);
+  --meta: rgba(255, 255, 255, 0.58);
 
   --edge: rgba(255, 255, 255, 0.09);
   --line: rgba(255, 255, 255, 0.11);
   --line-light: rgba(255, 255, 255, 0.07);
-  --line2: rgba(255, 255, 255, 0.16);
+  --line2: rgba(255, 255, 255, 0.12);
   --line2-hover: rgba(255, 255, 255, 0.28);
 
   --ink-field: #ffffff;
@@ -347,9 +356,11 @@ html[data-mode="dark"] {
   --ember-tint: rgba(245, 158, 11, 0.12);
   --ember-line: rgba(245, 158, 11, 0.32);
 
-  --loss: #f26d6d;
-  --loss-tint: rgba(242, 109, 109, 0.12);
-  --loss-line: rgba(242, 109, 109, 0.32);
+  --loss: #fb7185;
+  --loss-tint: rgba(251, 113, 133, 0.12);
+  --loss-line: rgba(251, 113, 133, 0.32);
+  /* The deepest red in the system: the single worst column in a chart. */
+  --loss-deep: #e11d48;
 
   --accent: #a78bfa;
   --accent-deep: #c4b5fd;
@@ -385,6 +396,55 @@ html[data-mode="dark"] {
   --w-rest: color-mix(in srgb, var(--signal) 22%, transparent);
 
   --axis: rgba(255, 255, 255, 0.34);
+
+  /*
+   * ── The chrome and the race ──
+   *
+   * The nav bar frosts over the field, so it needs the field's own colour at
+   * an alpha rather than a token that resolves to something opaque.
+   *
+   * The race is the one place in the product that draws an *object* — five
+   * cars on five lanes — and an object needs shading a semantic hue cannot
+   * give it. These are the four greys the field's cars are painted in, plus
+   * the leader's gradient, and they live here for the same reason every other
+   * palette value does: so a component never states a hex.
+   */
+  /*
+   * ── The wedge palette: the one place a hue may mean "which" ──
+   *
+   * Everywhere else a hue means one thing and never variety. A part-to-whole
+   * chart is the exception the rule has to make: with no colour per slice
+   * nothing ties an arc to its legend row, and one hue rampted across seven
+   * names is a chart nobody reads at a glance. Fixed and ordered by weight, so
+   * the largest holding is always violet and the remainder always neutral —
+   * these identify, they never grade.
+   */
+  --wedge-1: #a855f7;
+  --wedge-2: #f59e0b;
+  --wedge-3: #4ade80;
+  --wedge-4: #fb7185;
+  --wedge-5: #60a5fa;
+  --wedge-rest: rgba(255, 255, 255, 0.3);
+
+  --chrome: rgba(8, 8, 13, 0.92);
+  --nav-dim: rgba(255, 255, 255, 0.62);
+  --avatar-grad: linear-gradient(140deg, #6d28d9, #a78bfa);
+  --lead-grad: linear-gradient(150deg, #7c3aed, #f59e0b);
+  --lead-car-from: #7c3aed;
+  --lead-car-mid: #a855f7;
+  --lead-car-to: #f59e0b;
+  --car-2: #5b5b6b;
+  --car-3: #4a4a58;
+  --car-4: #43434f;
+  --car-5: #3c3c47;
+  --tyre: #191922;
+  --tyre-lead: #2b1500;
+  --lead-trail: linear-gradient(
+    90deg,
+    rgba(124, 58, 237, 0) 0%,
+    rgba(168, 85, 247, 0.5) 60%,
+    rgba(245, 158, 11, 0.75) 100%
+  );
 
   --lift: 0 1px 2px rgba(0, 0, 0, 0.5);
   --lift-hero: 0 1px 2px rgba(0, 0, 0, 0.5), 0 24px 60px -34px rgba(0, 0, 0, 0.85);

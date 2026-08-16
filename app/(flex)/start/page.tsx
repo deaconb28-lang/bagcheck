@@ -3,7 +3,7 @@ import { getUserId, isAuthConfigured } from "@/auth";
 import { isDbConfigured, linkedBrokerage } from "@/lib/db";
 import { isSnapTradeConfigured } from "@/lib/snaptrade";
 import { appLocked } from "@/lib/launch";
-import { CanopyMark } from "@/app/(marketing)/CanopyMark";
+import { BagcheckMark } from "@/components/brand/BagcheckMark";
 import { GoogleSignIn } from "@/components/app/GoogleSignIn";
 import { DancingCards } from "./DancingCards";
 import { ConnectButton } from "./ConnectButton";
@@ -69,7 +69,7 @@ export default async function StartPage({
             </h1>
             <p className={styles.lede}>
               {institutionLine(linked.institutions, linked.accounts)} It stays
-              linked to your Google account, so Canopy keeps reading new
+              linked to your Google account, so Bagcheck keeps reading new
               fills on its own — there is nothing to connect again.
             </p>
             {/*
@@ -131,7 +131,7 @@ export default async function StartPage({
             in your order history.
           </h1>
           <p className={styles.lede}>
-            Canopy reads your filled orders through SnapTrade and makes a card
+            Bagcheck reads your filled orders through SnapTrade and makes a card
             out of everything the year can prove. Most accounts take about
             thirty seconds.
           </p>
@@ -154,7 +154,7 @@ export default async function StartPage({
             <li>
               <Tick />
               <span>
-                <b>Read-only, permanently.</b> canopy sees filled orders and
+                <b>Read-only, permanently.</b> bagcheck sees filled orders and
                 positions. It cannot place a trade, move money, or change a
                 setting.
               </span>
@@ -163,14 +163,14 @@ export default async function StartPage({
               <Tick />
               <span>
                 <b>Your login stays with your broker.</b> SnapTrade handles the
-                sign-in; Canopy never receives a password.
+                sign-in; Bagcheck never receives a password.
               </span>
             </li>
             <li>
               <Tick />
               <span>
                 <b>Unlink any time.</b> That stops the sync and takes the
-                history out of canopy.
+                history out of bagcheck.
               </span>
             </li>
           </ul>
@@ -231,8 +231,8 @@ function Header({ step }: { step: string }) {
   return (
     <header className={shell.bar}>
       <Link href="/" className={shell.brand}>
-        <CanopyMark size={26} />
-        <span className={shell.wordmark}>canopy</span>
+        <BagcheckMark size={26} />
+        <span className={shell.wordmark}>bagcheck</span>
       </Link>
       <span className={shell.barNote}>{step}</span>
     </header>

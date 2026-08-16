@@ -4,7 +4,7 @@ import styles from "./status.module.css";
 export default function NotFound() {
   return (
     <main className={styles.page}>
-      <Eyebrow>Canopy</Eyebrow>
+      <Eyebrow>Bagcheck</Eyebrow>
       <h1 className={`disp ${styles.title}`}>That page does not exist</h1>
       <p className={styles.body}>
         The link may be out of date. Everything starts from Home — the score,

@@ -12,7 +12,7 @@ import styles from "./landing.module.css";
 
 /*
  * The one page whose title is not run through the root template — a landing
- * called "canopy · canopy" is what a template does when nobody checks.
+ * called "bagcheck · bagcheck" is what a template does when nobody checks.
  */
 export const metadata: Metadata = {
   title: { absolute: `${SITE_NAME} — ${SITE_TAGLINE.toLowerCase()}` },
@@ -131,12 +131,12 @@ export default async function LandingPage() {
             <span>Robinhood, Fidelity, Schwab and 20+ more</span>
           </div>
           <h1 className={styles.h1}>
-            <span className={styles.h1Strong}>Meet canopy</span>
+            <span className={styles.h1Strong}>Meet bagcheck</span>
             <span>Turn your portfolio</span>
             <span>into a flex</span>
           </h1>
           <p className={styles.lede}>
-            Connect your brokerage in two taps through SnapTrade. Canopy reads
+            Connect your brokerage in two taps through SnapTrade. Bagcheck reads
             the numbers and turns your year into a Wrapped worth posting —
             returns, top holdings, best trades, and the ones that got away.
           </p>
@@ -311,7 +311,7 @@ export default async function LandingPage() {
                       <span>@jordan</span>
                     </div>
                     <div className={styles.wrapReturn}>+38.4%</div>
-                    <div className={styles.wrapSub}>Return this year · Top 3% of canopy</div>
+                    <div className={styles.wrapSub}>Return this year · Top 3% of bagcheck</div>
                     <div className={styles.wrapChips}>
                       <span className={styles.typeChip}>The Conviction Buyer</span>
                       <span className={styles.tradesChip}>142 trades</span>
@@ -375,7 +375,7 @@ export default async function LandingPage() {
               </div>
               <span className={styles.cardPill}>
                 <i />
-                Top 3% of canopy
+                Top 3% of bagcheck
               </span>
             </div>,
 
