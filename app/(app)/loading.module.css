@@ -47,17 +47,23 @@
 
 /*
  * The dashboard's measure and rhythm, so the arrival does not move what this
- * promised. Both arrive as custom properties, and the gap especially: a plain
- * `gap` here is a single-class selector tying with `.grid`'s single-class
- * selector in another module, and the winner is whichever stylesheet the
- * bundler emitted last — which is not a decision anyone made. This file's
- * import happens to come first, so the tie was losing: the skeleton stacked at
- * 34px, and at 28px on a phone the negative margin on the top row put the door
- * bar through the first plate.
+ * promised.
+ *
+ * The measure is a property because `.grid` reads one. The gap has to be a
+ * doubled class, because `.grid` does *not* read one below 899px — it sets a
+ * literal `28px` — and two single-class selectors tie on specificity with the
+ * winner decided by whichever stylesheet the bundler emitted last. Losing that
+ * tie stacked the skeleton at 28px on a phone while the negative margin on the
+ * top row stayed at −32px, which put the door bar through the first plate.
+ * See the twin of this note in `you/you.module.css`.
  */
 .wide {
   --measure: 1240px;
   --gap-block: 64px;
+}
+
+.wide.wide {
+  gap: var(--gap-block);
 }
 
 .topRow {

@@ -19,16 +19,27 @@
 .wide {
   /* Read by `screen.module.css .grid`; see the note on `--measure` there. */
   --measure: 1240px;
-  /*
-   * The rhythm arrives as a property for exactly the reason the measure does.
-   * A plain `gap` here is a single-class selector tying with `.grid`'s in
-   * another module, and the tie is broken by emission order rather than by
-   * anyone's decision — this file wins that today and would stop winning the
-   * day someone reorders two imports.
-   */
   --gap-block: 96px;
   display: flex;
   flex-direction: column;
+}
+
+/*
+ * Doubled on purpose. This is the only declaration in the file that has to win
+ * an argument.
+ *
+ * `.wide` and `.grid` are the same element, and `screen.module.css` sets
+ * `gap: 28px` on `.grid` under `max-width: 899px` — a literal, not the
+ * variable. Two single-class selectors tie on specificity and the winner is
+ * whichever stylesheet the bundler emitted last, which is not a decision
+ * anyone made. It was decided by the order of two imports in `page.tsx`, and
+ * splitting the blocks into their own module reversed it: every gap below
+ * 860px silently dropped from 64px to 28px, which is 432px of the phone's
+ * layout, and nothing failed. `.wide.wide` is (0,2,0) and settles it whatever
+ * the emission order turns out to be. A custom property cannot settle it,
+ * because the rule on the other side does not read one.
+ */
+.wide.wide {
   gap: var(--gap-block);
 }
 
