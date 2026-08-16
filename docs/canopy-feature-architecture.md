@@ -1,4 +1,4 @@
-# Bagcheck — feature architecture
+# Canopy — feature architecture
 
 **Fitness tracking for your investment portfolio.**
 
@@ -14,7 +14,7 @@ Nobody has built that for investors — and the data already exists. Your broker
 
 It just never shows you.
 
-> Bagcheck tells you how *you* are doing as an investor, not how your portfolio did.
+> Canopy tells you how *you* are doing as an investor, not how your portfolio did.
 
 ---
 
@@ -43,7 +43,7 @@ Five layers. Each one exists for a different job.
 
 **Read-only brokerage connection. Every trade, every transfer, every position, all history.**
 
-One tap via SnapTrade. Bagcheck can see what you did and cannot place, cancel, or modify an order.
+One tap via SnapTrade. Canopy can see what you did and cannot place, cancel, or modify an order.
 
 Why it matters: this is the only layer users have to actively grant, and it's the layer that makes everything above it automatic. No manual entry. No screenshots. No CSV.
 
@@ -229,7 +229,7 @@ Printed year-in-review posters at Wrapped time. Brokerage referral fees, quietly
 ## What we are not building
 
 - **A trading app.** Read-only, permanently.
-- **Advice.** Bagcheck describes what you did and what it cost or earned. It never recommends a trade.
+- **Advice.** Canopy describes what you did and what it cost or earned. It never recommends a trade.
 - **Another price alert.** The category is loud. We are the quiet one.
 - **A social feed.** Segments and cards give us social proof without moderation.
 
@@ -270,7 +270,7 @@ One notification a day, and it is never a price alert.
 > **What changed beyond colour and type:** the product is light-first; the
 > left icon rail became a 244px ink sidebar with labelled routes; low neutral
 > elevation is now allowed on cards where the old rule said no shadows at all;
-> and one colour, `--accent`, is reserved for work Bagcheck did on its own.
+> and one colour, `--accent`, is reserved for work Canopy did on its own.
 
 ### Data idiom
 

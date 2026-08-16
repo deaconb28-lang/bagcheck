@@ -164,7 +164,7 @@ export function ShareSheet({ type, slug, label, onClose }: ShareSheetProps) {
           * or save it at the right aspect when the browser cannot.
           */}
         <ul className={styles.targets}>
-          {shareTargets(url, `${label} — Bagcheck`, caps).map((target) => (
+          {shareTargets(url, `${label} — Canopy`, caps).map((target) => (
             <li key={target.id}>
               <button
                 type="button"

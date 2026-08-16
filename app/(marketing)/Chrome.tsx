@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { appLocked } from "@/lib/launch";
 import { GoToApp } from "./GoToApp";
-import { BagMark } from "./BagMark";
+import { CanopyMark } from "./CanopyMark";
 import styles from "./landing.module.css";
 
 /*
@@ -17,8 +17,8 @@ export async function MarketingNav({ current }: { current?: "pricing" }) {
   return (
     <header className={styles.nav}>
       <Link href="/" className={styles.brand}>
-        <BagMark />
-        <span className={styles.wordmark}>bagcheck</span>
+        <CanopyMark />
+        <span className={styles.wordmark}>canopy</span>
       </Link>
       <nav className={styles.navLinks} aria-label="Sections">
         <Link href="/#deck">Wrapped</Link>
@@ -53,9 +53,9 @@ export async function MarketingFooter() {
     <footer className={styles.foot}>
       <div className={styles.footInner}>
         <span className={styles.brand} data-foot="">
-          <BagMark size={28} check="var(--mk-field)" />
+          <CanopyMark size={28} accent="var(--mk-field)" />
           <span className={styles.wordmark} data-small="">
-            bagcheck
+            canopy
           </span>
         </span>
         <div className={styles.footLinks}>
@@ -66,7 +66,7 @@ export async function MarketingFooter() {
           <Link href="/legal/photos">Photo credits</Link>
           {!locked ? <Link href="/you">Go to app</Link> : null}
         </div>
-        <span className={styles.footNote}>© 2026 bagcheck</span>
+        <span className={styles.footNote}>© 2026 canopy</span>
       </div>
     </footer>
   );

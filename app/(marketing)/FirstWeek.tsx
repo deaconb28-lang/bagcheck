@@ -92,7 +92,7 @@ function WrappedScreen() {
         <div>
           <div className={styles.fwMiniEyebrow}>2026 WRAPPED</div>
           <div className={styles.fwMiniReturn}>+38.4%</div>
-          <div className={styles.fwMiniSub}>Top 3% of bagcheck</div>
+          <div className={styles.fwMiniSub}>Top 3% of canopy</div>
         </div>
       </div>
       <div className={styles.fwChecklist}>
@@ -100,7 +100,7 @@ function WrappedScreen() {
           <Check /> Return calculated
         </div>
         <div>
-          <Check /> Top bags ranked
+          <Check /> Top holdings ranked
         </div>
         <div>
           <span className={styles.fwSpinner} /> Scoring your trades

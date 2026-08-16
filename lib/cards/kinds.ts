@@ -209,7 +209,7 @@ function correlationCard(i: CardInput): CardSpec | null {
   if (ratio < 1.5) return null;
   return {
     kind: "correlation",
-    eyebrow: "Bagcheck · conviction",
+    eyebrow: "Canopy · conviction",
     kicker: "Conviction",
     headline: "Decay",
     lede: `High-conviction entries returned ${ratio.toFixed(1)}× your low-conviction entries.`,
@@ -238,7 +238,7 @@ function archetypeCard(i: CardInput): CardSpec | null {
   const order = ["adherence", "consistency", "patience", "exposure"] as const;
   return {
     kind: "archetype",
-    eyebrow: "Bagcheck · archetype",
+    eyebrow: "Canopy · archetype",
     kicker: "The",
     headline: i.archetype.name.replace(/^The /, ""),
     lede: i.archetype.line,
@@ -272,7 +272,7 @@ function healthCard(i: CardInput): CardSpec | null {
   if (i.score == null) return null;
   return {
     kind: "health",
-    eyebrow: "Bagcheck · health",
+    eyebrow: "Canopy · health",
     kicker: "Health",
     headline: "Score",
     lede: "Scored against your own baseline, not against a model investor.",
@@ -301,7 +301,7 @@ function longestHoldCard(i: CardInput): CardSpec | null {
   const held = Math.round(longest.holdDays);
   return {
     kind: "longestHold",
-    eyebrow: `Bagcheck · ${i.year}`,
+    eyebrow: `Canopy · ${i.year}`,
     kicker: "Longest",
     headline: "Hold",
     lede: `${held} days on ${longest.symbol}. Longer than you have held anything else.`,
@@ -330,7 +330,7 @@ function holdRatioCard(i: CardInput): CardSpec | null {
   const runs = ratio >= 1;
   return {
     kind: "holdRatio",
-    eyebrow: "Bagcheck · hold time",
+    eyebrow: "Canopy · hold time",
     kicker: runs ? "Winners" : "Losers",
     headline: runs ? "Run" : "Linger",
     lede: runs
@@ -361,7 +361,7 @@ function noPanicCard(i: CardInput): CardSpec | null {
   if (i.scoredDays < FLOOR.quarter || i.panicSells !== 0) return null;
   return {
     kind: "noPanic",
-    eyebrow: "Bagcheck · conduct",
+    eyebrow: "Canopy · conduct",
     kicker: "Zero",
     headline: "Panic",
     lede: `Not one panic sell across ${i.scoredDays} scored sessions.`,
@@ -386,7 +386,7 @@ function streakCard(i: CardInput): CardSpec | null {
   if (i.streakDays < FLOOR.streak) return null;
   return {
     kind: "streak",
-    eyebrow: "Bagcheck · streak",
+    eyebrow: "Canopy · streak",
     kicker: "Current",
     headline: "Streak",
     lede: `${i.streakName}, and it has not broken.`,
@@ -413,7 +413,7 @@ function bestDecisionCard(i: CardInput): CardSpec | null {
   if (!best || best.pnl <= 0) return null;
   return {
     kind: "bestDecision",
-    eyebrow: "Bagcheck · decisions",
+    eyebrow: "Canopy · decisions",
     kicker: "Best",
     headline: "Call",
     lede: `${best.symbol}, held ${days(best.holdDays)} days and closed.`,
@@ -447,7 +447,7 @@ function drawdownHeldCard(i: CardInput): CardSpec | null {
   if (worst < FLOOR.drawdown) return null;
   return {
     kind: "drawdownHeld",
-    eyebrow: "Bagcheck · drawdown",
+    eyebrow: "Canopy · drawdown",
     kicker: "Held",
     headline: "Through",
     lede: "The deepest your account fell from its own high, and you stayed in it.",
@@ -473,7 +473,7 @@ function cadenceCard(i: CardInput): CardSpec | null {
   if (mean <= 0) return null;
   return {
     kind: "cadence",
-    eyebrow: "Bagcheck · cadence",
+    eyebrow: "Canopy · cadence",
     kicker: "Weekly",
     headline: "Rhythm",
     lede: `About ${mean.toFixed(1)} sessions a week, across ${weeks.length} weeks.`,
@@ -511,7 +511,7 @@ function monthlyPnlCard(i: CardInput): CardSpec | null {
   const green = months.filter(([, v]) => v > 0).length;
   return {
     kind: "monthlyPnl",
-    eyebrow: `Bagcheck · ${i.year}`,
+    eyebrow: `Canopy · ${i.year}`,
     kicker: "Realised",
     headline: "Months",
     lede: `${green} of ${months.length} months closed green.`,
@@ -544,7 +544,7 @@ function equityCard(i: CardInput): CardSpec | null {
   if (!first) return null;
   return {
     kind: "equity",
-    eyebrow: "Bagcheck · equity",
+    eyebrow: "Canopy · equity",
     kicker: "Account",
     headline: "Curve",
     lede: `${i.equity.length} days of account value, forward-filled from your brokerage.`,
@@ -577,7 +577,7 @@ function wrappedCard(i: CardInput): CardSpec | null {
   if (i.scoredDays < FLOOR.wrapped) return null;
   return {
     kind: "wrapped",
-    eyebrow: `Bagcheck · ${i.year}`,
+    eyebrow: `Canopy · ${i.year}`,
     kicker: "Your",
     headline: String(i.year),
     lede: `${i.scoredDays} scored sessions across ${NUM.format(i.transactionCount)} transactions.`,

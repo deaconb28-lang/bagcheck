@@ -520,7 +520,7 @@
 .dial {
   display: flex;
   flex: none;
-  /* Violet: the score is Bagcheck's own reading, not money and not exposure. */
+  /* Violet: the score is Canopy's own reading, not money and not exposure. */
   --ring-stroke: var(--accent);
 }
 

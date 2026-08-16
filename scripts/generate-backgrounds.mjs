@@ -5,7 +5,7 @@
  *   OPENAI_API_KEY=… npm run wrapped:backgrounds
  *
  * Not per user. A background is the stage a card is set on, and every
- * user-specific thing on a Bagcheck card lives in the HTML text layer above
+ * user-specific thing on a Canopy card lives in the HTML text layer above
  * it — so generating art per reader would be slow, expensive, and would buy
  * nothing a shared image does not already give. Twelve images, committed, and
  * the cost is paid once.

@@ -2,7 +2,7 @@ import { MongoClient } from "mongodb";
 
 declare global {
   // Cached across hot reloads in dev and across route invocations in prod.
-  var _bagcheckMongo: Promise<MongoClient> | undefined;
+  var _canopyMongo: Promise<MongoClient> | undefined;
 }
 
 export function isDbConfigured(): boolean {
@@ -18,12 +18,21 @@ export function getMongoClient(): Promise<MongoClient> {
   if (!uri) {
     throw new Error("MONGODB_URI is not set");
   }
-  if (!globalThis._bagcheckMongo) {
-    globalThis._bagcheckMongo = new MongoClient(uri).connect();
+  if (!globalThis._canopyMongo) {
+    globalThis._canopyMongo = new MongoClient(uri).connect();
   }
-  return globalThis._bagcheckMongo;
+  return globalThis._canopyMongo;
 }
 
 export function dbName(): string {
+  /*
+   * Still "bagcheck", and deliberately.
+   *
+   * The product was renamed to Canopy; its storage was not. A database name is
+   * an address, not a brand — pointing the fallback at "canopy" would aim a
+   * fresh deployment at an empty database and read every live account as a new
+   * one. `MONGODB_DB` is set explicitly in production; this is the local and
+   * CI default, and it has to keep matching what the seed script writes.
+   */
   return process.env.MONGODB_DB ?? "bagcheck";
 }

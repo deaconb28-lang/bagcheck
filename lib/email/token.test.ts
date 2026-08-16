@@ -32,7 +32,7 @@ test("the url falls back to the settings screen when nothing can sign", () => {
   const beforeCron = process.env.CRON_SECRET;
   delete process.env.AUTH_SECRET;
   delete process.env.CRON_SECRET;
-  assert.equal(unsubscribeUrl("user-a", "https://bagcheck.app"), "https://bagcheck.app/profile");
+  assert.equal(unsubscribeUrl("user-a", "https://canopy.app"), "https://canopy.app/profile");
   if (before) process.env.AUTH_SECRET = before;
   if (beforeCron) process.env.CRON_SECRET = beforeCron;
 });

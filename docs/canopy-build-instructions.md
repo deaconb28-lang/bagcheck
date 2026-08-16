@@ -1,6 +1,6 @@
-# Bagcheck — build instructions for Claude Code
+# Canopy — build instructions for Claude Code
 
-Companion to `bagcheck-feature-architecture.md` (product + brand) and `bagcheck-brand-kit.html` (rendered reference).
+Companion to `canopy-feature-architecture.md` (product + brand) and `canopy-brand-kit.html` (rendered reference).
 
 Read this first, then the brand addendum. The brand addendum is authoritative on anything visual.
 
@@ -200,6 +200,6 @@ Put these in `CLAUDE.md` at the repo root so every session inherits them.
 
 ## 5. Starting prompt for Claude Code
 
-> Read `bagcheck-feature-architecture.md` and `bagcheck-brand-kit.html`. Scaffold a Next.js App Router project on the structure in section 2 of the build instructions. Start with `styles/tokens.css` containing both modes exactly as specified in the brand addendum, then build the `/components/primitives` set — Stat, Eyebrow, Card, Button, Chip, Row — using only `var(--*)` colours. Show me the primitives rendered on a scratch page in both modes before touching any data.
+> Read `canopy-feature-architecture.md` and `canopy-brand-kit.html`. Scaffold a Next.js App Router project on the structure in section 2 of the build instructions. Start with `styles/tokens.css` containing both modes exactly as specified in the brand addendum, then build the `/components/primitives` set — Stat, Eyebrow, Card, Button, Chip, Row — using only `var(--*)` colours. Show me the primitives rendered on a scratch page in both modes before touching any data.
 
 Build the visual language before the data layer. Every later screen is an assembly of those primitives, and fixing the tokens once is cheaper than fixing them in forty components.

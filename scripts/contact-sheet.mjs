@@ -225,7 +225,7 @@ const overflowCount = report.report.filter((r) => r.overflow).length;
 const contrastCount = report.report.reduce((n, r) => n + r.contrastFailures, 0);
 const nodeCount = report.report.reduce((n, r) => n + r.checked, 0);
 
-const html = `<title>Bagcheck Contact Sheet</title>
+const html = `<title>Canopy Contact Sheet</title>
 <style>
 ${fonts}
 

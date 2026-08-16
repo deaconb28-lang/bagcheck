@@ -595,7 +595,7 @@
  * every other layout's. This used to override it to `inset: 0`, which ran the
  * picture up under the eyebrow row — invisible while the band was a flat fill
  * and obvious the moment a photograph went behind it, with the ring sliced off
- * at the card's top edge and BAGCHECK · 2026 lying across it.
+ * at the card's top edge and CANOPY · 2026 lying across it.
  */
 
 .card[data-layout="editorial"] .wash {

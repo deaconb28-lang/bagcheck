@@ -26,14 +26,14 @@ export async function GET(
   const reading = isDbConfigured() ? await badgeBySlug(slug) : null;
   if (!reading) return new Response("Not found", { status: 404 });
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="232" height="64" viewBox="0 0 232 64" role="img" aria-label="Bagcheck Health ${reading.score}">
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="232" height="64" viewBox="0 0 232 64" role="img" aria-label="Canopy Health ${reading.score}">
   <rect x="0.5" y="0.5" width="231" height="63" rx="15.5" fill="${FIELD}" stroke="${EDGE}"/>
   <circle cx="32" cy="32" r="17" fill="none" stroke="${EDGE}" stroke-width="3.5"/>
   <circle cx="32" cy="32" r="17" fill="none" stroke="${MOSS}" stroke-width="3.5"
     stroke-linecap="round" stroke-dasharray="${((reading.score / 100) * 106.8).toFixed(1)} 106.8"
     transform="rotate(-90 32 32)"/>
   <text x="62" y="28" font-family="system-ui,-apple-system,sans-serif" font-size="17" font-weight="700" fill="${INK}">${reading.score}<tspan fill="${DIM}" font-weight="500"> / 100</tspan></text>
-  <text x="62" y="47" font-family="ui-monospace,Menlo,monospace" font-size="9.5" letter-spacing="1.4" fill="${DIM}">BAGCHECK HEALTH · ${reading.date}</text>
+  <text x="62" y="47" font-family="ui-monospace,Menlo,monospace" font-size="9.5" letter-spacing="1.4" fill="${DIM}">CANOPY HEALTH · ${reading.date}</text>
 </svg>`;
 
   return new Response(svg, {

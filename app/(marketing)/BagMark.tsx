@@ -3,7 +3,7 @@
  * `currentColor` so the mark sits in whatever ink its row uses; the check is
  * the one fixed hue, except on the dark footer where it inverts to the field.
  */
-export function BagMark({ size = 34, check }: { size?: number; check?: string }) {
+export function CanopyMark({ size = 34, check }: { size?: number; check?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 34 34" fill="none" aria-hidden="true">
       <path

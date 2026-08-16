@@ -26,7 +26,7 @@ export async function GET() {
   return new NextResponse(JSON.stringify(payload, null, 2), {
     headers: {
       "content-type": "application/json; charset=utf-8",
-      "content-disposition": `attachment; filename="bagcheck-export-${day}.json"`,
+      "content-disposition": `attachment; filename="canopy-export-${day}.json"`,
       "cache-control": "private, no-store",
     },
   });

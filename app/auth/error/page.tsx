@@ -51,7 +51,7 @@ export default async function AuthErrorPage({
 
   return (
     <main className={styles.page}>
-      <Eyebrow>Bagcheck · sign-in</Eyebrow>
+      <Eyebrow>Canopy · sign-in</Eyebrow>
       <h1 className={`disp ${styles.title}`}>{detail.title}</h1>
       <p className={styles.body}>{detail.body}</p>
 

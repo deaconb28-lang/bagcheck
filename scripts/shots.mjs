@@ -314,7 +314,7 @@ async function shoot(name, path, { width, height, mode, selector, full }) {
    */
   if (mode) {
     await page.addInitScript(`
-      try { localStorage.setItem("bagcheck-mode", ${JSON.stringify(mode)}); } catch {}
+      try { localStorage.setItem("canopy-mode", ${JSON.stringify(mode)}); } catch {}
       document.addEventListener("DOMContentLoaded", () => {
         document.documentElement.dataset.mode = ${JSON.stringify(mode)};
       });

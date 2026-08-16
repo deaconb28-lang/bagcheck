@@ -1,4 +1,4 @@
-# Bagcheck
+# Canopy
 
 Fitness tracking for your investment portfolio. Connect a brokerage read-only,
 get a score for how you actually invest — behaviour, not returns.
@@ -40,4 +40,4 @@ No domain yet? Two options:
 
 M1 ledger (auth, SnapTrade, Mongo models, `/debug`) — in progress.
 M2 score · M3 Today · M4 Wrapped + share cards · M5 loops · M6 Stripe ·
-M7 Trader tier · M8 engine. Details in `docs/bagcheck-build-instructions.md`.
+M7 Trader tier · M8 engine. Details in `docs/canopy-build-instructions.md`.

@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
 
 /**
- * The web manifest, so a phone that adds Bagcheck to its home screen gets the
+ * The web manifest, so a phone that adds Canopy to its home screen gets the
  * mark and the light field rather than a screenshot and a white flash.
  *
  * `background_color` and `theme_color` are the one place besides

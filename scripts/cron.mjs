@@ -10,7 +10,7 @@
  * platform this app does not deploy to and therefore never fired once — no
  * nightly score, no email, and no error to notice.
  *
- *   APP_URL       the deployed origin, e.g. https://bagcheck.example
+ *   APP_URL       the deployed origin, e.g. https://canopy.example
  *   CRON_SECRET   must match the app's, or every call answers 401
  *   CRON_JOBS     optional, comma-separated; defaults to both
  *

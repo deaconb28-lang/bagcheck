@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import styles from "./ModeSwitch.module.css";
 
 type Mode = "light" | "dark";
-const KEY = "bagcheck-mode";
+const KEY = "canopy-mode";
 
 /**
  * Light or dark, from the rail.

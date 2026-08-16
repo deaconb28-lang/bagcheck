@@ -16,7 +16,7 @@
  * twelve pictures that happen to share a palette.
  *
  * The no-text clause is load-bearing rather than stylistic: image models
- * garble letterforms, and every figure on a Bagcheck card is a number that
+ * garble letterforms, and every figure on a Canopy card is a number that
  * came off a brokerage. Typography lives in the HTML layer, where it stays
  * crisp, brand-controlled, and — the part that matters — correct.
  */

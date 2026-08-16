@@ -91,7 +91,7 @@ export function ScreenHeader({
       ) : null}
 
       {/*
-        * Violet, because the age is Bagcheck's own reading of the conduct —
+        * Violet, because the age is Canopy's own reading of the conduct —
         * the same reserved voice as the insight and the nightly score.
         */}
       {age != null ? (

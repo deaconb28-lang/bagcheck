@@ -6,7 +6,7 @@ import { buildCards } from "@/lib/cards";
 import { exampleLedger } from "@/lib/cards/exampleLedger";
 import { assembleWrapped } from "@/lib/wrapped/assemble";
 import { storedPhotos } from "@/lib/unsplash";
-import { BagMark } from "@/app/(marketing)/BagMark";
+import { CanopyMark } from "@/app/(marketing)/CanopyMark";
 import { GoogleSignIn } from "@/components/app/GoogleSignIn";
 import { Deck } from "./Deck";
 import { FirstRun } from "./FirstRun";
@@ -213,9 +213,9 @@ function Bar({
 }) {
   return (
     <header className={styles.bar}>
-      <Link href="/" className={styles.brand} aria-label="bagcheck home">
-        <BagMark size={24} />
-        <span>bagcheck</span>
+      <Link href="/" className={styles.brand} aria-label="canopy home">
+        <CanopyMark size={24} />
+        <span>canopy</span>
       </Link>
       <span className={styles.barLabel}>
         {example ? "Sample year" : "Wrapped"} · {label}

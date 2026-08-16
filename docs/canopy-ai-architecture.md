@@ -1,4 +1,4 @@
-# Bagcheck — processing and reasoning architecture
+# Canopy — processing and reasoning architecture
 
 How every element on every screen comes to exist: what is extracted, what is
 computed, what is inferred, what is written by a model, and what must never be.
@@ -10,7 +10,7 @@ authoritative on voice and visual system.
 
 ## 0. The boundary, stated first
 
-Bagcheck is a measuring instrument pointed at somebody's own money. The
+Canopy is a measuring instrument pointed at somebody's own money. The
 failure mode that ends the product is not a dull sentence — it is a confident
 number that never happened. So the boundary is not a matter of taste:
 
@@ -34,7 +34,7 @@ produces it.
 | **T3** | **Written** | Anthropic | Yes — words only, over a T1/T2 fact pack. |
 | **T4** | **Drawn** | OpenAI | Yes — abstract imagery only. |
 
-T0 is the account of record. If the brokerage did not say it, Bagcheck does not
+T0 is the account of record. If the brokerage did not say it, Canopy does not
 show it — a gap renders as a gap (`—`), never as an estimate. T1 is
 reproducible: given the same ledger, the same numbers, forever. T2 is where
 honesty gets structural — a finding below its sample floor returns `null`
@@ -86,7 +86,7 @@ surface as of the v2 shell.
 | Tier chip, upgrade button | T1 | `subscriptions` | `tierFromStatus` |
 | Score ring (value + arc) | T1 | `scores` | `computeScore` |
 | **Daily insight sentence + tail** | **T3** | Fact pack | **Anthropic** |
-| "Written by Bagcheck" chip | — | Static | — |
+| "Written by Canopy" chip | — | Static | — |
 | 4 component tiles: value, meter | T1 | `scores.components` | `computeScore` |
 | Component comparison lines | T1 | Static per component | Template |
 | Tag queue line, question, facts | T1 | `transactions`, `tags` | `lib/tags` |
@@ -414,7 +414,7 @@ for (const raw of `${sentence} ${tail}`.matchAll(/\d+(?:\.\d+)?/g)) {
 }
 ```
 
-A model cannot ship a number Bagcheck did not compute. Not "is unlikely to" —
+A model cannot ship a number Canopy did not compute. Not "is unlikely to" —
 cannot. Every new output kind gets its own `allowedNumbers()`.
 
 **This validator is a security boundary, not a style checker.** Generated
@@ -455,7 +455,7 @@ what rejects it, and what happens when it fails.
 | **Surfaces** | `/home` hero, `/insights` hero, daily notification |
 
 The one place `--accent` appears in the product, because it is the one thing
-Bagcheck wrote on its own.
+Canopy wrote on its own.
 
 ### A2 — Wrapped backdrop `[built]`
 
@@ -718,7 +718,7 @@ Every one degrades. None breaks a page.
 | Reconciliation mismatch | FIFO vs snapshot delta | Symbol excluded from statistics, not silently wrong |
 
 The pattern throughout: **the brokerage's own numbers are the floor.** Every
-degraded path lands there, because that is the one thing Bagcheck can always
+degraded path lands there, because that is the one thing Canopy can always
 show honestly.
 
 ---

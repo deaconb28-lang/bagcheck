@@ -19,7 +19,7 @@ export function siteOrigin(): string {
   return raw.replace(/\/+$/, "");
 }
 
-export const SITE_NAME = "bagcheck";
+export const SITE_NAME = "canopy";
 export const SITE_TAGLINE = "Turn your portfolio into a flex";
 export const SITE_DESCRIPTION =
-  "Connect your brokerage in two taps through SnapTrade. Bagcheck reads the numbers and turns your year into a Wrapped worth posting — returns, top bags, best trades, and the ones that got away.";
+  "Connect your brokerage in two taps through SnapTrade. Canopy reads the numbers and turns your year into a Wrapped worth posting — returns, top holdings, best trades, and the ones that got away.";

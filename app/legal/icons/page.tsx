@@ -21,7 +21,7 @@ export default async function IconCreditsPage() {
         <span className={styles.eyebrow}>Credits</span>
         <h1 className={`disp ${styles.title}`}>Icons</h1>
         <p className={styles.body}>
-          The glyphs in Bagcheck come from The Noun Project, under the Creative
+          The glyphs in Canopy come from The Noun Project, under the Creative
           Commons attribution licence. The people who drew them are listed here.
           The route marks in the sidebar are drawn by us and are not on this list.
         </p>

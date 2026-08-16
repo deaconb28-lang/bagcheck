@@ -103,7 +103,7 @@ export default async function YouPage({
     return (
       <PageGrid>
         <EmptyState
-          eyebrow="Bagcheck"
+          eyebrow="Canopy"
           icon={userId ? "setup" : "signin"}
           title={userId ? "Configure the ledger store" : "Sign in to see your dashboard"}
           body={
@@ -128,7 +128,7 @@ export default async function YouPage({
     return (
       <PageGrid>
         <EmptyState
-          eyebrow="Bagcheck"
+          eyebrow="Canopy"
           icon={data.connection ? "waiting" : "connect"}
           title={data.connection ? "Nothing read yet" : "Connect a brokerage"}
           body={
@@ -437,7 +437,7 @@ export default async function YouPage({
               </div>
 
               <div className={styles.actions}>
-                <span className={styles.written}>Written by Bagcheck</span>
+                <span className={styles.written}>Written by Canopy</span>
                 <ShareButton type="health" label="your score" size={44} />
               </div>
             </section>

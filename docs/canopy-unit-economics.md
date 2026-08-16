@@ -1,4 +1,4 @@
-# Bagcheck — cost and pricing model
+# Canopy — cost and pricing model
 
 What one month costs, what conversion rate the current pricing requires, and
 what actually moves it.
@@ -13,7 +13,7 @@ tier as designed do not currently coexist.**
 
 | Service | Price | Verified |
 |---|---|---|
-| **SnapTrade** | **$1.00 / connected user / month** (daily data, no trading — what read-only Bagcheck needs). $2 with real-time + trading. Volume discounts offered. | [snaptrade.com/pricing](https://snaptrade.com/pricing) |
+| **SnapTrade** | **$1.00 / connected user / month** (daily data, no trading — what read-only Canopy needs). $2 with real-time + trading. Volume discounts offered. | [snaptrade.com/pricing](https://snaptrade.com/pricing) |
 | **Anthropic** | Opus 5 $5/$25 per 1M; Sonnet 5 $3/$15 ($2/$10 intro to 2026-08-31); Haiku 4.5 $1/$5 | Model table, 2026-06-24 |
 | **Finnhub** | Free tier is **personal, non-commercial only** — a monetized app needs Premium, $11.99–$99.99/mo | [finnhub.io/pricing](https://finnhub.io/pricing) |
 | **logo.dev** | Free 500K req/mo; Startup $33.33/mo; Pro $150/mo | [logo.dev/pricing](https://www.logo.dev/pricing) |
@@ -22,7 +22,7 @@ tier as designed do not currently coexist.**
 | **OpenAI** | Wrapped backdrop, 1 image / user / **year** | Immaterial at any plausible price |
 | **Vercel / Atlas at scale** | Estimated by tier | **Not verified** |
 
-> **Compliance note, not a cost note.** Bagcheck is monetized, so the Finnhub
+> **Compliance note, not a cost note.** Canopy is monetized, so the Finnhub
 > free tier it currently runs on is outside its licence. That is a $100/month
 > problem and a legal one, and it should be fixed before launch rather than
 > after.
@@ -79,7 +79,7 @@ At 10,000 users and **3% conversion** — a good outcome for consumer freemium:
 - Cost: **$13,420**
 - **Loss: $9,724/month**, which is **$1.00 per free user per month**
 
-That is the actual question in front of the business: *is a free Bagcheck user
+That is the actual question in front of the business: *is a free Canopy user
 worth a dollar a month in acquisition value?* Given that Layer 5 — share cards —
 is explicitly the acquisition engine, the answer is not automatically no. But
 it has to be measured, not assumed, and it has to be bounded.
@@ -119,7 +119,7 @@ is exactly what the landing page promises you will not get.
 | Reverse-trial (full product, then gate) | 8–15% |
 | Free trial requiring a card | 40–60% of trials |
 
-Bagcheck's current shape is consumer freemium, so 2–5% is the honest planning
+Canopy's current shape is consumer freemium, so 2–5% is the honest planning
 number and 10.9% is not reachable by better marketing. **Reverse-trial is the
 shape that matches both the cost structure and the product's own promise** —
 give the full retrospective, then gate the ongoing service.
@@ -140,7 +140,7 @@ give the full retrospective, then gate the ongoing service.
    product half — `lib/tiers.ts`, `TRIAL_DAYS = 14`. Fourteen days of full
    access from the moment a brokerage connects (not from signup: an account
    with no ledger has nothing to unlock), then everything paid locks and
-   Bagcheck stays free. It states a date, once, where the plan is described —
+   Canopy stays free. It states a date, once, where the plan is described —
    no countdown, no banner, no nag.
 
    The **cost** half is the part that moves the model and is still a decision:

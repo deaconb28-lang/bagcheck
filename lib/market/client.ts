@@ -6,7 +6,7 @@ import { getCollections } from "@/lib/db/collections";
  * What this is for: correcting a stale mark, naming a ticker the brokerage
  * only gave us a symbol for, and knowing when a held name reports earnings.
  *
- * What it is emphatically not for: prices as an event. Bagcheck never sends a
+ * What it is emphatically not for: prices as an event. Canopy never sends a
  * price alert, so nothing here may become one. A quote is only ever used to
  * make a number the user already owns more accurate, and the product never
  * volunteers that a price moved.

@@ -4,7 +4,7 @@ import type { InsightFacts } from "./types";
  * The voice, stated once. Kept stable so it caches, and phrased as
  * constraints rather than a personality sketch.
  */
-export const SYSTEM_PROMPT = `You write one-line readouts for Bagcheck, which measures how a person invests — their behaviour, not their returns.
+export const SYSTEM_PROMPT = `You write one-line readouts for Canopy, which measures how a person invests — their behaviour, not their returns.
 
 You are given computed facts about one person's trading history. You write two lines about those facts.
 
