@@ -36,7 +36,7 @@ export default async function Image() {
           fontFamily: "sans-serif",
         }}
       >
-        {/* The bag mark and the wordmark, drawn the way CanopyMark draws them. */}
+        {/* The bag mark and the wordmark, drawn the way BagcheckMark draws them. */}
         <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
           <svg width="64" height="64" viewBox="0 0 34 34" fill="none">
             <path

@@ -211,6 +211,11 @@ export async function seed({ quiet = false } = {}) {
       }),
     });
   }
+  /*
+   * A cash balance on every snapshot, so the harness runs the account basis
+   * rather than the book fallback — the branch a real connection takes.
+   */
+  for (const snap of snapshots) snap.cash = 4200;
   await db.collection("positionSnapshots").insertMany(snapshots);
 
   /*

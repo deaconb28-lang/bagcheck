@@ -90,7 +90,7 @@ test("snapshots on the same day across accounts are summed, not overwritten", ()
     ],
     "2026-08-01",
   );
-  assert.deepEqual(out, [{ date: "2026-08-01", value: 1400, interpolated: false }]);
+  assert.deepEqual(out, [{ date: "2026-08-01", value: 1400, interpolated: false, withCash: false }]);
 });
 
 test("an empty ledger produces no curve rather than a flat line at zero", () => {
@@ -196,4 +196,30 @@ test("the probe and the loaded ledger agree", () => {
 test("an empty ledger hashes without throwing", () => {
   assert.equal(typeof ledgerHash([], []), "string");
   assert.equal(ledgerHash([], []).length, 16);
+});
+
+test("cash joins the curve when the brokerage reports it, and says so", () => {
+  const out = equityFrom(
+    [{ date: "2026-08-01", value: 1000, cash: 250 }],
+    "2026-08-01",
+  );
+  assert.deepEqual(out, [
+    { date: "2026-08-01", value: 1250, withCash: true, interpolated: false },
+  ]);
+});
+
+test("one account without cash puts the whole day back on the book basis", () => {
+  /*
+   * Part-account and part-book is not a basis. A day is only the account when
+   * every account that reported it reported its cash.
+   */
+  const out = equityFrom(
+    [
+      { date: "2026-08-01", value: 1000, cash: 250 },
+      { date: "2026-08-01", value: 400, cash: null },
+    ],
+    "2026-08-01",
+  );
+  assert.equal(out[0].withCash, false);
+  assert.equal(out[0].value, 1650);
 });

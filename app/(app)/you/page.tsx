@@ -158,7 +158,9 @@ export default async function DashboardPage({
             tone={perf.ret == null ? undefined : perf.ret >= 0 ? "moss" : "loss"}
             tail={
               view.index == null
-                ? "Your book, buys and sells taken out."
+                ? perf.basis === "account"
+                  ? "Your account, contributions taken out."
+                  : "Your invested book, buys and sells taken out."
                 : `vs ${signedPct(view.index * 100)} S&P`
             }
           />

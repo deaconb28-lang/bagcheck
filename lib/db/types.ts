@@ -50,6 +50,13 @@ export interface PositionSnapshotDoc {
   date: string;
   takenAt: Date;
   positions: Position[];
+  /**
+   * Uninvested cash across the account's balances, when the brokerage says.
+   * Null on every snapshot taken before this was read, and on any brokerage
+   * that will not answer — the curve degrades to positions-only rather than
+   * stepping when it appears.
+   */
+  cash?: number | null;
 }
 
 export interface ScoreDoc {
@@ -334,7 +341,8 @@ export interface DerivedDoc {
   transactionCount: number;
   roundTrips: RoundTrip[];
   dailyPnl: Array<{ date: string; realised: number }>;
-  equitySeries: Array<{ date: string; value: number; interpolated: boolean }>;
+  /** `withCash` says whether the mark is the whole account or the book. */
+  equitySeries: Array<{ date: string; value: number; interpolated: boolean; withCash: boolean }>;
   holdTime: {
     winnersMean: number | null;
     losersMean: number | null;

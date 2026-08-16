@@ -34,6 +34,8 @@ export interface Mark {
   date: string;
   value: number;
   filled: boolean;
+  /** Whether this mark is the whole account or only the invested book. */
+  withCash: boolean;
 }
 
 /** A session that closed something, and what it made. */
@@ -75,8 +77,18 @@ export interface Facts {
   sessions: Session[];
   /** Daily portfolio value, forward-filled. */
   curve: Mark[];
-  /** Money crossing into and out of positions: buys positive, sells negative. */
-  flows: Array<{ date: string; amount: number }>;
+  /**
+   * The two kinds of flow, because which one a return has to net out depends
+   * on what the curve is measuring.
+   *
+   * On a **book** curve — positions only — the thing that moves it other than
+   * the market is money crossing into a position, so `trades` is what comes
+   * out. On an **account** curve, a buy is an internal transfer that moves
+   * nothing and `transfers` is what comes out. Netting the wrong one reports a
+   * deposit left in cash as a total loss, which is exactly the bug that made
+   * this distinction worth a type.
+   */
+  flows: { trades: Array<{ date: string; amount: number }>; transfers: Array<{ date: string; amount: number }> };
   holdTime: {
     winnersMean: number | null;
     losersMean: number | null;
@@ -119,6 +131,12 @@ export interface Book {
 }
 
 export interface Performance {
+  /**
+   * What the return is a return *on*. "account" includes uninvested cash;
+   * "book" is the invested slice, which is all a brokerage that will not
+   * report a balance can honestly answer for. The screen states it.
+   */
+  basis: "account" | "book";
   /** Return over the window, flows removed. Null until two marks exist. */
   ret: number | null;
   /** The same move in dollars. */

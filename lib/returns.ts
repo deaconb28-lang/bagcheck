@@ -91,6 +91,29 @@ export function investmentFlows(
 }
 
 /**
+ * Money crossing the account's own edge — what an *account* curve has to net
+ * out. A buy is invisible here on purpose: on a curve that includes cash, a
+ * purchase moves money from one pocket to another and the total does not
+ * change, so counting it would subtract a gain that never happened.
+ */
+export function transferFlows(
+  rows: Array<{ date: string; type: string; amount: number | null }>,
+): Flow[] {
+  const out: Flow[] = [];
+  for (const row of rows) {
+    if (!row.date || row.amount == null || !Number.isFinite(row.amount)) continue;
+    const type = row.type ?? "";
+    const inbound = /contribution|deposit|transfer.?in/i.test(type);
+    const outbound = /withdrawal|transfer.?out/i.test(type);
+    if (inbound === outbound) continue;
+    const size = Math.abs(row.amount);
+    if (size === 0) continue;
+    out.push({ date: row.date.slice(0, 10), amount: inbound ? size : -size });
+  }
+  return out;
+}
+
+/**
  * Modified Dietz over a window, as a fraction — 0.184 for +18.4%.
  *
  * The window is the curve itself: its first mark opens the period and its last

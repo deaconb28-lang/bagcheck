@@ -38,19 +38,26 @@ const WIDTHS = [
   { key: "390", w: 390, h: 844 },
 ];
 
-/** `modes` is which of light/dark the screen has anything to say about. */
+/*
+ * `modes` is which of light/dark the screen has anything to say about — and
+ * since the app went dark-only there is one answer for anything wearing app
+ * chrome. Forcing light on those produced a state that cannot occur in
+ * production, and it duly "found" a wordmark at 1.02:1 that no reader can
+ * ever see. Marketing is unaffected either way: it speaks `--mk-*`, which is
+ * stated once and never flipped by mode.
+ */
 const SCREENS = [
   { key: "landing", path: "/", modes: ["light"] },
   { key: "pricing", path: "/pricing", modes: ["light"] },
-  { key: "privacy", path: "/legal/privacy", modes: ["light", "dark"] },
-  { key: "terms", path: "/legal/terms", modes: ["light", "dark"] },
-  { key: "icons", path: "/legal/icons", modes: ["light"] },
-  { key: "photos", path: "/legal/photos", modes: ["light"] },
-  { key: "start", path: "/start", modes: ["light"] },
+  { key: "privacy", path: "/legal/privacy", modes: ["dark"] },
+  { key: "terms", path: "/legal/terms", modes: ["dark"] },
+  { key: "icons", path: "/legal/icons", modes: ["dark"] },
+  { key: "photos", path: "/legal/photos", modes: ["dark"] },
+  { key: "start", path: "/start", modes: ["dark"] },
   { key: "you", path: "/you", modes: ["dark"] },
   { key: "holdings", path: "/holdings", modes: ["dark"] },
   { key: "insights", path: "/insights", modes: ["dark"] },
-  { key: "wrapped", path: "/wrapped", modes: ["light"] },
+  { key: "wrapped", path: "/wrapped", modes: ["dark"] },
   { key: "profile", path: "/profile", modes: ["dark"] },
 ];
 

@@ -87,7 +87,19 @@ export function bookFrom(holdings: Facts["holdings"]): Book {
 
 export function performanceFrom(facts: Facts, window: Window): Performance {
   const curve = facts.curve.filter((mark) => mark.date >= window.from);
-  const flows = facts.flows.filter((flow) => flow.date >= window.from);
+
+  /*
+   * The basis is a property of the window, not of the account: a curve that
+   * only started carrying cash in June is a book curve for anything reaching
+   * back past it. Every mark in the window has to agree, or the return would
+   * be measured across a change of basis and read the day cash first appeared
+   * as a gain the size of the balance.
+   */
+  const basis: "account" | "book" =
+    curve.length > 0 && curve.every((mark) => mark.withCash) ? "account" : "book";
+  const flows = (basis === "account" ? facts.flows.transfers : facts.flows.trades).filter(
+    (flow) => flow.date >= window.from,
+  );
   const sessions = facts.sessions.filter((session) => session.date >= window.from);
   const trips = facts.trips.filter((trip) => trip.closeDate >= window.from);
 
@@ -105,6 +117,7 @@ export function performanceFrom(facts: Facts, window: Window): Performance {
   const wins = trips.filter((trip) => trip.pnl > 0).length;
 
   return {
+    basis,
     ret: periodReturn(curve, flows),
     gain: gainOver(curve, flows),
     sessions,
@@ -323,9 +336,12 @@ export function dashboardView({
   const yearCurve = facts.curve.filter((mark) => mark.date.slice(0, 4) === String(year));
   const opened = yearCurve[0]?.date ?? null;
   const sameWindow = opened != null && opened <= `${year}-01-14`;
+  const yearBasis = yearCurve.length > 0 && yearCurve.every((mark) => mark.withCash);
   const ytd = periodReturn(
     yearCurve,
-    facts.flows.filter((flow) => flow.date.slice(0, 4) === String(year)),
+    (yearBasis ? facts.flows.transfers : facts.flows.trades).filter(
+      (flow) => flow.date.slice(0, 4) === String(year),
+    ),
   );
   const field = sameWindow ? raceField(ytd, peers) : null;
 
@@ -353,7 +369,20 @@ export function dashboardView({
     concentration,
     patterns: patternsFrom(facts, window),
     wrapped: { year, earned: wrapped.earned, total: wrapped.total, archetype },
-    provenance: facts.provenance,
+    provenance: {
+      ...facts.provenance,
+      /*
+       * Which basis the figures stand on, said once. A reader comparing this
+       * screen to their brokerage's own total needs to know whether the cash
+       * is in it, and a brokerage that will not report a balance is a fact
+       * about the connection rather than something to paper over.
+       */
+      marks: `${facts.provenance.marks} · ${
+        performance.basis === "account"
+          ? "figures include uninvested cash"
+          : "figures are the invested book, cash not reported"
+      }`,
+    },
     accounts: facts.accounts.length,
     syncedAt: facts.syncedAt,
   };

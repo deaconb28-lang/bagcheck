@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { auth, getUserId, isAuthConfigured } from "@/auth";
-import { isDbConfigured } from "@/lib/db";
+import { getCollections, isDbConfigured, syncClock } from "@/lib/db";
 import { appLocked } from "@/lib/launch";
 import { wrappedDeck } from "@/lib/wrapped/year";
 import { BagcheckMark } from "@/components/brand/BagcheckMark";
 import { GoogleSignIn } from "@/components/app/GoogleSignIn";
+import { AppNav } from "@/components/app/AppNav";
+import { shellUser } from "@/components/app/shellUser";
 import { CardFonts } from "@/components/cards/CardFonts";
 import { StillToCome } from "./StillToCome";
 import { YearDeck } from "./YearDeck";
@@ -85,7 +87,7 @@ export default async function WrappedPage({
   if (firstRun && example) {
     return (
       <>
-        <Bar label={String(year)} signedIn={Boolean(userId)} />
+        <Bar label={String(year)} userId={userId} />
         <main className={styles.main}>
           <div className={styles.page}>{firstRun}</div>
         </main>
@@ -96,7 +98,7 @@ export default async function WrappedPage({
   if (nothingEarned) {
     return (
       <>
-        <Bar label={String(year)} signedIn={Boolean(userId)} />
+        <Bar label={String(year)} userId={userId} />
         <main className={styles.empty}>
           <h1 className={styles.emptyTitle}>Nothing has been earned yet</h1>
           <p className={styles.emptyBody}>
@@ -121,7 +123,7 @@ export default async function WrappedPage({
 
   return (
     <>
-      <Bar label={label} example={example} signedIn={Boolean(userId)} />
+      <Bar label={label} example={example} userId={userId} />
       <main className={styles.main}>
         <div className={styles.page}>
           {firstRun}
@@ -203,15 +205,39 @@ async function firstName(): Promise<string> {
  * back — so a signed-out visitor gets one-click Google, and a signed-in one
  * gets the dashboard.
  */
-function Bar({
+async function Bar({
   label,
   example,
-  signedIn,
+  userId,
 }: {
   label: string;
   example?: boolean;
-  signedIn: boolean;
+  /** Null when signed out. Also the filter every read below is scoped by. */
+  userId: string | null;
 }) {
+  const signedIn = Boolean(userId);
+  /*
+   * A signed-in reader gets the app's own nav, because Wrapped is one of the
+   * four tabs and arriving here should not feel like leaving the product. A
+   * signed-out visitor gets the bar: the landing hands off to this page
+   * directly, and a nav whose every tab would bounce them to a sign-in is
+   * chrome that only knows how to refuse.
+   */
+  if (signedIn && isDbConfigured()) {
+    const { connections } = await getCollections();
+    const conn = await connections
+      .findOne({ userId: userId! }, { projection: { _id: 0, accounts: 1, lastSyncAt: 1 } })
+      .catch(() => null);
+    return (
+      <AppNav
+        active="wrapped"
+        accounts={conn?.accounts?.length ?? 0}
+        syncedAt={syncClock(conn?.lastSyncAt ?? null)}
+        user={await shellUser()}
+      />
+    );
+  }
+
   return (
     <header className={styles.bar}>
       <Link href="/" className={styles.brand} aria-label="bagcheck home">

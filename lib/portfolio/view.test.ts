@@ -27,7 +27,7 @@ const facts = (over: Partial<Facts> = {}): Facts => ({
   trips: [],
   sessions: [],
   curve: [],
-  flows: [],
+  flows: { trades: [], transfers: [] },
   holdTime: { winnersMean: null, losersMean: null, winners: 0, losers: 0 },
   findings: [],
   holdings: [],
@@ -91,10 +91,10 @@ test("a purchase inside the window is not a gain", () => {
   const perf = performanceFrom(
     facts({
       curve: [
-        { date: "2026-08-01", value: 1000, filled: true },
-        { date: "2026-08-16", value: 2000, filled: false },
+        { date: "2026-08-01", value: 1000, filled: true, withCash: false },
+        { date: "2026-08-16", value: 2000, filled: false, withCash: false },
       ],
-      flows: [{ date: "2026-08-10", amount: 1000 }],
+      flows: { trades: [{ date: "2026-08-10", amount: 1000 }], transfers: [] },
     }),
     windowFor("all", "2026-08-16", "2026-08-01"),
   );
@@ -106,6 +106,7 @@ test("sharpe declines under a season of marks", () => {
     date: `2026-07-${String(i + 1).padStart(2, "0")}`,
     value: 1000 + i,
     filled: false,
+    withCash: false,
   }));
   assert.equal(performanceFrom(facts({ curve: short }), windowFor("all", "2026-08-16", null)).sharpe, null);
 });

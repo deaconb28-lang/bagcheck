@@ -6,7 +6,7 @@ import {
   peerReturnsYtd,
   refreshHoldings,
 } from "@/lib/market";
-import { investmentFlows } from "@/lib/returns";
+import { investmentFlows, transferFlows } from "@/lib/returns";
 import { wrappedDeck } from "@/lib/wrapped/year";
 import { CARDS } from "@/wrapped/cards.mjs";
 import type { Facts, RangeKey } from "./types";
@@ -50,13 +50,13 @@ export async function factsFor(userId: string, data: ScreenData): Promise<Facts>
           provenance: `Brokerage synced ${asOf ?? "never"}`,
         }),
     /*
-     * Buys and sells only, projected to three fields. These are the flows that
-     * move a *positions* curve — the equity series is `Σ price × units` and
-     * cannot see a cash balance, so netting deposits out of it would report a
-     * contribution left in cash as a loss.
+     * Both kinds of flow, in one query. Which one a return nets out depends on
+     * what the curve is measuring: a book curve moves when money crosses into
+     * a position, an account curve moves when money crosses the account's own
+     * edge. The view picks; this only has to fetch.
      */
     transactions
-      .find({ userId, type: { $regex: /buy|sell/i } })
+      .find({ userId, type: { $regex: /buy|sell|contribution|deposit|withdrawal|transfer/i } })
       .project<{ date: string; type: string; amount: number | null }>({
         _id: 0,
         date: 1,
@@ -76,8 +76,9 @@ export async function factsFor(userId: string, data: ScreenData): Promise<Facts>
       date: point.date,
       value: point.value,
       filled: point.interpolated,
+      withCash: point.withCash,
     })),
-    flows: investmentFlows(flowRows),
+    flows: { trades: investmentFlows(flowRows), transfers: transferFlows(flowRows) },
     holdTime: data.derived?.holdTime ?? {
       winnersMean: null,
       losersMean: null,

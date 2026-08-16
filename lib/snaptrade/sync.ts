@@ -119,9 +119,36 @@ async function runSync(userId: string, startedAt: number): Promise<SyncResult> {
     });
     const positions = posRes.data ?? [];
     positionsCount += positions.length;
+
+    /*
+     * The cash beside the positions.
+     *
+     * Without it the equity curve is the value of the *book*, not of the
+     * account: a deposit sitting uninvested moves nothing, and every return
+     * built on the curve is a return on the invested slice. Read separately
+     * because SnapTrade keeps it separately, and tolerated as null because a
+     * brokerage that will not answer must degrade the figure rather than the
+     * page — `equityFrom` falls back to positions-only when it is missing.
+     *
+     * Note the double count the SDK warns about: a money-market fund is in
+     * `cash` *and* comes back as a position with `cash_equivalent: true`.
+     * Netting that out is `equityFrom`'s job, which is why both halves are
+     * stored raw rather than added up here.
+     */
+    const cash = await snaptrade.accountInformation
+      .getUserAccountBalance({ ...creds, accountId: account.id })
+      .then((res) =>
+        (res.data ?? []).reduce<number | null>(
+          (sum, balance) =>
+            typeof balance.cash === "number" ? (sum ?? 0) + balance.cash : sum,
+          null,
+        ),
+      )
+      .catch(() => null);
+
     await positionSnapshots.updateOne(
       { userId, accountId: account.id, date },
-      { $set: { userId, accountId: account.id, date, takenAt: new Date(), positions } },
+      { $set: { userId, accountId: account.id, date, takenAt: new Date(), positions, cash } },
       { upsert: true },
     );
     await markPhase(userId, "positions", { accountsDone: index + 1, positions: positionsCount });

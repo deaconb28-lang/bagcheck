@@ -20,7 +20,7 @@ import type { DerivedDoc } from "./types";
  */
 
 /** Bump when anything in this file changes shape or meaning. */
-export const DERIVED_VERSION = 3;
+export const DERIVED_VERSION = 4;
 
 export interface DailyPnl {
   date: string;
@@ -30,6 +30,16 @@ export interface DailyPnl {
 export interface EquityPoint {
   date: string;
   value: number;
+  /**
+   * Whether `value` is the whole account or only the invested book.
+   *
+   * The brokerage did not always report cash, and the snapshots taken before
+   * it did have none. A curve that silently switched basis part-way would step
+   * on the day the first cash arrived and call it a gain — so each mark says
+   * which it is, and anything measuring a return reads a run of marks that
+   * agree rather than the whole series.
+   */
+  withCash: boolean;
   /**
    * Forward-filled from the last real snapshot. Position snapshots only exist
    * on days a sync ran, so without this the equity curve is a picture of when
@@ -126,13 +136,25 @@ export function dailyPnlFrom(rows: TxnLite[], trips: RoundTrip[] = []): DailyPnl
  * actually reported.
  */
 export function equityFrom(
-  snapshots: Array<{ date: string; value: number }>,
+  snapshots: Array<{ date: string; value: number; cash?: number | null }>,
   today: string,
 ): EquityPoint[] {
   if (!snapshots.length) return [];
 
-  const byDate = new Map<string, number>();
-  for (const s of snapshots) byDate.set(s.date, (byDate.get(s.date) ?? 0) + s.value);
+  const byDate = new Map<string, { value: number; withCash: boolean }>();
+  for (const s of snapshots) {
+    const prior = byDate.get(s.date);
+    const cash = typeof s.cash === "number" ? s.cash : null;
+    byDate.set(s.date, {
+      value: (prior?.value ?? 0) + s.value + (cash ?? 0),
+      /*
+       * A day is on the account basis only when *every* account that reported
+       * that day reported its cash. One brokerage answering and another not
+       * would otherwise produce a day that is part account and part book.
+       */
+      withCash: (prior?.withCash ?? true) && cash != null,
+    });
+  }
   const dates = [...byDate.keys()].sort();
 
   const out: EquityPoint[] = [];
@@ -144,7 +166,7 @@ export function equityFrom(
     const iso = cursor.toISOString().slice(0, 10);
     const real = byDate.get(iso);
     if (real != null) last = real;
-    out.push({ date: iso, value: last, interpolated: real == null });
+    out.push({ date: iso, value: last.value, withCash: last.withCash, interpolated: real == null });
     cursor.setUTCDate(cursor.getUTCDate() + 1);
   }
   return out;
@@ -200,7 +222,7 @@ export function reconcile(
 
 export interface BuildInput {
   rows: TxnLite[];
-  snapshots: Array<{ date: string; value: number }>;
+  snapshots: Array<{ date: string; value: number; cash?: number | null }>;
   heldUnits: Map<string, number>;
   today: string;
 }
@@ -299,15 +321,28 @@ export async function rebuildDerived(userId: string): Promise<DerivedDoc | null>
 
   const snapDocs = await positionSnapshots.find({ userId }).sort({ date: 1 }).toArray();
 
-  const byDate = new Map<string, number>();
+  const byDate = new Map<string, { value: number; cash: number | null }>();
   const heldUnits = new Map<string, number>();
   const latestPerAccount = new Map<string, (typeof snapDocs)[number]>();
   for (const snap of snapDocs) {
-    const value = (snap.positions ?? []).reduce(
-      (sum, p) => sum + (p.price ?? 0) * (p.units ?? 0),
-      0,
-    );
-    byDate.set(snap.date, (byDate.get(snap.date) ?? 0) + value);
+    const cash = typeof snap.cash === "number" ? snap.cash : null;
+    /*
+     * A money-market fund is reported twice — inside `cash` and again as a
+     * position flagged `cash_equivalent`. Counting both would inflate the
+     * account by the size of its own cash, so when the brokerage has told us
+     * the cash, the equivalents come out of the positions side.
+     */
+    const value = (snap.positions ?? []).reduce((sum, p) => {
+      const equivalent = (p as { symbol?: { symbol?: { is_cash_equivalent?: boolean } } }).symbol
+        ?.symbol?.is_cash_equivalent;
+      if (cash != null && equivalent) return sum;
+      return sum + (p.price ?? 0) * (p.units ?? 0);
+    }, 0);
+    const prior = byDate.get(snap.date);
+    byDate.set(snap.date, {
+      value: (prior?.value ?? 0) + value,
+      cash: cash == null ? null : (prior?.cash ?? 0) + cash,
+    });
     const current = latestPerAccount.get(snap.accountId);
     if (!current || snap.date > current.date) latestPerAccount.set(snap.accountId, snap);
   }
@@ -324,7 +359,11 @@ export async function rebuildDerived(userId: string): Promise<DerivedDoc | null>
     computedAt: new Date(),
     ...buildDerived({
       rows,
-      snapshots: [...byDate.entries()].map(([date, value]) => ({ date, value })),
+      snapshots: [...byDate.entries()].map(([date, at]) => ({
+        date,
+        value: at.value,
+        cash: at.cash,
+      })),
       heldUnits,
       today: new Date().toISOString().slice(0, 10),
     }),
