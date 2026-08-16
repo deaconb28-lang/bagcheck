@@ -14,7 +14,17 @@
   can correct on an artefact whose whole claim is that it came off a brokerage.
 -->
 <div class="card" style="width:1080px;height:1920px" data-card="02" data-key="return">
-  <img class="bg" src="/wrapped/2026/backgrounds/bg-02.png" alt="">
+  <!--
+    The PNG is the committed source of truth; the WebP is what a reader
+    actually downloads. Twelve photographic gradients at 1080x1920 are 38MB as
+    PNG and 1.8MB as WebP with nothing visible between them — and the story
+    view loads all twelve on a phone. The PNG stays because it is what the
+    renderer composites from and what the set was authored as.
+  -->
+  <picture>
+    <source srcset="/wrapped/2026/backgrounds/bg-02.webp" type="image/webp">
+    <img class="bg" src="/wrapped/2026/backgrounds/bg-02.png" alt="">
+  </picture>
   <div class="scrim"></div>
 
   <div class="layer">
