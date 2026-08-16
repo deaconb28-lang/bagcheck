@@ -9,7 +9,13 @@
 .shell {
   min-height: 100svh;
   display: grid;
-  grid-template-columns: var(--rail-w) minmax(0, 1fr);
+  /*
+   * One column. There was a 220px labelled rail here holding a single tab and,
+   * a thousand pixels below it, the account cluster — furniture for a product
+   * that has one screen. The mark, the avatar and the light switch moved into
+   * the header, which is the one row of chrome this app now has.
+   */
+  grid-template-columns: minmax(0, 1fr);
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-voice), var(--font-body), system-ui, sans-serif;

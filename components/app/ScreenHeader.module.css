@@ -10,7 +10,16 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 22px var(--pad-page, 48px) 18px;
+  /*
+   * The same left edge as the body.
+   *
+   * The body pads by `--pad-page` and then centres a 1240px measure inside
+   * what is left, so on a wide window its first character sits ~100px in while
+   * a plainly-padded header started at 56 — two left edges, forty-four pixels
+   * apart, on a screen whose whole grammar is one column read from the left.
+   * Taking the larger of the two puts them on the same line at every width.
+   */
+  padding: 22px max(var(--pad-page, 48px), calc((100% - 1240px) / 2)) 18px;
   background: color-mix(in srgb, var(--bg) 82%, transparent);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -297,6 +306,57 @@
   }
 
   .spacer {
+    display: none;
+  }
+}
+
+/*
+ * The mark, the avatar and the light switch — the rail's whole non-navigational
+ * job, in the header where it costs a row rather than a column. The rail was
+ * 220px wide, held one tab, and left about a thousand pixels of nothing between
+ * that tab and this cluster; with a single screen there is nothing to navigate
+ * between, and a column that pretends otherwise is chrome asking to be read.
+ */
+.mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 11px;
+  color: var(--ink);
+  background: var(--inset);
+  transition: background 0.16s ease;
+}
+
+.mark:hover {
+  background: var(--tile);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--inset);
+  border: 1px solid var(--edge);
+  color: var(--ink2);
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+
+.avatar:hover {
+  background: var(--tile);
+  color: var(--ink);
+}
+
+/* Below the tab-bar breakpoint the row has to give something up. */
+@media (max-width: 560px) {
+  .mark {
     display: none;
   }
 }

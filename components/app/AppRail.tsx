@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MarkGlyph, MOBILE_ROUTES, ROUTES } from "./routes";
-import { ModeSwitch } from "./ModeSwitch";
+import { MOBILE_ROUTES } from "./routes";
 import styles from "./AppRail.module.css";
 
 export type ShellUser = {
@@ -24,46 +23,16 @@ function useIsActive() {
  * destinations are not self-evident from a drawn mark. Three items is far too
  * few to need the space back, so they say what they are.
  */
-export function AppRail({ user }: { user: ShellUser | null }) {
-  const isActive = useIsActive();
-
-  return (
-    <nav className={styles.rail} aria-label="Sections">
-      <Link href="/you" className={styles.mark} aria-label="Canopy">
-        <MarkGlyph />
-      </Link>
-
-      {ROUTES.map(({ href, label, Glyph }) => (
-        <Link
-          key={href}
-          href={href}
-          className={styles.item}
-          data-active={isActive(href) || undefined}
-          aria-current={isActive(href) ? "page" : undefined}
-        >
-          <Glyph />
-          <span className={styles.label}>{label}</span>
-        </Link>
-      ))}
-
-      <div className={styles.spacer} />
-
-      <div className={styles.foot}>
-        <Link
-          href="/profile"
-          title={user ? `${user.name} — settings` : "Settings"}
-          className={styles.avatar}
-        >
-          {user?.initials ?? "—"}
-        </Link>
-        {user ? <span className={styles.who}>{user.name}</span> : <span className={styles.spacer} />}
-        <ModeSwitch />
-      </div>
-    </nav>
-  );
-}
-
-/** Bottom tab bar — below 900px. Five tabs, 48px targets. */
+/**
+ * The tab bar — below 900px, and the only navigation furniture left.
+ *
+ * The desktop rail is gone: 220px of column holding one tab and, a thousand
+ * pixels lower, the account cluster. With a single screen there is nothing to
+ * navigate between, so the mark, the avatar and the light switch moved into
+ * `<ScreenHeader>` and the canvas took the width back. A phone still needs a
+ * way to reach settings, which is why this survives with two tabs rather than
+ * one — a one-item tab bar is a label, not navigation.
+ */
 export function MobileTabs() {
   const isActive = useIsActive();
 

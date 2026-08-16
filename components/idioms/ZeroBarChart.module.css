@@ -12,7 +12,8 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 50%;
+  /* Set by the component from the data: centred only when both signs occur. */
+  top: var(--zero-at, 50%);
   height: 1px;
   background: var(--line-light);
 }
@@ -46,7 +47,7 @@
 }
 
 .bar[data-dir="up"] {
-  bottom: 50%;
+  bottom: calc(100% - var(--zero-at, 50%));
   transform-origin: center bottom;
   animation-name: growUp;
   /* Ordinary sessions sit back; the outlier takes the hue at full strength. */
@@ -54,7 +55,7 @@
 }
 
 .bar[data-dir="down"] {
-  top: 50%;
+  top: var(--zero-at, 50%);
   background: color-mix(in srgb, var(--loss) 46%, transparent);
 }
 

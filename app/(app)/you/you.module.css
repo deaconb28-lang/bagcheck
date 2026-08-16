@@ -30,11 +30,25 @@
 }
 
 /* ── The section head: eyebrow → heading → lede ── */
+
+/*
+ * The eyebrow's *shape* is what makes it an eyebrow; its colour is not free.
+ * All nine of these were violet, which put the product's reserved hue on the
+ * P&L, the holdings, the minted cards and the export formats — nine violet
+ * lines down one page, and a screen whose dominant colour is one hue is a
+ * screen where the hue has stopped carrying information. Violet means what
+ * Canopy concluded, so only the three blocks that are a reading wear it.
+ */
 .eyebrow {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
+  color: var(--meta);
+}
+
+/* The score, the identity it implies, and the history of that score. */
+.eyebrow[data-voice] {
   color: var(--accent);
 }
 

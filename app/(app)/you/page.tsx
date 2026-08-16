@@ -23,6 +23,7 @@ import { EmptyState } from "@/components/app/EmptyState";
 import { FirstScore } from "@/components/app/FirstScore";
 import { PageGrid } from "@/components/app/PageGrid";
 import { ScreenHeader } from "@/components/app/ScreenHeader";
+import { shellUser } from "@/components/app/shellUser";
 import { ShareButton } from "@/components/app/ShareButton";
 import { SignInCta } from "@/components/app/SignInCta";
 import { SyncDialog } from "@/components/app/SyncDialog";
@@ -316,6 +317,7 @@ export default async function YouPage({
         score={null}
         syncedAt={syncClock(data.connection?.lastSyncAt)}
         tier={data.tier}
+        user={await shellUser()}
       />
 
       <div className={screen.body}>
@@ -393,7 +395,7 @@ export default async function YouPage({
           {/* ── 3 · The read ── */}
           {latest && insight ? (
             <section id="read" data-reveal className={styles.block} style={{ animationDelay: "0.03s" }}>
-              <span className={styles.eyebrow}>Health today</span>
+              <span className={styles.eyebrow} data-voice>Health today</span>
               <div className={styles.headRow} data-dial>
                 {/*
                   * The dial, drawn bare. The figure is set at 62px an inch
@@ -485,7 +487,7 @@ export default async function YouPage({
           {/* ── 6 · Who the ledger says you are ── */}
           {components ? (
             <section data-reveal className={styles.block} style={{ animationDelay: "0.06s" }}>
-              <span className={styles.eyebrow}>Identity</span>
+              <span className={styles.eyebrow} data-voice>Identity</span>
               <div className={styles.archHead}>
                 <Avatar archetype={archetype.key} size={64} />
                 <div className={styles.archText}>
@@ -526,7 +528,7 @@ export default async function YouPage({
           {/* ── 7 · How steadily ── */}
           {data.scores.length > 1 ? (
             <section id="consistency" data-reveal className={styles.block} style={{ animationDelay: "0.07s" }}>
-              <span className={styles.eyebrow}>Consistency</span>
+              <span className={styles.eyebrow} data-voice>Consistency</span>
               <h2 className={styles.h2}>
                 {streak > 0 ? `${streak} days inside your rules` : "Your scored days"}
               </h2>

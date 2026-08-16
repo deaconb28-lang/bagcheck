@@ -32,8 +32,29 @@ export function ZeroBarChart({
   const best = Math.max(...days.map((d) => d.amount));
   const worst = Math.min(...days.map((d) => d.amount));
 
+  /*
+   * Where the zero line sits, and therefore how much height a bar can use.
+   *
+   * Centred it always was, which is right when the period has both kinds of
+   * session and wrong the rest of the time: a run with no red day spent half
+   * its box on the half nothing reaches, so the block read as a chart with a
+   * void under it. The line goes to the floor when every session is green and
+   * to the ceiling when every one is red, and the bars take the whole height —
+   * the same drawing, without the empty half.
+   */
+  const down = worst < 0;
+  const up = best > 0;
+  const both = down && up;
+  const zeroAt = both ? 50 : down ? 0 : 100;
+  const room = both ? 50 : 100;
+
   return (
-    <div className={styles.chart} style={{ height }} role="img" aria-label={`Realised P&L across ${days.length} sessions`}>
+    <div
+      className={styles.chart}
+      style={{ height, "--zero-at": `${zeroAt}%` } as React.CSSProperties}
+      role="img"
+      aria-label={`Realised P&L across ${days.length} sessions`}
+    >
       <span className={styles.zero} aria-hidden="true" />
       <div className={styles.cols}>
         {days.map((d, i) => {
@@ -47,7 +68,7 @@ export function ZeroBarChart({
                 data-dir={up ? "up" : "down"}
                 data-strong={strong || undefined}
                 style={{
-                  height: `${Math.max(share * 50, 0.6)}%`,
+                  height: `${Math.max(share * room, 0.6)}%`,
                   animationDelay: `${Math.min(i * 8, 400)}ms`,
                 }}
               />

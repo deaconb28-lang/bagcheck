@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { ModeSwitch } from "./ModeSwitch";
+import { CanopyMark } from "@/app/(marketing)/CanopyMark";
 import { SyncNow } from "./SyncNow";
 import { TIER_LABEL } from "@/lib/tiers";
 import type { Tier } from "@/lib/tiers";
+import type { ShellUser } from "./AppRail";
 import styles from "./ScreenHeader.module.css";
 
 export type ScreenHeaderProps = {
@@ -27,6 +30,8 @@ export type ScreenHeaderProps = {
    */
   leak?: { count: number; worst: number | null } | null;
   tier: Tier;
+  /** Who is signed in, for the avatar. Null on a signed-out screen. */
+  user?: ShellUser | null;
 };
 
 /**
@@ -47,9 +52,19 @@ export function ScreenHeader({
   streak = null,
   leak = null,
   tier,
+  user = null,
 }: ScreenHeaderProps) {
   return (
     <header className={styles.head}>
+      {/*
+        * The mark, and the way home. It used to sit at the top of a 220px rail
+        * whose only other content was one tab and, a thousand pixels lower, the
+        * account cluster — a column of furniture for a product with one screen.
+        */}
+      <Link href="/you" className={styles.mark} aria-label="Canopy">
+        <CanopyMark size={19} />
+      </Link>
+
       <div className={styles.text}>
         <div className={`disp ${styles.title}`}>{title}</div>
         <div className={styles.meta}>{meta}</div>
@@ -115,6 +130,20 @@ export function ScreenHeader({
           Go Pro
         </Link>
       ) : null}
+
+      {/*
+        * Settings and the light switch, at the end of the one row of chrome
+        * this product has. The avatar is the door to `/profile`; there is no
+        * tab for it, because a tab bar of one destination is a label.
+        */}
+      <Link
+        href="/profile"
+        className={styles.avatar}
+        title={user ? `${user.name} — settings` : "Settings"}
+      >
+        {user?.initials ?? "—"}
+      </Link>
+      <ModeSwitch />
     </header>
   );
 }
