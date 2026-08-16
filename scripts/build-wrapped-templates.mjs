@@ -22,6 +22,17 @@ import { CARDS } from "../wrapped/cards.mjs";
 const OUT = new URL("../wrapped/templates/", import.meta.url);
 
 /*
+ * The art set the templates point at.
+ *
+ * Versioned rather than overwritten, because the art and the direction that
+ * asked for it are one thing: an image drawn to "near-black luminous gradient"
+ * sitting under a card *designed* as a terrazzo slab is worse than no image at
+ * all. Bumping this retires the old set without deleting it, and a deck renders
+ * on its drawn CSS ground until the new one is generated.
+ */
+const ART_SET = "chaotic-01";
+
+/*
  * Tokens whose value is a word rather than a figure. They take the body face
  * at a smaller size — "Consolidator" set at 380px in a mono face leaves the
  * stage, and a hero that overflows is not a hero.
@@ -90,7 +101,7 @@ function template(card) {
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>canopy · ${esc(card.title)}</title>
+<title>bagcheck · ${esc(card.title)}</title>
 <link rel="stylesheet" href="card.css">
 </head>
 <body>
@@ -110,13 +121,13 @@ function template(card) {
     renderer composites from and what the set was authored as.
   -->
   <picture>
-    <source srcset="/wrapped/2026/backgrounds/bg-${card.no}.webp" type="image/webp">
-    <img class="bg" src="/wrapped/2026/backgrounds/bg-${card.no}.png" alt="">
+    <source srcset="/wrapped/2026/art/${ART_SET}/bg-${card.no}.webp" type="image/webp">
+    <img class="bg" src="/wrapped/2026/art/${ART_SET}/bg-${card.no}.png" alt="">
   </picture>
   <div class="scrim"></div>
 
   <div class="layer">
-    <p class="eyebrow">canopy &middot; <span data-token="YEAR">{{YEAR}}</span></p>
+    <p class="eyebrow">bagcheck &middot; <span data-token="YEAR">{{YEAR}}</span></p>
     <p class="hero" data-kind="${heroKind}" data-token="${card.hero}">{{${card.hero}}}</p>
     <h1 class="title">${esc(card.title)}</h1>
 ${facts ? `
@@ -127,7 +138,7 @@ ${facts}
     <p class="caption" data-caption="">{{CAPTION}}</p>
   </div>
 
-  <span class="mark"><i class="markDot"></i>canopy</span>
+  <span class="mark"><i class="markDot"></i>bagcheck</span>
   <span class="provenance">Read-only via SnapTrade</span>
 </div>
 </body>

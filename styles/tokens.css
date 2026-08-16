@@ -183,6 +183,70 @@
    * Cards and Wrapped viewers. Mode-invariant before; now simply of a piece
    * with the app around them. Values unchanged — the cards were the source.
    */
+
+  /*
+   * ── The twelve Wrapped palettes ──
+   *
+   * A deck is chaotic on purpose. The pleasure of flicking through Wrapped is
+   * that the next card looks nothing like the last, so each of the twelve owns
+   * a ground, an ink and two accents — four of them are light cards, which is
+   * what stops the deck reading as one dark poster printed twelve times.
+   *
+   * They live here rather than in `card.css` for the reason every other colour
+   * does: a hex outside this file is a second opinion waiting to drift. They
+   * are **not** flipped by mode — a card is an artefact with its own palette,
+   * and one that changed colour with the reader's preference would not be one
+   * artefact.
+   */
+  --wrap-01-bg: #050505;
+  --wrap-01-ink: #ffffff;
+  --wrap-01-a: #c6ff2e;
+  --wrap-01-b: #ff2ec4;
+  --wrap-02-bg: #f2ece1;
+  --wrap-02-ink: #14120e;
+  --wrap-02-a: #ff5c15;
+  --wrap-02-b: #1a49ff;
+  --wrap-03-bg: #f3e6d2;
+  --wrap-03-ink: #2b1c10;
+  --wrap-03-a: #c4512a;
+  --wrap-03-b: #6b7a3a;
+  --wrap-04-bg: #0a0f22;
+  --wrap-04-ink: #ffffff;
+  --wrap-04-a: #2fd6c4;
+  --wrap-04-b: #7b5cff;
+  --wrap-05-bg: #ffdf2b;
+  --wrap-05-ink: #17110a;
+  --wrap-05-a: #ff2f8e;
+  --wrap-05-b: #00b7e0;
+  --wrap-06-bg: #0b0724;
+  --wrap-06-ink: #ffffff;
+  --wrap-06-a: #ff33a8;
+  --wrap-06-b: #fff3d1;
+  --wrap-07-bg: #050a06;
+  --wrap-07-ink: #d9ffe4;
+  --wrap-07-a: #3dff88;
+  --wrap-07-b: #23e5ff;
+  --wrap-08-bg: #f4efe6;
+  --wrap-08-ink: #1a0c0c;
+  --wrap-08-a: #c8102e;
+  --wrap-08-b: #6b1220;
+  --wrap-09-bg: #f6f3ec;
+  --wrap-09-ink: #1e2422;
+  --wrap-09-a: #ff7a66;
+  --wrap-09-b: #57d6a8;
+  --wrap-10-bg: #0a1e3d;
+  --wrap-10-ink: #dceaff;
+  --wrap-10-a: #6fd3ff;
+  --wrap-10-b: #ffffff;
+  --wrap-11-bg: #2a0f2e;
+  --wrap-11-ink: #fff1e0;
+  --wrap-11-a: #ffab3d;
+  --wrap-11-b: #ff5f8f;
+  --wrap-12-bg: #101014;
+  --wrap-12-ink: #ffffff;
+  --wrap-12-a: #ff8fd0;
+  --wrap-12-b: #7fe9ff;
+
   --share-bg: #17140f;
   --share-s1: #211d17;
   --share-ink: #fdfcfa;

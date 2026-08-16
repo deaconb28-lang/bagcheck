@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import { CARDS, STYLE_PREFIX } from "../../wrapped/cards.mjs";
+import { CARDS, COMPOSITION, CONSTRAINTS } from "../../wrapped/cards.mjs";
 
 /**
  * Drawing one Wrapped background, wherever the key happens to live.
@@ -9,7 +9,7 @@ import { CARDS, STYLE_PREFIX } from "../../wrapped/cards.mjs";
  * artefact, and two copies of it would drift the first time either was tuned.
  *
  * The images are drawn **once for everybody** and committed to
- * `public/wrapped/2026/backgrounds`. Nothing here runs on a page view.
+ * `public/wrapped/2026/art/chaotic-01`. Nothing here runs on a page view.
  */
 
 /** The story frame. The API renders 2:3; the card is 9:16. */
@@ -21,20 +21,56 @@ export function imageModel(): string {
   return process.env.OPENAI_IMAGE_MODEL || "gpt-image-1";
 }
 
+export interface CardArt {
+  /** The medium the card is drawn in — chrome, riso, terrazzo, foil. */
+  medium: string;
+  /** How the surface behaves under light. */
+  texture: string;
+  /** Named colours, not hexes: a model reads "canary yellow", not #FCE300. */
+  palette: string;
+}
+
 export interface BackgroundCard {
   no: string;
   key: string;
   motif: string;
+  art: CardArt;
 }
 
 /** The twelve, as the drawing side needs them. */
 export function backgroundCards(): BackgroundCard[] {
-  return (CARDS as BackgroundCard[]).map((c) => ({ no: c.no, key: c.key, motif: c.motif }));
+  return (CARDS as BackgroundCard[]).map((c) => ({
+    no: c.no,
+    key: c.key,
+    motif: c.motif,
+    art: c.art,
+  }));
 }
 
-/** The full prompt for one card: the shared style, then this card's motif. */
+/**
+ * The full prompt for one card.
+ *
+ * Medium first, because it is the thing that makes card five look nothing
+ * like card four — an image model weights the opening of a prompt hardest,
+ * and "halftone pop-art print" up front produces a different object from the
+ * same subject described after four lines of shared house style. Only the
+ * composition and the prohibitions are shared, and both are about keeping the
+ * type legible rather than about how the card looks.
+ *
+ * The variation is **across the twelve and not across readers**: card five is
+ * the same art direction for everybody, the way a Wrapped template is. What
+ * makes a card someone's own is the figure set over it in type.
+ */
 export function promptFor(card: BackgroundCard): string {
-  return `${STYLE_PREFIX} ${card.motif}.`;
+  const { medium, texture, palette } = card.art;
+  return [
+    `${medium}.`,
+    `Subject: ${card.motif}.`,
+    `Palette: ${palette}.`,
+    `Surface: ${texture}.`,
+    COMPOSITION,
+    CONSTRAINTS,
+  ].join(" ");
 }
 
 /**

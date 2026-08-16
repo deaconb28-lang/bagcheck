@@ -298,3 +298,223 @@ body {
   text-transform: uppercase;
   color: var(--share-dim);
 }
+
+
+/*
+ * The drawn ground. Sits under `.bg`, which paints over it when the generated
+ * art exists — same stacking level, and the image comes later in paint order.
+ */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-repeat: repeat;
+}
+
+
+/* ══ The twelve palettes ══════════════════════════════════════════════════
+ *
+ * Each card overrides the shared `--share-*` family with its own ground, ink
+ * and two accents, so the deck is twelve objects rather than one poster
+ * printed twelve times. Four of them are light cards — that is the point, and
+ * it is why the ink is a variable rather than a constant.
+ *
+ * The ground is drawn in CSS, under the generated art. That is not a
+ * placeholder: a card has to be a finished artefact before its image exists,
+ * the same way a share card with no photograph wears its drawn geometry
+ * alone. When the art lands it covers this; when it does not, the card is
+ * still the card.
+ */
+
+.card[data-card="01"] {
+  --share-bg: var(--wrap-01-bg);
+  --share-ink: var(--wrap-01-ink);
+  --share-a: var(--wrap-01-a);
+  --share-b: var(--wrap-01-b);
+  --share-ink-dim: color-mix(in srgb, var(--wrap-01-ink) 62%, transparent);
+  --share-line: color-mix(in srgb, var(--wrap-01-ink) 16%, transparent);
+  --share-fill: color-mix(in srgb, var(--wrap-01-ink) 10%, transparent);
+  --share-dim: color-mix(in srgb, var(--wrap-01-ink) 62%, transparent);
+}
+
+.card[data-card="01"]::before {
+  background-image: radial-gradient(120% 80% at 50% 22%, color-mix(in srgb, var(--share-a) 34%, transparent), transparent 62%), conic-gradient(from 210deg at 50% 30%, color-mix(in srgb, var(--share-b) 40%, transparent), transparent 32%, color-mix(in srgb, var(--share-a) 26%, transparent) 62%, transparent 88%);
+  
+}
+
+.card[data-card="02"] {
+  --share-bg: var(--wrap-02-bg);
+  --share-ink: var(--wrap-02-ink);
+  --share-a: var(--wrap-02-a);
+  --share-b: var(--wrap-02-b);
+  --share-ink-dim: color-mix(in srgb, var(--wrap-02-ink) 62%, transparent);
+  --share-line: color-mix(in srgb, var(--wrap-02-ink) 16%, transparent);
+  --share-fill: color-mix(in srgb, var(--wrap-02-ink) 10%, transparent);
+  --share-dim: color-mix(in srgb, var(--wrap-02-ink) 62%, transparent);
+}
+
+.card[data-card="02"]::before {
+  background-image: repeating-linear-gradient(28deg, color-mix(in srgb, var(--share-a) 26%, transparent) 0 14px, transparent 14px 34px), repeating-linear-gradient(-28deg, color-mix(in srgb, var(--share-b) 20%, transparent) 0 10px, transparent 10px 30px);
+  
+}
+
+.card[data-card="03"] {
+  --share-bg: var(--wrap-03-bg);
+  --share-ink: var(--wrap-03-ink);
+  --share-a: var(--wrap-03-a);
+  --share-b: var(--wrap-03-b);
+  --share-ink-dim: color-mix(in srgb, var(--wrap-03-ink) 62%, transparent);
+  --share-line: color-mix(in srgb, var(--wrap-03-ink) 16%, transparent);
+  --share-fill: color-mix(in srgb, var(--wrap-03-ink) 10%, transparent);
+  --share-dim: color-mix(in srgb, var(--wrap-03-ink) 62%, transparent);
+}
+
+.card[data-card="03"]::before {
+  background-image: linear-gradient(180deg, color-mix(in srgb, var(--share-b) 26%, transparent) 0 34%, transparent 34%), linear-gradient(180deg, transparent 0 52%, color-mix(in srgb, var(--share-a) 30%, transparent) 52% 78%, transparent 78%);
+  
+}
+
+.card[data-card="04"] {
+  --share-bg: var(--wrap-04-bg);
+  --share-ink: var(--wrap-04-ink);
+  --share-a: var(--wrap-04-a);
+  --share-b: var(--wrap-04-b);
+  --share-ink-dim: color-mix(in srgb, var(--wrap-04-ink) 62%, transparent);
+  --share-line: color-mix(in srgb, var(--wrap-04-ink) 16%, transparent);
+  --share-fill: color-mix(in srgb, var(--wrap-04-ink) 10%, transparent);
+  --share-dim: color-mix(in srgb, var(--wrap-04-ink) 62%, transparent);
+}
+
+.card[data-card="04"]::before {
+  background-image: radial-gradient(90% 60% at 30% 18%, color-mix(in srgb, var(--share-a) 42%, transparent), transparent 68%), radial-gradient(80% 70% at 74% 40%, color-mix(in srgb, var(--share-b) 46%, transparent), transparent 70%);
+  
+}
+
+.card[data-card="05"] {
+  --share-bg: var(--wrap-05-bg);
+  --share-ink: var(--wrap-05-ink);
+  --share-a: var(--wrap-05-a);
+  --share-b: var(--wrap-05-b);
+  --share-ink-dim: color-mix(in srgb, var(--wrap-05-ink) 62%, transparent);
+  --share-line: color-mix(in srgb, var(--wrap-05-ink) 16%, transparent);
+  --share-fill: color-mix(in srgb, var(--wrap-05-ink) 10%, transparent);
+  --share-dim: color-mix(in srgb, var(--wrap-05-ink) 62%, transparent);
+}
+
+.card[data-card="05"]::before {
+  background-image: radial-gradient(circle at center, var(--share-a) 30%, transparent 32%);
+  background-size: 96px 96px;
+}
+
+.card[data-card="06"] {
+  --share-bg: var(--wrap-06-bg);
+  --share-ink: var(--wrap-06-ink);
+  --share-a: var(--wrap-06-a);
+  --share-b: var(--wrap-06-b);
+  --share-ink-dim: color-mix(in srgb, var(--wrap-06-ink) 62%, transparent);
+  --share-line: color-mix(in srgb, var(--wrap-06-ink) 16%, transparent);
+  --share-fill: color-mix(in srgb, var(--wrap-06-ink) 10%, transparent);
+  --share-dim: color-mix(in srgb, var(--wrap-06-ink) 62%, transparent);
+}
+
+.card[data-card="06"]::before {
+  background-image: repeating-radial-gradient(circle at 50% 24%, color-mix(in srgb, var(--share-b) 34%, transparent) 0 26px, color-mix(in srgb, var(--share-a) 30%, transparent) 26px 62px, transparent 62px 108px);
+  
+}
+
+.card[data-card="07"] {
+  --share-bg: var(--wrap-07-bg);
+  --share-ink: var(--wrap-07-ink);
+  --share-a: var(--wrap-07-a);
+  --share-b: var(--wrap-07-b);
+  --share-ink-dim: color-mix(in srgb, var(--wrap-07-ink) 62%, transparent);
+  --share-line: color-mix(in srgb, var(--wrap-07-ink) 16%, transparent);
+  --share-fill: color-mix(in srgb, var(--wrap-07-ink) 10%, transparent);
+  --share-dim: color-mix(in srgb, var(--wrap-07-ink) 62%, transparent);
+}
+
+.card[data-card="07"]::before {
+  background-image: repeating-linear-gradient(180deg, color-mix(in srgb, var(--share-a) 22%, transparent) 0 2px, transparent 2px 7px), radial-gradient(80% 44% at 50% 26%, color-mix(in srgb, var(--share-b) 26%, transparent), transparent 70%);
+  
+}
+
+.card[data-card="08"] {
+  --share-bg: var(--wrap-08-bg);
+  --share-ink: var(--wrap-08-ink);
+  --share-a: var(--wrap-08-a);
+  --share-b: var(--wrap-08-b);
+  --share-ink-dim: color-mix(in srgb, var(--wrap-08-ink) 62%, transparent);
+  --share-line: color-mix(in srgb, var(--wrap-08-ink) 16%, transparent);
+  --share-fill: color-mix(in srgb, var(--wrap-08-ink) 10%, transparent);
+  --share-dim: color-mix(in srgb, var(--wrap-08-ink) 62%, transparent);
+}
+
+.card[data-card="08"]::before {
+  background-image: repeating-radial-gradient(circle at 38% 26%, color-mix(in srgb, var(--share-a) 26%, transparent) 0 8px, transparent 8px 22px), repeating-radial-gradient(circle at 72% 40%, color-mix(in srgb, var(--share-b) 24%, transparent) 0 6px, transparent 6px 20px);
+  
+}
+
+.card[data-card="09"] {
+  --share-bg: var(--wrap-09-bg);
+  --share-ink: var(--wrap-09-ink);
+  --share-a: var(--wrap-09-a);
+  --share-b: var(--wrap-09-b);
+  --share-ink-dim: color-mix(in srgb, var(--wrap-09-ink) 62%, transparent);
+  --share-line: color-mix(in srgb, var(--wrap-09-ink) 16%, transparent);
+  --share-fill: color-mix(in srgb, var(--wrap-09-ink) 10%, transparent);
+  --share-dim: color-mix(in srgb, var(--wrap-09-ink) 62%, transparent);
+}
+
+.card[data-card="09"]::before {
+  background-image: radial-gradient(circle at 20% 18%, var(--share-a) 0 12px, transparent 13px), radial-gradient(circle at 68% 30%, var(--share-b) 0 16px, transparent 17px), radial-gradient(circle at 44% 8%, var(--share-ink) 0 7px, transparent 8px);
+  background-size: 260px 260px, 300px 300px, 210px 210px;
+}
+
+.card[data-card="10"] {
+  --share-bg: var(--wrap-10-bg);
+  --share-ink: var(--wrap-10-ink);
+  --share-a: var(--wrap-10-a);
+  --share-b: var(--wrap-10-b);
+  --share-ink-dim: color-mix(in srgb, var(--wrap-10-ink) 62%, transparent);
+  --share-line: color-mix(in srgb, var(--wrap-10-ink) 16%, transparent);
+  --share-fill: color-mix(in srgb, var(--wrap-10-ink) 10%, transparent);
+  --share-dim: color-mix(in srgb, var(--wrap-10-ink) 62%, transparent);
+}
+
+.card[data-card="10"]::before {
+  background-image: repeating-linear-gradient(90deg, color-mix(in srgb, var(--share-a) 34%, transparent) 0 3px, transparent 3px 72px), repeating-linear-gradient(180deg, color-mix(in srgb, var(--share-a) 34%, transparent) 0 3px, transparent 3px 72px), repeating-linear-gradient(90deg, color-mix(in srgb, var(--share-a) 14%, transparent) 0 2px, transparent 2px 18px);
+  
+}
+
+.card[data-card="11"] {
+  --share-bg: var(--wrap-11-bg);
+  --share-ink: var(--wrap-11-ink);
+  --share-a: var(--wrap-11-a);
+  --share-b: var(--wrap-11-b);
+  --share-ink-dim: color-mix(in srgb, var(--wrap-11-ink) 62%, transparent);
+  --share-line: color-mix(in srgb, var(--wrap-11-ink) 16%, transparent);
+  --share-fill: color-mix(in srgb, var(--wrap-11-ink) 10%, transparent);
+  --share-dim: color-mix(in srgb, var(--wrap-11-ink) 62%, transparent);
+}
+
+.card[data-card="11"]::before {
+  background-image: linear-gradient(180deg, color-mix(in srgb, var(--share-b) 44%, transparent) 0%, color-mix(in srgb, var(--share-a) 40%, transparent) 34%, transparent 62%);
+  
+}
+
+.card[data-card="12"] {
+  --share-bg: var(--wrap-12-bg);
+  --share-ink: var(--wrap-12-ink);
+  --share-a: var(--wrap-12-a);
+  --share-b: var(--wrap-12-b);
+  --share-ink-dim: color-mix(in srgb, var(--wrap-12-ink) 62%, transparent);
+  --share-line: color-mix(in srgb, var(--wrap-12-ink) 16%, transparent);
+  --share-fill: color-mix(in srgb, var(--wrap-12-ink) 10%, transparent);
+  --share-dim: color-mix(in srgb, var(--wrap-12-ink) 62%, transparent);
+}
+
+.card[data-card="12"]::before {
+  background-image: conic-gradient(from 40deg at 46% 26%, color-mix(in srgb, var(--share-a) 40%, transparent), color-mix(in srgb, var(--share-b) 40%, transparent) 26%, color-mix(in srgb, var(--share-a) 34%, transparent) 54%, color-mix(in srgb, var(--share-b) 38%, transparent) 78%, color-mix(in srgb, var(--share-a) 40%, transparent));
+  
+}

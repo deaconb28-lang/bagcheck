@@ -26,7 +26,7 @@ import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 import { CARDS, STYLE_PREFIX } from "../wrapped/cards.mjs";
 
-const OUT = new URL("../public/wrapped/2026/backgrounds/", import.meta.url);
+const OUT = new URL("../public/wrapped/2026/art/chaotic-01/", import.meta.url);
 
 /* The story frame. 1024×1536 is what the API renders; 1080×1920 is the card. */
 const REQUEST_SIZE = "1024x1536";
