@@ -19,7 +19,7 @@
  * gate.
  */
 
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { CARDS } from "../wrapped/cards.mjs";
 import {
@@ -119,7 +119,8 @@ for (let i = 0; i < batch; i += 1) {
       `fixture-${i}`,
     );
     finished.push(out);
-    out.source === "model" ? (fromModel += 1) : (fromFallback += 1);
+    if (out.source === "model") fromModel += 1;
+    else fromFallback += 1;
 
     /* Check 1, 2 and 3 — the same gate the runtime uses. */
     const verdict = validate(out.html, template, stats);

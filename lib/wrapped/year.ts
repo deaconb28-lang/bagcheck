@@ -1,10 +1,14 @@
 import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { getCollections } from "@/lib/db/collections";
 import { getDerived } from "@/lib/db/derived";
 import { loadScreen } from "@/lib/db/screen";
 import { archetypeFor } from "@/lib/archetypes";
 import { indexReturnYtd, isMarketConfigured, profilesFor } from "@/lib/market";
 import { CARDS } from "../../wrapped/cards.mjs";
+import { cardDocument } from "./document";
+import { fallbackCaption, fill } from "./personalise";
+import { sampleWrapped } from "./sample";
 import { earnedCards, wrappedStats } from "./stats";
 import type { WrappedContext, WrappedStats } from "./stats";
 import { finishCards } from "./run";
@@ -33,11 +37,18 @@ export interface WrappedYear {
 /** Templates are read from disk once per process, not once per card. */
 const templates = new Map<string, string>();
 
+/*
+ * Addressed from the working directory, not from `import.meta.url`. Next
+ * compiles server code into `.next/server/chunks`, so a path relative to the
+ * module resolves to `.next/wrapped/templates` at runtime and finds nothing —
+ * it only appears to work under `tsx`, where the module really is where it
+ * looks. `next start` runs at the project root, which is the same assumption
+ * `app/og/[slug]/render.tsx` already makes when it reads a font off disk.
+ */
 async function template(no: string): Promise<string> {
   const hit = templates.get(no);
   if (hit) return hit;
-  const url = new URL(`../../wrapped/templates/card-${no}.html`, import.meta.url);
-  const html = await readFile(url, "utf8");
+  const html = await readFile(join(process.cwd(), "wrapped/templates", `card-${no}.html`), "utf8");
   templates.set(no, html);
   return html;
 }
@@ -187,4 +198,59 @@ export async function wrappedYear(
     .catch((err) => console.error("[wrapped] cache write failed", err));
 
   return { year, stats, context, cards, fingerprint };
+}
+
+/** One card as a page: the stored markup plus the stylesheet and the fit. */
+export interface ShownCard {
+  no: string;
+  key: string;
+  caption: string;
+  /** A complete document, ready for a frame. */
+  html: string;
+}
+
+/**
+ * The deck a screen actually renders — a reader's year, or the sample.
+ *
+ * One function for both, because they must not diverge: the sample exists to
+ * show what the product does, and a demo built by a different path would drift
+ * from the thing it advertises within a release or two. The only difference is
+ * where the stats came from and what the provenance line says.
+ *
+ * The sample takes the deterministic caption bank rather than the model. It is
+ * the same deck for every visitor, so writing it twelve times a minute would
+ * be spending money to produce the same page.
+ */
+export async function wrappedDeck(
+  userId: string | null,
+  year: number,
+  opts: { example?: boolean; name?: string | null } = {},
+): Promise<{ cards: ShownCard[]; example: boolean; stats: WrappedStats | null }> {
+  const real = !opts.example && userId ? await wrappedYear(userId, year, { name: opts.name }) : null;
+
+  if (real?.cards.length) {
+    const cards = await Promise.all(
+      real.cards.map(async (c) => ({
+        no: c.no,
+        key: c.key,
+        caption: c.caption,
+        html: await cardDocument(c.html),
+      })),
+    );
+    return { cards, example: false, stats: real.stats };
+  }
+
+  const { stats } = sampleWrapped(year);
+  const earned = earnedCards(
+    CARDS as Array<{ no: string; key: string; tokens: string[]; fallbackCaptions: string[] }>,
+    stats,
+  );
+  const cards = await Promise.all(
+    earned.map(async (c) => {
+      const caption = fallbackCaption(c.fallbackCaptions, `sample:${c.no}`);
+      const filled = fill(await template(c.no), stats, caption);
+      return { no: c.no, key: c.key, caption, html: await cardDocument(filled, { example: true }) };
+    }),
+  );
+  return { cards, example: true, stats };
 }

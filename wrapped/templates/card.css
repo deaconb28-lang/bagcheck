@@ -20,6 +20,16 @@
  * needed fonts.gstatic.com to answer would fail to render on a bad minute, and
  * these are rendered into PNGs people post.
  *
+ * `font-display: swap` rather than `block`. Block is the right instinct for a
+ * poster — never draw an artefact in the wrong face — and it was exactly wrong
+ * here: it lays the text out and paints nothing for up to three seconds, so a
+ * deck of seven cards each fetching four faces opened as seven pictures with
+ * no type on them, on the one screen whose whole job is to be worth posting.
+ * Swap shows the fallback for that instant and always arrives at the real face.
+ * The host page preloads the same four files (`<CardFonts>`), which is what
+ * makes the instant short enough not to see; the PNG renderer embeds them as
+ * data URIs, so it never falls back at all.
+ *
  * The families are declared here rather than borrowed, and no rule below may
  * cite `--font-voice` or `--font-mono`. Those are set by `next/font` in the
  * app's root layout, and a card is rendered standalone — as a page, by a
@@ -33,7 +43,7 @@
   font-family: "Voice";
   font-weight: 500;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
   src: url("/fonts/general-sans-500.woff2") format("woff2");
 }
 
@@ -41,7 +51,7 @@
   font-family: "Voice";
   font-weight: 600;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
   src: url("/fonts/general-sans-600.woff2") format("woff2");
 }
 
@@ -49,7 +59,7 @@
   font-family: "Voice";
   font-weight: 700;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
   src: url("/fonts/general-sans-700.woff2") format("woff2");
 }
 
@@ -57,7 +67,7 @@
   font-family: "Machine";
   font-weight: 100 800;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
   src: url("/fonts/jetbrains-mono-latin.woff2") format("woff2");
 }
 

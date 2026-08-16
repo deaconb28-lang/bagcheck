@@ -35,6 +35,8 @@ export const STYLE_PREFIX =
  * @property {string} motif   Appended to STYLE_PREFIX for this card's art.
  * @property {string[]} tokens Every {{TOKEN}} the template carries, minus CAPTION.
  * @property {string} hero    The token set enormous. One per card.
+ * @property {string} teaser  The drawing an unearned frame wears. A `TeaserKind`.
+ * @property {string} requires The one condition that mints it. A requirement, never a figure.
  * @property {string[]} fallbackCaptions Three, written to the same tone rules.
  */
 
@@ -43,10 +45,12 @@ export const CARDS = [
   {
     no: "01",
     key: "cover",
-    title: "Your 2026, checked",
+    title: "Your year, all of it",
     motif: "a slow aurora unfurling from the bottom edge",
     tokens: ["USER_NAME", "YEAR"],
     hero: "YEAR",
+    teaser: "cardFan",
+    requires: "a synced brokerage",
     fallbackCaptions: [
       "Here is your year, read straight off your brokerage.",
       "Twelve cards, all of them yours.",
@@ -60,6 +64,8 @@ export const CARDS = [
     motif: "a single vertical beam of light splitting the darkness",
     tokens: ["TOTAL_RETURN_PCT"],
     hero: "TOTAL_RETURN_PCT",
+    teaser: "equity",
+    requires: "30 days of account value",
     fallbackCaptions: [
       "Your whole year, as one figure.",
       "Everything you did, added up.",
@@ -73,6 +79,8 @@ export const CARDS = [
     motif: "ascending translucent steps catching light",
     tokens: ["CONTRIBUTION_COUNT", "CONTRIBUTION_STREAK_WEEKS"],
     hero: "CONTRIBUTION_COUNT",
+    teaser: "cadence",
+    requires: "one contribution on the ledger",
     fallbackCaptions: [
       "You kept showing up, week after week.",
       "Every one of these was a decision you made.",
@@ -86,6 +94,8 @@ export const CARDS = [
     motif: "a small bright body in slow orbit around a dark mass",
     tokens: ["LONGEST_HOLD_TICKER", "LONGEST_HOLD_DAYS"],
     hero: "LONGEST_HOLD_DAYS",
+    teaser: "hold",
+    requires: "a position held 30 days",
     fallbackCaptions: [
       "You held this one longer than anything else.",
       "Patience, measured in days.",
@@ -99,6 +109,8 @@ export const CARDS = [
     motif: "a solar flare cresting a dark horizon",
     tokens: ["BEST_TICKER", "BEST_RETURN_PCT"],
     hero: "BEST_RETURN_PCT",
+    teaser: "records",
+    requires: "one round trip closed green",
     fallbackCaptions: [
       "Your strongest name of the year.",
       "This one did the heavy lifting.",
@@ -112,6 +124,8 @@ export const CARDS = [
     motif: "a deep wave trough with light breaking at the far edge",
     tokens: ["MAX_DRAWDOWN_PCT", "RECOVERY_DAYS"],
     hero: "MAX_DRAWDOWN_PCT",
+    teaser: "eventWindow",
+    requires: "a 10% drawdown you did not sell",
     fallbackCaptions: [
       "You sat through this one and came out the far side.",
       "The dip you did not sell into.",
@@ -125,6 +139,8 @@ export const CARDS = [
     motif: "a pulsing grid of soft light points",
     tokens: ["BUSIEST_MONTH", "TRADE_COUNT_YEAR"],
     hero: "TRADE_COUNT_YEAR",
+    teaser: "months",
+    requires: "one month with trades in it",
     fallbackCaptions: [
       "Your busiest stretch of the whole year.",
       "This was the month you were paying attention.",
@@ -138,6 +154,8 @@ export const CARDS = [
     motif: "scattered embers glowing against the dark",
     tokens: ["RED_DAY_BUYS"],
     hero: "RED_DAY_BUYS",
+    teaser: "sessionSize",
+    requires: "a buy on a day your book was down",
     fallbackCaptions: [
       "You bought while the screen was red.",
       "Green days are easy. These were not.",
@@ -151,6 +169,8 @@ export const CARDS = [
     motif: "layered geological strata in muted luminous bands",
     tokens: ["TOP_SECTOR", "TOP_SECTOR_PCT", "HOLDINGS_COUNT"],
     hero: "TOP_SECTOR_PCT",
+    teaser: "components",
+    requires: "sector data for what you hold",
     fallbackCaptions: [
       "This is where your money actually sits.",
       "Your book, by where it leans.",
@@ -164,6 +184,8 @@ export const CARDS = [
     motif: "two horizon lines converging at a vanishing point",
     tokens: ["VS_SPY_PCT"],
     hero: "VS_SPY_PCT",
+    teaser: "percentile",
+    requires: "30 days of account value",
     fallbackCaptions: [
       "You and the index, side by side.",
       "Your year, measured against the market's.",
@@ -177,6 +199,8 @@ export const CARDS = [
     motif: "a constellation forming a subtle figure",
     tokens: ["ARCHETYPE_NAME", "ARCHETYPE_TRAIT"],
     hero: "ARCHETYPE_NAME",
+    teaser: "archetypes",
+    requires: "one scored day",
     fallbackCaptions: [
       "This is what your own record reads like.",
       "Twelve months of decisions, given a name.",
@@ -190,6 +214,8 @@ export const CARDS = [
     motif: "the full gradient spectrum of cards 1 through 11 blended into one field",
     tokens: ["TOTAL_RETURN_PCT", "LONGEST_HOLD_DAYS", "ARCHETYPE_NAME", "INVESTOR_AGE"],
     hero: "TOTAL_RETURN_PCT",
+    teaser: "stamp",
+    requires: "every other card in the set",
     fallbackCaptions: [
       "Your year, on one card.",
       "The short version, worth posting.",

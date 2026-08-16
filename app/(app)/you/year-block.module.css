@@ -191,6 +191,39 @@
   border-radius: 22px;
 }
 
+/*
+ * A card is a finished 1080x1920 document in a frame, not a component drawn in
+ * app tokens — so the stage keeps the poster's own proportions and the wrapper
+ * scales it. This rail and the player on `/wrapped` are then one drawing at two
+ * magnifications rather than two layouts that have to be kept in step.
+ */
+.stage {
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1080 / 1920;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--share-bg);
+}
+
+.paper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
+  border: 0;
+  transform-origin: top left;
+  /* The frame's own width drives the scale; nothing here hardcodes a size. */
+  transform: scale(calc(100cqw / 1080));
+  pointer-events: none;
+}
+
+.stage {
+  container-type: inline-size;
+}
+
 /* A frame with nothing in it yet: the drawing, the name, the condition. */
 .locked {
   aspect-ratio: 2 / 3;

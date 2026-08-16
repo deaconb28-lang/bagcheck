@@ -2,13 +2,11 @@ import Link from "next/link";
 import { auth, getUserId, isAuthConfigured } from "@/auth";
 import { isDbConfigured } from "@/lib/db";
 import { appLocked } from "@/lib/launch";
-import { buildCards } from "@/lib/cards";
-import { exampleLedger } from "@/lib/cards/exampleLedger";
-import { assembleWrapped } from "@/lib/wrapped/assemble";
-import { storedPhotos } from "@/lib/unsplash";
+import { wrappedDeck } from "@/lib/wrapped/year";
 import { CanopyMark } from "@/app/(marketing)/CanopyMark";
 import { GoogleSignIn } from "@/components/app/GoogleSignIn";
-import { Deck } from "./Deck";
+import { CardFonts } from "@/components/cards/CardFonts";
+import { YearDeck } from "./YearDeck";
 import { FirstRun } from "./FirstRun";
 import { ComingSoon } from "./ComingSoon";
 import styles from "./wrapped.module.css";
@@ -18,20 +16,25 @@ export const dynamic = "force-dynamic";
 /**
  * Step two: your year, as cards.
  *
- * **The page is the sheet; the player is the reader.** Browsing thirteen
- * artefacts and reading one are different jobs, and the build before this
- * asked a single horizontal snap rail to do both — which meant a desktop saw
- * one and a half cards, a third of the width sat empty, and the only way to
- * reach card nine was nine presses or one of thirteen anonymous dashes.
+ * **The page is the sheet; the player is the reader.** Browsing twelve
+ * artefacts and reading one are different jobs, and an early build asked a
+ * single horizontal snap rail to do both — which meant a desktop saw one and a
+ * half cards and the only way to reach card nine was nine presses.
  *
- * Now the cover leads beside the year, the rest lie out under their frame
- * numbers, and either the play button or any card opens the player at that
- * frame. Nothing above the cards is prose.
+ * Now the rail lies the whole set out under its frame numbers, and either the
+ * play button or any card opens the player at that frame. Nothing above the
+ * cards is prose.
+ *
+ * Each card is a finished 1080x1920 document from the Wrapped pipeline —
+ * stats computed in our code, one caption per card from the model, every
+ * figure checked character for character against the stats before it is
+ * allowed on screen. The page frames them and does not draw them.
  *
  * Three ways in, each landing on a real set. A connected account gets its own
- * cards; `?demo=1` gets the example ledger with "Example" on every card;
- * someone with nothing synced is sent back to step one, because the next move
- * there is a brokerage rather than a message.
+ * cards; a visitor or `?demo=1` gets the sample year, marked as one on every
+ * card's own face; a connected account that has earned nothing yet gets said
+ * so rather than handed the sample, because a sample deck under someone's own
+ * greeting reads as their year having arrived wrong.
  */
 export default async function WrappedPage({
   searchParams,
@@ -42,16 +45,23 @@ export default async function WrappedPage({
   const userId = await getUserId();
   const year = new Date().getUTCFullYear();
 
-  const assembled =
-    demo === "1" || !userId || !isDbConfigured() ? null : await assembleWrapped(userId);
-
-  const example = !assembled;
-  const cards = assembled?.cards ?? buildCards(exampleLedger(year));
   /*
-   * Read-only, and never a call to Unsplash: rendering a page must not spend
-   * quota. An empty store just means the cards wear their drawn artwork.
+   * One loader for both decks. A connected account gets its own twelve; a
+   * visitor, or `?demo=1`, gets the sample year — computed by the same
+   * `wrappedStats` off a sample ledger, and every card in it says so on its
+   * own face rather than only in a line under the rail.
    */
-  const photos = await storedPhotos();
+  const asDemo = demo === "1" || !isDbConfigured();
+  const { cards, example } = await wrappedDeck(userId, year, { example: asDemo });
+
+  /*
+   * The reader has an account and the loader still fell back to the sample —
+   * so they have nothing of their own yet. That is a different screen from a
+   * visitor browsing the demo, and it must not be the same one: the sample
+   * deck standing in for an empty year would read as their year having come
+   * back wrong.
+   */
+  const nothingEarned = Boolean(userId) && !asDemo && example;
 
   /*
    * Straight off the connection portal: greet, run the first read, and let
@@ -71,7 +81,7 @@ export default async function WrappedPage({
    * holds the screen alone until the sync writes something, and the refresh
    * it fires at the end is what brings the cards in.
    */
-  if (firstRun && (example || cards.length === 0)) {
+  if (firstRun && example) {
     return (
       <>
         <Bar label={String(year)} signedIn={Boolean(userId)} />
@@ -82,7 +92,7 @@ export default async function WrappedPage({
     );
   }
 
-  if (!example && cards.length === 0) {
+  if (nothingEarned) {
     return (
       <>
         <Bar label={String(year)} signedIn={Boolean(userId)} />
@@ -106,18 +116,7 @@ export default async function WrappedPage({
     );
   }
 
-  const label = assembled?.label ?? String(year);
-  const provenance = example
-    ? "Example ledger · not anyone's record"
-    : "Read-only brokerage data via SnapTrade";
-
-  /*
-   * The cover card already states the year's counts in its own lede, so the
-   * hero borrows that line rather than recomputing it — one number, one
-   * source, and no chance of the page and the card disagreeing.
-   */
-  const stat =
-    cards.find((c) => c.kind === "wrapped")?.lede ?? `${cards.length} cards from your year.`;
+  const label = String(year);
 
   return (
     <>
@@ -125,14 +124,8 @@ export default async function WrappedPage({
       <main className={styles.main}>
         <div className={styles.page}>
           {firstRun}
-          <Deck
-            cards={cards}
-            example={example}
-            provenance={provenance}
-            photos={photos}
-            year={label}
-            stat={stat}
-          />
+          <CardFonts />
+          <YearDeck cards={cards} year={year} />
 
           {/*
             * What Wrapped is the first chapter of. It sits below the sheet

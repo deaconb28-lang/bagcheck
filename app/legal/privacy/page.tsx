@@ -127,15 +127,30 @@ export default function PrivacyPage() {
               and no name, no email, no ticker and no dollar figure.
             </li>
             <li>
-              <strong>Finnhub</strong> and <strong>logo.dev</strong> receive
-              ticker symbols in order to return a quote or a company mark. They
-              are not told whose symbols they are.
+              <strong>OpenAI</strong> writes the one caption on each Wrapped
+              card. Each card is sent only the figures printed on that card, so
+              across a year that includes your first name on the cover card and
+              the ticker symbols of your longest hold and your strongest name.
+              It is never sent your email, your account numbers, your
+              brokerage&rsquo;s name, your holdings list or any dollar figure,
+              and it is never sent the whole set at once — a card&rsquo;s
+              request carries that card&rsquo;s figures and nothing else.
+              Nothing it returns can change a number: every figure on a card is
+              set by us and checked character for character against our own
+              computation before the card is shown, and a card whose text
+              disagreed is thrown away and written by us instead.
+            </li>
+            <li>
+              <strong>Finnhub</strong> and the logo sources receive ticker
+              symbols in order to return a quote or a company mark. They are not
+              told whose symbols they are.
             </li>
           </ul>
           <p>
-            No analytics or advertising trackers run on this site. Image models
-            drew the card artwork before launch; nothing about you is sent to
-            one.
+            No analytics or advertising trackers run on this site, and no fonts
+            are fetched from anyone else — every face is served from this
+            domain. Image models drew the card artwork before launch, once, for
+            everyone; nothing about you is sent to one.
           </p>
         </section>
 

@@ -8,14 +8,12 @@ import {
   isDbConfigured,
   loadScreen,
   syncClock,
-  taggedOpensFor,
 } from "@/lib/db";
 import type { CardDoc } from "@/lib/db";
 import { isMarketConfigured, refreshHoldings } from "@/lib/market";
 import { untaggedQueue } from "@/lib/tags";
 import type { UntaggedEntry } from "@/lib/tags";
-import { assembleWrappedFrom } from "@/lib/wrapped/assemble";
-import { storedPhotos } from "@/lib/unsplash";
+import { wrappedDeck } from "@/lib/wrapped/year";
 import { EquityCurve, HeatGrid, ScoreRing, ZeroBarChart } from "@/components/idioms";
 import type { WaveDay } from "@/components/idioms";
 import { TrophyCard } from "@/components/cards/TrophyCard";
@@ -241,15 +239,16 @@ export default async function YouPage({
 
   /*
    * Everything Home used to load, off the screen this page already holds.
+   * Merging the two screens merged their queries too — the pair used to load
+   * the same ledger twice, on two navigations, to answer two halves of one
+   * question.
    *
-   * `assembleWrapped` would re-read the same 400 scores for the same document;
-   * `assembleWrappedFrom` takes the one in hand and the tag opens it needs for
-   * conviction, which is the only read the deck adds. Merging the two screens
-   * merged their queries too — the pair used to load the same ledger twice, on
-   * two navigations, to answer two halves of one question.
+   * The year block reads the Wrapped pipeline's own cache, so opening the
+   * dashboard costs no model call once a year has been built and the deck it
+   * shows is character-identical to the one `/wrapped` plays.
    */
   const { transactions, tags } = await getCollections();
-  const [recent, taggedDocs, insight, opens, photos] = await Promise.all([
+  const [recent, taggedDocs, insight] = await Promise.all([
     transactions
       .find({ userId, type: { $regex: /buy/i } })
       .sort({ date: -1 })
@@ -277,11 +276,9 @@ export default async function YouPage({
           ),
         )
       : Promise.resolve(null),
-    taggedOpensFor(userId),
-    storedPhotos(),
   ]);
 
-  const wrapped = assembleWrappedFrom(data, opens);
+  const wrapped = await wrappedDeck(userId, new Date().getUTCFullYear());
 
   /*
    * The wave is read, not computed. This used to pull four thousand rows on
@@ -445,7 +442,7 @@ export default async function YouPage({
 
           {/* ── 4 · The year, and the door into it ── */}
           {wrapped ? (
-            <YearBlock year={wrapped.label} cards={wrapped.cards} photos={photos} />
+            <YearBlock year={String(new Date().getUTCFullYear())} cards={wrapped.cards} />
           ) : null}
 
           {/* ── 5 · What you are holding ── */}
