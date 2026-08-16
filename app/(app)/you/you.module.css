@@ -17,7 +17,8 @@
  * the right of every one of them.
  */
 .wide {
-  max-width: 1240px;
+  /* Read by `screen.module.css .grid`; see the note on `--measure` there. */
+  --measure: 1240px;
   display: flex;
   flex-direction: column;
   gap: 96px;

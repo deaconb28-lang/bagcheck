@@ -17,7 +17,15 @@
   flex-direction: column;
   gap: var(--gap-block, 34px);
   align-items: stretch;
-  max-width: 820px;
+  /*
+   * The measure is a variable, not a second `max-width` in another file.
+   * `.wide` set 1240px and lost: two single-class selectors tie on specificity
+   * and the winner is whichever stylesheet the bundler emitted last, which is
+   * not a decision anyone made. The dashboard had been rendering at the
+   * reading measure — 820px centred in a 1440px window, with a third of the
+   * display empty and the header starting 210px to its left.
+   */
+  max-width: var(--measure, 820px);
   margin-inline: auto;
 }
 
