@@ -19,6 +19,7 @@ import type {
   SubscriptionDoc,
   SyncProgressDoc,
   TagDoc,
+  WrappedCardsDoc,
   TransactionDoc,
 } from "./types";
 
@@ -55,6 +56,7 @@ export async function getCollections() {
     prefs: db.collection<PrefsDoc>("prefs"),
     emailLog: db.collection<EmailLogDoc>("emailLog"),
     derived: db.collection<DerivedDoc>("derived"),
+    wrappedCards: db.collection<WrappedCardsDoc>("wrappedCards"),
     syncProgress: db.collection<SyncProgressDoc>("syncProgress"),
   };
 }
@@ -91,6 +93,7 @@ export async function ensureIndexes() {
     // notification a day, whichever cron gets there first.
     c.emailLog.createIndex({ userId: 1, date: 1 }, { unique: true }),
     c.derived.createIndex({ userId: 1 }, { unique: true }),
+    c.wrappedCards.createIndex({ userId: 1, year: 1 }, { unique: true }),
     c.syncProgress.createIndex({ userId: 1 }, { unique: true }),
   ]);
 }

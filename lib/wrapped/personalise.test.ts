@@ -5,6 +5,7 @@ import {
   captionOf,
   fallbackCaption,
   fill,
+  fitHero,
   normalise,
   tokenValues,
   validate,
@@ -210,4 +211,43 @@ test("a warm, neutral caption passes", () => {
   ]) {
     assert.equal(captionIsClean(c).ok, true, c);
   }
+});
+
+/*
+ * The hero fit. A viewport clamp cannot know how many characters a figure has,
+ * so `+42.8%` and `129` were set at the same 380px and the six-character one
+ * ran off the edge of the card — on every reader whose return had a sign and a
+ * decimal, which is most of them.
+ */
+
+test("a wide figure is stepped down to fit the measure", () => {
+  const out = fitHero(fill(TEMPLATE, STATS, CAPTION));
+  const size = /--hero-size:(\d+)px/.exec(out);
+  assert.ok(size, "a six-character hero should carry a size");
+  assert.ok(Number(size[1]) < 380);
+  /* And it actually fits: characters x advance x size, inside the measure. */
+  assert.ok("+42.8%".length * 0.555 * Number(size[1]) <= 880);
+});
+
+test("a narrow figure keeps the full size and takes no stamp", () => {
+  const stats = { ...STATS, BEST_RETURN_PCT: "+5%" } as unknown as WrappedStats;
+  assert.ok(!fitHero(fill(TEMPLATE, stats, CAPTION)).includes("--hero-size"));
+});
+
+test("a word hero is left alone — it is allowed to wrap", () => {
+  const template = TEMPLATE.replace(
+    '<p class="hero" data-kind="figure"',
+    '<p class="hero" data-kind="word"',
+  );
+  const stats = { ...STATS, BEST_RETURN_PCT: "Consumer Staples" } as unknown as WrappedStats;
+  assert.ok(!fitHero(fill(template, stats, CAPTION)).includes("--hero-size"));
+});
+
+test("the fit changes no value and no other markup", () => {
+  const filled = fill(TEMPLATE, STATS, CAPTION);
+  const fitted = fitHero(filled);
+  assert.deepEqual(tokenValues(fitted), tokenValues(filled));
+  assert.equal(captionOf(fitted), CAPTION);
+  /* The stored card is what passed the gate; the fit happens on the way out. */
+  assert.equal(validate(filled, TEMPLATE, STATS).ok, true);
 });

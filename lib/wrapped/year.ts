@@ -1,0 +1,190 @@
+import { readFile } from "node:fs/promises";
+import { getCollections } from "@/lib/db/collections";
+import { getDerived } from "@/lib/db/derived";
+import { loadScreen } from "@/lib/db/screen";
+import { archetypeFor } from "@/lib/archetypes";
+import { indexReturnYtd, isMarketConfigured, profilesFor } from "@/lib/market";
+import { CARDS } from "../../wrapped/cards.mjs";
+import { earnedCards, wrappedStats } from "./stats";
+import type { WrappedContext, WrappedStats } from "./stats";
+import { finishCards } from "./run";
+import type { CardJob, FinishedCard } from "./run";
+
+/**
+ * One reader's year, from the ledger to twelve finished cards.
+ *
+ * This is the whole of Phase 3's assembly: read what the derived layer already
+ * holds, compute the stats deterministically, drop the cards this account has
+ * not earned, and hand what remains to the model for a caption each.
+ *
+ * Nothing here decides what a card *says* — `stats.ts` did that, before the
+ * network was involved.
+ */
+
+export interface WrappedYear {
+  year: number;
+  stats: WrappedStats;
+  context: WrappedContext;
+  cards: FinishedCard[];
+  /** The fingerprint the cache is keyed on. Same stats, same cards. */
+  fingerprint: string;
+}
+
+/** Templates are read from disk once per process, not once per card. */
+const templates = new Map<string, string>();
+
+async function template(no: string): Promise<string> {
+  const hit = templates.get(no);
+  if (hit) return hit;
+  const url = new URL(`../../wrapped/templates/card-${no}.html`, import.meta.url);
+  const html = await readFile(url, "utf8");
+  templates.set(no, html);
+  return html;
+}
+
+/**
+ * A stable fingerprint of everything a card is made of.
+ *
+ * The cards are regenerated only when this moves, which is what stops a page
+ * view from spending twelve model calls. It is the stats themselves rather
+ * than a sync timestamp: a sync that changed nothing a card states should not
+ * invalidate the cards, and the ledger moves far more often than the year's
+ * headline figures do.
+ */
+export function fingerprintOf(stats: WrappedStats): string {
+  return Object.entries(stats)
+    .filter(([, v]) => typeof v === "string" && v)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([k, v]) => `${k}=${v}`)
+    .join("|");
+}
+
+/** The reader's display name, which card 01 puts on the cover. */
+async function displayName(userId: string): Promise<string | null> {
+  try {
+    const { users } = (await getCollections()) as unknown as {
+      users?: { findOne: (q: unknown) => Promise<{ name?: string } | null> };
+    };
+    const doc = await users?.findOne({ _id: userId });
+    return doc?.name?.split(/\s+/)[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Compute the stats for a year. No model, no network beyond the benchmark —
+ * the part of the pipeline that has to be right.
+ */
+export async function statsForYear(
+  userId: string,
+  year: number,
+  name?: string | null,
+): Promise<{ stats: WrappedStats; context: WrappedContext } | null> {
+  const [data, derived] = await Promise.all([loadScreen(userId, 400), getDerived(userId)]);
+  if (!derived) return null;
+
+  const { transactions } = await getCollections();
+  const rows = await transactions
+    .find({ userId, date: { $gte: `${year}-01-01`, $lte: `${year}-12-31` } })
+    .project<{ date: string; type: string; symbol: string | null; amount: number | null }>({
+      _id: 0,
+      date: 1,
+      type: 1,
+      symbol: 1,
+      amount: 1,
+    })
+    .toArray();
+
+  /*
+   * Sectors come from the market layer's company profiles, which the app
+   * already fetches and caches for names. Without a key there is no sector and
+   * card 09 is unearned — an inferred sector is a lookup table pretending to
+   * be a fact about the reader's book.
+   */
+  const symbols = data.holdings.map((h) => h.symbol).filter(Boolean);
+  const [profiles, indexReturn] = await Promise.all([
+    isMarketConfigured() ? profilesFor(symbols).catch(() => new Map()) : Promise.resolve(new Map()),
+    isMarketConfigured() ? indexReturnYtd().catch(() => null) : Promise.resolve(null),
+  ]);
+
+  const latest = data.scores[0] ?? null;
+  const archetype = latest ? archetypeFor(latest.components) : null;
+
+  return wrappedStats({
+    year,
+    name: name ?? (await displayName(userId)),
+    equity: derived.equitySeries.map((p) => ({ date: p.date, value: p.value })),
+    trips: derived.roundTrips,
+    rows: rows.map((r) => ({
+      date: r.date ?? "",
+      type: r.type ?? "",
+      symbol: r.symbol ?? null,
+      amount: r.amount ?? null,
+    })),
+    dailyPnl: derived.dailyPnl,
+    holdings: data.holdings.map((h) => ({
+      symbol: h.symbol,
+      value: h.value ?? null,
+      sector: profiles.get(h.symbol)?.industry ?? null,
+    })),
+    archetype: archetype ? { name: archetype.name, trait: archetype.line } : null,
+    investorAge: data.investorAge,
+    indexReturn,
+    /* Percent-first: dollars only when the reader has turned them on. */
+    showDollars: false,
+  });
+}
+
+/**
+ * The finished set, cached per reader per year.
+ *
+ * Twelve model calls is cheap but it is not free, and a reader who opens their
+ * year twice in a day should pay for it once. The cache is keyed on the stats
+ * fingerprint, so it survives a sync that did not move any figure a card
+ * states and invalidates itself the moment one does.
+ */
+export async function wrappedYear(
+  userId: string,
+  year: number,
+  opts: { refresh?: boolean; name?: string | null } = {},
+): Promise<WrappedYear | null> {
+  const computed = await statsForYear(userId, year, opts.name);
+  if (!computed) return null;
+
+  const { stats, context } = computed;
+  const fingerprint = fingerprintOf(stats);
+  const earned = earnedCards(CARDS as Array<{ no: string; key: string; tokens: string[]; fallbackCaptions: string[] }>, stats);
+  if (!earned.length) return { year, stats, context, cards: [], fingerprint };
+
+  const { wrappedCards } = await getCollections();
+
+  if (!opts.refresh) {
+    const hit = await wrappedCards.findOne({ userId, year });
+    if (hit && hit.fingerprint === fingerprint) {
+      return { year, stats, context, cards: hit.cards, fingerprint };
+    }
+  }
+
+  const jobs: CardJob[] = await Promise.all(
+    earned.map(async (c) => ({
+      no: c.no,
+      key: c.key,
+      template: await template(c.no),
+      fallbackCaptions: c.fallbackCaptions,
+    })),
+  );
+  const tokensByCard = Object.fromEntries(earned.map((c) => [c.no, c.tokens]));
+
+  const cards = await finishCards(jobs, tokensByCard, stats, context, `${userId}:${year}`);
+
+  await wrappedCards
+    .updateOne(
+      { userId, year },
+      { $set: { userId, year, fingerprint, cards, builtAt: new Date() } },
+      { upsert: true },
+    )
+    .catch((err) => console.error("[wrapped] cache write failed", err));
+
+  return { year, stats, context, cards, fingerprint };
+}

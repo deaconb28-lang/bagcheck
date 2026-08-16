@@ -20,7 +20,8 @@
     "shots": "node --import tsx scripts/shots.mjs",
     "sheet": "node --import tsx scripts/contact-sheet.mjs",
     "wrapped:backgrounds": "node --import tsx scripts/generate-backgrounds.mjs",
-    "wrapped:templates": "node scripts/build-wrapped-templates.mjs"
+    "wrapped:templates": "node scripts/build-wrapped-templates.mjs",
+    "wrapped:check": "node --import tsx scripts/personalize-wrapped.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",

@@ -19,6 +19,15 @@
  * nothing is fetched from a CDN, at build time or at render time. A card that
  * needed fonts.gstatic.com to answer would fail to render on a bad minute, and
  * these are rendered into PNGs people post.
+ *
+ * The families are declared here rather than borrowed, and no rule below may
+ * cite `--font-voice` or `--font-mono`. Those are set by `next/font` in the
+ * app's root layout, and a card is rendered standalone — as a page, by a
+ * headless browser, into a PNG — so they resolve to nothing. An unresolved
+ * `var()` inside `font-family` does not fall through to the next name in the
+ * list: it invalidates the whole declaration, and every line on the card sets
+ * in the browser's default serif. It did, on all twelve, and the render is
+ * what caught it.
  */
 @font-face {
   font-family: "Voice";
@@ -78,7 +87,7 @@ body {
   overflow: hidden;
   background: var(--share-bg);
   color: var(--share-ink);
-  font-family: "Voice", var(--font-voice), system-ui, sans-serif;
+  font-family: "Voice", "Public Sans", system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -130,7 +139,7 @@ body {
 /* ── The lockup: eyebrow → hero → support → caption ── */
 
 .eyebrow {
-  font-family: "Machine", var(--font-mono), monospace;
+  font-family: "Machine", ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 30px;
   font-weight: 500;
   letter-spacing: 0.28em;
@@ -145,29 +154,43 @@ body {
  * flat the answer is to widen the gap, never to add an element.
  */
 .hero {
-  font-family: "Machine", var(--font-mono), monospace;
+  font-family: "Machine", ui-monospace, SFMono-Regular, Menlo, monospace;
   font-variant-numeric: tabular-nums;
   font-weight: 700;
-  font-size: 380px;
   line-height: 0.82;
   letter-spacing: -0.045em;
   color: var(--share-ink);
   margin: 0;
-  /* A long ticker or a month name cannot be allowed to leave the stage. */
   max-width: 100%;
-  overflow-wrap: anywhere;
+  /*
+   * A figure never breaks. "+5.0%" split across two lines — the sign and the
+   * number on one, the percent sign alone on the next — is not a hero, it is
+   * a hero and a typo, and `overflow-wrap: anywhere` was doing it every time
+   * the value ran wide. The size steps down instead, which is what the clamp
+   * is for.
+   */
+  white-space: nowrap;
+  /*
+   * `--hero-size` is stamped per card by `fitHero`, which knows the value's
+   * character count — the one thing a viewport clamp cannot. The clamp is the
+   * floor under it, so a card that never went through the fit still draws.
+   */
+  font-size: var(--hero-size, clamp(180px, 34vw, 380px));
 }
 
 /*
- * Words set at 380px overflow a 904px measure, so a card whose hero is a name
- * rather than a figure takes the smaller step. Same lockup, same position —
- * only the size differs, because the job differs.
+ * A word can break — "Consumer Staples" over two lines is a headline, not a
+ * broken number — so it keeps its wrapping, and it takes the smaller step
+ * because a name set at 380px overflows a 904px measure. Same lockup, same
+ * position; only the size differs, because the job differs.
  */
 .hero[data-kind="word"] {
-  font-family: "Voice", var(--font-voice), system-ui, sans-serif;
-  font-size: 200px;
+  font-family: "Voice", "Public Sans", system-ui, -apple-system, sans-serif;
+  font-size: clamp(96px, 17vw, 190px);
   line-height: 0.92;
   letter-spacing: -0.035em;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .title {
@@ -197,7 +220,7 @@ body {
 }
 
 .factLabel {
-  font-family: "Machine", var(--font-mono), monospace;
+  font-family: "Machine", ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 24px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -205,7 +228,7 @@ body {
 }
 
 .factValue {
-  font-family: "Machine", var(--font-mono), monospace;
+  font-family: "Machine", ui-monospace, SFMono-Regular, Menlo, monospace;
   font-variant-numeric: tabular-nums;
   font-size: 62px;
   font-weight: 600;
@@ -214,7 +237,7 @@ body {
 }
 
 .factValue[data-kind="word"] {
-  font-family: "Voice", var(--font-voice), system-ui, sans-serif;
+  font-family: "Voice", "Public Sans", system-ui, -apple-system, sans-serif;
   font-size: 54px;
 }
 
@@ -259,7 +282,7 @@ body {
   right: 88px;
   bottom: 52px;
   z-index: 3;
-  font-family: "Machine", var(--font-mono), monospace;
+  font-family: "Machine", ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 20px;
   letter-spacing: 0.16em;
   text-transform: uppercase;

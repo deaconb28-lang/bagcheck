@@ -236,6 +236,30 @@ export interface LogoDoc {
 }
 
 /**
+ * A reader's finished Wrapped cards for one year.
+ *
+ * Twelve model calls is cheap but not free, and opening your year twice in a
+ * day should pay for it once. Keyed on a fingerprint of the stats themselves
+ * rather than a sync time: a sync that moved no figure a card states should
+ * not invalidate the set, and the ledger moves far more often than a year's
+ * headline numbers do.
+ */
+export interface WrappedCardsDoc {
+  userId: string;
+  year: number;
+  fingerprint: string;
+  cards: Array<{
+    no: string;
+    key: string;
+    html: string;
+    caption: string;
+    source: "model" | "fallback";
+    discarded: string | null;
+  }>;
+  builtAt: Date;
+}
+
+/**
  * One row per message actually sent.
  *
  * The unique index is on {userId, date}, not {userId, date, kind} — that is

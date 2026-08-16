@@ -17,3 +17,7 @@ __pycache__/
 public/archetypes/_sheet.png
 .shots/
 .shots-before/
+
+# Rendered Wrapped cards from `npm run wrapped:check -- --render`. A local
+# proof, not an artefact — the twelve backgrounds are what ships.
+.wrapped-check/

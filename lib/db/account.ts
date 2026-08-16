@@ -27,6 +27,7 @@ export const PERSONAL_COLLECTIONS = [
   "emailLog",
   "syncProgress",
   "subscriptions",
+  "wrappedCards",
 ] as const;
 
 export type PersonalCollection = (typeof PERSONAL_COLLECTIONS)[number];
