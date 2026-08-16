@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>bagcheck · The card you share</title>
+<link rel="stylesheet" href="card.css">
+</head>
+<body>
+<!--
+  Card 12 — share
+
+  A 1080x1920 stage. The art is a background and nothing else; every figure on
+  this card is set in type, because a number a model drew is a number nobody
+  can correct on an artefact whose whole claim is that it came off a brokerage.
+-->
+<div class="card" style="width:1080px;height:1920px" data-card="12" data-key="share">
+  <img class="bg" src="/wrapped/2026/backgrounds/bg-12.png" alt="">
+  <div class="scrim"></div>
+
+  <div class="layer">
+    <p class="eyebrow">bagcheck &middot; <span data-token="YEAR">{{YEAR}}</span></p>
+    <p class="hero" data-kind="figure" data-token="TOTAL_RETURN_PCT">{{TOTAL_RETURN_PCT}}</p>
+    <h1 class="title">The card you share</h1>
+
+    <div class="support">
+        <div class="fact">
+          <span class="factLabel">Days held</span>
+          <span class="factValue" data-kind="figure" data-token="LONGEST_HOLD_DAYS">{{LONGEST_HOLD_DAYS}}</span>
+        </div>
+        <div class="fact">
+          <span class="factLabel">Archetype</span>
+          <span class="factValue" data-kind="word" data-token="ARCHETYPE_NAME">{{ARCHETYPE_NAME}}</span>
+        </div>
+        <div class="fact">
+          <span class="factLabel">Investor age</span>
+          <span class="factValue" data-kind="figure" data-token="INVESTOR_AGE">{{INVESTOR_AGE}}</span>
+        </div>
+    </div>
+
+    <p class="caption" data-caption="">{{CAPTION}}</p>
+  </div>
+
+  <span class="mark"><i class="markDot"></i>bagcheck</span>
+  <span class="provenance">Read-only via SnapTrade</span>
+</div>
+</body>
+</html>

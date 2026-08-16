@@ -1,0 +1,267 @@
+/*
+ * The Wrapped card stage. One stylesheet for all twelve.
+ *
+ * The palette is not written here. `styles/tokens.css` is the brand kit and
+ * the single source of colour in this repository, so this file imports it and
+ * spends the rest of its length on layout — a hex in here would be a second
+ * opinion about what `--share-bg` means, and the two would drift the first
+ * time either moved.
+ *
+ * A card is an artefact with its own palette, saturated well past anything the
+ * app uses, and it does not flip with the reader's mode. That is why it reads
+ * the `--share-*` and `--card-*` families rather than the app's `--ink`/`--bg`:
+ * those are stated once on `:root` and never redefined by `data-mode`.
+ */
+@import url("../../styles/tokens.css");
+
+/*
+ * The faces are vendored in `public/fonts` and served from our own origin —
+ * nothing is fetched from a CDN, at build time or at render time. A card that
+ * needed fonts.gstatic.com to answer would fail to render on a bad minute, and
+ * these are rendered into PNGs people post.
+ */
+@font-face {
+  font-family: "Voice";
+  font-weight: 500;
+  font-style: normal;
+  font-display: block;
+  src: url("/fonts/general-sans-500.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Voice";
+  font-weight: 600;
+  font-style: normal;
+  font-display: block;
+  src: url("/fonts/general-sans-600.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Voice";
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+  src: url("/fonts/general-sans-700.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Machine";
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: block;
+  src: url("/fonts/jetbrains-mono-latin.woff2") format("woff2");
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--share-bg);
+}
+
+/*
+ * A fixed stage, not a responsive one. The card is 1080×1920 because that is
+ * what a story is; every length below is absolute for the same reason. This is
+ * the one surface in the product that is not a layout — it is a poster, and a
+ * poster has a size.
+ */
+.card {
+  position: relative;
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  background: var(--share-bg);
+  color: var(--share-ink);
+  font-family: "Voice", var(--font-voice), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The art is a stage. It sits under everything and asks for nothing. */
+  z-index: 0;
+}
+
+/*
+ * The scrim, over the bottom third.
+ *
+ * The generated art has "generous empty space in the center and lower third"
+ * asked of it, but a generative model is not a contract — one image in twelve
+ * will put a bright band exactly where the caption goes. The scrim makes the
+ * text layer legible whatever the art did, which is what lets the same
+ * typography ship over twelve different pictures.
+ */
+.scrim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 62%;
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--share-bg) 55%, transparent) 38%,
+    color-mix(in srgb, var(--share-bg) 88%, transparent) 72%,
+    var(--share-bg) 100%
+  );
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 96px 88px 104px;
+}
+
+/* ── The lockup: eyebrow → hero → support → caption ── */
+
+.eyebrow {
+  font-family: "Machine", var(--font-mono), monospace;
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--share-dim);
+  margin: 0 0 28px;
+}
+
+/*
+ * The number is the hero and the caption is a whisper. Hierarchy comes from
+ * the size gap, not from a second weight or a second colour — if a card reads
+ * flat the answer is to widen the gap, never to add an element.
+ */
+.hero {
+  font-family: "Machine", var(--font-mono), monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 380px;
+  line-height: 0.82;
+  letter-spacing: -0.045em;
+  color: var(--share-ink);
+  margin: 0;
+  /* A long ticker or a month name cannot be allowed to leave the stage. */
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+/*
+ * Words set at 380px overflow a 904px measure, so a card whose hero is a name
+ * rather than a figure takes the smaller step. Same lockup, same position —
+ * only the size differs, because the job differs.
+ */
+.hero[data-kind="word"] {
+  font-family: "Voice", var(--font-voice), system-ui, sans-serif;
+  font-size: 200px;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+
+.title {
+  font-size: 58px;
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--share-ink);
+  margin: 40px 0 0;
+}
+
+/* The second and third facts, on one mono row under the hero. */
+.support {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px 56px;
+  margin: 44px 0 0;
+  padding-top: 34px;
+  border-top: 2px solid var(--share-line);
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.factLabel {
+  font-family: "Machine", var(--font-mono), monospace;
+  font-size: 24px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--share-dim);
+}
+
+.factValue {
+  font-family: "Machine", var(--font-mono), monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 62px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--share-ink);
+}
+
+.factValue[data-kind="word"] {
+  font-family: "Voice", var(--font-voice), system-ui, sans-serif;
+  font-size: 54px;
+}
+
+/* The model's one line. Body face, quiet, never larger than the title. */
+.caption {
+  font-size: 38px;
+  line-height: 1.4;
+  color: var(--share-dim);
+  margin: 44px 0 0;
+  max-width: 22ch;
+}
+
+/*
+ * The wordmark ships on every exported card at every tier. It is not a
+ * watermark and it is not a paywall artefact — it is the thing that makes a
+ * posted card legible as coming from somewhere.
+ */
+.mark {
+  position: absolute;
+  left: 88px;
+  bottom: 44px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--share-ink);
+  opacity: 0.86;
+}
+
+.markDot {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  background: var(--card-ember-lit);
+}
+
+.provenance {
+  position: absolute;
+  right: 88px;
+  bottom: 52px;
+  z-index: 3;
+  font-family: "Machine", var(--font-mono), monospace;
+  font-size: 20px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--share-dim);
+}

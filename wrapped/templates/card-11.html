@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>bagcheck · Your archetype</title>
+<link rel="stylesheet" href="card.css">
+</head>
+<body>
+<!--
+  Card 11 — archetype
+
+  A 1080x1920 stage. The art is a background and nothing else; every figure on
+  this card is set in type, because a number a model drew is a number nobody
+  can correct on an artefact whose whole claim is that it came off a brokerage.
+-->
+<div class="card" style="width:1080px;height:1920px" data-card="11" data-key="archetype">
+  <img class="bg" src="/wrapped/2026/backgrounds/bg-11.png" alt="">
+  <div class="scrim"></div>
+
+  <div class="layer">
+    <p class="eyebrow">bagcheck &middot; <span data-token="YEAR">{{YEAR}}</span></p>
+    <p class="hero" data-kind="word" data-token="ARCHETYPE_NAME">{{ARCHETYPE_NAME}}</p>
+    <h1 class="title">Your archetype</h1>
+
+    <div class="support">
+        <div class="fact">
+          <span class="factLabel">Reads as</span>
+          <span class="factValue" data-kind="word" data-token="ARCHETYPE_TRAIT">{{ARCHETYPE_TRAIT}}</span>
+        </div>
+    </div>
+
+    <p class="caption" data-caption="">{{CAPTION}}</p>
+  </div>
+
+  <span class="mark"><i class="markDot"></i>bagcheck</span>
+  <span class="provenance">Read-only via SnapTrade</span>
+</div>
+</body>
+</html>

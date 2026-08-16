@@ -18,7 +18,9 @@
     "fonts": "node scripts/vendor-fonts.mjs",
     "seed": "node --import tsx scripts/seed.mjs",
     "shots": "node --import tsx scripts/shots.mjs",
-    "sheet": "node --import tsx scripts/contact-sheet.mjs"
+    "sheet": "node --import tsx scripts/contact-sheet.mjs",
+    "wrapped:backgrounds": "node --import tsx scripts/generate-backgrounds.mjs",
+    "wrapped:templates": "node scripts/build-wrapped-templates.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
