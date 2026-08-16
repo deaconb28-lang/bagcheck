@@ -10,3 +10,4 @@ export { isStale, provenanceLine, resolveMark, resolveMarks } from "./marks";
 export type { Quote, ResolvedMark, StoredMark } from "./marks";
 export { nameRows, refreshHoldings, repriceRows } from "./holdings";
 export type { RefreshedHoldings } from "./holdings";
+export { BENCHMARK, indexReturnYtd } from "./benchmark";
