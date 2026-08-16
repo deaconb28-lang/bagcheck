@@ -6,6 +6,7 @@ import { wrappedDeck } from "@/lib/wrapped/year";
 import { CanopyMark } from "@/app/(marketing)/CanopyMark";
 import { GoogleSignIn } from "@/components/app/GoogleSignIn";
 import { CardFonts } from "@/components/cards/CardFonts";
+import { StillToCome } from "./StillToCome";
 import { YearDeck } from "./YearDeck";
 import { FirstRun } from "./FirstRun";
 import { ComingSoon } from "./ComingSoon";
@@ -126,6 +127,13 @@ export default async function WrappedPage({
           {firstRun}
           <CardFonts />
           <YearDeck cards={cards} year={year} />
+
+          {/*
+            * What the year has not minted, as rows rather than as locked
+            * frames in the deck. A deck that is part artefact and part
+            * inventory is neither.
+            */}
+          {example ? null : <StillToCome earned={cards.map((c) => c.no)} />}
 
           {/*
             * What Wrapped is the first chapter of. It sits below the sheet

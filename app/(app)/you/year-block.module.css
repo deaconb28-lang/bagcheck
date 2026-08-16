@@ -98,44 +98,13 @@
  * are 0-or-1 and belong to the scroll position. Keeping them apart is what
  * lets the phone use a narrower fade without the keyframes overriding it.
  */
-.rail {
-  display: flex;
-  gap: 18px;
-  width: 100%;
-  margin-top: 44px;
-  padding: 4px 0 8px;
-  list-style: none;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  --fade: 72px;
-  --lead: 0;
-  --trail: 1;
-  mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    #000 calc(var(--lead) * var(--fade)),
-    #000 calc(100% - var(--trail) * var(--fade)),
-    transparent 100%
-  );
-}
 
-.rail::-webkit-scrollbar {
-  display: none;
-}
 
-@property --lead {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0;
-}
 
-@property --trail {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 1;
-}
+
+
+
+
 
 /*
  * Where scroll-driven animation exists, the two edges follow the scroll
@@ -144,10 +113,7 @@
  * timeline drives both, so they cannot disagree.
  */
 @supports (animation-timeline: scroll(self inline)) {
-  .rail {
-    animation: rail-fade linear both;
-    animation-timeline: scroll(self inline);
-  }
+  
 
   @keyframes rail-fade {
     0% {
@@ -167,41 +133,35 @@
 }
 
 
-.frame {
-  flex: 0 0 auto;
-  width: clamp(178px, 15vw, 214px);
-  display: flex;
-  flex-direction: column;
-  gap: 11px;
-  scroll-snap-align: start;
-}
 
-.slot {
-  display: block;
-  border-radius: 22px;
-  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.3, 1);
-}
 
-.slot:hover {
-  transform: translateY(-5px);
-}
 
-.slot > * {
-  max-width: none;
-  border-radius: 22px;
-}
+
+
+
+
 
 /*
+ * The pile.
+ *
  * A card is a finished 1080x1920 document in a frame, not a component drawn in
  * app tokens — so the stage keeps the poster's own proportions and the wrapper
- * scales it. This rail and the player on `/wrapped` are then one drawing at two
+ * scales it. This block and the deck on `/wrapped` are then one drawing at two
  * magnifications rather than two layouts that have to be kept in step.
+ *
+ * `--card-w` is a plain number and the lengths derive from it, because
+ * `scale()` takes a ratio and `calc(200px / 1080)` is a length — which does not
+ * fail loudly, it invalidates the transform and leaves the frame showing the
+ * card's top-left corner. Every card's type is in its lower third, so that
+ * corner is pure background art and the strip renders as pictures with no
+ * words on them.
  */
 .stage {
+  --card-w: 200;
   display: block;
   position: relative;
-  width: 100%;
-  aspect-ratio: 1080 / 1920;
+  width: calc(var(--card-w) * 1px);
+  height: calc(var(--card-w) * 1px * 1920 / 1080);
   border-radius: 22px;
   overflow: hidden;
   background: var(--share-bg);
@@ -215,97 +175,88 @@
   height: 1920px;
   border: 0;
   transform-origin: top left;
-  /* The frame's own width drives the scale; nothing here hardcodes a size. */
-  transform: scale(calc(100cqw / 1080));
+  transform: scale(calc(var(--card-w) / 1080));
   pointer-events: none;
 }
 
-.stage {
-  container-type: inline-size;
-}
-
 /* A frame with nothing in it yet: the drawing, the name, the condition. */
-.locked {
-  aspect-ratio: 2 / 3;
-  border-radius: 22px;
-  border: 1px dashed var(--line2);
-  background: var(--tile);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 7px;
-  padding: 18px 16px;
-}
 
-.lockArt {
-  flex: 1;
-  display: grid;
-  place-items: center;
-  width: 100%;
-  min-height: 0;
-  padding: 4px 0 14px;
-  --teaser-accent: var(--accent);
-  --teaser-ink: var(--meta);
-}
+
+
 
 .lockArt > * {
   width: 100%;
 }
 
-.lockName {
-  font-size: 14.5px;
-  font-weight: 600;
-  line-height: 1.25;
-  color: var(--ink);
-}
 
-.lockNeed {
-  font-family: var(--font-mono), monospace;
-  font-size: 9.5px;
-  line-height: 1.5;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--meta);
-}
 
-.caption {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  min-width: 0;
-}
 
-.no {
-  font-family: var(--font-mono), monospace;
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  color: var(--meta);
-  flex: none;
-}
 
-.name {
-  font-size: 12.5px;
-  color: var(--ink3);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+
+
+
+
+
 
 @media (max-width: 860px) {
   /*
    * A 72px fade against a 178px card eats a third of it. The rail shows one
    * card and a shoulder at this width, so the hint can be much lighter.
    */
-  .rail {
-    --fade: 38px;
-  }
+  
 
-  .rail {
-    gap: 14px;
-  }
+  
 
-  .frame {
-    width: 62vw;
-    max-width: 240px;
+  
+}
+
+/*
+ * The pile: the top card at a size you can read, the rest as depth behind it.
+ * A strip of a dozen laid side by side is a contact sheet, and at the size a
+ * dozen fit none of them can be read — so this shows one and says how many.
+ */
+.pile {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: calc(var(--card-w, 260) * 1px * 1920 / 1080 + 44px);
+  margin-top: 40px;
+  --card-w: 260;
+  transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.pile:hover {
+  transform: translateY(-5px);
+}
+
+.card {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: calc(var(--card-w) * 1px);
+  height: calc(var(--card-w) * 1px * 1920 / 1080);
+  transform-origin: top center;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--share-bg);
+  box-shadow: 0 22px 60px color-mix(in srgb, var(--ink) 22%, transparent);
+}
+
+.paper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
+  border: 0;
+  /* A ratio, not a length — a length silently invalidates the transform. */
+  transform-origin: top left;
+  transform: scale(calc(var(--card-w) / 1080));
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pile:hover {
+    transform: none;
   }
 }

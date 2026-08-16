@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { CARDS } from "@/wrapped/cards.mjs";
 import { CardFonts } from "@/components/cards/CardFonts";
-import { Teaser } from "@/components/cards/Teaser";
 import type { ShownCard } from "@/lib/wrapped/year";
 import styles from "./year-block.module.css";
 
@@ -14,12 +13,17 @@ import styles from "./year-block.module.css";
  * It is a block on the dashboard now, and `/wrapped` is the subpage it opens
  * into rather than a destination the reader has to find on a rail.
  *
- * It shows **the whole set**, earned and unearned, for the same reason
- * `/wrapped` does: a young account earns three or four cards, and a strip that
- * shows only those reads as a thin product rather than as a year in progress.
- * An unearned frame carries its drawing and the one condition that mints it —
- * shapes, never a figure, because a plausible number on a locked card would
- * undermine every real one beside it.
+ * **A pile, never a gallery.** A strip of cards laid out side by side is a
+ * contact sheet: it asks the eye to scan a dozen things at once, and at the
+ * size a dozen things fit, none of them can be read. A poster is looked at one
+ * at a time, so the top card is shown at a size you can actually read and the
+ * rest stand behind it as depth. The count says how many there are; the pile
+ * says what they are.
+ *
+ * The unearned ones are a number here rather than a row of locked frames.
+ * Reading what mints card nine is `/wrapped`'s job, under the deck, where
+ * there is room to state a condition without turning the dashboard into a
+ * second roadmap.
  *
  * The rail is the deck's, not a second grammar: same full-bleed inset, same
  * snap, same frame numbers, and — since the pipeline landed — the same twelve
@@ -41,9 +45,10 @@ const ROSTER = CARDS as unknown as Array<{
 }>;
 
 export function YearBlock({ year, cards }: { year: string; cards: ShownCard[] }) {
-  const have = new Map(cards.map((c) => [c.no, c]));
-  const frames = ROSTER.map((r) => ({ ...r, card: have.get(r.no) ?? null }));
   const earned = cards.length;
+  const total = ROSTER.length;
+  /* Top card first, then the three standing behind it. Depth, not a fan. */
+  const pile = cards.slice(0, 4);
 
   return (
     <section data-reveal className={styles.block} aria-labelledby="year-block">
@@ -52,7 +57,7 @@ export function YearBlock({ year, cards }: { year: string; cards: ShownCard[] })
 
       <div className={styles.headRow}>
         <h2 className={styles.h2} id="year-block">
-          {earned === frames.length
+          {earned === total
             ? "Your whole year, minted"
             : earned === 0
               ? "Your year, still filling in"
@@ -65,65 +70,35 @@ export function YearBlock({ year, cards }: { year: string; cards: ShownCard[] })
       </div>
 
       <p className={styles.lede}>
-        <b>{earned}</b> of {frames.length} cards earned.{" "}
+        <b>{earned}</b> of {total} cards earned.{" "}
         {earned === 0
           ? "Each one mints itself once your history can prove it."
           : "Every one comes off read-only brokerage data, and sharing is never behind a plan."}
       </p>
 
-      <ol className={styles.rail}>
-        {frames.map((frame) => (
-          <li key={frame.no} className={styles.frame}>
-            <Link
-              href="/wrapped"
-              className={styles.slot}
-              aria-label={
-                frame.card ? `${frame.title} — open your Wrapped` : `${frame.title} — not earned yet`
-              }
-            >
-              {frame.card ? (
-                <span className={styles.stage}>
-                  {/*
-                    The card itself, framed rather than redrawn. It is a
-                    1080x1920 document with its own stylesheet and faces, and
-                    the wrapper scales it — so this rail and the player on
-                    `/wrapped` are one drawing at two magnifications.
-                  */}
-                  <iframe
-                    className={styles.paper}
-                    srcDoc={frame.card.html}
-                    title={frame.card.caption || frame.title}
-                    loading="lazy"
-                    tabIndex={-1}
-                    scrolling="no"
-                  />
-                </span>
-              ) : (
-                <Locked frame={frame} />
-              )}
-            </Link>
-
-            <span className={styles.caption}>
-              <span className={styles.no}>{frame.no}</span>
-              <span className={styles.name}>{frame.title}</span>
-            </span>
-          </li>
+      <Link href="/wrapped" className={styles.pile} aria-label="Open your Wrapped">
+        {pile.map((card, i) => (
+          <span
+            key={card.no}
+            className={styles.card}
+            style={{
+              zIndex: pile.length - i,
+              transform: `translate(-50%, ${i * 16}px) scale(${(1 - i * 0.055).toFixed(3)})`,
+              opacity: i > 2 ? 0 : 1,
+            }}
+          >
+            <iframe
+              className={styles.paper}
+              srcDoc={card.html}
+              title={card.caption || `Card ${card.no}`}
+              loading={i === 0 ? "eager" : "lazy"}
+              tabIndex={-1}
+              scrolling="no"
+            />
+          </span>
         ))}
-      </ol>
+      </Link>
     </section>
-  );
-}
-
-/** A frame that has not been minted: its drawing, its name, its condition. */
-function Locked({ frame }: { frame: { title: string; teaser: string; requires: string } }) {
-  return (
-    <div className={styles.locked}>
-      <span className={styles.lockArt}>
-        <Teaser kind={frame.teaser as never} />
-      </span>
-      <span className={styles.lockName}>{frame.title}</span>
-      <span className={styles.lockNeed}>{frame.requires}</span>
-    </div>
   );
 }
 
