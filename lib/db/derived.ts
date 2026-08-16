@@ -20,7 +20,7 @@ import type { DerivedDoc } from "./types";
  */
 
 /** Bump when anything in this file changes shape or meaning. */
-export const DERIVED_VERSION = 2;
+export const DERIVED_VERSION = 3;
 
 export interface DailyPnl {
   date: string;
@@ -86,16 +86,35 @@ export function ledgerHash(rows: TxnLite[], snapshotDates: string[]): string {
   });
 }
 
-/** Realised P&L per session. A buy is not a result, so only sells and dividends count. */
-export function dailyPnlFrom(rows: TxnLite[]): DailyPnl[] {
+/**
+ * Realised P&L per session — the FIFO-matched *gain*, plus cash dividends.
+ *
+ * This used to sum each sell's `amount`, which is the **proceeds**: a reader
+ * who sold half a million dollars of stock for a two-thousand-dollar profit
+ * had a chart column reading +$500,000, and every screen downstream — the
+ * dashboard's headline figure, Wrapped's red-day count — inherited it. A sale
+ * is not a result; the difference between what a lot cost and what it fetched
+ * is, and that is exactly what a round trip carries.
+ *
+ * Dividends stay, because a dividend genuinely is realised income and has no
+ * cost basis to match against.
+ */
+export function dailyPnlFrom(rows: TxnLite[], trips: RoundTrip[] = []): DailyPnl[] {
   const byDate = new Map<string, number>();
+
+  for (const trip of trips) {
+    const date = trip.closeDate?.slice(0, 10);
+    if (!date) continue;
+    byDate.set(date, (byDate.get(date) ?? 0) + trip.pnl);
+  }
+
   for (const row of rows) {
     const date = row.date?.slice(0, 10);
     if (!date || !row.amount) continue;
-    const type = (row.type ?? "").toLowerCase();
-    if (!type.includes("sell") && !type.includes("dividend")) continue;
+    if (!/dividend/i.test(row.type ?? "")) continue;
     byDate.set(date, (byDate.get(date) ?? 0) + row.amount);
   }
+
   return [...byDate.entries()]
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map(([date, realised]) => ({ date, realised }));
@@ -200,7 +219,7 @@ export function buildDerived(input: BuildInput): Omit<DerivedDoc, "userId" | "co
     version: DERIVED_VERSION,
     ledgerHash: ledgerHash(input.rows, input.snapshots.map((s) => s.date)),
     roundTrips,
-    dailyPnl: dailyPnlFrom(input.rows),
+    dailyPnl: dailyPnlFrom(input.rows, roundTrips),
     equitySeries,
     holdTime: holdTimeFrom(roundTrips),
     excludedSymbols,

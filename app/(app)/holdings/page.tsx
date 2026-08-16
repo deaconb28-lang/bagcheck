@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getUserId } from "@/auth";
-import { isDbConfigured, loadScreen, syncClock } from "@/lib/db";
+import { isDbConfigured, syncClock } from "@/lib/db";
+import { dashboardFor } from "@/lib/portfolio/load";
 import type { HoldingRow } from "@/lib/db";
 import { AppNav } from "@/components/app/AppNav";
 import { shellUser } from "@/components/app/shellUser";
@@ -47,21 +48,17 @@ export default async function HoldingsPage({
   const userId = await getUserId();
   if (!userId || !isDbConfigured()) redirect("/you");
 
-  const data = await loadScreen(userId, 400);
+  const { data, view, facts } = await dashboardFor(userId, "all");
   const { sort: sortParam } = await searchParams;
   const sort: Sort =
     sortParam === "pnl" || sortParam === "account" ? sortParam : "weight";
 
-  const holdings = [...data.holdings].sort(compare(sort));
-  const totalValue = holdings.reduce((sum, row) => sum + (row.value ?? 0), 0);
-  const totalCost = holdings.reduce((sum, row) => sum + (row.cost ?? 0), 0);
-  const unrealised = totalValue - totalCost;
-
+  /* The book is the view's; this page only chooses an order to read it in. */
+  const { book } = view;
+  const holdings = [...facts.holdings].sort(compare(sort));
   const byValue = [...holdings].sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
   const topTwo = byValue.slice(0, 2).reduce((sum, row) => sum + (row.value ?? 0), 0);
-  const topShare = totalValue > 0 ? topTwo / totalValue : 0;
-
-  const accounts = data.connection?.accounts.length ?? 0;
+  const accounts = view.accounts;
 
   return (
     <>
@@ -93,17 +90,17 @@ export default async function HoldingsPage({
         </div>
 
         <Stats>
-          <Stat label="Market value" value={money(totalValue)} />
+          <Stat label="Market value" value={money(book.value)} />
           <Stat
             label="Unrealised"
-            value={signedMoney(unrealised)}
-            tone={unrealised >= 0 ? "moss" : "loss"}
+            value={signedMoney(book.unrealised)}
+            tone={book.unrealised >= 0 ? "moss" : "loss"}
           />
-          <Stat label="Cost basis" value={money(totalCost)} />
+          <Stat label="Cost basis" value={money(book.cost)} />
           <Stat
             label="Top two weight"
-            value={holdings.length >= 2 ? `${Math.round(topShare * 100)}%` : "—"}
-            tone={topShare >= 0.5 ? "loss" : undefined}
+            value={holdings.length >= 2 ? `${Math.round(book.topTwo * 100)}%` : "—"}
+            tone={book.topTwo >= 0.5 ? "loss" : undefined}
           />
         </Stats>
 
@@ -120,7 +117,7 @@ export default async function HoldingsPage({
           </div>
 
           {holdings.map((row, i) => {
-            const weight = totalValue ? ((row.value ?? 0) / totalValue) * 100 : 0;
+            const weight = book.value ? ((row.value ?? 0) / book.value) * 100 : 0;
             const up = (row.pnlPct ?? 0) >= 0;
             return (
               <div
@@ -178,12 +175,12 @@ export default async function HoldingsPage({
           })}
         </div>
 
-        {holdings.length >= 2 && topShare >= 0.5 ? (
+        {holdings.length >= 2 && book.topTwo >= 0.5 ? (
           <div className={styles.warn} data-reveal>
             <Warning />
             <p>
               {byValue[0].symbol} and {byValue[1].symbol} carry{" "}
-              {Math.round(topShare * 100)}% of your book. A 10% move in either is{" "}
+              {Math.round(book.topTwo * 100)}% of your book. A 10% move in either is{" "}
               {money(topTwo * 0.1)} against you or for you in a day.
             </p>
           </div>

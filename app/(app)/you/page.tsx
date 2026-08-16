@@ -1,18 +1,8 @@
 import type { Metadata } from "next";
 import { getUserId, isAuthConfigured } from "@/auth";
 import { isDbConfigured, loadScreen, syncClock } from "@/lib/db";
-import { isMarketConfigured, peerReturnsYtd } from "@/lib/market";
-import { investmentFlows, raceField } from "@/lib/returns";
-import {
-  dailyRealised,
-  holdSplit,
-  periodMove,
-  sharpe,
-  spread,
-  weekdayPnl,
-  winRate,
-  worstWeekday,
-} from "@/lib/dash";
+import { dashboardFor, fieldLine, rangeOf } from "@/lib/portfolio/load";
+import type { RangeKey } from "@/lib/portfolio/types";
 import { EmptyState } from "@/components/app/EmptyState";
 import { FirstScore } from "@/components/app/FirstScore";
 import { PageGrid } from "@/components/app/PageGrid";
@@ -46,9 +36,12 @@ import {
   WeekdayBars,
 } from "@/components/dash/Charts";
 import { InsightRow, WrappedPromo } from "@/components/dash/Cards";
-import { archetypeOf } from "../derive";
-import { loadDashboard, RANGES, rangeOf } from "./data";
-import type { RangeKey } from "./data";
+
+const RANGES: Array<{ key: RangeKey; label: string }> = [
+  { key: "45d", label: "45D" },
+  { key: "ytd", label: "YTD" },
+  { key: "all", label: "ALL" },
+];
 
 export const metadata: Metadata = { title: "Dashboard" };
 export const dynamic = "force-dynamic";
@@ -132,41 +125,22 @@ export default async function DashboardPage({
     );
   }
 
-  const view = await loadDashboard(userId, data, range);
-  const trips = data.derived?.roundTrips ?? [];
-
-  /* Everything the panels below need, computed once. */
-  const move = periodMove(view.curve, investmentFlows(view.flowRows));
-  const sessions = dailyRealised(trips).filter((s) => s.date >= view.from);
-  const session = spread(sessions);
-  const rate = winRate(trips.filter((t) => t.closeDate >= view.from));
-  const ratio = sharpe(view.curve);
-  const week = weekdayPnl(trips);
-  const worst = worstWeekday(week);
-  const holds = holdSplit(
-    data.derived?.holdTime.winnersMean ?? null,
-    data.derived?.holdTime.losersMean ?? null,
-  );
-
-  const peers = isMarketConfigured() ? await peerReturnsYtd().catch(() => []) : [];
-  const field = view.sameWindow ? raceField(view.ytd, peers) : null;
-  const spy = peers.find((peer) => peer.key === "SPY")?.value ?? null;
-
-  const archetype = latest?.components ? archetypeOf(latest.components as never) : null;
+  const { view } = await dashboardFor(userId, range);
+  const { book, performance: perf, window } = view;
 
   return (
     <>
       {syncDialog}
       <AppNav
         active="dash"
-        accounts={data.connection?.accounts.length ?? 0}
+        accounts={view.accounts}
         syncedAt={syncClock(data.connection?.lastSyncAt)}
         user={await shellUser()}
       />
 
       <Page>
         <div data-reveal>
-          <PageHead eyebrow="Total value" title={<TotalValue value={view.totalValue} delta={move.gain} deltaPct={move.pct} />}>
+          <PageHead eyebrow="Total value" title={<TotalValue value={book.value} delta={perf.gain} deltaPct={perf.ret} />}>
             <Chips>
               {RANGES.map((option) => (
                 <Chip key={option.key} href={`/you?range=${option.key}`} active={option.key === range}>
@@ -180,34 +154,38 @@ export default async function DashboardPage({
         <Stats>
           <Stat
             label="Return"
-            value={view.ytd == null ? "—" : signedPct(view.ytd * 100)}
-            tone={view.ytd == null ? undefined : view.ytd >= 0 ? "moss" : "loss"}
-            tail={spy == null ? "Your book, contributions removed." : `vs ${signedPct(spy * 100)} S&P`}
-          />
-          <Stat
-            label="Win rate"
-            value={rate.pct == null ? "—" : `${rate.pct}%`}
+            value={perf.ret == null ? "—" : signedPct(perf.ret * 100)}
+            tone={perf.ret == null ? undefined : perf.ret >= 0 ? "moss" : "loss"}
             tail={
-              rate.pct == null
-                ? `${rate.trades} closed — needs ten to be a rate.`
-                : `${rate.wins} of ${rate.trades} round trips`
+              view.index == null
+                ? "Your book, buys and sells taken out."
+                : `vs ${signedPct(view.index * 100)} S&P`
             }
           />
           <Stat
-            label={`${view.label} P&L`}
-            value={sessions.length ? signedMoney(session.total) : "—"}
-            tone={sessions.length ? (session.total >= 0 ? "moss" : "loss") : undefined}
+            label="Win rate"
+            value={perf.winRate.pct == null ? "—" : `${perf.winRate.pct}%`}
             tail={
-              sessions.length
-                ? `${session.up} up, ${session.down} down`
+              perf.winRate.pct == null
+                ? `${perf.winRate.trades} closed — needs ten to be a rate.`
+                : `${perf.winRate.wins} of ${perf.winRate.trades} round trips`
+            }
+          />
+          <Stat
+            label={`${window.label} P&L`}
+            value={perf.sessions.length ? signedMoney(perf.realised) : "—"}
+            tone={perf.sessions.length ? (perf.realised >= 0 ? "moss" : "loss") : undefined}
+            tail={
+              perf.sessions.length
+                ? `${perf.up} up, ${perf.down} down`
                 : "Nothing has closed in this window."
             }
           />
           <Stat
             label="Sharpe"
-            value={ratio == null ? "—" : ratio.toFixed(2)}
+            value={perf.sharpe == null ? "—" : perf.sharpe.toFixed(2)}
             tail={
-              ratio == null
+              perf.sharpe == null
                 ? "Needs a season of daily marks."
                 : "Annualised on daily marks, no risk-free rate."
             }
@@ -219,41 +197,42 @@ export default async function DashboardPage({
           * without two quotable funds, or without a window the reader's own
           * curve can answer for on the same terms.
           */}
-        {field && field.place != null ? (
+        {view.field && view.field.place != null ? (
           <Row kind="full">
             <Panel>
               <PanelHead
                 eyebrow="The race"
                 title={
-                  field.place === 1
+                  view.field.place === 1
                     ? "You are out in front of the field"
-                    : `You are ${field.place} of ${field.of} this year`
+                    : `You are ${view.field.place} of ${view.field.of} this year`
                 }
               >
                 <PanelNote>Year to date · price return</PanelNote>
               </PanelHead>
-              <Race field={field} />
+              <Race field={view.field} />
+              <p className="dashProv">{fieldLine(view.field.of - 1, view.provenance.asOf ?? "")}</p>
             </Panel>
           </Row>
         ) : null}
 
         <Row kind="wide">
           <Panel>
-            <PanelHead eyebrow={`Daily P&L · ${view.label}`}>
-              <Legend up={session.up} down={session.down} />
+            <PanelHead eyebrow={`Daily P&L · ${window.label}`}>
+              <Legend up={perf.up} down={perf.down} />
             </PanelHead>
             <div className="dashFigureRow">
-              <span className={"num dashFigure"}>{sessions.length ? signedMoney(session.total) : "—"}</span>
-              {view.ytd != null ? (
-                <span className="dashFigurePct" data-tone={view.ytd >= 0 ? "moss" : "loss"}>
-                  {signedPct(view.ytd * 100)}
+              <span className={"num dashFigure"}>{perf.sessions.length ? signedMoney(perf.realised) : "—"}</span>
+              {perf.ret != null ? (
+                <span className="dashFigurePct" data-tone={perf.ret >= 0 ? "moss" : "loss"}>
+                  {signedPct(perf.ret * 100)}
                 </span>
               ) : null}
             </div>
-            {sessions.length ? (
+            {perf.sessions.length ? (
               <>
-                <PnlColumns sessions={sessions} peak={session.peak} />
-                <ChartAxis labels={view.axis} />
+                <PnlColumns sessions={perf.sessions} peak={perf.peak} />
+                <ChartAxis labels={perf.axis} />
               </>
             ) : (
               <p className="dashEmpty">
@@ -266,11 +245,7 @@ export default async function DashboardPage({
           <Panel>
             <PanelHead eyebrow="Allocation" />
             <AllocationDonut
-              slices={view.holdings.map((h) => ({
-                key: h.symbol,
-                label: h.symbol,
-                value: h.value ?? 0,
-              }))}
+              slices={view.allocation}
             />
             {view.concentration ? <p className="dashSentence">{view.concentration}</p> : null}
           </Panel>
@@ -279,49 +254,40 @@ export default async function DashboardPage({
         <Row kind="thirds">
           <Panel span>
             <PanelHead eyebrow="Insights this week">
-              {view.findings.length ? (
-                <span className="dashNew">{view.findings.length} on file</span>
+              {view.patterns.length ? (
+                <span className="dashNew">{view.patterns.length} on file</span>
               ) : null}
             </PanelHead>
 
-            {view.findings.length || worst || holds.ratio ? (
+            {/*
+              * One list, three kinds. The view shapes each pattern — including
+              * the data its thumbnail draws — so this loop never branches on
+              * where a pattern came from.
+              */}
+            {view.patterns.length ? (
               <div className="dashInsights">
-                {worst ? (
+                {view.patterns.slice(0, 3).map((pattern, i) => (
                   <InsightRow
-                    delay={50}
-                    thumb={<WeekdayBars cells={week} worst={worst.day} />}
-                    title={`${worst.day}days are your worst day`}
-                    body={`${worst.day} closes have booked ${signedMoney(worst.amount)} across ${worst.trades} round ${worst.trades === 1 ? "trip" : "trips"}.`}
-                    range={view.label}
-                  />
-                ) : null}
-
-                {holds.ratio && holds.winners != null && holds.losers != null ? (
-                  <InsightRow
-                    delay={130}
-                    thumb={<HoldMeters winners={holds.winners} losers={holds.losers} compact />}
-                    title={
-                      holds.direction === "cuts-winners"
-                        ? `You cut winners ${holds.ratio.toFixed(1)}× faster`
-                        : `You hold winners ${holds.ratio.toFixed(1)}× longer`
-                    }
-                    body={`Winners stay in the book ${Math.round(holds.winners)} days on average, losers ${Math.round(holds.losers)}.`}
-                    range="All"
-                  />
-                ) : null}
-
-                {view.findings.slice(0, 2).map((finding, i) => (
-                  <InsightRow
-                    key={finding.key}
-                    delay={210 + i * 80}
+                    key={pattern.key}
+                    delay={50 + i * 80}
                     thumb={
-                      <span className="dashImpact" data-tone={finding.impact == null ? undefined : finding.impact >= 0 ? "moss" : "loss"}>
-                        {finding.impact != null ? signedMoney(finding.impact) : "—"}
-                      </span>
+                      pattern.chart.type === "weekday" ? (
+                        <WeekdayBars cells={pattern.chart.cells} worst={pattern.chart.worst} />
+                      ) : pattern.chart.type === "holds" ? (
+                        <HoldMeters
+                          winners={pattern.chart.winners}
+                          losers={pattern.chart.losers}
+                          compact
+                        />
+                      ) : (
+                        <span className="dashImpact" data-tone={pattern.tone}>
+                          {pattern.impact != null ? signedMoney(pattern.impact) : "—"}
+                        </span>
+                      )
                     }
-                    title={finding.sentence}
-                    body={finding.evidence}
-                    range="All"
+                    title={pattern.title}
+                    body={pattern.body}
+                    range={pattern.range}
                   />
                 ))}
               </div>
@@ -334,18 +300,15 @@ export default async function DashboardPage({
           </Panel>
 
           <WrappedPromo
-            year={String(view.year)}
-            headline={view.ytd == null ? "—" : signedPct(view.ytd * 100)}
+            year={String(view.wrapped.year)}
+            headline={perf.ret == null ? "—" : signedPct(perf.ret * 100)}
             sub={
-              archetype
-                ? `${archetype.name} · ${rate.trades} round ${rate.trades === 1 ? "trip" : "trips"}`
-                : `${rate.trades} round ${rate.trades === 1 ? "trip" : "trips"} this year`
+              view.wrapped.archetype
+                ? `${view.wrapped.archetype} · ${view.wrapped.earned} of ${view.wrapped.total} cards`
+                : `${view.wrapped.earned} of ${view.wrapped.total} cards earned`
             }
-            pills={[
-              ...(archetype ? [archetype.name] : []),
-              ...(holds.losers != null ? [`${Math.round(holds.losers)}-day hold`] : []),
-            ]}
-            ready={view.earned > 0}
+            pills={view.wrapped.archetype ? [view.wrapped.archetype] : []}
+            ready={view.wrapped.earned > 0}
           />
         </Row>
       </Page>

@@ -1,4 +1,4 @@
-import type { Session } from "@/lib/dash";
+import type { Session } from "@/lib/portfolio/types";
 import styles from "./charts.module.css";
 
 /**

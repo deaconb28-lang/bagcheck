@@ -20,22 +20,42 @@ const txn = (over: Partial<TxnLite> = {}): TxnLite => ({
   ...over,
 });
 
-test("only sells and dividends are results — a buy is not one", () => {
-  const out = dailyPnlFrom([
-    txn({ type: "BUY", amount: -1000 }),
-    txn({ type: "SELL", amount: 400 }),
-    txn({ type: "DIVIDEND", amount: 20 }),
-    txn({ type: "CONTRIBUTION", amount: 5000 }),
-  ]);
-  assert.deepEqual(out, [{ date: "2026-08-01", realised: 420 }]);
+test("a sale is proceeds, not a result — only the matched gain counts", () => {
+  /*
+   * The sell fetched $400 and the round trip it closed made $60. The old
+   * arithmetic reported the $400, which is the size of the position rather
+   * than anything the reader earned.
+   */
+  const out = dailyPnlFrom(
+    [
+      txn({ type: "BUY", amount: -1000 }),
+      txn({ type: "SELL", amount: 400 }),
+      txn({ type: "DIVIDEND", amount: 20 }),
+      txn({ type: "CONTRIBUTION", amount: 5000 }),
+    ],
+    [{ symbol: "NVDA", openDate: "2026-07-01", closeDate: "2026-08-01", holdDays: 31, pnl: 60, notional: 340 }],
+  );
+  assert.deepEqual(out, [{ date: "2026-08-01", realised: 80 }]);
+});
+
+test("with no round trips a session holds only its dividends", () => {
+  const out = dailyPnlFrom([txn({ type: "SELL", amount: 400 }), txn({ type: "DIVIDEND", amount: 20 })]);
+  assert.deepEqual(out, [{ date: "2026-08-01", realised: 20 }]);
 });
 
 test("realised P&L is summed per session and sorted forward", () => {
-  const out = dailyPnlFrom([
-    txn({ type: "SELL", date: "2026-08-03", amount: 100 }),
-    txn({ type: "SELL", date: "2026-08-01", amount: -50 }),
-    txn({ type: "SELL", date: "2026-08-01", amount: 30 }),
-  ]);
+  const trip = (closeDate: string, pnl: number) => ({
+    symbol: "NVDA",
+    openDate: "2026-07-01",
+    closeDate,
+    holdDays: 30,
+    pnl,
+    notional: 1000,
+  });
+  const out = dailyPnlFrom(
+    [],
+    [trip("2026-08-03", 100), trip("2026-08-01", -50), trip("2026-08-01", 30)],
+  );
   assert.deepEqual(out, [
     { date: "2026-08-01", realised: -20 },
     { date: "2026-08-03", realised: 100 },
