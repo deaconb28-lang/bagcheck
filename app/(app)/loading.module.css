@@ -45,6 +45,54 @@
   height: 11px;
 }
 
+/*
+ * The dashboard's measure and rhythm, so the arrival does not move what this
+ * promised. Both arrive as custom properties, and the gap especially: a plain
+ * `gap` here is a single-class selector tying with `.grid`'s single-class
+ * selector in another module, and the winner is whichever stylesheet the
+ * bundler emitted last — which is not a decision anyone made. This file's
+ * import happens to come first, so the tie was losing: the skeleton stacked at
+ * 34px, and at 28px on a phone the negative margin on the top row put the door
+ * bar through the first plate.
+ */
+.wide {
+  --measure: 1240px;
+  --gap-block: 64px;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: calc(var(--gap-block, 64px) * -0.5);
+}
+
+.stamp {
+  width: 240px;
+  height: 11px;
+}
+
+.door {
+  width: 210px;
+  height: 44px;
+  border-radius: 14px;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1.32fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+
+@media (max-width: 1080px) {
+  .pair {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+}
+
 .plate {
   height: 240px;
   border-radius: 32px;

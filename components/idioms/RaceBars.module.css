@@ -1,0 +1,210 @@
+/*
+ * The field. One zero line down the whole chart, a lane per row, and nothing
+ * else — no axis labels, no grid, no ticks. Every figure is stated in type at
+ * the end of its own lane, so the bars carry the shape and never a reading.
+ *
+ * There is no track fill behind a bar. A track implies a maximum and there
+ * isn't one; the line is the only chrome, which is the same discipline the
+ * zero-bar chart keeps.
+ */
+.race {
+  position: relative;
+  width: 100%;
+  margin-top: 40px;
+  border-top: 1px solid var(--line-light);
+  padding-top: 8px;
+}
+
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 17ch) minmax(0, 1fr) 8ch;
+  align-items: center;
+  gap: 20px;
+  padding: 15px 0;
+}
+
+/*
+ * One hairline, between the reader and the field. Structure, not a box — the
+ * same divider idiom the figure row and the holdings table already use.
+ */
+.row[data-you] {
+  border-bottom: 1px solid var(--line-light);
+  padding-bottom: 20px;
+  margin-bottom: 5px;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.name {
+  font-family: var(--font-mono), monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+/* The reader is the subject of the screen, so their row is the darkest ink. */
+.row[data-you] .name {
+  font-family: var(--font-voice), system-ui, sans-serif;
+  font-size: 15.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--ink);
+}
+
+.note {
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--meta);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * The lane. The zero line is redrawn per row rather than as one absolute rule,
+ * because it has to sit inside the track column at every width and the rows
+ * carry their own padding — the effect is one continuous rule and the stacking
+ * is not a fight.
+ */
+.track {
+  position: relative;
+  height: 14px;
+  min-width: 0;
+}
+
+.track::before {
+  content: "";
+  position: absolute;
+  top: -15px;
+  bottom: -15px;
+  /*
+   * Held inside the lane. At 100% — a field where everything is down — a bare
+   * `left: 100%` puts the rule one pixel into the column gap beside it.
+   */
+  left: min(var(--zero, 0%), calc(100% - 1px));
+  width: 1px;
+  background: var(--axis);
+}
+
+.bar {
+  position: absolute;
+  top: 2px;
+  height: 10px;
+  /* Comparison is exposure, and exposure is the one hue it may take. */
+  background: var(--signal);
+  animation: run 0.8s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+/*
+ * Square on the zero side, rounded away from it. A pill cap on a ten-pixel bar
+ * overhangs the line by five pixels, which inflates every near-zero row —
+ * a drawn number disagreeing with the printed one.
+ */
+.row[data-dir="up"] .bar {
+  left: var(--zero, 0%);
+  transform-origin: left center;
+  border-radius: 0 3px 3px 0;
+}
+
+.row[data-dir="down"] .bar {
+  right: calc(100% - var(--zero, 0%));
+  transform-origin: right center;
+  border-radius: 3px 0 0 3px;
+}
+
+/* The reader's own return is money, so it takes money's colour. */
+.row[data-you][data-dir="up"] .bar {
+  background: var(--moss);
+}
+
+.row[data-you][data-dir="down"] .bar {
+  background: var(--loss);
+}
+
+/*
+ * A fund's return is not the reader's money, so it never takes money's colour.
+ * Hue reaches exactly one figure in this chart and it is theirs.
+ */
+.figure {
+  font-size: 14.5px;
+  text-align: right;
+  color: var(--ink2);
+  white-space: nowrap;
+}
+
+.row[data-you] .figure {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.row[data-you][data-dir="up"] .figure {
+  color: var(--moss);
+}
+
+.row[data-you][data-dir="down"] .figure {
+  color: var(--loss);
+}
+
+@keyframes run {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    animation: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr) 7ch;
+    gap: 8px 14px;
+    padding: 14px 0;
+  }
+
+  .label {
+    grid-column: 1;
+  }
+
+  .figure {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+  }
+
+  /* Stacked, the lane is a full-width row under the name it belongs to. */
+  .track {
+    grid-column: 1 / -1;
+    height: 12px;
+  }
+
+  .track::before {
+    top: -5px;
+    bottom: -5px;
+  }
+
+  .bar {
+    top: 1px;
+  }
+
+  .note {
+    white-space: normal;
+  }
+}

@@ -69,8 +69,14 @@ const SECTIONS = [
    * thousand pixels down — the consistency grid had never been looked at.
    */
   { key: "you-money", path: "/you", selector: "#money" },
+  { key: "you-exposure", path: "/you", selector: "#exposure" },
+  { key: "you-standing", path: "/you", selector: "#standing" },
+  { key: "you-race", path: "/you", selector: "#race" },
+  { key: "you-holdings", path: "/you", selector: "#holdings" },
   { key: "you-read", path: "/you", selector: "#read" },
+  { key: "you-patterns", path: "/you", selector: "#patterns" },
   { key: "you-consistency", path: "/you", selector: "#consistency" },
+  { key: "you-identity", path: "/you", selector: "#identity" },
   { key: "you-cards", path: "/you", selector: "#cards" },
 ];
 
@@ -199,6 +205,16 @@ function serve(uri, userId) {
         APP_URL: BASE,
         MONGODB_URI: uri,
         MONGODB_DB: "bagcheck",
+        /*
+         * The market layer is on, and it never leaves the machine: the seed
+         * primes `marketCache` with an unexpired entry for everything the
+         * screens ask for, so `cached()` answers from Mongo and `finnhub()` is
+         * never reached. Without a key the comparison field is absent by
+         * design — which meant the one block on the dashboard that talks to a
+         * provider could never be shot, and a block that cannot be shot is a
+         * block nobody has looked at.
+         */
+        FINNHUB_API_KEY: "seeded-cache-only",
         DEV_USER_ID: userId,
         /* The DEV_USER_ID bypass only wakes up when all three are absent. */
         AUTH_SECRET: "",

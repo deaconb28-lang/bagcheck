@@ -19,15 +19,101 @@
 .wide {
   /* Read by `screen.module.css .grid`; see the note on `--measure` there. */
   --measure: 1240px;
+  /*
+   * The rhythm arrives as a property for exactly the reason the measure does.
+   * A plain `gap` here is a single-class selector tying with `.grid`'s in
+   * another module, and the tie is broken by emission order rather than by
+   * anyone's decision — this file wins that today and would stop winning the
+   * day someone reorders two imports.
+   */
+  --gap-block: 96px;
   display: flex;
   flex-direction: column;
-  gap: 96px;
+  gap: var(--gap-block);
 }
 
 .block {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  min-width: 0;
+}
+
+/*
+ * ── The door, above everything ──
+ *
+ * Wrapped used to be reachable from one block two thirds of the way down the
+ * page. It is the most shareable surface in the product and the thing the
+ * landing actually sells, so there is a door before the reader has scrolled
+ * anywhere. A row, not a block: it carries no idea of its own, so it does not
+ * get 96px of air around it.
+ */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  width: 100%;
+  /*
+   * Half the block rhythm, whatever the block rhythm currently is. A literal
+   * -48px was correct against 96 and wrong the moment the phone dropped the
+   * gap to 64 — the row would have sat twice as far from the block it belongs
+   * above as it does on the desktop.
+   */
+  margin-bottom: calc(var(--gap-block, 96px) * -0.5);
+}
+
+.asOf {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+/* The strongest object in the view, spent on exactly one thing per screen. */
+.toWrapped {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 14px;
+  background: var(--ink-field);
+  color: var(--on-ink);
+  font-size: 14.5px;
+  font-weight: 600;
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+
+.toWrapped:hover {
+  background: var(--ink-field-hover);
+  transform: translateY(-1px);
+}
+
+/*
+ * ── Two blocks that sit next to each other ──
+ *
+ * Not one block with two idioms in it: each half keeps its own eyebrow,
+ * figure, sentence and single idiom, and this only decides that they share a
+ * row. The P&L takes the wider column because a month of columns needs the
+ * width and a ring does not.
+ */
+.pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1.32fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+  width: 100%;
+}
+
+@media (max-width: 1080px) {
+  .pair {
+    grid-template-columns: minmax(0, 1fr);
+    /* 64px stacked rather than 96, so the pair still reads as a pair. */
+    gap: 64px;
+  }
 }
 
 /* ── The section head: eyebrow → heading → lede ── */
@@ -448,7 +534,7 @@
 
 @media (max-width: 860px) {
   .wide {
-    gap: 64px;
+    --gap-block: 64px;
   }
 
 /* Stacked, the divider is between rows rather than a stray vertical rule. */
@@ -546,6 +632,30 @@
 
 .h2[data-tone="loss"] {
   color: var(--loss);
+}
+
+/*
+ * A paired block runs at roughly half the measure, so its figure comes down
+ * with it — 52px in a 480px column is a headline looking for a page.
+ */
+.pair .h2 {
+  font-size: clamp(30px, 2.7vw, 42px);
+}
+
+/*
+ * Where the reader landed in the field. Neutral furniture, like the score's
+ * weekly delta beside it: a placing is a fact about a set of numbers, so it
+ * takes an outline and the body ink rather than a hue or a fill.
+ */
+.place {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line2);
+  color: var(--ink3);
 }
 
 /* A score is not money, so its delta is a direction rather than a verdict. */

@@ -1,5 +1,26 @@
 # Handoff — redesign `/you`
 
+> **Done.** This brief has been built; the paragraphs in `CLAUDE.md` about
+> `/you`, the field, the weight ramp and `lib/returns.ts` are the current
+> description of the screen and take precedence over anything below. Kept as
+> the record of what was asked for and why.
+>
+> **§5, the one open question, resolved as option 2.** There is still no
+> hedge-fund index and no key for one, so nothing is labelled "hedge funds" in
+> the aggregate. The field is five real funds quoted by ticker through the
+> provider already in the repo — `DBMF`, `QAI`, `MNA`, `BTAL` and `SPY` — four
+> of which exist to replicate hedge-fund strategies. Every figure is checkable
+> and nothing is invented; a fund the provider will not quote is dropped rather
+> than drawn at zero.
+>
+> One thing found while building it that is **not fixed and is not mine**:
+> `dailyPnlFrom` in `lib/db/derived.ts` sums each sell's *cash amount*, so
+> `derived.dailyPnl[].realised` is gross proceeds rather than realised P&L.
+> Everything reading that series — the dashboard's headline P&L chart and
+> Wrapped — overstates. The new "Realised in {year}" figure sidesteps it by
+> summing `derived.roundTrips[].pnl` instead. Fixing the series itself means
+> changing what Wrapped's cards say and bumping `DERIVED_VERSION`.
+
 **Branch:** `claude/bagcheck-build-instructions-b97o06` (the repo's only branch; both
 deployments build from it)
 **Head at handoff:** `3c88615`

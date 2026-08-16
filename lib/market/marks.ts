@@ -94,3 +94,22 @@ export function provenanceLine(marks: ResolvedMark[], lastSync: string | null): 
   }
   return `${synced} · every mark is from that sync`;
 }
+
+/**
+ * The same job for the comparison field: where those returns came from, what
+ * kind of return they are, and how the reader's own figure was arrived at.
+ *
+ * It ends by saying the chart is shown for scale rather than as a rating,
+ * because that is the read-only stance and it belongs in the mono strip beside
+ * the numbers rather than in a note somewhere else. Descriptive throughout —
+ * it never suggests doing anything about what it reports.
+ */
+export function fieldProvenance(funds: number, asOf: string | null): string {
+  const when = asOf ? ` as of ${asOf}` : "";
+  return [
+    `${funds} ${funds === 1 ? "fund" : "funds"} from market data${when}`,
+    "price return year to date",
+    "your own figure is off your fills, with buys and sells taken out",
+    "shown for scale, not rated",
+  ].join(" · ");
+}

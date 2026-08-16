@@ -230,6 +230,47 @@ export async function seed({ quiet = false } = {}) {
     })),
   );
 
+  /*
+   * The market cache, primed.
+   *
+   * Not a mock and not a stub: this is the collection `cached()` genuinely
+   * reads, holding unexpired entries in the provider's own response shape, so
+   * the app runs its real market path end to end and never opens a socket.
+   * Without it `isMarketConfigured()` is false in the harness, the comparison
+   * field is absent by design, and the one block that talks to a provider goes
+   * out having never been looked at.
+   *
+   * The figures are a fixture, like every other number this file writes — one
+   * fund down, so the chart is shot with a bar on each side of its zero line.
+   */
+  const YTD = { DBMF: 6.4, QAI: 4.1, MNA: 3.2, BTAL: -5.8, SPY: 11.7 };
+  const entry = (key, value) => ({
+    key,
+    value,
+    fetchedAt: today,
+    expiresAt: new Date(today.getTime() + 86_400_000),
+  });
+  await db.collection("marketCache").insertMany([
+    ...Object.entries(YTD).map(([symbol, value]) =>
+      entry(`metric:${symbol}:price`, { metric: { yearToDatePriceReturnDaily: value } }),
+    ),
+    /*
+     * The held names too, or refreshing the holdings reaches for a socket on
+     * every shot and the run fills with rejected-token noise while it waits
+     * out an eight-second timeout per name. The quote agrees with the seed's
+     * own last mark, so nothing on screen moves because of it.
+     */
+    ...BOOK.flatMap((inst) => {
+      const series = price.get(inst.symbol);
+      const last = series[series.length - 1];
+      const prev = series[series.length - 2];
+      return [
+        entry(`quote:${inst.symbol}`, { c: last.price, pc: prev.price }),
+        entry(`profile:${inst.symbol}`, { name: inst.name }),
+      ];
+    }),
+  ]);
+
   await client.close();
 
   /*

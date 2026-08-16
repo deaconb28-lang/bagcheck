@@ -141,6 +141,36 @@
   --h3: #b79ceb;
   --h4: #6d3fd4;
 
+  /*
+   * ── The weight ramp: how much, never whether ──
+   *
+   * A pie needs a colour per slice, which is the one thing five-hues-with-one-
+   * meaning-each cannot supply. So the allocation ring does not take a colour
+   * per slice: it takes steps down a single hue, and the hue is `--signal`,
+   * because a share of the book is exposure and exposure is what that family
+   * is for. Rank sets the step, so the ring's order is the book's order and
+   * the largest name is the only one at full strength.
+   *
+   * A ramp is a palette, which is why it is stated here and not mixed inside a
+   * component — and why it is stated twice. It is deliberately *not* built on
+   * `--ink-fill-active`, the obvious neighbour: that is a chrome token (it
+   * paints the rail's active tab), and tying a data encoding to chrome means
+   * retuning a hover silently redraws a chart.
+   */
+  --w1: color-mix(in srgb, var(--signal) 100%, transparent);
+  --w2: color-mix(in srgb, var(--signal) 78%, transparent);
+  --w3: color-mix(in srgb, var(--signal) 59%, transparent);
+  --w4: color-mix(in srgb, var(--signal) 43%, transparent);
+  --w5: color-mix(in srgb, var(--signal) 30%, transparent);
+  --w-rest: color-mix(in srgb, var(--signal) 16%, transparent);
+
+  /*
+   * The line a bar is measured from is load-bearing, not a divider. `--line2`
+   * is a control outline at 14% and does not clear 3:1 as a graphical object,
+   * which is fine for the edge of a button and wrong for an axis.
+   */
+  --axis: rgba(14, 14, 18, 0.3);
+
   --lift: 0 1px 2px rgba(14, 14, 18, 0.05), 0 1px 1px rgba(14, 14, 18, 0.03);
   --lift-hero: 0 1px 2px rgba(14, 14, 18, 0.05), 0 18px 46px -30px rgba(14, 14, 18, 0.22);
   --scrim: rgba(14, 14, 18, 0.42);
@@ -341,6 +371,20 @@ html[data-mode="dark"] {
   --h2: #2f2563;
   --h3: #5443a4;
   --h4: #a78bfa;
+
+  /*
+   * The ramp again, retuned. Dark-mode `--signal` is a pale steel, so the same
+   * percentages that separate cleanly on white collapse into the ground here —
+   * the floor comes up and the steps between the quiet end widen.
+   */
+  --w1: color-mix(in srgb, var(--signal) 96%, transparent);
+  --w2: color-mix(in srgb, var(--signal) 76%, transparent);
+  --w3: color-mix(in srgb, var(--signal) 58%, transparent);
+  --w4: color-mix(in srgb, var(--signal) 44%, transparent);
+  --w5: color-mix(in srgb, var(--signal) 33%, transparent);
+  --w-rest: color-mix(in srgb, var(--signal) 22%, transparent);
+
+  --axis: rgba(255, 255, 255, 0.34);
 
   --lift: 0 1px 2px rgba(0, 0, 0, 0.5);
   --lift-hero: 0 1px 2px rgba(0, 0, 0, 0.5), 0 24px 60px -34px rgba(0, 0, 0, 0.85);

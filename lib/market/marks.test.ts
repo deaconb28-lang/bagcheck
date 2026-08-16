@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { isStale, provenanceLine, resolveMark, resolveMarks } from "./marks";
+import { fieldProvenance, isStale, provenanceLine, resolveMark, resolveMarks } from "./marks";
 import type { Quote, StoredMark } from "./marks";
 
 const TODAY = "2026-08-08";
@@ -122,4 +122,20 @@ test("provenance never suggests doing anything", () => {
     assert.ok(!/!/.test(line), line);
     assert.ok(!/\b(should|consider|now|hurry|act)\b/i.test(line), line);
   }
+});
+
+test("the field says where its returns came from and what kind they are", () => {
+  assert.equal(
+    fieldProvenance(5, "2026-08-15"),
+    "5 funds from market data as of 2026-08-15 · price return year to date · " +
+      "your own figure is off your fills, with buys and sells taken out · shown for scale, not rated",
+  );
+  /* One fund is a fund, and an unknown date is simply not stated. */
+  assert.ok(fieldProvenance(1, null).startsWith("1 fund from market data · "));
+});
+
+test("the field's provenance never suggests doing anything", () => {
+  const line = fieldProvenance(5, "2026-08-15");
+  assert.ok(!/!/.test(line), line);
+  assert.ok(!/\b(should|consider|beat|win|target|goal|hurry|act)\b/i.test(line), line);
 });
