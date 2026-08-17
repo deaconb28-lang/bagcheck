@@ -99,20 +99,38 @@ export default async function WrappedPage({
     return (
       <>
         <Bar label={String(year)} userId={userId} />
-        <main className={styles.empty}>
-          <h1 className={styles.emptyTitle}>Nothing has been earned yet</h1>
-          <p className={styles.emptyBody}>
-            A card needs behaviour the ledger can prove, so a short history
-            stays quiet rather than inventing one. Sync more of it, or read the
-            sample year to see what turns up.
-          </p>
-          <div className={styles.emptyActions}>
-            <Link className={styles.primary} href="/start">
-              Connect another account
-            </Link>
-            <Link className={styles.secondary} href="/wrapped?demo=1">
-              See a sample year
-            </Link>
+        {/*
+          * A year that has minted nothing is still a year in progress, and it
+          * gets the same screen as one that has minted eleven — the deck is
+          * empty, and every frame is listed under it with the one condition
+          * that mints it.
+          *
+          * It used to be a dead end: a heading saying nothing had been earned,
+          * two buttons, and no sight of what the twelve cards even are. That is
+          * the worst screen to hand someone who has just connected an account,
+          * because it reads as the product having nothing to offer them rather
+          * than as a year that has not happened yet. Nothing here invents a
+          * figure — `StillToCome` rows carry a drawn teaser, a name and a
+          * requirement, and never a number.
+          */}
+        <main className={styles.main}>
+          <div className={styles.page}>
+            <h1 className={styles.emptyTitle}>Your year is still filling in</h1>
+            <p className={styles.emptyBody}>
+              A card needs behaviour the ledger can prove, so a short history
+              stays quiet rather than inventing one. Here is the whole set and
+              what mints each — they arrive as your history does.
+            </p>
+            <div className={styles.emptyActions}>
+              <Link className={styles.primary} href="/start">
+                Connect another account
+              </Link>
+              <Link className={styles.secondary} href="/wrapped?demo=1">
+                See a sample year
+              </Link>
+            </div>
+
+            <StillToCome earned={[]} />
           </div>
         </main>
       </>

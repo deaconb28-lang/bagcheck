@@ -92,7 +92,25 @@ async function displayName(userId: string): Promise<string | null> {
     const { users } = (await getCollections()) as unknown as {
       users?: { findOne: (q: unknown) => Promise<{ name?: string } | null> };
     };
-    const doc = await users?.findOne({ _id: userId });
+    /*
+     * By ObjectId, not by the string.
+     *
+     * The Auth.js adapter keys its own collections by the user's ObjectId —
+     * `lib/db/account.ts` says so, and converts, for exactly this reason. This
+     * looked the name up with the plain string, which matches nothing, so
+     * `USER_NAME` was null for every account that has ever existed. The cover
+     * is the one card every connected reader should own and it requires that
+     * token, so it never earned — which is most of why a real account arrives
+     * at "Nothing has been earned yet".
+     */
+    const { ObjectId } = await import("mongodb");
+    let oid: InstanceType<typeof ObjectId> | null = null;
+    try {
+      oid = new ObjectId(userId);
+    } catch {
+      oid = null;
+    }
+    const doc = oid ? await users?.findOne({ _id: oid }) : null;
     return doc?.name?.split(/\s+/)[0] ?? null;
   } catch {
     return null;

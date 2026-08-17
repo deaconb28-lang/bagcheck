@@ -130,7 +130,19 @@ export async function dashboardFor(userId: string, range: RangeKey, preloaded?: 
       range,
       today,
       peers,
-      wrapped: { earned: deck?.cards.length ?? 0, total: (CARDS as unknown[]).length },
+      /*
+       * The reader's own cards, never the sample's.
+       *
+       * `wrappedDeck` falls back to the example deck when nothing has been
+       * earned, and this counted whatever came back — so an account with zero
+       * cards read "11 of 12 cards · READY" on the promo, and the door it
+       * opened said "Nothing has been earned yet". The flag beside the cards
+       * is the whole point of the flag.
+       */
+      wrapped: {
+        earned: deck && !deck.example ? deck.cards.length : 0,
+        total: (CARDS as unknown[]).length,
+      },
     }),
   };
 }
