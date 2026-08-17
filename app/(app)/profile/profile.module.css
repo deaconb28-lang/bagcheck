@@ -229,3 +229,92 @@
 .switchWord {
   min-width: 22px;
 }
+
+/* Public ledger — claim a handle, then decide whether it answers. */
+
+.handleForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.handleLabel {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.handleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.handleAt {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 16px;
+  color: var(--meta);
+}
+
+.handleInput {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--line2);
+  border-radius: 12px;
+  background: var(--inset);
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.handleInput:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+
+/* Never colour alone: the message below says what is wrong, in words. */
+.handleInput[aria-invalid] {
+  border-color: var(--loss-line);
+}
+
+.handleButton {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--ink-field);
+  color: var(--bg);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.16s ease;
+}
+
+.handleButton:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.handleProblem {
+  margin: 0;
+  font-size: 13px;
+  color: var(--loss);
+}
+
+.handleLink {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.handleLink:hover {
+  text-decoration: underline;
+}

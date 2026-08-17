@@ -29,6 +29,7 @@ import { trialLine } from "@/lib/tiers";
 import { isEmailConfigured } from "@/lib/email/send";
 import { BaselinePicker } from "./BaselinePicker";
 import { EmailPrefs } from "./EmailPrefs";
+import { PublicLedger } from "./PublicLedger";
 import styles from "./profile.module.css";
 
 export const metadata: Metadata = { title: "Profile" };
@@ -208,6 +209,30 @@ export default async function ProfilePage() {
           )}
         </div>
       </Card>
+
+      {/*
+        * Wrapped in a section because `Card` renders a plain div and takes no
+        * `id`, and the nav's "Public" tab links to `/profile#ledger`. The bare
+        * `<section id>` is the convention the marketing pages already use.
+        */}
+      <section id="ledger">
+        <Card>
+          <div className={styles.block}>
+            <Eyebrow>Public ledger</Eyebrow>
+            <h2 className={`disp ${styles.h2}`}>Your ledger, at an address</h2>
+            <p className={styles.body}>
+              A card is shared by its link and nothing else. A handle is
+              different — it is short, it is yours, and anyone can type it. So
+              it takes two deliberate steps, and what it shows is weights and
+              returns: never a balance, never a trade, never a date.
+            </p>
+            <PublicLedger
+              handle={emailPrefs?.handle ?? null}
+              published={Boolean(emailPrefs?.publicLedger)}
+            />
+          </div>
+        </Card>
+      </section>
 
       <Card>
         <div className={styles.block}>

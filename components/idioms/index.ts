@@ -9,6 +9,5 @@ export { EquityCurve } from "./EquityCurve";
 export type { CurvePoint } from "./EquityCurve";
 export { HeatGrid } from "./HeatGrid";
 export type { HeatDay } from "./HeatGrid";
-export { RaceBars } from "./RaceBars";
 export { ScoreRing } from "./ScoreRing";
 export { ZeroBarChart } from "./ZeroBarChart";

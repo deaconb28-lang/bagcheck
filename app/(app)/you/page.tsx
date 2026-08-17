@@ -27,7 +27,7 @@ import {
   signedMoney,
   signedPct,
 } from "@/components/dash/Chrome";
-import { Race } from "@/components/dash/Race";
+import { RaceBars } from "@/components/dash/RaceBars";
 import {
   AllocationDonut,
   ChartAxis,
@@ -299,7 +299,7 @@ export default async function DashboardPage({
               >
                 <PanelNote>Year to date · price return</PanelNote>
               </PanelHead>
-              <Race field={view.field} />
+              <RaceBars field={view.field} />
               <p className="dashProv">{fieldLine(view.field.of - 1, view.provenance.asOf ?? "")}</p>
             </Panel>
           </Row>
