@@ -10,6 +10,7 @@ import {
 import { syncIsDue } from "@/lib/db/due";
 import { warmUser } from "@/lib/db/warm";
 import { credentialCheck, syncUser } from "@/lib/snaptrade";
+import { marketCheck } from "@/lib/market";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -115,6 +116,15 @@ export async function GET(req: NextRequest) {
    */
   const credentials = failed ? await credentialCheck() : null;
 
+  /*
+   * And whether the market provider is answering. Asked every run rather than
+   * only on failure, because this layer has no failure to detect: every call
+   * into it is caught by design, so a rejected key looks exactly like a block
+   * that was never meant to draw. Both calls are cached six hours and keyed by
+   * symbol rather than by reader, so asking costs four provider calls a day.
+   */
+  const market = await marketCheck();
+
   return NextResponse.json({
     ...result,
     synced,
@@ -123,6 +133,7 @@ export async function GET(req: NextRequest) {
     insights,
     decks,
     connected: await connectedCount(),
+    market,
     ...(credentials ? { credentials } : {}),
   });
 }

@@ -12,4 +12,6 @@ export { nameRows, refreshHoldings, repriceRows } from "./holdings";
 export type { RefreshedHoldings } from "./holdings";
 export { BENCHMARK, indexReturnYtd } from "./benchmark";
 export { PEERS, peerReturnsYtd } from "./peers";
+export { marketCheck } from "./check";
+export type { MarketCheck } from "./check";
 export type { Peer } from "./peers";
