@@ -322,18 +322,59 @@ const signed = (value: number) =>
  * fetched here, because this file does no I/O — which is what makes every
  * figure on the screen assertable without a database or a network.
  */
+
+/**
+ * The book by industry.
+ *
+ * Only what the provider could actually name. A holding with no sector is left
+ * out of the total rather than swept into an "Other" bucket — "Other 38%" is a
+ * statement about our data coverage wearing the costume of a statement about
+ * the reader's portfolio. `cover` says how much of the book the shares below
+ * add up to, so the screen can state its own completeness instead of implying
+ * it is total.
+ */
+export function sectorsFrom(
+  holdings: Facts["holdings"],
+  sectors: Map<string, string | null>,
+): { sectors: DashboardView["sectors"]; sectorsCover: number } {
+  const byName = new Map<string, number>();
+  let known = 0;
+  let all = 0;
+
+  for (const holding of holdings) {
+    const value = holding.value ?? 0;
+    all += value;
+    const name = sectors.get(holding.symbol);
+    if (!name || value <= 0) continue;
+    known += value;
+    byName.set(name, (byName.get(name) ?? 0) + value);
+  }
+
+  if (known <= 0) return { sectors: [], sectorsCover: 0 };
+
+  return {
+    sectors: [...byName.entries()]
+      .map(([name, value]) => ({ name, value, share: value / known }))
+      .sort((a, b) => b.value - a.value),
+    sectorsCover: all > 0 ? known / all : 0,
+  };
+}
+
 export function dashboardView({
   facts,
   range,
   today,
   peers,
   wrapped,
+  sectors = new Map(),
 }: {
   facts: Facts;
   range: RangeKey;
   today: string;
   peers: RaceEntry[];
   wrapped: { earned: number; total: number };
+  /** Symbol to industry, from the market layer. Empty without a key. */
+  sectors?: Map<string, string | null>;
 }): DashboardView {
   const window = windowFor(range, today, facts.curve[0]?.date ?? null);
   const book = bookFrom(facts.holdings);
@@ -390,6 +431,7 @@ export function dashboardView({
         pnlPct: holding.pnlPct,
       })),
     concentration,
+    ...sectorsFrom(facts.holdings, sectors),
     patterns: patternsFrom(facts, window),
     wrapped: { year, earned: wrapped.earned, total: wrapped.total, archetype },
     provenance: {

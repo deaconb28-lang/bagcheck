@@ -35,6 +35,7 @@ import {
   HoldMeters,
   Legend,
   PnlColumns,
+  SectorMix,
   WeekdayBars,
 } from "@/components/dash/Charts";
 import { InsightRow, WrappedPromo } from "@/components/dash/Cards";
@@ -367,6 +368,13 @@ export default async function DashboardPage({
               slices={view.allocation}
             />
             {view.concentration ? <p className="dashSentence">{view.concentration}</p> : null}
+            {/*
+              * The same money at the grain that carries the risk. The ring
+              * answers "which names"; this answers "which kind of thing", and
+              * a book of five evenly-weighted semiconductor names is
+              * concentrated in a way no ring of five equal arcs can show.
+              */}
+            <SectorMix sectors={view.sectors} cover={view.sectorsCover} />
           </Panel>
         </Row>
 

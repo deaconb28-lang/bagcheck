@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { bookFrom, patternsFrom, performanceFrom, windowFor } from "./view";
+import { bookFrom, sectorsFrom, patternsFrom, performanceFrom, windowFor } from "./view";
 import type { Facts } from "./types";
 
 const holding = (symbol: string, value: number, cost: number, pnlPct: number) => ({
@@ -237,4 +237,50 @@ test("a book nothing can price states no percentage rather than a zero", () => {
   assert.equal(book.unrealisedPct, null);
   assert.equal(book.priced, 0);
   assert.equal(book.unrealised, 0);
+});
+
+/*
+ * The book by industry. Only what the provider could name — a holding with no
+ * sector is left out of the total rather than swept into "Other", which would
+ * be a statement about our data coverage wearing the costume of a statement
+ * about the reader's portfolio.
+ */
+
+const held = (symbol: string, value: number) => priced(symbol, value, value, 0);
+
+test("sectors are shares of what could be named, not of the whole book", () => {
+  const { sectors, sectorsCover } = sectorsFrom(
+    [held("NVDA", 600), held("AMD", 200), held("SPAXX", 200)],
+    new Map([
+      ["NVDA", "Semiconductors"],
+      ["AMD", "Semiconductors"],
+      ["SPAXX", null],
+    ]),
+  );
+  assert.equal(sectors.length, 1);
+  assert.equal(sectors[0].name, "Semiconductors");
+  /* 800 of 800 named, not 800 of 1000. */
+  assert.equal(sectors[0].share, 1);
+  /* And the screen is told it only covers 80%. */
+  assert.equal(sectorsCover, 0.8);
+});
+
+test("sectors are ordered by weight, largest first", () => {
+  const { sectors } = sectorsFrom(
+    [held("NVDA", 100), held("KO", 500), held("PEP", 300)],
+    new Map([
+      ["NVDA", "Semiconductors"],
+      ["KO", "Beverages"],
+      ["PEP", "Beverages"],
+    ]),
+  );
+  assert.deepEqual(sectors.map((s) => s.name), ["Beverages", "Semiconductors"]);
+  /* 800 of the 900 that could be named — every holding here has a sector. */
+  assert.equal(Number(sectors[0].share.toFixed(4)), 0.8889);
+});
+
+test("a book nothing can name yields no sectors and no coverage", () => {
+  const { sectors, sectorsCover } = sectorsFrom([held("SPAXX", 500)], new Map());
+  assert.deepEqual(sectors, []);
+  assert.equal(sectorsCover, 0);
 });

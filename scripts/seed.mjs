@@ -46,13 +46,13 @@ const DAYS = 430;
  * often a name is traded; drift is the annualised direction of its price.
  */
 const BOOK = [
-  { symbol: "NVDA", name: "NVIDIA Corporation", start: 78, drift: 2.4, vol: 0.032, weight: 5 },
-  { symbol: "AAPL", name: "Apple Inc.", start: 182, drift: 0.22, vol: 0.014, weight: 4 },
-  { symbol: "MSFT", name: "Microsoft Corporation", start: 372, drift: 0.31, vol: 0.013, weight: 3 },
-  { symbol: "ASML", name: "ASML Holding N.V.", start: 640, drift: 0.28, vol: 0.021, weight: 2 },
-  { symbol: "TSLA", name: "Tesla, Inc.", start: 248, drift: -0.34, vol: 0.038, weight: 4 },
-  { symbol: "COST", name: "Costco Wholesale Corporation", start: 590, drift: 0.36, vol: 0.011, weight: 2 },
-  { symbol: "SHOP", name: "Shopify Inc.", start: 78, drift: -0.12, vol: 0.034, weight: 3 },
+  { symbol: "NVDA", name: "NVIDIA Corporation", industry: "Semiconductors", start: 78, drift: 2.4, vol: 0.032, weight: 5 },
+  { symbol: "AAPL", name: "Apple Inc.", industry: "Technology", start: 182, drift: 0.22, vol: 0.014, weight: 4 },
+  { symbol: "MSFT", name: "Microsoft Corporation", industry: "Technology", start: 372, drift: 0.31, vol: 0.013, weight: 3 },
+  { symbol: "ASML", name: "ASML Holding N.V.", industry: "Semiconductors", start: 640, drift: 0.28, vol: 0.021, weight: 2 },
+  { symbol: "TSLA", name: "Tesla, Inc.", industry: "Automobiles", start: 248, drift: -0.34, vol: 0.038, weight: 4 },
+  { symbol: "COST", name: "Costco Wholesale Corporation", industry: "Retail", start: 590, drift: 0.36, vol: 0.011, weight: 2 },
+  { symbol: "SHOP", name: "Shopify Inc.", industry: "Technology", start: 78, drift: -0.12, vol: 0.034, weight: 3 },
 ];
 
 /*
@@ -271,7 +271,8 @@ export async function seed({ quiet = false } = {}) {
       const prev = series[series.length - 2];
       return [
         entry(`quote:${inst.symbol}`, { c: last.price, pc: prev.price }),
-        entry(`profile:${inst.symbol}`, { name: inst.name }),
+        /* `industry` too, so the sector block is a thing the sweep can shoot. */
+        entry(`profile:${inst.symbol}`, { name: inst.name, finnhubIndustry: inst.industry }),
       ];
     }),
   ]);

@@ -388,3 +388,72 @@ export function HoldingBars({ rows, money }: { rows: PositionRow[]; money: (n: n
     </ul>
   );
 }
+
+/* ── The book by industry ───────────────────────────────────────────────── */
+
+/**
+ * Where the money sits by *kind of thing*, under the ring that says by name.
+ *
+ * Five positions spread evenly is not spread at all if four of them are
+ * semiconductors, and the allocation ring cannot see that — it answers "which
+ * names", which is the question a reader already knows the answer to. This is
+ * the grain that actually carries the risk.
+ *
+ * One stacked bar rather than a second donut: two rings on one panel is two
+ * things to decode, and a part-to-whole across three or four buckets reads
+ * better as a line than as a circle. It takes the same fixed weight ramp the
+ * ring does, so the largest sector wears the same paint as the largest name
+ * and the two idioms agree about what "biggest" looks like.
+ *
+ * `cover` is stated rather than hidden. A holding whose sector nothing can name
+ * is left out entirely — "Other 38%" would be a statement about our data
+ * coverage wearing the costume of a statement about the reader's portfolio.
+ */
+export function SectorMix({
+  sectors,
+  cover,
+}: {
+  sectors: Array<{ name: string; value: number; share: number }>;
+  cover: number;
+}) {
+  if (sectors.length < 2) return null;
+  const shown = sectors.slice(0, 5);
+
+  return (
+    <div className={styles.sectors}>
+      <div className={styles.sectorBar} role="img" aria-label="Book by industry">
+        {shown.map((sector, i) => (
+          <i
+            key={sector.name}
+            className={styles.sectorSeg}
+            style={{
+              width: `${sector.share * 100}%`,
+              background: `var(${WEDGES[Math.min(i, WEDGES.length - 1)]})`,
+              animationDelay: `${120 + i * 90}ms`,
+            }}
+          />
+        ))}
+      </div>
+      <dl className={styles.sectorLegend}>
+        {shown.map((sector, i) => (
+          <div key={sector.name} className={styles.sectorRow}>
+            <span
+              className={styles.wedgeSwatch}
+              style={{ background: `var(${WEDGES[Math.min(i, WEDGES.length - 1)]})` }}
+              aria-hidden="true"
+            />
+            <dt className={styles.sectorName}>{sector.name}</dt>
+            <dd className={`num ${styles.sectorShare}`}>
+              {sector.share * 100 < 1 ? "<1" : (sector.share * 100).toFixed(0)}%
+            </dd>
+          </div>
+        ))}
+      </dl>
+      {cover < 0.995 ? (
+        <p className={styles.sectorNote}>
+          Across the {(cover * 100).toFixed(0)}% of your book your brokerage names a sector for.
+        </p>
+      ) : null}
+    </div>
+  );
+}

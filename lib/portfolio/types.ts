@@ -200,6 +200,21 @@ export interface DashboardView {
    */
   positions: Array<{ symbol: string; value: number; pnl: number | null; pnlPct: number | null }>;
   concentration: string | null;
+  /**
+   * Where the money sits by *industry*, largest first.
+   *
+   * The ring answers "which names" and this answers "which kind of thing" —
+   * the same question at the grain that actually carries risk. Five positions
+   * spread evenly is not spread at all if four of them are semiconductors.
+   *
+   * Empty when the brokerage and the provider between them cannot say. A
+   * sector inferred from a ticker is a lookup table pretending to be a fact
+   * about the reader's book, so unknown holdings are excluded from the total
+   * rather than bucketed into "Other".
+   */
+  sectors: Array<{ name: string; value: number; share: number }>;
+  /** How much of the book the sectors above could actually account for, 0–1. */
+  sectorsCover: number;
   patterns: Pattern[];
   wrapped: { year: number; earned: number; total: number; archetype: string | null };
   provenance: Provenance;

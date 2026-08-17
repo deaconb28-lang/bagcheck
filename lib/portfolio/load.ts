@@ -4,6 +4,7 @@ import {
   fieldProvenance,
   isMarketConfigured,
   peerReturnsYtd,
+  profilesFor,
   refreshHoldings,
 } from "@/lib/market";
 import { investmentFlows, transferFlows } from "@/lib/returns";
@@ -115,11 +116,21 @@ export async function dashboardFor(userId: string, range: RangeKey, preloaded?: 
   const today = new Date().toISOString().slice(0, 10);
   const year = Number(today.slice(0, 4));
 
-  const [facts, peers, deck] = await Promise.all([
+  const symbols = data.holdings.map((h) => h.symbol).filter(Boolean);
+
+  const [facts, peers, deck, profiles] = await Promise.all([
     factsFor(userId, data),
     /* No key, no field — and no invented one. */
     isMarketConfigured() ? peerReturnsYtd().catch(() => []) : Promise.resolve([]),
     wrappedDeck(userId, year).catch(() => null),
+    /*
+     * Sectors, through the same six-hour cache keyed by symbol rather than by
+     * reader — so two people holding NVDA cost one call, and a screen never
+     * spends quota that a previous screen already spent.
+     */
+    isMarketConfigured()
+      ? profilesFor(symbols).catch(() => new Map())
+      : Promise.resolve(new Map()),
   ]);
 
   return {
@@ -130,6 +141,13 @@ export async function dashboardFor(userId: string, range: RangeKey, preloaded?: 
       range,
       today,
       peers,
+      /*
+       * Symbol to industry. Empty without a market key, which is what makes
+       * the sector block absent rather than wrong on a deployment without one.
+       */
+      sectors: new Map(
+        symbols.map((symbol) => [symbol, profiles.get(symbol)?.industry ?? null]),
+      ),
       /*
        * The reader's own cards, never the sample's.
        *
