@@ -11,6 +11,15 @@ export interface HoldingRow {
   value: number | null;
   pnl: number | null;
   pnlPct: number | null;
+  /**
+   * Where the unrealised figure came from.
+   *
+   * `cost` means we computed it — value less average purchase price times
+   * units. `broker` means SnapTrade's own `open_pnl`, which is what shows when
+   * the brokerage reports a P&L but not a cost basis. `null` means neither was
+   * available and the row states no P&L rather than a zero.
+   */
+  pnlSource: "cost" | "broker" | null;
 }
 
 /** position.symbol is a PositionSymbol wrapping a UniversalSymbol. */
@@ -32,7 +41,12 @@ export function holdingsFrom(snapshots: PositionSnapshotDoc[]): HoldingRow[] {
     }
   }
 
-  const merged = new Map<string, HoldingRow>();
+  /*
+   * The accumulator carries one field the finished row does not: the broker's
+   * own P&L, which is summed across accounts here and folded away below. It is
+   * an input to the row rather than part of it.
+   */
+  const merged = new Map<string, HoldingRow & { brokerPnl: number | null }>();
   for (const snap of latestPerAccount.values()) {
     for (const position of snap.positions ?? []) {
       const symbol = positionSymbol(position);
@@ -42,12 +56,31 @@ export function holdingsFrom(snapshots: PositionSnapshotDoc[]): HoldingRow[] {
       const avg = position.average_purchase_price ?? null;
       const value = price != null ? price * units : null;
       const cost = avg != null ? avg * units : null;
+      /*
+       * The brokerage's own unrealised figure, which SnapTrade returns on the
+       * position and which was being stored and thrown away. It is the answer
+       * for every broker that reports a P&L but no average purchase price —
+       * those holdings showed a dash where a real number was already on file,
+       * and it needs no derivation, so it is on the screen the moment a sync
+       * has written a snapshot.
+       */
+      const brokerPnl = position.open_pnl ?? null;
 
       const existing = merged.get(symbol);
       if (existing) {
         existing.units += units;
         existing.value = existing.value != null && value != null ? existing.value + value : existing.value ?? value;
         existing.cost = existing.cost != null && cost != null ? existing.cost + cost : existing.cost ?? cost;
+        /*
+         * Summed across accounts like the others. A holding split over two
+         * accounts where only one reports `open_pnl` must not report that one
+         * account's P&L as the whole position's, so a partial sum is only used
+         * where no cost basis exists at all — which the fold below decides.
+         */
+        existing.brokerPnl =
+          existing.brokerPnl != null && brokerPnl != null
+            ? existing.brokerPnl + brokerPnl
+            : existing.brokerPnl ?? brokerPnl;
       } else {
         merged.set(symbol, {
           symbol,
@@ -58,15 +91,32 @@ export function holdingsFrom(snapshots: PositionSnapshotDoc[]): HoldingRow[] {
           value,
           pnl: null,
           pnlPct: null,
+          pnlSource: null,
+          brokerPnl,
         });
       }
     }
   }
 
-  const rows = [...merged.values()].map((row) => {
-    const pnl = row.value != null && row.cost != null ? row.value - row.cost : null;
-    const pnlPct = pnl != null && row.cost ? (pnl / row.cost) * 100 : null;
-    return { ...row, pnl, pnlPct };
+  const rows = [...merged.values()].map(({ brokerPnl, ...row }) => {
+    /*
+     * Our own arithmetic first, the broker's second. Cost basis is the figure
+     * the rest of this product reasons about, and preferring it keeps one
+     * holding's unrealised P&L consistent with the book it sits in; the
+     * broker's number fills the gap rather than competing with it.
+     */
+    const computed = row.value != null && row.cost != null ? row.value - row.cost : null;
+    const pnl = computed ?? brokerPnl;
+    const pnlSource = computed != null ? "cost" : brokerPnl != null ? "broker" : null;
+    /*
+     * A percentage needs a base. With only the broker's dollar figure the base
+     * is value less that figure — what the position cost, implied — and where
+     * even that is unavailable the row states dollars and no percentage rather
+     * than dividing by something it does not have.
+     */
+    const base = row.cost ?? (row.value != null && pnl != null ? row.value - pnl : null);
+    const pnlPct = pnl != null && base ? (pnl / base) * 100 : null;
+    return { ...row, pnl, pnlPct, pnlSource } as HoldingRow;
   });
 
   return rows.sort((a, b) => (b.value ?? 0) - (a.value ?? 0));

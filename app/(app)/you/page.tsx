@@ -125,7 +125,16 @@ export default async function DashboardPage({
     );
   }
 
-  const { view } = await dashboardFor(userId, range);
+  /*
+   * The screen above is handed straight to the assembly rather than re-read.
+   * And the shell's user is fetched alongside it: it used to sit inline in the
+   * JSX below, which made it a second round trip that only started once the
+   * whole dashboard had finished assembling.
+   */
+  const [{ view }, user] = await Promise.all([
+    dashboardFor(userId, range, data),
+    shellUser(),
+  ]);
   const { book, performance: perf, window } = view;
 
   return (
@@ -135,7 +144,7 @@ export default async function DashboardPage({
         active="dash"
         accounts={view.accounts}
         syncedAt={syncClock(data.connection?.lastSyncAt)}
-        user={await shellUser()}
+        user={user}
       />
 
       <Page>

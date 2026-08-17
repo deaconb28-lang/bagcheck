@@ -1,3 +1,4 @@
+import { Logo } from "@/components/primitives";
 import type { Session } from "@/lib/portfolio/types";
 import styles from "./charts.module.css";
 
@@ -188,6 +189,21 @@ export function AllocationDonut({ slices, size = 184 }: { slices: Slice[]; size?
         {rows.map((row) => (
           <div key={row.key} className={styles.donutRow}>
             <span className={styles.wedgeSwatch} style={{ background: row.paint }} aria-hidden="true" />
+            {/*
+              * The company's mark, on the one screen that names holdings and
+              * had none.
+              *
+              * Always a slot, never a conditional child: this legend is a grid
+              * with a column per part, and a row that skipped the mark would
+              * slide its name and its share one column left. `__rest` is an
+              * aggregate of several companies rather than one, so it holds an
+              * empty slot — a mark there would be one arbitrary member of the
+              * group standing for all of them — and `Logo` itself renders
+              * nothing for a symbol it cannot normalise.
+              */}
+            <span className={styles.wedgeMark} aria-hidden="true">
+              {row.key === "__rest" ? null : <Logo symbol={row.key} size={22} />}
+            </span>
             <dt className={styles.wedgeName}>{row.label}</dt>
             <dd className={`num ${styles.wedgeShare}`}>
               {row.share * 100 < 1 ? "<1" : (row.share * 100).toFixed(0)}%

@@ -102,9 +102,16 @@ export async function factsFor(userId: string, data: ScreenData): Promise<Facts>
  * The dashboard, end to end: one screen read, one facts assembly, one pure
  * build. A page calls this and renders — it does not query, and it does not
  * compute.
+ *
+ * `preloaded` exists because a page may already hold the screen. `/you` reads
+ * it first to decide between the dashboard and an empty state, and then called
+ * this — which read the whole ledger a second time, every view. That is the
+ * failure this layer was built to end, reintroduced one level up: the screen
+ * is 400 scores, every snapshot and the connection, and fetching it twice
+ * costs exactly twice.
  */
-export async function dashboardFor(userId: string, range: RangeKey) {
-  const data = await loadScreen(userId, 400);
+export async function dashboardFor(userId: string, range: RangeKey, preloaded?: ScreenData) {
+  const data = preloaded ?? (await loadScreen(userId, 400));
   const today = new Date().toISOString().slice(0, 10);
   const year = Number(today.slice(0, 4));
 

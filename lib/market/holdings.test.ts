@@ -12,6 +12,7 @@ const row = (over: Partial<HoldingRow> = {}): HoldingRow => ({
   cost: 800,
   value: 1000,
   pnl: 200,
+  pnlSource: "cost",
   pnlPct: 25,
   ...over,
 });

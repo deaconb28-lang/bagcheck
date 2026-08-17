@@ -1,5 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { connectedCount, ensureIndexes, isDbConfigured, scoreUser, sweep } from "@/lib/db";
+import {
+  connectedCount,
+  ensureIndexes,
+  getCollections,
+  isDbConfigured,
+  scoreUser,
+  sweep,
+} from "@/lib/db";
+import { syncIsDue } from "@/lib/db/due";
+import { warmUser } from "@/lib/db/warm";
 import { syncUser } from "@/lib/snaptrade";
 
 export const runtime = "nodejs";
@@ -43,19 +52,63 @@ export async function GET(req: NextRequest) {
    */
   await ensureIndexes();
 
+  const { connections } = await getCollections();
+  let synced = 0;
+  let fresh = 0;
+  let insights = 0;
+  let decks = 0;
+
   const result = await sweep(JOB, async (userId) => {
     /*
-     * The sync is best effort and the score is not. A broker that fails today
-     * must still leave a reading against yesterday's ledger, so these are two
-     * statements rather than one chain.
+     * The sweep wraps every run on a small table, so without this every user
+     * was pulled from SnapTrade ninety-six times a day. The score still runs
+     * on every visit — it is local arithmetic over rows already in Mongo — but
+     * the brokerage is only asked once a day.
      */
-    try {
-      await syncUser(userId);
-    } catch (err) {
-      console.error("[cron] sync failed", userId, err);
+    const connection = await connections.findOne(
+      { userId },
+      { projection: { _id: 0, lastSyncAt: 1 } },
+    );
+
+    if (syncIsDue(connection?.lastSyncAt, new Date())) {
+      /*
+       * The sync is best effort and the score is not. A broker that fails today
+       * must still leave a reading against yesterday's ledger, so these are two
+       * statements rather than one chain.
+       */
+      try {
+        await syncUser(userId);
+        synced += 1;
+      } catch (err) {
+        console.error("[cron] sync failed", userId, err);
+      }
+    } else {
+      fresh += 1;
     }
+
     await scoreUser(userId);
+
+    /*
+     * Then build what the screens would otherwise build while someone waits:
+     * the day's written insight and this year's Wrapped deck. Both are cached
+     * per user and both were filled lazily by whoever opened the page first.
+     */
+    const warmed = await warmUser(userId);
+    if (warmed.insight) insights += 1;
+    if (warmed.wrapped) decks += 1;
   });
 
-  return NextResponse.json({ ...result, connected: await connectedCount() });
+  /*
+   * `synced` and `fresh` are reported because "is the brokerage being asked
+   * once a day" has to be a checkable question rather than an assumption —
+   * that it was not is exactly what the previous version hid.
+   */
+  return NextResponse.json({
+    ...result,
+    synced,
+    fresh,
+    insights,
+    decks,
+    connected: await connectedCount(),
+  });
 }

@@ -94,3 +94,63 @@ test("missing price or cost basis yields null rather than a wrong number", () =>
 test("an empty snapshot list produces no rows", () => {
   assert.deepEqual(holdingsFrom([]), []);
 });
+
+/*
+ * The brokerage's own unrealised P&L. SnapTrade returns `open_pnl` on every
+ * position and it was stored and thrown away — so a broker that reports a P&L
+ * but no average purchase price left the holding showing a dash, with a real
+ * number already on file. It needs no derivation, so it is on screen as soon
+ * as a sync has written one snapshot.
+ */
+
+const brokerPosition = (over: Record<string, unknown> = {}) => ({
+  symbol: { symbol: { symbol: "NVDA" } },
+  units: 10,
+  price: 100,
+  ...over,
+});
+
+test("cost basis is preferred when the broker gives one", () => {
+  const [row] = holdingsFrom([
+    {
+      userId: "u",
+      accountId: "a",
+      date: "2026-08-17",
+      takenAt: new Date(),
+      positions: [brokerPosition({ average_purchase_price: 80, open_pnl: 999 })],
+    },
+  ] as never);
+  assert.equal(row.pnl, 200);
+  assert.equal(row.pnlSource, "cost");
+});
+
+test("the broker's own figure fills in when there is no cost basis", () => {
+  const [row] = holdingsFrom([
+    {
+      userId: "u",
+      accountId: "a",
+      date: "2026-08-17",
+      takenAt: new Date(),
+      positions: [brokerPosition({ average_purchase_price: null, open_pnl: 150 })],
+    },
+  ] as never);
+  assert.equal(row.pnl, 150);
+  assert.equal(row.pnlSource, "broker");
+  /* Value less the gain is what it cost, so a percentage is still honest. */
+  assert.equal(Math.round(row.pnlPct ?? 0), 18);
+});
+
+test("neither available states no P&L rather than a zero", () => {
+  const [row] = holdingsFrom([
+    {
+      userId: "u",
+      accountId: "a",
+      date: "2026-08-17",
+      takenAt: new Date(),
+      positions: [brokerPosition({ average_purchase_price: null, open_pnl: null })],
+    },
+  ] as never);
+  assert.equal(row.pnl, null);
+  assert.equal(row.pnlPct, null);
+  assert.equal(row.pnlSource, null);
+});

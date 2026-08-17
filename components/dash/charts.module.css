@@ -182,9 +182,17 @@
   min-width: 0;
 }
 
+.wedgeMark {
+  display: flex;
+  width: 22px;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+}
+
 .donutRow {
   display: grid;
-  grid-template-columns: 11px minmax(0, 1fr) auto;
+  grid-template-columns: 11px 22px minmax(0, 1fr) auto;
   align-items: center;
   gap: 11px;
 }

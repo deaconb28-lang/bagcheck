@@ -12,6 +12,7 @@ const holding = (symbol: string, value: number, cost: number, pnlPct: number) =>
   value,
   pnl: value - cost,
   pnlPct,
+  pnlSource: "cost" as const,
 });
 
 const trip = (closeDate: string, pnl: number) => ({
