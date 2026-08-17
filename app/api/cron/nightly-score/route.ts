@@ -9,7 +9,7 @@ import {
 } from "@/lib/db";
 import { syncIsDue } from "@/lib/db/due";
 import { warmUser } from "@/lib/db/warm";
-import { syncUser } from "@/lib/snaptrade";
+import { credentialCheck, syncUser } from "@/lib/snaptrade";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -57,6 +57,7 @@ export async function GET(req: NextRequest) {
   let fresh = 0;
   let insights = 0;
   let decks = 0;
+  let failed = 0;
 
   const result = await sweep(JOB, async (userId) => {
     /*
@@ -80,6 +81,7 @@ export async function GET(req: NextRequest) {
         await syncUser(userId);
         synced += 1;
       } catch (err) {
+        failed += 1;
         console.error("[cron] sync failed", userId, err);
       }
     } else {
@@ -103,12 +105,24 @@ export async function GET(req: NextRequest) {
    * once a day" has to be a checkable question rather than an assumption —
    * that it was not is exactly what the previous version hid.
    */
+  /*
+   * A sync that fails is caught so one broken account cannot stop the sweep —
+   * but caught is not the same as noticed, and every sync in production was
+   * failing 401 with nothing above the log line to say so. When any did, ask
+   * SnapTrade which credential it is rejecting: the client's, or that user's
+   * stored secret. The two need opposite fixes and a bare 401 cannot tell them
+   * apart, so the answer travels with the job's own result.
+   */
+  const credentials = failed ? await credentialCheck() : null;
+
   return NextResponse.json({
     ...result,
     synced,
     fresh,
+    failed,
     insights,
     decks,
     connected: await connectedCount(),
+    ...(credentials ? { credentials } : {}),
   });
 }
