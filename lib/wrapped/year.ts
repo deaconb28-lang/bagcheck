@@ -15,6 +15,22 @@ import { finishCards } from "./run";
 import type { CardJob, FinishedCard } from "./run";
 
 /**
+ * The slice of a card definition this file needs, named once.
+ *
+ * `wrapped/cards.mjs` is plain JavaScript with a JSDoc typedef, so every
+ * consumer states the shape it reads. Stating it twice in one file is how the
+ * two calls below drifted apart the first time a field was added.
+ */
+type CardDef = {
+  no: string;
+  key: string;
+  title: string;
+  measures: string | null;
+  tokens: string[];
+  fallbackCaptions: string[];
+};
+
+/**
  * One reader's year, from the ledger to twelve finished cards.
  *
  * This is the whole of Phase 3's assembly: read what the derived layer already
@@ -165,7 +181,7 @@ export async function wrappedYear(
 
   const { stats, context } = computed;
   const fingerprint = fingerprintOf(stats);
-  const earned = earnedCards(CARDS as Array<{ no: string; key: string; tokens: string[]; fallbackCaptions: string[] }>, stats);
+  const earned = earnedCards(CARDS as CardDef[], stats);
   if (!earned.length) return { year, stats, context, cards: [], fingerprint };
 
   const { wrappedCards } = await getCollections();
@@ -181,6 +197,8 @@ export async function wrappedYear(
     earned.map(async (c) => ({
       no: c.no,
       key: c.key,
+      title: c.title,
+      measures: c.measures ?? null,
       template: await template(c.no),
       fallbackCaptions: c.fallbackCaptions,
     })),
@@ -242,7 +260,7 @@ export async function wrappedDeck(
 
   const { stats } = sampleWrapped(year);
   const earned = earnedCards(
-    CARDS as Array<{ no: string; key: string; tokens: string[]; fallbackCaptions: string[] }>,
+    CARDS as CardDef[],
     stats,
   );
   const cards = await Promise.all(

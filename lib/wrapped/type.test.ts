@@ -112,6 +112,79 @@ test("the eyebrow and the fact labels stay in the machine face on all twelve", (
   );
 });
 
+/*
+ * What a card says about its own figure.
+ *
+ * The deck's clarity problem was not the wording, it was that the biggest
+ * number on a card had nothing naming it: card 07 set the *year's* trade count
+ * under a heading that read "Most active month", so the figure read as the
+ * month's and no line on the card said otherwise. The label names the metric;
+ * the caption says what was counted and over what period.
+ */
+
+test("every card whose hero is a figure says what that figure measures", () => {
+  const namesItself = new Set(["cover", "archetype"]);
+  for (const card of CARDS) {
+    if (namesItself.has(card.key)) {
+      assert.equal(card.measures, null, `${card.no} should let its hero name itself`);
+      continue;
+    }
+    assert.ok(card.measures, `${card.no} has no label above its hero`);
+    assert.ok(
+      template(card.no).includes(`<p class="heroLabel">${card.measures}</p>`),
+      `card-${card.no}.html does not print its own hero label`,
+    );
+  }
+});
+
+test("no caption carries a figure of its own", () => {
+  /*
+   * Every number on a card is set in type from the stats and checked character
+   * for character. A numeral inside a caption is the one figure on the card
+   * nobody is comparing to anything.
+   */
+  for (const card of CARDS) {
+    for (const caption of card.fallbackCaptions) {
+      assert.ok(!/\d/.test(caption), `${card.no}: "${caption}" carries a numeral`);
+    }
+  }
+});
+
+test("no two cards share a caption", () => {
+  const all = CARDS.flatMap((c) => c.fallbackCaptions);
+  assert.equal(new Set(all).size, all.length, "a caption is reused across the deck");
+});
+
+test("a ticker is printed with a mark slot beside it, never inside it", () => {
+  /*
+   * Inside, the slot would become part of the ticker's own text — and
+   * `tokenValues` compares that text to the stats character for character, so
+   * every card carrying a mark would fail the gate.
+   */
+  const tickers = ["LONGEST_HOLD_TICKER", "BEST_TICKER"];
+  for (const card of CARDS) {
+    const html = template(card.no);
+    for (const token of tickers) {
+      const wanted = card.tokens.includes(token);
+      assert.equal(
+        html.includes(`data-logo="${token}"`),
+        wanted,
+        `card-${card.no}.html ${wanted ? "should" : "should not"} carry a mark for ${token}`,
+      );
+      if (!wanted) continue;
+      assert.ok(
+        !new RegExp(`data-token="${token}"[^>]*>[^<]*<img`).test(html),
+        `card-${card.no}.html nests the mark inside the ticker`,
+      );
+      /* The template stores no address — `stampLogos` adds it at render. */
+      assert.ok(
+        !/<img[^>]*\bdata-logo=[^>]*\bsrc=/.test(html),
+        `card-${card.no}.html stores a logo URL, which the gate would see as changed markup`,
+      );
+    }
+  }
+});
+
 test("a card that carries no direction still draws the way it always did", () => {
   /*
    * Cards minted before this table exist in the store and are rendered from

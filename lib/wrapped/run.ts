@@ -57,6 +57,10 @@ const BACKOFF_MS = [400, 1200, 3600];
 export interface CardJob {
   no: string;
   key: string;
+  /** The card's own heading, so the caption is written against what it says. */
+  title: string;
+  /** The mono line above the hero. Null where the hero names itself. */
+  measures: string | null;
   template: string;
   fallbackCaptions: readonly string[];
 }
@@ -83,14 +87,25 @@ const SYSTEM_FULL =
   "no added elements, no removed elements, no altered attributes or styles. " +
   "Return the raw completed HTML only, with no code fences and no commentary.";
 
+/*
+ * The caption's job is to say what the figure *is*, not how to feel about it.
+ *
+ * It used to ask only for a warm line, and warm lines are interchangeable:
+ * "Everything you did, added up" reads the same on the return card as on the
+ * trade-count card, and tells a reader nothing about either. The caption is
+ * the one place a card can say what was counted and over what period — the
+ * label above the figure names the metric, and this finishes the sentence.
+ */
 const SYSTEM_CAPTION =
   "You write one caption for a Wrapped card. You will receive the card's " +
-  "title and a stats JSON object. Write at most 12 words: second person, " +
-  "warm, celebratory or neutral, never advice, never a prediction, never a " +
-  "line that points out something the reader did wrong, no trader slang, no " +
-  "exclamation marks. Do not restate the numbers — they are already set in " +
-  "type on the card. Return the caption text only, with no quotes, no code " +
-  "fences and no commentary.";
+  "title, the label printed above its main figure, and a stats JSON object. " +
+  "Write at most 12 words saying plainly what that figure is: what was " +
+  "counted or measured, and over what period. Second person, warm or " +
+  "neutral, never advice, never a prediction, never a line that points out " +
+  "something the reader did wrong, no trader slang, no exclamation marks. Do " +
+  "not restate the numbers — they are already set in type on the card, and a " +
+  "figure you retype is one nobody can correct. Return the caption text " +
+  "only, with no quotes, no code fences and no commentary.";
 
 /**
  * Card 10 compares the reader to the index, and being behind it is the one
@@ -200,7 +215,7 @@ export async function finishCard(
     mode === "full" ? SYSTEM_FULL : SYSTEM_CAPTION,
     mode === "full"
       ? `${job.template}\n\n${payload}${toneNote(job.no, context)}`
-      : `Card: ${job.key}\n\n${payload}${toneNote(job.no, context)}`,
+      : `Card: ${job.title}\nThe label above the figure: ${job.measures ?? "none — the figure names itself"}\n\n${payload}${toneNote(job.no, context)}`,
     signal,
   );
 

@@ -7,6 +7,7 @@ import {
   fill,
   fitHero,
   normalise,
+  stampLogos,
   tokenValues,
   validate,
 } from "./personalise";
@@ -290,6 +291,44 @@ test("a word hero is left alone — it is allowed to wrap", () => {
   );
   const stats = { ...STATS, BEST_RETURN_PCT: "Consumer Staples" } as unknown as WrappedStats;
   assert.ok(!fitHero(fill(template, stats, CAPTION)).includes("--hero-size"));
+});
+
+/*
+ * The ticker mark. A render-time pass for the same reason the fit is one: the
+ * symbol is a per-reader value, and an attribute filled at fill time is
+ * markup the gate would see differ outside the slots.
+ */
+
+const WITH_MARK = TEMPLATE.replace(
+  '<span class="factValue" data-kind="word" data-token="BEST_TICKER">{{BEST_TICKER}}</span>',
+  '<span class="logo"><img class="logoImg" data-logo="BEST_TICKER" alt=""></span>' +
+    '<span class="factValue" data-kind="word" data-token="BEST_TICKER">{{BEST_TICKER}}</span>',
+);
+
+test("a mark slot is pointed at the ticker printed beside it", () => {
+  const out = stampLogos(fill(WITH_MARK, STATS, CAPTION));
+  assert.match(out, /src="\/api\/logo\/NVDA\?size=128"/);
+});
+
+test("a symbol with a dot in it is encoded, not pasted into the path", () => {
+  const stats = { ...STATS, BEST_TICKER: "BRK.B" } as unknown as WrappedStats;
+  const out = stampLogos(fill(WITH_MARK, stats, CAPTION));
+  assert.match(out, /src="\/api\/logo\/BRK\.B\?size=128"/);
+});
+
+test("a slot whose token is not on the card is left drawn", () => {
+  const orphan = WITH_MARK.replace('data-logo="BEST_TICKER"', 'data-logo="LONGEST_HOLD_TICKER"');
+  const out = stampLogos(fill(orphan, STATS, CAPTION));
+  assert.ok(!out.includes("src="), "an unresolvable slot must not gain a src");
+});
+
+test("the mark stamp changes no value, no caption and no other markup", () => {
+  const filled = fill(WITH_MARK, STATS, CAPTION);
+  const stamped = stampLogos(filled);
+  assert.deepEqual(tokenValues(stamped), tokenValues(filled));
+  assert.equal(captionOf(stamped), CAPTION);
+  /* The stored card is what passed the gate; the stamp happens on the way out. */
+  assert.equal(validate(filled, WITH_MARK, STATS).ok, true);
 });
 
 test("the fit changes no value and no other markup", () => {

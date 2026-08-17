@@ -72,6 +72,17 @@ const LABEL = {
   INVESTOR_AGE: "Investor age",
 };
 
+/**
+ * Tokens whose value is a ticker, and which therefore get a mark beside them.
+ *
+ * The slot is drawn in CSS and is finished on its own — the same contract the
+ * card's own art has. `stampLogos` points the image at `/api/logo/<symbol>` on
+ * the way to a screen, and where that cannot be reached (a card rendered into a
+ * PNG with no origin) the drawn plate is what shows. A placeholder that only
+ * works when a third party answers is not a placeholder.
+ */
+const TICKER_TOKENS = new Set(["LONGEST_HOLD_TICKER", "BEST_TICKER"]);
+
 const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -90,9 +101,22 @@ function template(card) {
   const facts = rest
     .map((t) => {
       const kind = WORD_TOKENS.has(t) ? "word" : "figure";
+      const value = `<span class="factValue" data-kind="${kind}" data-token="${t}">{{${t}}}</span>`;
+      /*
+       * The mark is a *sibling* of the value, never a child. `tokenValues`
+       * reads the text inside every `data-token` element and compares it to
+       * the stats character for character — an image nested in there would
+       * make the ticker "<img …>NVDA" and fail the card at the gate.
+       */
+      const body = TICKER_TOKENS.has(t)
+        ? `<span class="instrument">
+            <span class="logo" aria-hidden="true"><img class="logoImg" data-logo="${t}" alt=""></span>
+            ${value}
+          </span>`
+        : value;
       return `        <div class="fact">
           <span class="factLabel">${esc(LABEL[t] ?? t)}</span>
-          <span class="factValue" data-kind="${kind}" data-token="${t}">{{${t}}}</span>
+          ${body}
         </div>`;
     })
     .join("\n");
@@ -135,7 +159,7 @@ function template(card) {
 
   <div class="layer">
     <p class="eyebrow">bagcheck &middot; <span data-token="YEAR">{{YEAR}}</span></p>
-    <p class="hero" data-kind="${heroKind}" data-token="${card.hero}">{{${card.hero}}}</p>
+${card.measures ? `    <p class="heroLabel">${esc(card.measures)}</p>\n` : ""}    <p class="hero" data-kind="${heroKind}" data-token="${card.hero}">{{${card.hero}}}</p>
     <h1 class="title">${esc(card.title)}</h1>
 ${facts ? `
     <div class="support">

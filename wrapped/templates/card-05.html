@@ -36,13 +36,17 @@
 
   <div class="layer">
     <p class="eyebrow">bagcheck &middot; <span data-token="YEAR">{{YEAR}}</span></p>
+    <p class="heroLabel">Return on the trade</p>
     <p class="hero" data-kind="figure" data-token="BEST_RETURN_PCT">{{BEST_RETURN_PCT}}</p>
     <h1 class="title">Best performer</h1>
 
     <div class="support">
         <div class="fact">
           <span class="factLabel">Instrument</span>
-          <span class="factValue" data-kind="word" data-token="BEST_TICKER">{{BEST_TICKER}}</span>
+          <span class="instrument">
+            <span class="logo" aria-hidden="true"><img class="logoImg" data-logo="BEST_TICKER" alt=""></span>
+            <span class="factValue" data-kind="word" data-token="BEST_TICKER">{{BEST_TICKER}}</span>
+          </span>
         </div>
     </div>
 

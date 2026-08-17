@@ -27,6 +27,7 @@ import {
   captionOf,
   fill,
   fitHero,
+  stampLogos,
   tokenValues,
   validate,
 } from "../lib/wrapped/personalise.ts";
@@ -61,6 +62,9 @@ const FACE_FAMILY = {
 
 /** The title follows the card's voice, except on the mono card — see `card.css`. */
 const FACE_TITLE = (face) => (face === "machine" ? "Voice" : FACE_FAMILY[face]);
+
+/** Tokens that get a company mark beside them. Mirrors the template builder. */
+const TICKER_TOKENS = new Set(["LONGEST_HOLD_TICKER", "BEST_TICKER"]);
 const render = process.argv.includes("--render");
 const batch = Number(process.argv.find((a) => a.startsWith("--batch="))?.slice(8) || 1);
 
@@ -139,7 +143,14 @@ for (let i = 0; i < batch; i += 1) {
   for (const card of earned) {
     const template = await templateFor(card.no);
     const out = await finishCard(
-      { no: card.no, key: card.key, template, fallbackCaptions: card.fallbackCaptions },
+      {
+        no: card.no,
+        key: card.key,
+        title: card.title,
+        measures: card.measures ?? null,
+        template,
+        fallbackCaptions: card.fallbackCaptions,
+      },
       stats,
       { aheadOfIndex: !stats.VS_SPY_PCT.startsWith("−"), showDollars: false },
       card.tokens,
@@ -266,8 +277,13 @@ if (render) {
       fileURLToPath(new URL(`../public/wrapped/2026/art/${ART_SET}/bg-${card.no}.webp`, import.meta.url)),
     ).catch(() => null);
 
-    /* The fit is a render-time pass, so it happens here — same as in the app. */
-    let html = fitHero(card.html).replace(
+    /*
+     * Both render-time passes happen here, same as in `cardDocument`. The
+     * stamped logo URL cannot resolve — this page has no origin — which is
+     * exactly the case worth rendering: what shows is the drawn plate, and
+     * that is the state a card in a PNG or on a fresh deployment is in.
+     */
+    let html = stampLogos(fitHero(card.html)).replace(
       '<link rel="stylesheet" href="card.css">',
       `<style>${css}</style>`,
     );
@@ -318,6 +334,12 @@ if (render) {
         heroKind: hero?.getAttribute("data-kind") ?? null,
         eyebrow: first(document.querySelector(".eyebrow")),
         title: first(document.querySelector(".title")),
+        heroLabel: first(document.querySelector(".heroLabel")),
+        /* The drawn mark plate, measured rather than merely present. */
+        logos: [...document.querySelectorAll(".logo")].map((el) => {
+          const r = el.getBoundingClientRect();
+          return { w: Math.round(r.width), h: Math.round(r.height) };
+        }),
         /*
          * The caption's own weight, not the title's. The title is in the
          * card's display voice on eleven of the twelve now, so asking whether
@@ -337,6 +359,29 @@ if (render) {
     if (type.title !== FACE_TITLE(def.type.face))
       fail(`card-${card.no}: title sets in ${type.title}, not ${FACE_TITLE(def.type.face)}`);
     if (type.eyebrow !== "Machine") fail(`card-${card.no}: eyebrow sets in ${type.eyebrow}`);
+
+    /*
+     * The label naming what the hero counts. Absent by design on the two cards
+     * whose hero names itself, present and mono on the other ten — a big
+     * figure with no label is one the caption has to define before it can say
+     * anything, which is how card 07 came to print a year's trade count under
+     * a heading about a month.
+     */
+    if (def.measures) {
+      if (type.heroLabel !== "Machine")
+        fail(`card-${card.no}: hero label sets in ${type.heroLabel}, not Machine`);
+    } else if (type.heroLabel) {
+      fail(`card-${card.no}: declares no measures but drew a hero label`);
+    }
+
+    /* A ticker gets a mark beside it, drawn, whether or not a logo resolves. */
+    const tickers = def.tokens.filter((t) => TICKER_TOKENS.has(t)).length;
+    if (type.logos.length !== tickers)
+      fail(`card-${card.no}: ${tickers} ticker(s) but ${type.logos.length} mark slot(s)`);
+    for (const box of type.logos) {
+      if (box.w < 60 || box.h < 60)
+        fail(`card-${card.no}: a mark slot drew ${box.w}x${box.h}, too small to read as a mark`);
+    }
     if (!type.voice) fail(`card-${card.no}: the Voice face never loaded`);
     if (!type.machine) fail(`card-${card.no}: the Machine face never loaded`);
     if (!type.face) fail(`card-${card.no}: the ${wantFamily} face never loaded`);

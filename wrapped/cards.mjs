@@ -11,25 +11,17 @@
  * runtime can all read it without a bundler in the way.
  */
 
-/**
- * Identical across all twelve, so the set reads as one story rather than as
- * twelve pictures that happen to share a palette.
- *
- * The no-text clause is load-bearing rather than stylistic: image models
- * garble letterforms, and every figure on a Canopy card is a number that
- * came off a brokerage. Typography lives in the HTML layer, where it stays
- * crisp, brand-controlled, and — the part that matters — correct.
- */
 /*
- * What every card shares — and it is deliberately only two things.
+ * What every card shares — and it is deliberately only one thing.
  *
  * It used to be a whole style: "near-black deep canvas, luminous grainy
  * gradients, cinematic depth", which is why twelve cards came back looking
  * like one card twelve times. A Wrapped deck is chaotic on purpose — the
  * pleasure of flicking through it is that the next one looks nothing like the
  * last. So the medium, the texture and the palette now live per card in
- * `art`, and what stays shared is the two rules that are about legibility
- * rather than taste.
+ * `art`, the composition follows each card's own type placement, and what
+ * stays shared is the prohibitions, which are about legibility rather than
+ * taste.
  */
 
 /**
@@ -118,9 +110,19 @@ export const TYPE_AXES = {
  *   no two of the twelve set the same way in the same place.
  * @property {string[]} tokens Every {{TOKEN}} the template carries, minus CAPTION.
  * @property {string} hero    The token set enormous. One per card.
+ * @property {?string} measures
+ *   The mono line above the hero, naming what that figure counts. Without it a
+ *   card is a big number with a mood underneath: card 07 set the *year's* trade
+ *   count under the heading "Most active month", which reads as the month's.
+ *   `null` where the hero names itself — the year, an archetype.
  * @property {string} teaser  The drawing an unearned frame wears. A `TeaserKind`.
  * @property {string} requires The one condition that mints it. A requirement, never a figure.
- * @property {string[]} fallbackCaptions Three, written to the same tone rules.
+ * @property {string[]} fallbackCaptions
+ *   Three, written to the same tone rules — and each one says plainly what the
+ *   figure on that card *is*: what was counted, over what period, on what
+ *   basis. They used to be moods ("Everything you did, added up"), which read
+ *   the same on any card and left the reader to guess at the arithmetic. Twelve
+ *   words is the ceiling `captionIsClean` enforces, on these and on the model's.
  */
 
 /** @type {WrappedCardDef[]} */
@@ -144,12 +146,13 @@ export const CARDS = [
     },
     tokens: ["USER_NAME", "YEAR"],
     hero: "YEAR",
+    measures: null,
     teaser: "cardFan",
     requires: "a synced brokerage",
     fallbackCaptions: [
-      "Here is your year, read straight off your brokerage.",
-      "Twelve cards, all of them yours.",
-      "Your year, in the numbers you actually made.",
+      "Twelve cards, built from what your brokerage recorded this year.",
+      "Every figure here came off your account, not an estimate.",
+      "Your year, read straight off your brokerage.",
     ],
   },
   {
@@ -171,12 +174,13 @@ export const CARDS = [
     },
     tokens: ["TOTAL_RETURN_PCT"],
     hero: "TOTAL_RETURN_PCT",
+    measures: "Change in account value",
     teaser: "equity",
     requires: "30 days of account value",
     fallbackCaptions: [
-      "Your whole year, as one figure.",
-      "Everything you did, added up.",
-      "One number for twelve months of decisions.",
+      "Your account's value at year end, against its first mark.",
+      "First mark of the year to the last, money paid in included.",
+      "How much your account value moved across the whole year.",
     ],
   },
   {
@@ -198,12 +202,13 @@ export const CARDS = [
     },
     tokens: ["CONTRIBUTION_COUNT", "CONTRIBUTION_STREAK_WEEKS"],
     hero: "CONTRIBUTION_COUNT",
+    measures: "Deposits this year",
     teaser: "cadence",
     requires: "one contribution on the ledger",
     fallbackCaptions: [
-      "You kept showing up, week after week.",
-      "Every one of these was a decision you made.",
-      "Steady beats dramatic, and this is steady.",
+      "Deposits and transfers into the account, counted one by one.",
+      "Times you moved money in, and your longest run of weeks.",
+      "Every contribution your brokerage recorded this year.",
     ],
   },
   {
@@ -225,12 +230,13 @@ export const CARDS = [
     },
     tokens: ["LONGEST_HOLD_TICKER", "LONGEST_HOLD_DAYS"],
     hero: "LONGEST_HOLD_DAYS",
+    measures: "Days held",
     teaser: "hold",
     requires: "a position held 30 days",
     fallbackCaptions: [
-      "You held this one longer than anything else.",
-      "Patience, measured in days.",
-      "This one stayed with you all year.",
+      "Days between the first buy and the last sell.",
+      "Your longest closed hold this year, opening trade to closing trade.",
+      "No other position you closed stayed open this long.",
     ],
   },
   {
@@ -252,12 +258,13 @@ export const CARDS = [
     },
     tokens: ["BEST_TICKER", "BEST_RETURN_PCT"],
     hero: "BEST_RETURN_PCT",
+    measures: "Return on the trade",
     teaser: "records",
     requires: "one round trip closed green",
     fallbackCaptions: [
-      "Your strongest name of the year.",
-      "This one did the heavy lifting.",
-      "The pick that worked hardest for you.",
+      "Your best closed trade, ranked by return rather than size.",
+      "Return on this position, first buy through last sell.",
+      "The strongest round trip you closed this year, by percentage.",
     ],
   },
   {
@@ -279,12 +286,13 @@ export const CARDS = [
     },
     tokens: ["MAX_DRAWDOWN_PCT", "RECOVERY_DAYS"],
     hero: "MAX_DRAWDOWN_PCT",
+    measures: "Deepest drawdown",
     teaser: "eventWindow",
     requires: "a 10% drawdown you did not sell",
     fallbackCaptions: [
-      "You sat through this one and came out the far side.",
-      "The dip you did not sell into.",
-      "Held, all the way through and back.",
+      "The furthest your account fell below a high, and back.",
+      "Peak to trough on your own account value this year.",
+      "Your deepest fall from a high, and the days to recover.",
     ],
   },
   {
@@ -306,12 +314,13 @@ export const CARDS = [
     },
     tokens: ["BUSIEST_MONTH", "TRADE_COUNT_YEAR"],
     hero: "TRADE_COUNT_YEAR",
+    measures: "Trades this year",
     teaser: "months",
     requires: "one month with trades in it",
     fallbackCaptions: [
-      "Your busiest stretch of the whole year.",
-      "This was the month you were paying attention.",
-      "More happened here than anywhere else.",
+      "Buys and sells all year; this month held the most.",
+      "Every trade you placed this year, and your busiest month.",
+      "Your whole year in trades. One month carried more than others.",
     ],
   },
   {
@@ -333,12 +342,13 @@ export const CARDS = [
     },
     tokens: ["RED_DAY_BUYS"],
     hero: "RED_DAY_BUYS",
+    measures: "Buys on red days",
     teaser: "sessionSize",
     requires: "a buy on a day your book was down",
     fallbackCaptions: [
-      "You bought while the screen was red.",
-      "Green days are easy. These were not.",
-      "Every one of these took some nerve.",
+      "Buys you placed on days your own realised P&L was negative.",
+      "Times you added on a session that closed down for you.",
+      "Purchases made on your red days, not the market's.",
     ],
   },
   {
@@ -360,12 +370,13 @@ export const CARDS = [
     },
     tokens: ["TOP_SECTOR", "TOP_SECTOR_PCT", "HOLDINGS_COUNT"],
     hero: "TOP_SECTOR_PCT",
+    measures: "Share of book",
     teaser: "components",
     requires: "sector data for what you hold",
     fallbackCaptions: [
-      "This is where your money actually sits.",
-      "Your book, by where it leans.",
-      "The shape of what you own.",
+      "Share of your book in the sector your broker reports largest.",
+      "How much of everything you hold sits in one sector.",
+      "Your largest sector, as a share of what you own now.",
     ],
   },
   {
@@ -387,12 +398,13 @@ export const CARDS = [
     },
     tokens: ["VS_SPY_PCT"],
     hero: "VS_SPY_PCT",
+    measures: "Against the index",
     teaser: "percentile",
     requires: "30 days of account value",
     fallbackCaptions: [
-      "You and the index, side by side.",
-      "Your year, measured against the market's.",
-      "Here is where you landed next to the benchmark.",
+      "Your return for the year, minus the index's.",
+      "The gap between your account's year and the index's.",
+      "Where your year landed next to the index, point for point.",
     ],
   },
   {
@@ -414,12 +426,13 @@ export const CARDS = [
     },
     tokens: ["ARCHETYPE_NAME", "ARCHETYPE_TRAIT"],
     hero: "ARCHETYPE_NAME",
+    measures: null,
     teaser: "archetypes",
     requires: "one scored day",
     fallbackCaptions: [
-      "This is what your own record reads like.",
-      "Twelve months of decisions, given a name.",
-      "Your conduct, in one word.",
+      "One of sixteen, decided by your record rather than a survey.",
+      "Four score components, each above or below the same fixed bar.",
+      "What your year's conduct reads as, in one name.",
     ],
   },
   {
@@ -441,12 +454,13 @@ export const CARDS = [
     },
     tokens: ["TOTAL_RETURN_PCT", "LONGEST_HOLD_DAYS", "ARCHETYPE_NAME", "INVESTOR_AGE"],
     hero: "TOTAL_RETURN_PCT",
+    measures: "Change in account value",
     teaser: "stamp",
     requires: "every other card in the set",
     fallbackCaptions: [
-      "Your year, on one card.",
-      "The short version, worth posting.",
-      "Everything above, in a single frame.",
+      "Your year in four figures, all off your own account.",
+      "The short version: return, longest hold, archetype, investor age.",
+      "Everything above, on one card worth posting.",
     ],
   },
 ];

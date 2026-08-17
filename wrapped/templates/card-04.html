@@ -36,13 +36,17 @@
 
   <div class="layer">
     <p class="eyebrow">bagcheck &middot; <span data-token="YEAR">{{YEAR}}</span></p>
+    <p class="heroLabel">Days held</p>
     <p class="hero" data-kind="figure" data-token="LONGEST_HOLD_DAYS">{{LONGEST_HOLD_DAYS}}</p>
     <h1 class="title">The longest hold</h1>
 
     <div class="support">
         <div class="fact">
           <span class="factLabel">Instrument</span>
-          <span class="factValue" data-kind="word" data-token="LONGEST_HOLD_TICKER">{{LONGEST_HOLD_TICKER}}</span>
+          <span class="instrument">
+            <span class="logo" aria-hidden="true"><img class="logoImg" data-logo="LONGEST_HOLD_TICKER" alt=""></span>
+            <span class="factValue" data-kind="word" data-token="LONGEST_HOLD_TICKER">{{LONGEST_HOLD_TICKER}}</span>
+          </span>
         </div>
     </div>
 

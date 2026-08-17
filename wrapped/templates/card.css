@@ -246,6 +246,29 @@ body {
 }
 
 /*
+ * The line that names what the hero counts.
+ *
+ * Card 07 set the *year's* trade count under a heading that said "Most active
+ * month", with the month itself in a fact below — so the biggest number on the
+ * card read as the month's, and nothing on it said otherwise. A figure with no
+ * label is a figure the caption has to define, and a caption that spends
+ * itself on a definition has nothing left to say. This is the product's own
+ * stat grammar — label, number, tail — arriving on the cards.
+ *
+ * Machine on all twelve, like every other label here. It is absent, not empty,
+ * on the two cards whose hero names itself.
+ */
+.heroLabel {
+  font-family: "Machine", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--share-dim);
+  margin: 0 0 22px;
+}
+
+/*
  * The number is the hero and the caption is a whisper. Hierarchy comes from
  * the size gap, not from a second weight or a second colour — if a card reads
  * flat the answer is to widen the gap, never to add an element.
@@ -347,6 +370,55 @@ body {
 .factValue[data-kind="word"] {
   font-family: "Voice", "Public Sans", system-ui, -apple-system, sans-serif;
   font-size: 54px;
+}
+
+/*
+ * A ticker and its company's mark.
+ *
+ * The mark is the per-person half of a card about a position — the same idea
+ * the app's holdings table runs on. The plate is drawn here and is the
+ * finished state: `stampLogos` points the image at `/api/logo/<symbol>` on the
+ * way to a screen, and a card rendered where that route cannot be reached
+ * shows the plate rather than a hole. Both halves stand on their own, which is
+ * the same contract the card's art has with its CSS ground.
+ */
+.instrument {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  position: relative;
+  flex: none;
+  width: 76px;
+  height: 76px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--share-fill);
+  box-shadow: inset 0 0 0 2px var(--share-line);
+}
+
+/*
+ * The drawn plate, under the image. Shapes and no letterforms: a monogram
+ * drawn in CSS would have to come from the ticker, and the ticker is set in
+ * type two inches to the right already.
+ */
+.logo::after {
+  content: "";
+  position: absolute;
+  inset: 22px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--share-a) 42%, transparent);
+}
+
+.logoImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 1;
 }
 
 /* The model's one line. Body face, quiet, never larger than the title. */

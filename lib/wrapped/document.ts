@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { fitHero } from "./personalise";
+import { fitHero, stampLogos } from "./personalise";
 
 /**
  * A stored card, made into a page a browser can draw.
@@ -17,11 +17,12 @@ import { fitHero } from "./personalise";
  * `/wrapped`, the faces under `/fonts` — is already an absolute path served
  * out of `public`, so those resolve on their own.
  *
- * This is also where `fitHero` runs. The size the hero needs depends on how
- * many characters the value has, and that is a fact about drawing rather than
- * about the card's contents, so it belongs on the way to pixels and not in
- * what the gate checked. One function turns a stored card into a shown one,
- * which is what keeps those two from drifting apart.
+ * This is also where `fitHero` and `stampLogos` run. The size a hero needs
+ * depends on how many characters the value has, and the address of a ticker's
+ * mark depends on the ticker — both are facts about drawing rather than about
+ * the card's contents, so they belong on the way to pixels and not in what the
+ * gate checked. One function turns a stored card into a shown one, which is
+ * what keeps those two from drifting apart.
  */
 
 /** Read once per process. The stylesheet does not change between requests. */
@@ -61,7 +62,7 @@ export async function cardDocument(
   opts: { example?: boolean } = {},
 ): Promise<string> {
   const css = await stylesheet();
-  let out = fitHero(html).replace(
+  let out = stampLogos(fitHero(html)).replace(
     /<link rel="stylesheet" href="card\.css">/,
     `<style>${css}</style>`,
   );
@@ -74,7 +75,11 @@ export async function cardDocument(
  * page and wants a single copy of the stylesheet rather than twelve.
  */
 export function cardFragment(html: string): string {
-  return /<div class="card"[\s\S]*?<\/div>\s*<\/body>/.exec(fitHero(html))?.[0].replace(/\s*<\/body>$/, "") ?? "";
+  return (
+    /<div class="card"[\s\S]*?<\/div>\s*<\/body>/
+      .exec(stampLogos(fitHero(html)))?.[0]
+      .replace(/\s*<\/body>$/, "") ?? ""
+  );
 }
 
 /** The stylesheet on its own, for a page that lays several fragments out. */
