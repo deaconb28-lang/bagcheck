@@ -10,6 +10,8 @@ import { cardDocument } from "./document";
 import { fallbackCaption, fill } from "./personalise";
 import { sampleWrapped } from "./sample";
 import { earnedCards, wrappedStats } from "./stats";
+import { yearWindow } from "./window";
+import type { WrappedWindow } from "./window";
 import type { WrappedContext, WrappedStats } from "./stats";
 import { finishCards } from "./run";
 import type { CardJob, FinishedCard } from "./run";
@@ -125,13 +127,19 @@ export async function statsForYear(
   userId: string,
   year: number,
   name?: string | null,
+  window: WrappedWindow = yearWindow(year),
 ): Promise<{ stats: WrappedStats; context: WrappedContext } | null> {
   const [data, derived] = await Promise.all([loadScreen(userId, 400), getDerived(userId)]);
   if (!derived) return null;
 
   const { transactions } = await getCollections();
   const rows = await transactions
-    .find({ userId, date: { $gte: `${year}-01-01`, $lte: `${year}-12-31` } })
+    /*
+     * The window's own range. `to` is exclusive, so `$lt` — a quarter ends
+     * where the next begins and `$lte` on the next quarter's first day would
+     * pull one day of its trades into this one.
+     */
+    .find({ userId, date: { $gte: window.from, $lt: window.to } })
     .project<{ date: string; type: string; symbol: string | null; amount: number | null }>({
       _id: 0,
       date: 1,
@@ -150,7 +158,16 @@ export async function statsForYear(
   const symbols = data.holdings.map((h) => h.symbol).filter(Boolean);
   const [profiles, indexReturn] = await Promise.all([
     isMarketConfigured() ? profilesFor(symbols).catch(() => new Map()) : Promise.resolve(new Map()),
-    isMarketConfigured() ? indexReturnYtd().catch(() => null) : Promise.resolve(null),
+    /*
+     * The benchmark is a *year to date* figure and there is no quarterly one in
+     * this repository. A YTD index return set beside a quarter's own return
+     * would be two different measurements printed as a comparison, which is the
+     * exact thing the field block refuses to do — so on a quarter the index is
+     * absent and card 10 is simply unearned.
+     */
+    isMarketConfigured() && window.quarter == null
+      ? indexReturnYtd().catch(() => null)
+      : Promise.resolve(null),
   ]);
 
   const latest = data.scores[0] ?? null;
@@ -158,6 +175,7 @@ export async function statsForYear(
 
   return wrappedStats({
     year,
+    window: { from: window.from, to: window.to, label: window.label },
     name: name ?? (await displayName(userId)),
     equity: derived.equitySeries.map((p) => ({ date: p.date, value: p.value })),
     trips: derived.roundTrips,
@@ -192,9 +210,10 @@ export async function statsForYear(
 export async function wrappedYear(
   userId: string,
   year: number,
-  opts: { refresh?: boolean; name?: string | null } = {},
+  opts: { refresh?: boolean; name?: string | null; window?: WrappedWindow } = {},
 ): Promise<WrappedYear | null> {
-  const computed = await statsForYear(userId, year, opts.name);
+  const window = opts.window ?? yearWindow(year);
+  const computed = await statsForYear(userId, year, opts.name, window);
   if (!computed) return null;
 
   const { stats, context } = computed;
@@ -205,7 +224,7 @@ export async function wrappedYear(
   const { wrappedCards } = await getCollections();
 
   if (!opts.refresh) {
-    const hit = await wrappedCards.findOne({ userId, year });
+    const hit = await wrappedCards.findOne({ userId, year, window: window.key });
     if (hit && hit.fingerprint === fingerprint) {
       return { year, stats, context, cards: hit.cards, fingerprint };
     }
@@ -227,8 +246,8 @@ export async function wrappedYear(
 
   await wrappedCards
     .updateOne(
-      { userId, year },
-      { $set: { userId, year, fingerprint, cards, builtAt: new Date() } },
+      { userId, year, window: window.key },
+      { $set: { userId, year, window: window.key, fingerprint, cards, builtAt: new Date() } },
       { upsert: true },
     )
     .catch((err) => console.error("[wrapped] cache write failed", err));
@@ -260,9 +279,12 @@ export interface ShownCard {
 export async function wrappedDeck(
   userId: string | null,
   year: number,
-  opts: { example?: boolean; name?: string | null } = {},
+  opts: { example?: boolean; name?: string | null; window?: WrappedWindow } = {},
 ): Promise<{ cards: ShownCard[]; example: boolean; stats: WrappedStats | null }> {
-  const real = !opts.example && userId ? await wrappedYear(userId, year, { name: opts.name }) : null;
+  const real =
+    !opts.example && userId
+      ? await wrappedYear(userId, year, { name: opts.name, window: opts.window })
+      : null;
 
   if (real?.cards.length) {
     const cards = await Promise.all(

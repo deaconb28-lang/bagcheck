@@ -254,6 +254,14 @@ export interface LogoDoc {
 export interface WrappedCardsDoc {
   userId: string;
   year: number;
+  /**
+   * Which slice of the year this deck was cut to — `year`, or `q1`…`q4`.
+   *
+   * Part of the key, so a reader can hold a year and four quarters at once.
+   * Documents written before quarters existed carry no window at all; they
+   * simply never match a read again and are rebuilt under the new key.
+   */
+  window: string;
   fingerprint: string;
   cards: Array<{
     no: string;

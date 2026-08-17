@@ -1,6 +1,7 @@
 import { loadScreen } from "./screen";
 import { factsFrom, getDailyInsight } from "./insights";
 import { wrappedYear } from "@/lib/wrapped/year";
+import { quarterOf, quarterWindow, yearWindow } from "@/lib/wrapped/window";
 
 /**
  * Build the two slow things ahead of the reader.
@@ -56,16 +57,24 @@ export async function warmUser(userId: string, now: Date = new Date()): Promise<
     }
   }
 
-  try {
-    /*
-     * `wrappedYear` is the cached path: same stats fingerprint, same cards, no
-     * model calls. It only spends anything when a figure a card states has
-     * actually moved — which, after a sync, is exactly when it should.
-     */
-    await wrappedYear(userId, now.getUTCFullYear());
-    out.wrapped = true;
-  } catch {
-    /* A year with nothing earned yet is not a failure. */
+  /*
+   * Both windows a reader can arrive at: the year, and the quarter they are
+   * currently in. The quarter is the one a new account actually has anything
+   * in, so warming only the year would leave the very reader this exists for
+   * waiting on a cold build.
+   *
+   * `wrappedYear` is the cached path: same stats fingerprint, same cards, no
+   * model calls. It only spends anything when a figure a card states has
+   * actually moved — which, after a sync, is exactly when it should.
+   */
+  const year = now.getUTCFullYear();
+  for (const window of [yearWindow(year), quarterWindow(year, quarterOf(now))]) {
+    try {
+      await wrappedYear(userId, year, { window });
+      out.wrapped = true;
+    } catch {
+      /* A window with nothing earned yet is not a failure. */
+    }
   }
 
   return out;

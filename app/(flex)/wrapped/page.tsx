@@ -3,6 +3,7 @@ import { auth, getUserId, isAuthConfigured } from "@/auth";
 import { getCollections, isDbConfigured, syncClock } from "@/lib/db";
 import { appLocked } from "@/lib/launch";
 import { wrappedDeck } from "@/lib/wrapped/year";
+import { windowFor, windowsFor } from "@/lib/wrapped/window";
 import { BagcheckMark } from "@/components/brand/BagcheckMark";
 import { GoogleSignIn } from "@/components/app/GoogleSignIn";
 import { AppNav } from "@/components/app/AppNav";
@@ -42,9 +43,9 @@ export const dynamic = "force-dynamic";
 export default async function WrappedPage({
   searchParams,
 }: {
-  searchParams: Promise<{ demo?: string; connected?: string }>;
+  searchParams: Promise<{ demo?: string; connected?: string; w?: string }>;
 }) {
-  const { demo, connected } = await searchParams;
+  const { demo, connected, w } = await searchParams;
   const userId = await getUserId();
   const year = new Date().getUTCFullYear();
 
@@ -55,7 +56,19 @@ export default async function WrappedPage({
    * own face rather than only in a line under the rail.
    */
   const asDemo = demo === "1" || !isDbConfigured();
-  const { cards, example } = await wrappedDeck(userId, year, { example: asDemo });
+  /*
+   * Which slice of the year. A quarter is a window a new account can actually
+   * fill — a reader who connected in March has no year yet and can do nothing
+   * about it until December, but they have a Q1. An unknown or not-yet-started
+   * key resolves to the year rather than to an empty deck.
+   */
+  const now = new Date();
+  const win = windowFor(year, w, now);
+  const windows = windowsFor(year, now);
+  const { cards, example } = await wrappedDeck(userId, year, {
+    example: asDemo,
+    window: win,
+  });
 
   /*
    * The reader has an account and the loader still fell back to the sample —
@@ -87,7 +100,7 @@ export default async function WrappedPage({
   if (firstRun && example) {
     return (
       <>
-        <Bar label={String(year)} userId={userId} />
+        <Bar label={win.label} userId={userId} />
         <main className={styles.main}>
           <div className={styles.page}>{firstRun}</div>
         </main>
@@ -98,7 +111,7 @@ export default async function WrappedPage({
   if (nothingEarned) {
     return (
       <>
-        <Bar label={String(year)} userId={userId} />
+        <Bar label={win.label} userId={userId} />
         {/*
           * A year that has minted nothing is still a year in progress, and it
           * gets the same screen as one that has minted eleven — the deck is
@@ -130,6 +143,29 @@ export default async function WrappedPage({
               </Link>
             </div>
 
+            {/*
+              * The windows, as links rather than state. A window is a place you
+              * can be sent to and share, and making it component state would
+              * cost this page its server rendering for the sake of five buttons.
+              * Only windows that have begun are offered — an empty deck for a
+              * quarter that cannot hold anything is a dead end with a date on it.
+              */}
+            {example ? null : (
+              <nav className={styles.windows} aria-label="Wrapped window">
+                {windows.map((option) => (
+                  <Link
+                    key={option.key}
+                    href={option.key === "year" ? "/wrapped" : `/wrapped?w=${option.key}`}
+                    className={styles.window}
+                    data-active={option.key === win.key || undefined}
+                    aria-current={option.key === win.key ? "page" : undefined}
+                  >
+                    {option.key === "year" ? String(year) : option.label.split(" ")[0]}
+                  </Link>
+                ))}
+              </nav>
+            )}
+
             <StillToCome earned={[]} />
           </div>
         </main>
@@ -137,7 +173,7 @@ export default async function WrappedPage({
     );
   }
 
-  const label = String(year);
+  const label = win.label;
 
   return (
     <>
@@ -146,6 +182,29 @@ export default async function WrappedPage({
         <div className={styles.page}>
           {firstRun}
           <CardFonts />
+          {/*
+            * The windows, as links rather than state. A window is a place you
+            * can be sent to and share, and making it component state would
+            * cost this page its server rendering for the sake of five buttons.
+            * Only windows that have begun are offered — an empty deck for a
+            * quarter that cannot hold anything is a dead end with a date on it.
+            */}
+          {example ? null : (
+            <nav className={styles.windows} aria-label="Wrapped window">
+              {windows.map((option) => (
+                <Link
+                  key={option.key}
+                  href={option.key === "year" ? "/wrapped" : `/wrapped?w=${option.key}`}
+                  className={styles.window}
+                  data-active={option.key === win.key || undefined}
+                  aria-current={option.key === win.key ? "page" : undefined}
+                >
+                  {option.key === "year" ? String(year) : option.label.split(" ")[0]}
+                </Link>
+              ))}
+            </nav>
+          )}
+
           <YearDeck cards={cards} year={year} />
 
           {/*

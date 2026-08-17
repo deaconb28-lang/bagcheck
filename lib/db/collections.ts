@@ -147,7 +147,17 @@ export async function createIndexes() {
     // notification a day, whichever cron gets there first.
     c.emailLog.createIndex({ userId: 1, date: 1 }, { unique: true }),
     c.derived.createIndex({ userId: 1 }, { unique: true }),
-    c.wrappedCards.createIndex({ userId: 1, year: 1 }, { unique: true }),
+    /*
+     * One deck per reader per year *per window*. It was one per year, and that
+     * index actively prevents the quarters from existing: the second window
+     * written for a year would collide with the first. Dropping the old one is
+     * part of creating the new one — a unique index nobody can satisfy is not
+     * a leftover, it is an outage.
+     */
+    c.wrappedCards.dropIndex("userId_1_year_1").catch(() => {
+      /* Already gone, or this database never had it. Both are fine. */
+    }),
+    c.wrappedCards.createIndex({ userId: 1, year: 1, window: 1 }, { unique: true }),
     c.syncProgress.createIndex({ userId: 1 }, { unique: true }),
   ]);
 }

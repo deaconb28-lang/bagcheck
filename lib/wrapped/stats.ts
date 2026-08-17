@@ -61,6 +61,14 @@ export interface WrappedContext {
 
 export interface StatsInput {
   year: number;
+  /**
+   * The slice every figure is filtered to. Inclusive `from`, exclusive `to`.
+   *
+   * Omitted means the whole year, which is what every caller meant before
+   * quarters existed — so a caller that has not been taught about windows
+   * keeps producing exactly the deck it produced before.
+   */
+  window?: { from: string; to: string; label: string };
   name: string | null;
   /** Equity curve for the year, oldest first. Drives return and drawdown. */
   equity: Array<{ date: string; value: number }>;
@@ -206,7 +214,14 @@ export function redDayBuys(
  * on every run and a test can assert every figure.
  */
 export function wrappedStats(input: StatsInput): { stats: WrappedStats; context: WrappedContext } {
-  const inYear = (d: string) => d.slice(0, 4) === String(input.year);
+  /*
+   * One predicate, used by every figure below. It was `d.slice(0,4) === year`,
+   * which is a year filter that cannot express a quarter; a range does both,
+   * and the year is just the range that happens to be twelve months long.
+   */
+  const from = input.window?.from ?? `${input.year}-01-01`;
+  const to = input.window?.to ?? `${input.year + 1}-01-01`;
+  const inYear = (d: string) => d >= from && d < to;
 
   const equity = input.equity.filter((p) => inYear(p.date));
   const rows = input.rows.filter((r) => inYear(r.date));
