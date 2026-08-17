@@ -1,4 +1,5 @@
-import { getCollections, getDb } from "./collections";
+import { getCollections } from "./collections";
+import type { CronStateDoc } from "./types";
 
 /**
  * Cursor state for the nightly jobs.
@@ -16,22 +17,16 @@ import { getCollections, getDb } from "./collections";
  * them.
  */
 
-export interface CronState {
-  job: string;
-  /** The last userId completed, or null at the start of a sweep. */
-  cursor: string | null;
-  /** How many times the sweep has been all the way round. */
-  sweeps: number;
-  updatedAt: Date;
-}
+export type CronState = CronStateDoc;
 
-interface CronStateDoc extends CronState {
-  _id?: unknown;
-}
-
+/*
+ * Through `getCollections` rather than a raw `getDb().collection(…)`.
+ * Reaching past the declaration is what left this table with no index, no
+ * shared type, and outside the test that asserts every stored collection is
+ * either erased on request or exempt with a stated reason.
+ */
 async function states() {
-  const db = await getDb();
-  return db.collection<CronStateDoc>("cronState");
+  return (await getCollections()).cronState;
 }
 
 export async function cronState(job: string): Promise<CronState> {

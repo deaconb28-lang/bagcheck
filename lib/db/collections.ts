@@ -6,6 +6,7 @@ import type {
   CardDoc,
   EmailLogDoc,
   ConnectionDoc,
+  CronStateDoc,
   DerivedDoc,
   IconDoc,
   InsightDoc,
@@ -58,11 +59,40 @@ export async function getCollections() {
     derived: db.collection<DerivedDoc>("derived"),
     wrappedCards: db.collection<WrappedCardsDoc>("wrappedCards"),
     syncProgress: db.collection<SyncProgressDoc>("syncProgress"),
+    cronState: db.collection<CronStateDoc>("cronState"),
   };
 }
 
+/**
+ * Applied once per process.
+ *
+ * `ensureIndexes` is two dozen round trips to Atlas and it was being awaited
+ * at the top of every sync, every scoring run and every insight write — on a
+ * warm server that is the same two dozen calls answering "yes, still there"
+ * many times a minute. `createIndex` is idempotent, so the only thing repeating
+ * it buys is latency.
+ *
+ * Deliberately a cached *promise* rather than a boolean: two requests arriving
+ * together must await the same round trip rather than start two. A failure
+ * clears the cache so the next caller retries — a transient Atlas blip must
+ * not leave a process permanently believing it has indexes it does not.
+ *
+ * A process restart re-runs it, which is the right frequency: it is how a new
+ * deployment picks up an index added in that deployment. `npm run db:indexes`
+ * is the way to apply them without waiting for one.
+ */
+let applied: Promise<void> | null = null;
+
+export function ensureIndexes(): Promise<void> {
+  applied ??= createIndexes().catch((err) => {
+    applied = null;
+    throw err;
+  });
+  return applied;
+}
+
 /** Idempotent — compound {userId, date} indexes everywhere, per the data model. */
-export async function ensureIndexes() {
+export async function createIndexes() {
   const c = await getCollections();
   await Promise.all([
     c.connections.createIndex({ userId: 1 }, { unique: true }),
@@ -78,6 +108,30 @@ export async function ensureIndexes() {
     c.insights.createIndex({ userId: 1, date: 1, kind: 1 }, { unique: true }),
     c.cards.createIndex({ userId: 1, date: 1 }),
     c.cards.createIndex({ slug: 1 }, { unique: true }),
+    /*
+     * One badge per user, which is what `mintBadge` says and what nothing was
+     * enforcing: it reads, finds none, and inserts — so two requests arriving
+     * together minted two badges for one person, and `badgeBySlug` then
+     * answered from whichever the scan reached first. The unique index is what
+     * makes the read-then-insert safe rather than merely usually right.
+     */
+    c.badges.createIndex({ userId: 1 }, { unique: true }),
+    /* The slug is the badge's entire access model, exactly like a card's. */
+    c.badges.createIndex({ slug: 1 }, { unique: true }),
+    /*
+     * The waitlist upserts by lowercased address and the route reports whether
+     * the person was already on it. Without this, two submissions racing each
+     * other both insert, the count is wrong, and both are told they are new.
+     */
+    c.waitlist.createIndex({ email: 1 }, { unique: true }),
+    /*
+     * One row per job. An upsert with no unique key can insert a second row
+     * under concurrency, and a duplicated cursor means the sweep reads one and
+     * writes the other — users re-synced (SnapTrade is billed per call) or
+     * skipped entirely, which is the failure the resumable sweep was built to
+     * end.
+     */
+    c.cronState.createIndex({ job: 1 }, { unique: true }),
     c.subscriptions.createIndex({ userId: 1 }, { unique: true }),
     c.subscriptions.createIndex({ stripeCustomerId: 1 }),
     c.marketCache.createIndex({ key: 1 }, { unique: true }),

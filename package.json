@@ -22,7 +22,8 @@
     "wrapped:backgrounds": "node --import tsx scripts/generate-backgrounds.mjs",
     "wrapped:templates": "node scripts/build-wrapped-templates.mjs",
     "wrapped:check": "node --import tsx scripts/personalize-wrapped.mjs",
-    "wrapped:metrics": "node scripts/measure-hero-metrics.mjs"
+    "wrapped:metrics": "node scripts/measure-hero-metrics.mjs",
+    "db:indexes": "node --import tsx scripts/db-indexes.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",

@@ -15,10 +15,18 @@ import { PERSONAL_COLLECTIONS } from "./account";
 
 function declaredCollections(): string[] {
   const source = readFileSync(new URL("./collections.ts", import.meta.url), "utf8");
-  const block = source.slice(
-    source.indexOf("export async function getCollections()"),
-    source.indexOf("export async function ensureIndexes()"),
-  );
+  const from = source.indexOf("export async function getCollections()");
+  const to = source.indexOf("export async function createIndexes()");
+  /*
+   * Both anchors are asserted rather than trusted. `indexOf` answers -1 for a
+   * name that has been renamed, `slice` accepts -1 happily, and the test then
+   * reads a block it was not aiming at — passing for a reason that has nothing
+   * to do with what it checks. This test's whole job is to be the thing that
+   * notices a collection nobody decided about.
+   */
+  assert.ok(from >= 0, "getCollections has been renamed — this test is reading the wrong block");
+  assert.ok(to > from, "createIndexes has been renamed — this test is reading the wrong block");
+  const block = source.slice(from, to);
   return [...block.matchAll(/db\.collection<\w+>\("(\w+)"\)/g)].map((m) => m[1]);
 }
 
@@ -33,6 +41,9 @@ const NOT_PERSONAL: Record<string, string> = {
   icons: "third-party artwork, shared, no userId",
   logos: "company marks, keyed by ticker and shared — AAPL is not personal data",
   photos: "third-party photographs, shared, no userId",
+  cronState:
+    "one row per nightly job, not per user. Its cursor names a userId only as " +
+    "a position in an ordered walk, and the next sweep moves past it",
 };
 
 test("every stored collection is either erased or explicitly exempt", () => {

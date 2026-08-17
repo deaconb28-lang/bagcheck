@@ -327,6 +327,25 @@ export interface SyncProgressDoc {
 }
 
 /**
+ * Where a nightly sweep got to. One row per job, not per user.
+ *
+ * It was reached through `getDb().collection("cronState")` rather than
+ * declared here, which put it outside every check this layer has: no index, no
+ * type, and invisible to the test that asserts each stored collection is
+ * either erased on request or exempt with a stated reason. A collection nobody
+ * is checking is the failure that test exists to prevent, so it is declared.
+ */
+export interface CronStateDoc {
+  /** The job's name — `nightly-score`, `notify`. Unique. */
+  job: string;
+  /** The last userId completed, or null at the start of a sweep. */
+  cursor: string | null;
+  /** How many times the sweep has been all the way round. */
+  sweeps: number;
+  updatedAt: Date;
+}
+
+/**
  * The derived layer — round trips, daily P&L, forward-filled equity and hold
  * times, computed once per sync rather than on every page view.
  *
