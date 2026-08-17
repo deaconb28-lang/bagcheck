@@ -35,15 +35,21 @@ export interface BackgroundCard {
   key: string;
   motif: string;
   art: CardArt;
+  /**
+   * Where this card's type sits. The drawing side needs it because the
+   * composition it asks for is the negative of the lockup — see `COMPOSITION`.
+   */
+  place: keyof typeof COMPOSITION;
 }
 
 /** The twelve, as the drawing side needs them. */
 export function backgroundCards(): BackgroundCard[] {
-  return (CARDS as BackgroundCard[]).map((c) => ({
+  return CARDS.map((c) => ({
     no: c.no,
     key: c.key,
     motif: c.motif,
-    art: c.art,
+    art: c.art as CardArt,
+    place: c.type.place as keyof typeof COMPOSITION,
   }));
 }
 
@@ -54,8 +60,10 @@ export function backgroundCards(): BackgroundCard[] {
  * like card four — an image model weights the opening of a prompt hardest,
  * and "halftone pop-art print" up front produces a different object from the
  * same subject described after four lines of shared house style. Only the
- * composition and the prohibitions are shared, and both are about keeping the
- * type legible rather than about how the card looks.
+ * prohibitions are shared, and they are about keeping the type legible rather
+ * than about how the card looks. The composition is not shared either — it is
+ * the negative of wherever this card's lockup sits, because a quiet lower
+ * third is the wrong request for a card whose type is at the top.
  *
  * The variation is **across the twelve and not across readers**: card five is
  * the same art direction for everybody, the way a Wrapped template is. What
@@ -68,7 +76,7 @@ export function promptFor(card: BackgroundCard): string {
     `Subject: ${card.motif}.`,
     `Palette: ${palette}.`,
     `Surface: ${texture}.`,
-    COMPOSITION,
+    COMPOSITION[card.place] ?? COMPOSITION.foot,
     CONSTRAINTS,
   ].join(" ");
 }

@@ -34,6 +34,33 @@ import { finishCard } from "../lib/wrapped/run.ts";
 import { earnedCards } from "../lib/wrapped/stats.ts";
 
 const OUT = new URL("../.wrapped-check/", import.meta.url);
+
+/*
+ * The art set the templates point at. Kept in step with the same constant in
+ * `scripts/build-wrapped-templates.mjs` — a version the probe read wrong is a
+ * probe rendering the drawn CSS ground and reporting on a set nobody shipped.
+ */
+const ART_SET = "chaotic-01";
+
+/**
+ * The CSS family behind each `type.face`, as `card.css` declares it.
+ *
+ * Restated here rather than parsed, because the probe's whole job is to be an
+ * independent opinion about what the stylesheet does: a check that derived its
+ * expectation from the file it is checking would agree with any mistake in it.
+ */
+const FACE_FAMILY = {
+  machine: "Machine",
+  voice: "Voice",
+  poster: "Poster",
+  serif: "Serif",
+  grotesk: "Grotesk",
+  geometric: "Geometric",
+  lede: "Lede",
+};
+
+/** The title follows the card's voice, except on the mono card — see `card.css`. */
+const FACE_TITLE = (face) => (face === "machine" ? "Voice" : FACE_FAMILY[face]);
 const render = process.argv.includes("--render");
 const batch = Number(process.argv.find((a) => a.startsWith("--batch="))?.slice(8) || 1);
 
@@ -236,7 +263,7 @@ if (render) {
      * pays off.
      */
     const bg = await readFile(
-      fileURLToPath(new URL(`../public/wrapped/2026/backgrounds/bg-${card.no}.webp`, import.meta.url)),
+      fileURLToPath(new URL(`../public/wrapped/2026/art/${ART_SET}/bg-${card.no}.webp`, import.meta.url)),
     ).catch(() => null);
 
     /* The fit is a render-time pass, so it happens here — same as in the app. */
@@ -266,26 +293,69 @@ if (render) {
      * whatever it inherited — and that the face behind that name actually
      * loaded. Either one alone would have missed it.
      */
-    const type = await page.evaluate(() => {
+    const def = CARDS.find((c) => c.no === card.no);
+    const wantFamily = FACE_FAMILY[def.type.face];
+    const type = await page.evaluate((family) => {
       const first = (el) =>
         el ? getComputedStyle(el).fontFamily.split(",")[0].replace(/["']/g, "").trim() : null;
       const hero = document.querySelector(".hero");
+      const weight = getComputedStyle(hero).fontWeight;
+      /*
+       * Where the lockup actually landed, in stage coordinates. The type moved
+       * off the foot on eight of the twelve, and a placement rule that pushed
+       * a line past the edge would still pass every check above — they read
+       * the markup, and this is the only one that looks at the drawing.
+       */
+      const boxes = [...document.querySelectorAll(".layer > *")].map((el) => {
+        const r = el.getBoundingClientRect();
+        return { cls: el.className, left: r.left, right: r.right, top: r.top, bottom: r.bottom };
+      });
       return {
         card: first(document.querySelector(".card")),
         hero: first(hero),
+        heroWeight: weight,
         /* The hero's own attribute — `.factValue` wears this too. */
         heroKind: hero?.getAttribute("data-kind") ?? null,
         eyebrow: first(document.querySelector(".eyebrow")),
-        voice: document.fonts.check('600 58px Voice'),
-        machine: document.fonts.check('700 380px Machine'),
+        title: first(document.querySelector(".title")),
+        /*
+         * The caption's own weight, not the title's. The title is in the
+         * card's display voice on eleven of the twelve now, so asking whether
+         * Voice 600 had loaded was asking about a face those cards never set
+         * anything in — and `check` answers no for a face nothing requested.
+         */
+        voice: document.fonts.check("38px Voice"),
+        machine: document.fonts.check("500 30px Machine"),
+        face: document.fonts.check(`${getComputedStyle(hero).fontWeight} 380px "${family}"`),
+        boxes,
       };
-    });
-    const wantHero = type.heroKind === "word" ? "Voice" : "Machine";
+    }, wantFamily);
+
     if (type.card !== "Voice") fail(`card-${card.no}: body sets in ${type.card}, not Voice`);
-    if (type.hero !== wantHero) fail(`card-${card.no}: hero sets in ${type.hero}, not ${wantHero}`);
+    if (type.hero !== wantFamily)
+      fail(`card-${card.no}: hero sets in ${type.hero}, not ${wantFamily}`);
+    if (type.title !== FACE_TITLE(def.type.face))
+      fail(`card-${card.no}: title sets in ${type.title}, not ${FACE_TITLE(def.type.face)}`);
     if (type.eyebrow !== "Machine") fail(`card-${card.no}: eyebrow sets in ${type.eyebrow}`);
     if (!type.voice) fail(`card-${card.no}: the Voice face never loaded`);
     if (!type.machine) fail(`card-${card.no}: the Machine face never loaded`);
+    if (!type.face) fail(`card-${card.no}: the ${wantFamily} face never loaded`);
+
+    /*
+     * The stage, less its gutters, with a pixel of slack for sub-pixel
+     * rounding. Nothing in the lockup may cross it — that is what `fitHero`'s
+     * per-face table is for, and this is what proves the table is right.
+     */
+    for (const box of type.boxes) {
+      if (box.left < 87 || box.right > 993)
+        fail(
+          `card-${card.no}: .${box.cls} runs to ${Math.round(box.left)}…${Math.round(box.right)}, outside the 88…992 measure`,
+        );
+      if (box.top < 0 || box.bottom > 1920)
+        fail(
+          `card-${card.no}: .${box.cls} runs to ${Math.round(box.top)}…${Math.round(box.bottom)}, off the 1920 stage`,
+        );
+    }
 
     await page.screenshot({
       path: fileURLToPath(new URL(`card-${card.no}.png`, OUT)),

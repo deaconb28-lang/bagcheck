@@ -48,8 +48,26 @@ test("every prompt forbids the things that would break a card", () => {
         `${card.no} does not forbid ${banned}`,
       );
     }
-    assert.match(prompt, /centre and the lower third/);
+    assert.match(prompt, /Vertical 2:3 portrait poster art/);
   }
+});
+
+test("the composition a card asks for is the negative of where its type sits", () => {
+  /*
+   * The two directions have to agree. A card whose lockup is at the head, told
+   * to keep its lower third quiet, would come back with the incident drawn
+   * straight through the type.
+   */
+  const wants: Record<string, RegExp> = {
+    foot: /centre and the lower third/,
+    head: /upper half visually quiet/,
+    middle: /band across the centre/,
+    split: /top edge and the lower half/,
+  };
+  for (const card of cards) {
+    assert.match(promptFor(card), wants[card.place], `${card.no} (${card.place})`);
+  }
+  assert.equal(new Set(cards.map((c) => c.place)).size, 4, "the deck skips a placement");
 });
 
 test("a prompt names its own palette and subject", () => {

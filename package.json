@@ -21,7 +21,8 @@
     "sheet": "node --import tsx scripts/contact-sheet.mjs",
     "wrapped:backgrounds": "node --import tsx scripts/generate-backgrounds.mjs",
     "wrapped:templates": "node scripts/build-wrapped-templates.mjs",
-    "wrapped:check": "node --import tsx scripts/personalize-wrapped.mjs"
+    "wrapped:check": "node --import tsx scripts/personalize-wrapped.mjs",
+    "wrapped:metrics": "node scripts/measure-hero-metrics.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",

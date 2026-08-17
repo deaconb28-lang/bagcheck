@@ -10,6 +10,7 @@ import {
   tokenValues,
   validate,
 } from "./personalise";
+import { HERO_METRICS } from "../../wrapped/metrics.mjs";
 import type { WrappedStats } from "./stats";
 
 /*
@@ -220,18 +221,66 @@ test("a warm, neutral caption passes", () => {
  * decimal, which is most of them.
  */
 
+/** The stamped size, or null where the fit declined to stamp one. */
+const sizeOf = (html: string) => {
+  const hit = /--hero-size:(\d+)px/.exec(html);
+  return hit ? Number(hit[1]) : null;
+};
+
+/** The same card, dressed in another of the twelve type directions. */
+const inFace = (face: string) =>
+  TEMPLATE.replace('class="card"', `class="card" data-face="${face}"`);
+
 test("a wide figure is stepped down to fit the measure", () => {
-  const out = fitHero(fill(TEMPLATE, STATS, CAPTION));
-  const size = /--hero-size:(\d+)px/.exec(out);
+  const size = sizeOf(fitHero(fill(TEMPLATE, STATS, CAPTION)));
   assert.ok(size, "a six-character hero should carry a size");
-  assert.ok(Number(size[1]) < 380);
+  assert.ok(size < 380);
   /* And it actually fits: characters x advance x size, inside the measure. */
-  assert.ok("+42.8%".length * 0.555 * Number(size[1]) <= 880);
+  assert.ok("+42.8%".length * 0.555 * size <= 880);
 });
 
-test("a narrow figure keeps the full size and takes no stamp", () => {
+test("a narrow figure is set at the face's cap and no larger", () => {
   const stats = { ...STATS, BEST_RETURN_PCT: "+5%" } as unknown as WrappedStats;
-  assert.ok(!fitHero(fill(TEMPLATE, stats, CAPTION)).includes("--hero-size"));
+  assert.equal(sizeOf(fitHero(fill(TEMPLATE, stats, CAPTION))), 380);
+});
+
+/*
+ * The fit is per face, which is the whole reason it stopped being one
+ * constant. Anton is condensed and Playfair is wide, so the same six
+ * characters do not want the same size — and a table that ignored that would
+ * either overflow the stage or set every card at the narrowest face's size.
+ */
+test("the same figure is sized by the face the card sets it in", () => {
+  const sizes = new Map(
+    ["machine", "voice", "poster", "serif", "grotesk", "geometric", "lede"].map((face) => [
+      face,
+      sizeOf(fitHero(fill(inFace(face), STATS, CAPTION))),
+    ]),
+  );
+  for (const [face, size] of sizes) {
+    assert.ok(size, `${face} should carry a size`);
+    /* The contract: at the size it was given, the value fits the measure. */
+    const m = HERO_METRICS[face];
+    const width = [..."+42.8%"].reduce(
+      (sum, ch) => sum + ((m.advance[ch] ?? m.widest) + m.track) * size,
+      0,
+    );
+    assert.ok(width <= 880, `${face} sets +42.8% ${Math.round(width)}px wide, past the measure`);
+    assert.ok(size <= m.cap, `${face} sets past its own cap`);
+  }
+  assert.equal(new Set(sizes.values()).size, sizes.size, "no two faces fit alike");
+});
+
+/*
+ * Cards minted before the type table existed carry no `data-face`. They must
+ * keep drawing exactly as they drew, which means the fallback is the one face
+ * there used to be rather than whichever key sorts first.
+ */
+test("a card with no face is fitted as the face there used to be", () => {
+  assert.equal(
+    sizeOf(fitHero(fill(TEMPLATE, STATS, CAPTION))),
+    sizeOf(fitHero(fill(inFace("machine"), STATS, CAPTION))),
+  );
 });
 
 test("a word hero is left alone — it is allowed to wrap", () => {

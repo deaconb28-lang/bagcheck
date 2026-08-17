@@ -12,8 +12,15 @@
   A 1080x1920 stage. The art is a background and nothing else; every figure on
   this card is set in type, because a number a model drew is a number nobody
   can correct on an artefact whose whole claim is that it came off a brokerage.
+
+  The five data attributes on the stage are this card's own type direction —
+  which voice, where on the stage, from which edge, in which case, and in what
+  order the lockup's parts run. card.css answers each of them with a rule per
+  axis rather than a rule per card, so twelve posters cost about fifteen rules.
+  Every one of the five has a default stated on .card itself, which is what
+  lets a card minted before this table existed keep drawing the way it drew.
 -->
-<div class="card" style="width:1080px;height:1920px" data-card="08" data-key="redDays">
+<div class="card" style="width:1080px;height:1920px" data-card="08" data-key="redDays" data-face="serif" data-place="foot" data-align="centre" data-case="none" data-order="caption-lead">
   <!--
     The PNG is the committed source of truth; the WebP is what a reader
     actually downloads. Twelve photographic gradients at 1080x1920 are 38MB as

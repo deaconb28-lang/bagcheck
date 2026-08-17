@@ -71,6 +71,61 @@
   src: url("/fonts/jetbrains-mono-latin.woff2") format("woff2");
 }
 
+/*
+ * The five display voices, on top of Voice and Machine.
+ *
+ * A card is where a face is allowed to be a voice: the deck is twelve
+ * artefacts rather than twelve screens, and a template that sets every one of
+ * them in the same face is one poster printed twelve times — which is the same
+ * failure the shared art prefix caused, one layer up. Two of these are
+ * card-only by rule (Anton and Playfair never appear in app chrome); the other
+ * three the app already vendors for its own reasons and a card is free to
+ * borrow.
+ *
+ * All five are variable files covering their whole weight range in one
+ * request, so five more voices costs five more woff2 and no extra weights.
+ * They are vendored under our own origin like everything else here.
+ */
+@font-face {
+  font-family: "Poster";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/anton-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Serif";
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/playfair-display-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Grotesk";
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geometric";
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/outfit-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Lede";
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/public-sans-latin.woff2") format("woff2");
+}
+
 *,
 *::before,
 *::after {
@@ -99,6 +154,27 @@ body {
   color: var(--share-ink);
   font-family: "Voice", "Public Sans", system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+
+  /*
+   * The type direction, declared here as its own default rather than only on
+   * `[data-face="…"]`. That is the whole safety of this mechanism: every rule
+   * below cites `var(--hero-face)`, an unresolved `var()` inside `font-family`
+   * invalidates the declaration outright rather than falling through, and a
+   * card minted before this table existed carries no `data-face` at all. With
+   * the defaults stated on `.card` those old cards resolve to exactly what
+   * they were always set in — Machine figures, Voice words, Voice titles.
+   */
+  --hero-face: "Machine", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --hero-word-face: "Voice", "Public Sans", system-ui, -apple-system, sans-serif;
+  --title-face: "Voice", "Public Sans", system-ui, -apple-system, sans-serif;
+  --hero-weight: 700;
+  --hero-track: -0.045em;
+  --hero-cap: 380px;
+  --title-weight: 600;
+  --title-track: -0.03em;
+  --lockup-case: none;
+  --lockup-align: left;
+  --lockup-text: left;
 }
 
 .bg {
@@ -112,26 +188,35 @@ body {
 }
 
 /*
- * The scrim, over the bottom third.
+ * The scrim, under wherever the type went.
  *
  * The generated art has "generous empty space in the center and lower third"
  * asked of it, but a generative model is not a contract — one image in twelve
  * will put a bright band exactly where the caption goes. The scrim makes the
  * text layer legible whatever the art did, which is what lets the same
  * typography ship over twelve different pictures.
+ *
+ * It is a full-bleed element with a per-place gradient rather than a band
+ * pinned to the bottom, because the lockup no longer always sits at the
+ * bottom. A scrim that stayed at the foot while the type moved to the head
+ * would be the worst of both: art dimmed where nothing is read, and type set
+ * over whatever the model happened to draw. The default is the foot gradient,
+ * stop for stop where the old band was — a card with no `data-place` is a card
+ * from before this table and it must still draw the way it did.
  */
 .scrim {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 62%;
+  inset: 0;
   z-index: 1;
-  background: linear-gradient(
+  background: var(--scrim);
+}
+
+.card {
+  --scrim: linear-gradient(
     to bottom,
-    transparent 0%,
-    color-mix(in srgb, var(--share-bg) 55%, transparent) 38%,
-    color-mix(in srgb, var(--share-bg) 88%, transparent) 72%,
+    transparent 38%,
+    color-mix(in srgb, var(--share-bg) 55%, transparent) 61.6%,
+    color-mix(in srgb, var(--share-bg) 88%, transparent) 82.6%,
     var(--share-bg) 100%
   );
 }
@@ -143,6 +228,8 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  align-items: var(--lockup-align);
+  text-align: var(--lockup-text);
   padding: 96px 88px 104px;
 }
 
@@ -164,11 +251,12 @@ body {
  * flat the answer is to widen the gap, never to add an element.
  */
 .hero {
-  font-family: "Machine", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--hero-face);
   font-variant-numeric: tabular-nums;
-  font-weight: 700;
+  font-weight: var(--hero-weight);
   line-height: 0.82;
-  letter-spacing: -0.045em;
+  letter-spacing: var(--hero-track);
+  text-transform: var(--lockup-case);
   color: var(--share-ink);
   margin: 0;
   max-width: 100%;
@@ -185,7 +273,7 @@ body {
    * character count — the one thing a viewport clamp cannot. The clamp is the
    * floor under it, so a card that never went through the fit still draws.
    */
-  font-size: var(--hero-size, clamp(180px, 34vw, 380px));
+  font-size: var(--hero-size, clamp(180px, 34vw, var(--hero-cap)));
 }
 
 /*
@@ -195,7 +283,7 @@ body {
  * position; only the size differs, because the job differs.
  */
 .hero[data-kind="word"] {
-  font-family: "Voice", "Public Sans", system-ui, -apple-system, sans-serif;
+  font-family: var(--hero-word-face);
   font-size: clamp(96px, 17vw, 190px);
   line-height: 0.92;
   letter-spacing: -0.035em;
@@ -204,10 +292,12 @@ body {
 }
 
 .title {
+  font-family: var(--title-face);
   font-size: 58px;
-  font-weight: 600;
+  font-weight: var(--title-weight);
   line-height: 1.08;
-  letter-spacing: -0.03em;
+  letter-spacing: var(--title-track);
+  text-transform: var(--lockup-case);
   color: var(--share-ink);
   margin: 40px 0 0;
 }
@@ -216,15 +306,23 @@ body {
 .support {
   display: flex;
   flex-wrap: wrap;
+  justify-content: var(--lockup-align);
   gap: 22px 56px;
   margin: 44px 0 0;
   padding-top: 34px;
   border-top: 2px solid var(--share-line);
+  /*
+   * The rule above the facts is the lockup's own width on a left-set card and
+   * the stage's on any other — a hairline that stopped short of a centred
+   * block would read as a crop rather than as a rule.
+   */
+  align-self: stretch;
 }
 
 .fact {
   display: flex;
   flex-direction: column;
+  align-items: var(--lockup-align);
   gap: 10px;
   min-width: 0;
 }
@@ -310,6 +408,188 @@ body {
   inset: 0;
   z-index: 0;
   background-repeat: repeat;
+}
+
+
+/* ══ The type direction ═══════════════════════════════════════════════════
+ *
+ * Four axes — face, place, align, order — plus case, combined per card in
+ * `wrapped/cards.mjs` so that no two of the twelve set the same way in the
+ * same spot. Rules by axis rather than by card: a dozen bespoke lockups is a
+ * dozen places for a padding value to drift, and the chaos wanted here is the
+ * chaos of a *combination*, which is what makes twelve cards out of fifteen
+ * rules.
+ *
+ * The eyebrow, the fact labels and the fact values are deliberately not on any
+ * axis. Mono owns labels, counts and timestamps in this product, and a deck
+ * whose labels also moved would be chaos in the one layer that has to stay
+ * scannable — the variation belongs to the voice, not to the machine line.
+ */
+
+/* ── Face: the hero and the title ── */
+
+.card[data-face="voice"] {
+  --hero-face: "Voice", "Public Sans", system-ui, -apple-system, sans-serif;
+  --hero-weight: 700;
+  --hero-track: -0.04em;
+  --hero-cap: 360px;
+  --title-weight: 600;
+}
+
+/*
+ * Anton is a single-weight condensed poster face — the one face here that is
+ * *for* being enormous. It gets the largest cap and almost no tracking,
+ * because a condensed face pulled tighter closes its counters.
+ */
+.card[data-face="poster"] {
+  --hero-face: "Poster", "Voice", Impact, sans-serif;
+  --hero-word-face: "Poster", "Voice", Impact, sans-serif;
+  --title-face: "Poster", "Voice", Impact, sans-serif;
+  --hero-weight: 400;
+  --hero-track: -0.005em;
+  --hero-cap: 440px;
+  --title-weight: 400;
+  --title-track: 0.01em;
+}
+
+.card[data-face="serif"] {
+  --hero-face: "Serif", Georgia, "Times New Roman", serif;
+  --hero-word-face: "Serif", Georgia, "Times New Roman", serif;
+  --title-face: "Serif", Georgia, "Times New Roman", serif;
+  --hero-weight: 900;
+  --hero-track: -0.03em;
+  --hero-cap: 380px;
+  --title-weight: 500;
+  --title-track: -0.01em;
+}
+
+.card[data-face="grotesk"] {
+  --hero-face: "Grotesk", "Voice", system-ui, sans-serif;
+  --hero-word-face: "Grotesk", "Voice", system-ui, sans-serif;
+  --title-face: "Grotesk", "Voice", system-ui, sans-serif;
+  --hero-weight: 700;
+  --hero-track: -0.05em;
+  --hero-cap: 380px;
+  --title-weight: 600;
+}
+
+.card[data-face="geometric"] {
+  --hero-face: "Geometric", "Voice", system-ui, sans-serif;
+  --hero-word-face: "Geometric", "Voice", system-ui, sans-serif;
+  --title-face: "Geometric", "Voice", system-ui, sans-serif;
+  --hero-weight: 800;
+  --hero-track: -0.05em;
+  --hero-cap: 400px;
+  --title-weight: 600;
+}
+
+.card[data-face="lede"] {
+  --hero-face: "Lede", "Public Sans", system-ui, sans-serif;
+  --hero-word-face: "Lede", "Public Sans", system-ui, sans-serif;
+  --title-face: "Lede", "Public Sans", system-ui, sans-serif;
+  --hero-weight: 800;
+  --hero-track: -0.045em;
+  --hero-cap: 360px;
+  --title-weight: 700;
+}
+
+/* ── Align: which edge the lines start from ── */
+
+.card[data-align="centre"] {
+  --lockup-align: center;
+  --lockup-text: center;
+}
+
+.card[data-align="right"] {
+  --lockup-align: flex-end;
+  --lockup-text: right;
+}
+
+/* ── Case ── */
+
+.card[data-case="upper"] {
+  --lockup-case: uppercase;
+}
+
+/* ── Place: where the lockup sits, and where the scrim goes with it ── */
+
+.card[data-place="head"] .layer {
+  justify-content: flex-start;
+  padding-top: 128px;
+}
+
+.card[data-place="head"] {
+  --scrim: linear-gradient(
+    to top,
+    transparent 38%,
+    color-mix(in srgb, var(--share-bg) 55%, transparent) 61.6%,
+    color-mix(in srgb, var(--share-bg) 88%, transparent) 82.6%,
+    var(--share-bg) 100%
+  );
+}
+
+.card[data-place="middle"] .layer {
+  justify-content: center;
+}
+
+.card[data-place="middle"] {
+  --scrim: linear-gradient(
+    to bottom,
+    transparent 4%,
+    color-mix(in srgb, var(--share-bg) 52%, transparent) 22%,
+    color-mix(in srgb, var(--share-bg) 86%, transparent) 36%,
+    color-mix(in srgb, var(--share-bg) 92%, transparent) 64%,
+    color-mix(in srgb, var(--share-bg) 86%, transparent) 78%,
+    color-mix(in srgb, var(--share-bg) 52%, transparent) 90%,
+    transparent 99%
+  );
+}
+
+/*
+ * Split: the eyebrow alone at the head, everything else at the foot. An auto
+ * margin eats the free space in a flex column and beats `justify-content`,
+ * which is what lets one rule move one child to the far end without the markup
+ * gaining a wrapper it would then need on all twelve.
+ */
+.card[data-place="split"] .eyebrow {
+  margin-bottom: auto;
+}
+
+.card[data-place="split"] {
+  --scrim: linear-gradient(
+      to bottom,
+      var(--share-bg) 0%,
+      color-mix(in srgb, var(--share-bg) 82%, transparent) 7%,
+      color-mix(in srgb, var(--share-bg) 40%, transparent) 14%,
+      transparent 22%
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 42%,
+      color-mix(in srgb, var(--share-bg) 55%, transparent) 64%,
+      color-mix(in srgb, var(--share-bg) 88%, transparent) 84%,
+      var(--share-bg) 100%
+    );
+}
+
+/* ── Order: the lockup's own parts ── */
+
+.card[data-order="title-over"] .eyebrow {
+  order: -2;
+}
+
+.card[data-order="title-over"] .title {
+  order: -1;
+  margin: 0 0 30px;
+}
+
+.card[data-order="caption-lead"] .eyebrow {
+  order: -2;
+}
+
+.card[data-order="caption-lead"] .caption {
+  order: -1;
+  margin: 0 0 40px;
 }
 
 

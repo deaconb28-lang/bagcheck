@@ -1,5 +1,5 @@
 /**
- * The four faces a Wrapped card sets in, preloaded by the page that frames it.
+ * The faces a Wrapped deck sets in, preloaded by the page that frames it.
  *
  * A card is a self-contained document in an iframe, so it has its own font set
  * and asks for its own copies — which are *different URLs* from the ones
@@ -15,14 +15,26 @@
  * than not preloading at all.
  *
  * The list is written out rather than derived. `card.css` is the only other
- * place these names appear, and four literals that must match four literals is
+ * place these names appear, and nine literals that must match nine literals is
  * a smaller risk than a build step that parses a stylesheet.
+ *
+ * It grew from four when the twelve cards stopped sharing one type direction.
+ * Every card sets its hero and title in its own display voice, and a deck
+ * shows all twelve, so every voice is on the critical path of the same screen
+ * — preloading four of nine would just move the flash of fallback type onto
+ * the other five. They are variable files covering their whole weight range,
+ * which is why five more voices is five more requests rather than fifteen.
  */
 const FACES = [
   "/fonts/general-sans-500.woff2",
   "/fonts/general-sans-600.woff2",
   "/fonts/general-sans-700.woff2",
   "/fonts/jetbrains-mono-latin.woff2",
+  "/fonts/anton-latin.woff2",
+  "/fonts/playfair-display-latin.woff2",
+  "/fonts/space-grotesk-latin.woff2",
+  "/fonts/outfit-latin.woff2",
+  "/fonts/public-sans-latin.woff2",
 ];
 
 export function CardFonts() {
