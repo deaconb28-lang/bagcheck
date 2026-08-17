@@ -13,7 +13,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 50%;
+  top: var(--zero-at, 50%);
   height: 1px;
   background: rgba(255, 255, 255, 0.16);
   z-index: 1;
@@ -551,4 +551,22 @@
   .sectorSeg {
     animation: none;
   }
+}
+
+/* ── Cumulative realised P&L ────────────────────────────────────────────── */
+
+.wave {
+  width: 100%;
+  margin: 16px 0 0;
+}
+
+/*
+ * `preserveAspectRatio: none` stretches the viewBox to the box, which is what
+ * lets one path fill any panel width. Strokes are `non-scaling` so the line
+ * does not smear horizontally with it.
+ */
+.waveSvg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }

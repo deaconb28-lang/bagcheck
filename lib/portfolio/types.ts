@@ -1,5 +1,6 @@
 import type { ConnectionAccount, HoldingRow } from "@/lib/db";
 import type { RoundTrip } from "@/lib/score";
+import type { HeatDay } from "@/components/idioms";
 import type { RaceField } from "@/lib/returns";
 
 /**
@@ -212,6 +213,17 @@ export interface DashboardView {
    */
   positions: Array<{ symbol: string; value: number; pnl: number | null; pnlPct: number | null }>;
   concentration: string | null;
+  /**
+   * The running total of realised P&L, and the year as calendar cells.
+   *
+   * Both empty below `MIN_SESSIONS`. `dailyPnl` is sparse — only days that
+   * closed something appear — so an account that has never sold produces a
+   * cumulative line of one point and a calendar of 365 empty cells. Drawing
+   * either would be the empty-rectangle failure this screen was rebuilt to
+   * remove, wearing a new shape.
+   */
+  cumulative: Array<{ date: string; total: number }>;
+  calendar: HeatDay[];
   /**
    * Where the money sits by *industry*, largest first.
    *

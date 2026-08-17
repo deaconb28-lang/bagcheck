@@ -35,10 +35,12 @@ import {
   HoldMeters,
   Legend,
   PnlColumns,
+  PnlWave,
   SectorMix,
   WeekdayBars,
 } from "@/components/dash/Charts";
 import { InsightRow, WrappedPromo } from "@/components/dash/Cards";
+import { HeatGrid } from "@/components/idioms";
 
 const RANGES: Array<{ key: RangeKey; label: string }> = [
   { key: "45d", label: "45D" },
@@ -388,6 +390,44 @@ export default async function DashboardPage({
             ) : null}
           </Panel>
         </Row>
+
+        {/*
+          * Two questions the columns above cannot answer, and both are absent
+          * rather than empty when the ledger cannot answer them either.
+          *
+          * `dailyPnl` is a *sparse* series — only days that closed something
+          * appear — so an account that has never sold has one cumulative point
+          * and a year of blank cells. The view gates both on `MIN_SESSIONS`,
+          * which is the engine's own floor for reporting a pattern at all.
+          */}
+        {view.cumulative.length ? (
+          <Row kind="wide">
+            <Panel>
+              <PanelHead eyebrow={`Cumulative P&L · ${window.label}`}>
+                <PanelNote>Running total, session by session</PanelNote>
+              </PanelHead>
+              <div className="dashFigureRow">
+                <span className="num dashFigure">
+                  {signedMoney(view.cumulative[view.cumulative.length - 1].total)}
+                </span>
+              </div>
+              <PnlWave points={view.cumulative} />
+              <p className="dashProv">
+                Realised only · the line moves when a position closes, not when a
+                day passes
+              </p>
+            </Panel>
+
+            <Panel>
+              <PanelHead eyebrow="The year in days" />
+              {view.calendar.length ? <HeatGrid days={view.calendar} /> : null}
+              <p className="dashProv">
+                Each cell is one day&apos;s realised P&amp;L · an empty cell is a day
+                nothing closed, not a flat one
+              </p>
+            </Panel>
+          </Row>
+        ) : null}
 
         <Row kind="thirds">
           <Panel span>

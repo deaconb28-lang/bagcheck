@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { bookFrom, sectorsFrom, patternsFrom, performanceFrom, windowFor } from "./view";
+import { MIN_SESSIONS, bookFrom, cumulativePnl, pnlHeat, sectorsFrom, patternsFrom, performanceFrom, windowFor } from "./view";
 import type { Facts } from "./types";
 import { normaliseHandle } from "@/lib/db/publicLedger";
 
@@ -301,4 +301,79 @@ test("a handle is lowercased, @-stripped, and narrow", () => {
   assert.equal(normaliseHandle("dea con"), null);
   assert.equal(normaliseHandle("deacon!"), null);
   assert.equal(normaliseHandle("déacon"), null);
+});
+
+/*
+ * The cumulative line and the calendar. Both read `dailyPnl`, which is a
+ * *sparse* series — only days that closed something appear — and both are
+ * gated on `MIN_SESSIONS` for that reason.
+ */
+
+test("the cumulative line is the running sum, in order", () => {
+  const points = cumulativePnl([
+    { date: "2026-01-05", amount: 100 },
+    { date: "2026-01-09", amount: -40 },
+    { date: "2026-02-02", amount: 25 },
+  ]);
+  assert.deepEqual(points.map((p) => p.total), [100, 60, 85]);
+  /* One point per session, keyed by that session's own date. */
+  assert.deepEqual(points.map((p) => p.date), ["2026-01-05", "2026-01-09", "2026-02-02"]);
+});
+
+test("the cumulative line ends where the window's realised P&L lands", () => {
+  const sessions = [
+    { date: "2026-01-05", amount: -300 },
+    { date: "2026-01-06", amount: 120 },
+  ];
+  const points = cumulativePnl(sessions);
+  const sum = sessions.reduce((t, s) => t + s.amount, 0);
+  assert.equal(points[points.length - 1].total, sum);
+});
+
+test("an empty window yields no line rather than a flat one", () => {
+  assert.deepEqual(cumulativePnl([]), []);
+});
+
+test("the floor is the engine's own sample floor", () => {
+  /* A line of three points is not a curve and four lit cells are not a year. */
+  assert.equal(MIN_SESSIONS, 8);
+});
+
+/*
+ * The P&L calendar. A day with no closed session is level 0 — an *empty* cell,
+ * not a zero one. Painting it as flat would claim a fact the ledger does not
+ * hold, and it is the whole reason this cannot reuse `heatFromScores`.
+ */
+
+test("a day that closed nothing is empty, not flat", () => {
+  const cells = pnlHeat([{ date: "2026-08-15", amount: 400 }], 1, new Date("2026-08-17T00:00:00Z"));
+  const quiet = cells.find((c) => c.date === "2026-08-16");
+  assert.ok(quiet);
+  assert.equal(quiet.level, 0);
+  assert.equal(quiet.tone, undefined);
+  assert.match(quiet.note ?? "", /nothing closed/);
+});
+
+test("direction is the tone and magnitude is the level", () => {
+  const cells = pnlHeat(
+    [
+      { date: "2026-08-15", amount: 1000 },
+      { date: "2026-08-16", amount: -50 },
+    ],
+    1,
+    new Date("2026-08-17T00:00:00Z"),
+  );
+  const big = cells.find((c) => c.date === "2026-08-15");
+  const small = cells.find((c) => c.date === "2026-08-16");
+  assert.equal(big?.tone, "up");
+  assert.equal(big?.level, 4);
+  assert.equal(small?.tone, "down");
+  /* 50 against a 1000 peak is the bottom step, not an equal-weight red square. */
+  assert.equal(small?.level, 1);
+});
+
+test("the grid spans the window it was asked for, sparse or not", () => {
+  const cells = pnlHeat([{ date: "2026-08-15", amount: 5 }], 4, new Date("2026-08-17T00:00:00Z"));
+  assert.equal(cells.length, 28);
+  assert.equal(cells.filter((c) => c.level > 0).length, 1);
 });

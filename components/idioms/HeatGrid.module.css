@@ -78,3 +78,49 @@
   height: 11px;
   border-radius: 6px;
 }
+
+/*
+ * The money ramp. Four steps each way off the same empty cell, so a grid of
+ * green and red still reads as one texture rather than two charts sharing a
+ * box. Mixed against the ground rather than faded with opacity: a translucent
+ * cell picks up whatever is behind it, and these sit on two different panels.
+ */
+.cell[data-tone="up"][data-level="1"],
+.key[data-tone="up"][data-level="1"] {
+  background: color-mix(in srgb, var(--moss) 26%, var(--h0));
+}
+
+.cell[data-tone="up"][data-level="2"],
+.key[data-tone="up"][data-level="2"] {
+  background: color-mix(in srgb, var(--moss) 48%, var(--h0));
+}
+
+.cell[data-tone="up"][data-level="3"],
+.key[data-tone="up"][data-level="3"] {
+  background: color-mix(in srgb, var(--moss) 72%, var(--h0));
+}
+
+.cell[data-tone="up"][data-level="4"],
+.key[data-tone="up"][data-level="4"] {
+  background: var(--moss);
+}
+
+.cell[data-tone="down"][data-level="1"],
+.key[data-tone="down"][data-level="1"] {
+  background: color-mix(in srgb, var(--loss) 26%, var(--h0));
+}
+
+.cell[data-tone="down"][data-level="2"],
+.key[data-tone="down"][data-level="2"] {
+  background: color-mix(in srgb, var(--loss) 48%, var(--h0));
+}
+
+.cell[data-tone="down"][data-level="3"],
+.key[data-tone="down"][data-level="3"] {
+  background: color-mix(in srgb, var(--loss) 72%, var(--h0));
+}
+
+.cell[data-tone="down"][data-level="4"],
+.key[data-tone="down"][data-level="4"] {
+  background: var(--loss);
+}

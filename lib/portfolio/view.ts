@@ -1,6 +1,7 @@
 import { periodReturn, raceField } from "@/lib/returns";
 import type { RaceEntry } from "@/lib/returns";
 import { archetypeFor } from "@/lib/archetypes";
+import type { HeatDay } from "@/components/idioms";
 import type { ScoreComponents } from "@/lib/score";
 import type {
   Book,
@@ -369,6 +370,83 @@ export function sectorsFrom(
   };
 }
 
+
+/**
+ * The running total of realised P&L, one point per session.
+ *
+ * A different question from the columns beside it. `PnlColumns` answers "which
+ * days", and cannot answer "where did this end up" — a reader looking at
+ * fourteen green columns and eleven red ones has no way to tell whether the
+ * year is up. This is the sum, in order.
+ *
+ * Only sessions, not calendar days: `dailyPnl` is sparse, so the x-axis here is
+ * *events* rather than time. That is the honest reading of a cumulative
+ * realised line — nothing happens to realised P&L on a day nothing closed, so
+ * a flat stretch would be drawing a fact that does not exist.
+ */
+/**
+ * The floor under both new blocks.
+ *
+ * Eight is the engine's own `MIN_SAMPLE` — the count below which it refuses to
+ * report a pattern — and the same reasoning applies to a picture. A cumulative
+ * line of three points is not a curve and a calendar of four lit cells is not a
+ * year.
+ */
+export const MIN_SESSIONS = 8;
+
+/**
+ * Daily realised P&L as calendar cells.
+ *
+ * Levels are magnitude against the window's own peak, tone is direction, and a
+ * day with no closed session is level 0 — an *empty* cell, not a zero one. That
+ * distinction is the whole reason this cannot reuse `heatFromScores`: a day
+ * nobody traded is not a flat day, and painting it as one would claim a fact
+ * the ledger does not hold.
+ *
+ * `dailyPnl` is sparse, so most cells in any real year are empty. That is fine
+ * for a texture and fatal for a feature — the caller is responsible for not
+ * drawing a grid at all below a floor of sessions. A year of grey squares is
+ * not a chart.
+ */
+export function pnlHeat(
+  sessions: Array<{ date: string; amount: number }>,
+  weeks = 52,
+  today = new Date(),
+): HeatDay[] {
+  const byDate = new Map(sessions.map((s) => [s.date, s.amount]));
+  const peak = sessions.reduce((m, s) => Math.max(m, Math.abs(s.amount)), 0) || 1;
+
+  const out: HeatDay[] = [];
+  const start = new Date(today.getTime() - (weeks * 7 - 1) * 86_400_000);
+  for (let i = 0; i < weeks * 7; i += 1) {
+    const day = new Date(start.getTime() + i * 86_400_000);
+    const date = day.toISOString().slice(0, 10);
+    const amount = byDate.get(date);
+    if (amount == null || amount === 0) {
+      out.push({ date, level: 0, note: `${date} — nothing closed` });
+      continue;
+    }
+    const share = Math.abs(amount) / peak;
+    const level = share > 0.66 ? 4 : share > 0.33 ? 3 : share > 0.1 ? 2 : 1;
+    out.push({
+      date,
+      level: level as 1 | 2 | 3 | 4,
+      tone: amount > 0 ? "up" : "down",
+      note: `${date} — ${amount > 0 ? "+" : "−"}$${Math.abs(Math.round(amount)).toLocaleString("en-US")}`,
+    });
+  }
+  return out;
+}
+
+
+export function cumulativePnl(sessions: Session[]): Array<{ date: string; total: number }> {
+  let total = 0;
+  return sessions.map((session) => {
+    total += session.amount;
+    return { date: session.date, total };
+  });
+}
+
 export function dashboardView({
   facts,
   range,
@@ -440,6 +518,22 @@ export function dashboardView({
         pnlPct: holding.pnlPct,
       })),
     concentration,
+    /*
+     * Gated once, here, rather than in each component. The page then has no
+     * decision to make and cannot make a different one from its sibling.
+     */
+    cumulative:
+      performance.sessions.length >= MIN_SESSIONS ? cumulativePnl(performance.sessions) : [],
+    /*
+     * The calendar takes *every* session, not the window's.
+     *
+     * It draws a fixed 52 weeks, so feeding it the range-windowed sessions
+     * guaranteed an empty grid: at the 45-day default, seven eighths of the
+     * cells could not light no matter what the account had done. A year-shaped
+     * chart is fed a year. `pnlHeat` lights only what falls inside its own
+     * span, so handing it the whole series is both correct and sufficient.
+     */
+    calendar: facts.sessions.length >= MIN_SESSIONS ? pnlHeat(facts.sessions, 52, new Date(today)) : [],
     ...sectorsFrom(facts.holdings, sectors),
     patterns: patternsFrom(facts, window),
     wrapped: { year, earned: wrapped.earned, total: wrapped.total, archetype },

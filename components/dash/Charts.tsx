@@ -27,8 +27,24 @@ export function PnlColumns({ sessions, peak }: { sessions: Session[]; peak: numb
   /* Full strength for the top fifth of moves; everything else sits back. */
   const strongAt = peak * 0.62;
 
+  /*
+   * The zero line floats. It was hard-centred, so a window with no red day
+   * spent half its box on the half nothing reaches and the panel read as a
+   * chart with a void under it. This is `ZeroBarChart`'s idea, which sat
+   * written and unmounted in `components/idioms` while the live chart went
+   * without it.
+   */
+  const up = sessions.some((s) => s.amount > 0);
+  const down = sessions.some((s) => s.amount < 0);
+  const zeroAt = up && down ? 50 : down ? 0 : 100;
+
   return (
-    <div className={styles.columns} role="img" aria-label={`Realised P&L across ${sessions.length} sessions`}>
+    <div
+      className={styles.columns}
+      role="img"
+      aria-label={`Realised P&L across ${sessions.length} sessions`}
+      style={{ "--zero-at": `${zeroAt}%` } as React.CSSProperties}
+    >
       <span className={styles.zero} aria-hidden="true" />
       {sessions.map((session, i) => {
         const share = Math.min(Math.abs(session.amount) / peak, 1) * 100;
@@ -454,6 +470,89 @@ export function SectorMix({
           Across the {(cover * 100).toFixed(0)}% of your book your brokerage names a sector for.
         </p>
       ) : null}
+    </div>
+  );
+}
+
+
+/* ── Cumulative realised P&L ────────────────────────────────────────────── */
+
+/**
+ * Where the money actually ended up.
+ *
+ * The columns beside this answer "which days"; they cannot answer "is the year
+ * up". A reader looking at fourteen green columns and eleven red ones has no
+ * way to tell, because the question is a sum and the chart is a distribution.
+ * This is the running total.
+ *
+ * The x-axis is *sessions*, not calendar days, because realised P&L only moves
+ * when something closes — a flat stretch across a quiet fortnight would be
+ * drawing a fact the ledger does not hold. Filled to the zero line, green
+ * above and red below, so the crossing point is visible rather than inferred.
+ */
+export function PnlWave({
+  points,
+  height = 132,
+}: {
+  points: Array<{ date: string; total: number }>;
+  height?: number;
+}) {
+  if (points.length < 2) return null;
+
+  const totals = points.map((p) => p.total);
+  const top = Math.max(...totals, 0);
+  const bottom = Math.min(...totals, 0);
+  const span = top - bottom || 1;
+  /* Where zero sits as a share of the box, from the top. */
+  const zero = (top / span) * 100;
+
+  const x = (i: number) => (i / (points.length - 1)) * 100;
+  const y = (v: number) => ((top - v) / span) * 100;
+
+  const line = points.map((p, i) => `${x(i).toFixed(3)},${y(p.total).toFixed(3)}`).join(" L");
+  /* Closed back along the zero line, so the fill is the area to zero. */
+  const area = `M${line} L100,${zero.toFixed(3)} L0,${zero.toFixed(3)} Z`;
+
+  const ends = points[points.length - 1].total;
+
+  return (
+    <div className={styles.wave} style={{ height: `${height}px` }}>
+      <svg
+        className={styles.waveSvg}
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <defs>
+          {/*
+            * A real `<linearGradient>`. SVG has no CSS-gradient paint value,
+            * and a browser handed one drops the attribute and paints nothing.
+            */}
+          <linearGradient id="waveFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={ends >= 0 ? "var(--moss)" : "var(--loss)"} stopOpacity="0.28" />
+            <stop offset="100%" stopColor={ends >= 0 ? "var(--moss)" : "var(--loss)"} stopOpacity="0.02" />
+          </linearGradient>
+        </defs>
+        <line
+          x1="0"
+          x2="100"
+          y1={zero.toFixed(3)}
+          y2={zero.toFixed(3)}
+          stroke="var(--axis)"
+          strokeWidth="0.6"
+          vectorEffect="non-scaling-stroke"
+        />
+        <path d={area} fill="url(#waveFill)" />
+        <path
+          d={`M${line}`}
+          fill="none"
+          stroke={ends >= 0 ? "var(--moss)" : "var(--loss)"}
+          strokeWidth="2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
     </div>
   );
 }
