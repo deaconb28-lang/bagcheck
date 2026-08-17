@@ -1,4 +1,4 @@
-import { getCollections, loadScreen } from "@/lib/db";
+import { cashFrom, getCollections, loadScreen } from "@/lib/db";
 import type { ScreenData } from "@/lib/db";
 import {
   fieldProvenance,
@@ -88,6 +88,8 @@ export async function factsFor(userId: string, data: ScreenData): Promise<Facts>
     },
     findings: data.derived?.findings ?? [],
     holdings: refreshed.rows,
+    /* All-or-nothing: a partial cash sum understates it silently. */
+    cash: cashFrom(data.snapshots),
     accounts: data.connection?.accounts ?? [],
     syncedAt: data.connection?.lastSyncAt?.toISOString().slice(0, 10) ?? null,
     provenance: { marks: refreshed.provenance, asOf },

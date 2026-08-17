@@ -1,0 +1,94 @@
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 96px 24px 140px;
+  color: var(--mk-ink);
+}
+
+.head { margin: 0 0 40px; }
+
+.eyebrow {
+  margin: 0 0 12px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--mk-violet-soft);
+}
+
+.handle {
+  margin: 0 0 10px;
+  font-size: 44px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.tail { margin: 0; font-size: 14px; color: var(--mk-dim); }
+
+.figure {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 0 44px;
+  font-size: 62px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.figure[data-tone="moss"] { color: var(--mk-green-soft); }
+.figure[data-tone="loss"] { color: var(--mk-red-soft); }
+
+.figureLabel {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mk-dim);
+}
+
+.rows { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+
+.row {
+  display: grid;
+  grid-template-columns: 26px 62px minmax(0, 1fr) 48px 62px;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--mk-line);
+}
+
+.mark { display: flex; width: 26px; height: 26px; align-items: center; }
+.symbol { font-size: 14px; font-weight: 600; }
+
+.track {
+  display: flex;
+  height: 7px;
+  min-width: 0;
+  border-radius: 999px;
+  background: var(--mk-line);
+}
+
+.bar { height: 7px; min-width: 3px; border-radius: 999px; background: var(--mk-violet-soft); }
+
+.weight { font-size: 13px; text-align: right; color: var(--mk-ink); }
+.pnl { font-size: 13px; text-align: right; color: var(--mk-dim); }
+.pnl[data-tone="moss"] { color: var(--mk-green-soft); }
+.pnl[data-tone="loss"] { color: var(--mk-red-soft); }
+
+.sectors {
+  margin: 26px 0 0;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mk-dim);
+}
+
+.note {
+  margin: 40px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--mk-line);
+  font-size: 13px;
+  color: var(--mk-dim);
+}

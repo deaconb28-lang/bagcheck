@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { bookFrom, sectorsFrom, patternsFrom, performanceFrom, windowFor } from "./view";
 import type { Facts } from "./types";
+import { normaliseHandle } from "@/lib/db/publicLedger";
 
 const holding = (symbol: string, value: number, cost: number, pnlPct: number) => ({
   symbol,
@@ -32,6 +33,7 @@ const facts = (over: Partial<Facts> = {}): Facts => ({
   holdTime: { winnersMean: null, losersMean: null, winners: 0, losers: 0 },
   findings: [],
   holdings: [],
+  cash: null,
   accounts: [],
   syncedAt: null,
   provenance: { marks: "", asOf: null },
@@ -283,4 +285,20 @@ test("a book nothing can name yields no sectors and no coverage", () => {
   const { sectors, sectorsCover } = sectorsFrom([held("SPAXX", 500)], new Map());
   assert.deepEqual(sectors, []);
   assert.equal(sectorsCover, 0);
+});
+
+/*
+ * The public ledger's handle rule. It is the only access model in the product
+ * that is guessable — a card's slug is 96 random bits, a handle is short and
+ * chosen — so what counts as one is narrow on purpose.
+ */
+test("a handle is lowercased, @-stripped, and narrow", () => {
+  assert.equal(normaliseHandle("@Deacon"), "deacon");
+  assert.equal(normaliseHandle("  deacon_1 "), "deacon_1");
+  /* Too short, too long, or carrying anything that is not [a-z0-9_]. */
+  assert.equal(normaliseHandle("ab"), null);
+  assert.equal(normaliseHandle("a".repeat(21)), null);
+  assert.equal(normaliseHandle("dea con"), null);
+  assert.equal(normaliseHandle("deacon!"), null);
+  assert.equal(normaliseHandle("déacon"), null);
 });

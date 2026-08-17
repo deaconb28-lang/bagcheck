@@ -143,6 +143,12 @@ export async function createIndexes() {
     c.logos.createIndex({ symbol: 1, size: 1 }, { unique: true }),
     c.photos.createIndex({ kind: 1 }, { unique: true }),
     c.prefs.createIndex({ userId: 1 }, { unique: true }),
+    /*
+     * One handle each, and only among readers who claimed one — `sparse`, so
+     * the many rows with no handle do not all collide on null. Unique because
+     * `/@deacon` has to name exactly one person.
+     */
+    c.prefs.createIndex({ handle: 1 }, { unique: true, sparse: true }),
     // Deliberately not keyed on kind: this index is what enforces one
     // notification a day, whichever cron gets there first.
     c.emailLog.createIndex({ userId: 1, date: 1 }, { unique: true }),

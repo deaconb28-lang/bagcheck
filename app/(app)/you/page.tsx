@@ -375,6 +375,17 @@ export default async function DashboardPage({
               * concentrated in a way no ring of five equal arcs can show.
               */}
             <SectorMix sectors={view.sectors} cover={view.sectorsCover} />
+            {/*
+              * Cash is the one part of an account that is definitely not
+              * invested, and nothing on this screen said so. Absent rather
+              * than zero when the brokerage will not report a balance — that
+              * is a fact about the connection, not a holding of nothing.
+              */}
+            {book.cashShare != null ? (
+              <p className="dashProv">
+                {(book.cashShare * 100).toFixed(0)}% of the account is uninvested cash
+              </p>
+            ) : null}
           </Panel>
         </Row>
 

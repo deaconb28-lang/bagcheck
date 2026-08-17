@@ -307,6 +307,22 @@ export interface PrefsDoc {
    */
   emailDaily?: boolean;
   emailWeekly?: boolean;
+  /**
+   * The public ledger's handle, lowercased, without the `@`. Unique.
+   *
+   * Absent until the reader claims one. Claiming a handle does not publish
+   * anything on its own — `publicLedger` is the switch, and it is separate on
+   * purpose: reserving a name and deciding to be readable by strangers are two
+   * different decisions and collapsing them would publish somebody by
+   * accident.
+   */
+  handle?: string;
+  /**
+   * Whether `/@handle` answers to anyone at all. Off by default and off after
+   * a handle is claimed — publishing a person's positions is an outward-facing
+   * act, and the only safe default for one is no.
+   */
+  publicLedger?: boolean;
   updatedAt: Date;
 }
 

@@ -175,6 +175,28 @@ export default async function HoldingsPage({
           })}
         </div>
 
+        {/*
+          * Where the unrealised column came from.
+          *
+          * Two different figures share that column: our own arithmetic on the
+          * cost basis, and the brokerage's own `open_pnl` where it reports a
+          * P&L but no average purchase price. They are both honest and they
+          * are not the same measurement, so the table says which it is
+          * standing on rather than presenting one number in two dialects.
+          */}
+        {(() => {
+          const broker = holdings.filter((row) => row.pnlSource === "broker").length;
+          const unpriced = holdings.filter((row) => row.pnlSource === null).length;
+          if (!broker && !unpriced) return null;
+          return (
+            <p className={styles.provenance} data-reveal>
+              Unrealised is your cost basis
+              {broker ? `, except on ${broker} your broker prices itself` : ""}
+              {unpriced ? ` · ${unpriced} report neither and state no P&L` : ""}
+            </p>
+          );
+        })()}
+
         {holdings.length >= 2 && book.topTwo >= 0.5 ? (
           <div className={styles.warn} data-reveal>
             <Warning />

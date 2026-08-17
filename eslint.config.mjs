@@ -14,6 +14,10 @@ const compat = new FlatCompat({ baseDirectory: dirname(fileURLToPath(import.meta
  * are conventions this codebase has a reason for rather than rules it is
  * dodging:
  *
+ * - **`no-html-link-for-pages` is off.** The public ledger puts a dynamic
+ *   segment at the root, so every path resolves to a "page" as far as that
+ *   rule can tell — including the API routes this tree navigates to with a
+ *   real `<a>` on purpose.
  * - **`no-img-element` is off.** Every `<img>` in this tree points at a URL
  *   whose bytes we do not want Next to touch: a company mark from
  *   `/api/logo/[symbol]`, a badge SVG, a rendered card PNG, or an Unsplash
@@ -41,6 +45,18 @@ const config = [
   {
     rules: {
       "@next/next/no-img-element": "off",
+      /*
+       * **`no-html-link-for-pages` is off**, and the reason is the public
+       * ledger. `/@handle` is a dynamic segment at the *root*, so as far as
+       * this rule is concerned every path in the app now resolves to a page —
+       * including `/api/snaptrade/connect` and `/api/account/export`, which
+       * are deliberately plain `<a>` elements because one hands off to an OAuth
+       * portal and the other is a file download. Both must be full-document
+       * navigations; `<Link />` would break them. The rule cannot tell those
+       * apart from a page link any more, so it reports six false positives and
+       * no true ones.
+       */
+      "@next/next/no-html-link-for-pages": "off",
       /*
        * `any` is a warning rather than an error: the SnapTrade and Stripe SDKs
        * hand back loosely typed payloads at the edges, and failing CI over a

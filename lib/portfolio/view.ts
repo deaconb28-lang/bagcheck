@@ -60,7 +60,7 @@ export function windowFor(range: RangeKey, today: string, oldest: string | null)
   };
 }
 
-export function bookFrom(holdings: Facts["holdings"]): Book {
+export function bookFrom(holdings: Facts["holdings"], cash: number | null = null): Book {
   let value = 0;
   let cost = 0;
   let unrealised = 0;
@@ -85,10 +85,19 @@ export function bookFrom(holdings: Facts["holdings"]): Book {
   const ranked = [...holdings].sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
   const topTwo = ranked.slice(0, 2).reduce((sum, holding) => sum + (holding.value ?? 0), 0);
 
+  /*
+   * The share is of the *account* — cash plus what it bought — not of the
+   * invested book, because "18% in cash" is a statement about the whole and
+   * dividing by the invested part alone would overstate it.
+   */
+  const account = value + (cash ?? 0);
+
   return {
     positions: holdings.length,
     value,
     cost,
+    cash,
+    cashShare: cash != null && account > 0 ? cash / account : null,
     unrealised,
     /* Against the cost we actually know, never against a partial one. */
     unrealisedPct: cost > 0 ? (unrealised / cost) * 100 : null,
@@ -377,7 +386,7 @@ export function dashboardView({
   sectors?: Map<string, string | null>;
 }): DashboardView {
   const window = windowFor(range, today, facts.curve[0]?.date ?? null);
-  const book = bookFrom(facts.holdings);
+  const book = bookFrom(facts.holdings, facts.cash);
   const performance = performanceFrom(facts, window);
 
   /*

@@ -4,13 +4,21 @@ import { SyncNow } from "./SyncNow";
 import type { ShellUser } from "./AppRail";
 import styles from "./AppNav.module.css";
 
-export type AppTab = "dash" | "holdings" | "insights" | "wrapped";
+export type AppTab = "dash" | "holdings" | "insights" | "wrapped" | "ledger";
 
 const TABS: Array<{ key: AppTab; label: string; href: string }> = [
   { key: "dash", label: "Dashboard", href: "/you" },
   { key: "holdings", label: "Holdings", href: "/holdings" },
   { key: "insights", label: "Insights", href: "/insights" },
   { key: "wrapped", label: "Wrapped", href: "/wrapped" },
+  /*
+   * The public ledger. The href is decided per render rather than fixed: a
+   * reader who has claimed a handle goes to their own page, and one who has
+   * not goes to the settings that let them claim one. A tab that leads to a
+   * 404 until you have configured something is a tab that teaches people not
+   * to press it.
+   */
+  { key: "ledger", label: "Public", href: "/profile#ledger" },
 ];
 
 /**
@@ -30,12 +38,15 @@ const TABS: Array<{ key: AppTab; label: string; href: string }> = [
  */
 export function AppNav({
   active,
+  handle,
   accounts,
   syncedAt,
   user,
 }: {
   /** Absent on settings, which is behind the avatar rather than on the bar. */
   active?: AppTab;
+  /** The reader's public handle, when they have claimed one. */
+  handle?: string | null;
   /** How many brokerage accounts are linked. The pill states it. */
   accounts: number;
   syncedAt: string | null;
@@ -50,7 +61,12 @@ export function AppNav({
         </Link>
 
         <nav className={styles.tabs} aria-label="Sections">
-          {TABS.map((tab) => (
+          {TABS.map((raw) => {
+            const tab =
+              raw.key === "ledger" && handle
+                ? { ...raw, href: `/@${handle}` }
+                : raw;
+            return (
             <Link
               key={tab.key}
               href={tab.href}
@@ -60,7 +76,8 @@ export function AppNav({
             >
               {tab.label}
             </Link>
-          ))}
+            );
+          })}
         </nav>
       </div>
 

@@ -104,6 +104,8 @@ export interface Facts {
   }>;
   /** Positions as the brokerage last reported them, marks refreshed. */
   holdings: HoldingRow[];
+  /** Uninvested cash, or null unless every account reported a balance. */
+  cash: number | null;
   accounts: ConnectionAccount[];
   syncedAt: string | null;
   provenance: Provenance;
@@ -125,6 +127,16 @@ export interface Book {
   unrealised: number;
   unrealisedPct: number | null;
   winners: number;
+  /**
+   * Uninvested cash and what share of the account it is, 0–1.
+   *
+   * Null when the brokerage will not report a balance — which is a fact about
+   * the connection, not a zero. Money sitting in cash is the one part of an
+   * account that is definitely not invested, and the dashboard had no way to
+   * say so.
+   */
+  cash: number | null;
+  cashShare: number | null;
   /**
    * Positions whose unrealised P&L is knowable at all.
    *

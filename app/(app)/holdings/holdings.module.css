@@ -229,3 +229,13 @@
     width: 100%;
   }
 }
+
+/* Which figure the unrealised column is standing on. */
+.provenance {
+  margin: 16px 0 0;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--meta);
+}

@@ -250,3 +250,32 @@ export async function loadShellConnection(
   const institution = doc.accounts?.find((a) => a.institution)?.institution ?? null;
   return { institution };
 }
+
+
+/**
+ * Uninvested cash across the account, when the brokerage says.
+ *
+ * Latest snapshot per account, summed — and `null` unless **every** account
+ * answered. A partial sum is worse than no figure: an account whose broker
+ * reports no balance would silently contribute zero, and the reader would be
+ * told they hold less cash than they do on a screen whose whole claim is that
+ * its figures came off a brokerage.
+ *
+ * The same all-or-nothing rule the equity curve's `withCash` basis uses, for
+ * the same reason.
+ */
+export function cashFrom(snapshots: PositionSnapshotDoc[]): number | null {
+  const latestPerAccount = new Map<string, PositionSnapshotDoc>();
+  for (const snap of snapshots) {
+    const current = latestPerAccount.get(snap.accountId);
+    if (!current || snap.date > current.date) latestPerAccount.set(snap.accountId, snap);
+  }
+  if (!latestPerAccount.size) return null;
+
+  let total = 0;
+  for (const snap of latestPerAccount.values()) {
+    if (typeof snap.cash !== "number") return null;
+    total += snap.cash;
+  }
+  return total;
+}
