@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { connectedCount, isDbConfigured, scoreUser, sweep } from "@/lib/db";
+import { connectedCount, ensureIndexes, isDbConfigured, scoreUser, sweep } from "@/lib/db";
 import { syncUser } from "@/lib/snaptrade";
 
 export const runtime = "nodejs";
@@ -30,6 +30,18 @@ export async function GET(req: NextRequest) {
   if (!isDbConfigured()) {
     return NextResponse.json({ error: "ledger store not configured" }, { status: 503 });
   }
+
+  /*
+   * The one place the schema is guaranteed to be applied on a live deployment.
+   *
+   * Indexes were only ever created as a side effect of a sync, a scoring run
+   * or an insight write — so a deployment with no connected users had none at
+   * all, and the first person to connect got their sync *and* the index build
+   * on the same request. This job runs on a schedule whether or not anyone is
+   * connected, and `ensureIndexes` is memoised per process, so it costs one
+   * round trip per process rather than one per run.
+   */
+  await ensureIndexes();
 
   const result = await sweep(JOB, async (userId) => {
     /*
