@@ -186,3 +186,55 @@ test("an empty ledger produces an empty view rather than a plausible one", () =>
   assert.deepEqual(perf.axis, []);
   assert.deepEqual(patternsFrom(empty, windowFor("all", "2026-08-16", null)), []);
 });
+
+/*
+ * The book's unrealised P&L, which the dashboard now leads with for any account
+ * that has not sold anything. It is summed from each holding's own figure
+ * rather than taken as value less cost — a position the broker prices but will
+ * not give a cost basis for contributes nothing to `cost`, so the subtraction
+ * counted its whole market value as gain.
+ */
+
+const priced = (symbol: string, value: number, cost: number | null, pnl: number | null) => ({
+  symbol,
+  description: null,
+  units: 1,
+  price: value,
+  cost,
+  value,
+  pnl,
+  pnlPct: pnl != null && cost ? (pnl / cost) * 100 : null,
+  pnlSource: (pnl == null ? null : cost != null ? "cost" : "broker") as "cost" | "broker" | null,
+});
+
+test("a holding with no cost basis does not read as pure profit", () => {
+  const book = bookFrom([
+    priced("NVDA", 1000, 800, 200),
+    /* Broker prices it, will not say what it cost, reports no P&L either. */
+    priced("SPAXX", 5000, null, null),
+  ]);
+  /* Value less cost would have said 5,200 — the money-market fund as gain. */
+  assert.equal(book.unrealised, 200);
+  assert.equal(book.cost, 800);
+  assert.equal(book.priced, 1);
+  assert.equal(book.winners, 1);
+});
+
+test("the broker's own figure counts toward the book", () => {
+  const book = bookFrom([priced("NVDA", 1000, 800, 200), priced("GEV", 900, null, -50)]);
+  assert.equal(book.unrealised, 150);
+  assert.equal(book.priced, 2);
+  assert.equal(book.winners, 1);
+});
+
+test("the percentage is against the cost that is known, never a partial one", () => {
+  const book = bookFrom([priced("NVDA", 1000, 800, 200), priced("SPAXX", 5000, null, null)]);
+  assert.equal(book.unrealisedPct, 25);
+});
+
+test("a book nothing can price states no percentage rather than a zero", () => {
+  const book = bookFrom([priced("SPAXX", 5000, null, null)]);
+  assert.equal(book.unrealisedPct, null);
+  assert.equal(book.priced, 0);
+  assert.equal(book.unrealised, 0);
+});

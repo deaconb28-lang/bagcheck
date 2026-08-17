@@ -23,6 +23,7 @@ import {
   Stat,
   Stats,
   TotalValue,
+  money,
   signedMoney,
   signedPct,
 } from "@/components/dash/Chrome";
@@ -30,6 +31,7 @@ import { Race } from "@/components/dash/Race";
 import {
   AllocationDonut,
   ChartAxis,
+  HoldingBars,
   HoldMeters,
   Legend,
   PnlColumns,
@@ -160,45 +162,120 @@ export default async function DashboardPage({
           </PageHead>
         </div>
 
+        {/*
+          * Four figures, each the best one this account can actually answer.
+          *
+          * Every card here used to state a *closed-trading* statistic — return
+          * over a window, win rate over round trips, realised P&L, Sharpe over
+          * daily marks — and every one of them is null until a reader has both
+          * sold something and been connected long enough to have a curve. An
+          * account that connected this week and holds eight positions read as
+          * four em-dashes, on a screen sitting on a fully priced book.
+          *
+          * So each falls back to the figure the same data answers without any
+          * history at all: return on cost, positions in profit, unrealised
+          * P&L, what it cost. The label changes with the figure — a fallback
+          * that kept the old heading would be a different number under the
+          * same word, which is worse than the dash it replaced.
+          */}
         <Stats>
           <Stat
-            label="Return"
-            value={perf.ret == null ? "—" : signedPct(perf.ret * 100)}
-            tone={perf.ret == null ? undefined : perf.ret >= 0 ? "moss" : "loss"}
+            label={perf.ret == null ? "Return on cost" : "Return"}
+            value={
+              perf.ret != null
+                ? signedPct(perf.ret * 100)
+                : book.unrealisedPct != null
+                  ? signedPct(book.unrealisedPct)
+                  : "—"
+            }
+            tone={
+              perf.ret != null
+                ? perf.ret >= 0
+                  ? "moss"
+                  : "loss"
+                : book.unrealisedPct != null
+                  ? book.unrealisedPct >= 0
+                    ? "moss"
+                    : "loss"
+                  : undefined
+            }
             tail={
-              view.index == null
-                ? perf.basis === "account"
-                  ? "Your account, contributions taken out."
-                  : "Your invested book, buys and sells taken out."
-                : `vs ${signedPct(view.index * 100)} S&P`
+              perf.ret != null
+                ? /*
+                   * The benchmark line only belongs beside a figure. It was
+                   * printed unconditionally, so a reader with no return read
+                   * "—" over "vs +13.8% S&P" — a comparison against nothing.
+                   */
+                  view.index != null
+                  ? `vs ${signedPct(view.index * 100)} S&P`
+                  : perf.basis === "account"
+                    ? "Your account, contributions taken out."
+                    : "Your invested book, buys and sells taken out."
+                : book.unrealisedPct != null
+                  ? "Unrealised, against what you paid."
+                  : "Your brokerage reports no cost basis."
             }
           />
           <Stat
-            label="Win rate"
-            value={perf.winRate.pct == null ? "—" : `${perf.winRate.pct}%`}
+            label={perf.winRate.pct == null ? "In profit" : "Win rate"}
+            value={
+              perf.winRate.pct != null
+                ? `${perf.winRate.pct}%`
+                : book.priced
+                  ? `${book.winners}/${book.priced}`
+                  : "—"
+            }
             tail={
-              perf.winRate.pct == null
-                ? `${perf.winRate.trades} closed — needs ten to be a rate.`
-                : `${perf.winRate.wins} of ${perf.winRate.trades} round trips`
+              perf.winRate.pct != null
+                ? `${perf.winRate.wins} of ${perf.winRate.trades} round trips`
+                : book.priced
+                  ? `positions up right now${book.priced < book.positions ? `, of ${book.priced} priced` : ""}`
+                  : "No position reports a P&L yet."
             }
           />
           <Stat
-            label={`${window.label} P&L`}
-            value={perf.sessions.length ? signedMoney(perf.realised) : "—"}
-            tone={perf.sessions.length ? (perf.realised >= 0 ? "moss" : "loss") : undefined}
+            label={perf.sessions.length ? `${window.label} P&L` : "Unrealised P&L"}
+            value={
+              perf.sessions.length
+                ? signedMoney(perf.realised)
+                : book.priced
+                  ? signedMoney(book.unrealised)
+                  : "—"
+            }
+            tone={
+              perf.sessions.length
+                ? perf.realised >= 0
+                  ? "moss"
+                  : "loss"
+                : book.priced
+                  ? book.unrealised >= 0
+                    ? "moss"
+                    : "loss"
+                  : undefined
+            }
             tail={
               perf.sessions.length
                 ? `${perf.up} up, ${perf.down} down`
-                : "Nothing has closed in this window."
+                : book.priced
+                  ? "On what you hold, nothing sold yet."
+                  : "Nothing has closed in this window."
             }
           />
           <Stat
-            label="Sharpe"
-            value={perf.sharpe == null ? "—" : perf.sharpe.toFixed(2)}
+            label={perf.sharpe == null ? "Cost basis" : "Sharpe"}
+            value={
+              perf.sharpe != null
+                ? perf.sharpe.toFixed(2)
+                : book.cost > 0
+                  ? money(book.cost)
+                  : "—"
+            }
             tail={
-              perf.sharpe == null
-                ? "Needs a season of daily marks."
-                : "Annualised on daily marks, no risk-free rate."
+              perf.sharpe != null
+                ? "Annualised on daily marks, no risk-free rate."
+                : book.cost > 0
+                  ? `what ${book.positions} ${book.positions === 1 ? "position" : "positions"} cost you`
+                  : "Needs a season of daily marks."
             }
           />
         </Stats>
@@ -228,15 +305,38 @@ export default async function DashboardPage({
         ) : null}
 
         <Row kind="wide">
+          {/*
+            * The realised chart when there is one, the book itself when there
+            * is not.
+            *
+            * This is the largest panel on the screen and it drew an empty
+            * rectangle for every account that had never sold anything — half a
+            * fold of nothing, on a page whose whole claim is that it reads a
+            * brokerage. What replaces it is not a placeholder: unrealised P&L
+            * per position is a real figure off one synced snapshot, and for a
+            * reader who only ever buys it is *the* answer to "how is it going".
+            */}
           <Panel>
-            <PanelHead eyebrow={`Daily P&L · ${window.label}`}>
-              <Legend up={perf.up} down={perf.down} />
+            <PanelHead
+              eyebrow={perf.sessions.length ? `Daily P&L · ${window.label}` : "Your positions"}
+            >
+              {perf.sessions.length ? <Legend up={perf.up} down={perf.down} /> : null}
             </PanelHead>
             <div className="dashFigureRow">
-              <span className={"num dashFigure"}>{perf.sessions.length ? signedMoney(perf.realised) : "—"}</span>
-              {perf.ret != null ? (
+              <span className={"num dashFigure"}>
+                {perf.sessions.length
+                  ? signedMoney(perf.realised)
+                  : book.priced
+                    ? signedMoney(book.unrealised)
+                    : "—"}
+              </span>
+              {perf.sessions.length && perf.ret != null ? (
                 <span className="dashFigurePct" data-tone={perf.ret >= 0 ? "moss" : "loss"}>
                   {signedPct(perf.ret * 100)}
+                </span>
+              ) : !perf.sessions.length && book.unrealisedPct != null ? (
+                <span className="dashFigurePct" data-tone={book.unrealisedPct >= 0 ? "moss" : "loss"}>
+                  {signedPct(book.unrealisedPct)}
                 </span>
               ) : null}
             </div>
@@ -244,6 +344,14 @@ export default async function DashboardPage({
               <>
                 <PnlColumns sessions={perf.sessions} peak={perf.peak} />
                 <ChartAxis labels={perf.axis} />
+              </>
+            ) : view.positions.length ? (
+              <>
+                <HoldingBars rows={view.positions} money={signedMoney} />
+                <p className="dashProv">
+                  Unrealised, off your latest snapshot · the daily chart draws itself
+                  the first time a position is sold
+                </p>
               </>
             ) : (
               <p className="dashEmpty">

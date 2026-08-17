@@ -63,23 +63,37 @@ export function windowFor(range: RangeKey, today: string, oldest: string | null)
 export function bookFrom(holdings: Facts["holdings"]): Book {
   let value = 0;
   let cost = 0;
+  let unrealised = 0;
   let winners = 0;
+  let priced = 0;
   for (const holding of holdings) {
     value += holding.value ?? 0;
     cost += holding.cost ?? 0;
-    if ((holding.pnlPct ?? 0) > 0) winners += 1;
+    /*
+     * Summed from each holding's own figure rather than taken as value less
+     * cost. A position the broker reports a P&L for but no average purchase
+     * price contributes nothing to `cost`, so the subtraction would count its
+     * entire market value as gain — the book would read as up by the size of
+     * every holding whose cost basis the brokerage withheld.
+     */
+    if (holding.pnl != null) {
+      unrealised += holding.pnl;
+      priced += 1;
+      if (holding.pnl > 0) winners += 1;
+    }
   }
   const ranked = [...holdings].sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
   const topTwo = ranked.slice(0, 2).reduce((sum, holding) => sum + (holding.value ?? 0), 0);
-  const unrealised = value - cost;
 
   return {
     positions: holdings.length,
     value,
     cost,
     unrealised,
+    /* Against the cost we actually know, never against a partial one. */
     unrealisedPct: cost > 0 ? (unrealised / cost) * 100 : null,
     winners,
+    priced,
     largest: ranked[0]?.symbol ?? null,
     topTwo: value > 0 ? topTwo / value : 0,
   };
@@ -366,6 +380,15 @@ export function dashboardView({
       label: holding.symbol,
       value: holding.value ?? 0,
     })),
+    positions: [...facts.holdings]
+      .filter((holding) => (holding.value ?? 0) > 0)
+      .sort((a, b) => Math.abs(b.pnl ?? 0) - Math.abs(a.pnl ?? 0))
+      .map((holding) => ({
+        symbol: holding.symbol,
+        value: holding.value ?? 0,
+        pnl: holding.pnl,
+        pnlPct: holding.pnlPct,
+      })),
     concentration,
     patterns: patternsFrom(facts, window),
     wrapped: { year, earned: wrapped.earned, total: wrapped.total, archetype },

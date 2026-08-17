@@ -321,3 +321,70 @@ export function Sparkline({ series, up }: { series: number[]; up: boolean }) {
     </svg>
   );
 }
+
+/* ── The book, position by position ─────────────────────────────────────── */
+
+export interface PositionRow {
+  symbol: string;
+  value: number;
+  pnl: number | null;
+  pnlPct: number | null;
+}
+
+/**
+ * What each holding is up or down, unrealised.
+ *
+ * The daily realised chart is the largest panel on the dashboard and it is
+ * empty until the reader has *sold* something — so an account that connected
+ * this week, or one that only ever buys, gets half a screen of nothing while
+ * its eight positions sit priced and unread two panels over. This is what that
+ * space holds instead. It needs no round trips, no equity history and no
+ * derived document: one synced snapshot answers it.
+ *
+ * Bars run both ways off a shared left edge rather than a centre line, because
+ * these are not sessions in time — they are a ranked list, and a zero line
+ * would imply an ordering the rows do not have. Length is the *size* of the
+ * move against the largest in the book; the hue and the sign carry direction.
+ *
+ * A position whose P&L nothing can answer for — no cost basis, no broker
+ * figure — states the dash rather than drawing a bar at zero, which would read
+ * as flat rather than as unknown.
+ */
+export function HoldingBars({ rows, money }: { rows: PositionRow[]; money: (n: number) => string }) {
+  const answerable = rows.filter((row) => row.pnl != null);
+  if (!answerable.length) return null;
+
+  const peak = Math.max(...answerable.map((row) => Math.abs(row.pnl ?? 0)), 1);
+
+  return (
+    <ul className={styles.bookList}>
+      {rows.slice(0, 8).map((row, i) => {
+        const up = (row.pnl ?? 0) >= 0;
+        const share = row.pnl == null ? 0 : (Math.abs(row.pnl) / peak) * 100;
+        return (
+          <li key={row.symbol} className={styles.bookRow}>
+            <span className={styles.bookMark} aria-hidden="true">
+              <Logo symbol={row.symbol} size={22} />
+            </span>
+            <span className={styles.bookName}>{row.symbol}</span>
+            <span className={styles.bookTrack}>
+              {row.pnl == null ? null : (
+                <i
+                  className={styles.bookBar}
+                  data-tone={up ? "moss" : "loss"}
+                  style={{ width: `${share}%`, animationDelay: `${60 + i * 70}ms` }}
+                />
+              )}
+            </span>
+            <span className={`num ${styles.bookPnl}`} data-tone={row.pnl == null ? undefined : up ? "moss" : "loss"}>
+              {row.pnl == null ? "—" : money(row.pnl)}
+            </span>
+            <span className={`num ${styles.bookPct}`}>
+              {row.pnlPct == null ? "" : `${row.pnlPct >= 0 ? "+" : "−"}${Math.abs(row.pnlPct).toFixed(1)}%`}
+            </span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}

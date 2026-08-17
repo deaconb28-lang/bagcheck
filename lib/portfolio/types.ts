@@ -125,6 +125,14 @@ export interface Book {
   unrealised: number;
   unrealisedPct: number | null;
   winners: number;
+  /**
+   * Positions whose unrealised P&L is knowable at all.
+   *
+   * "5 of 8 in profit" is a lie when two of the eight report no cost basis and
+   * no broker P&L — they are not losers, they are unanswered. The denominator
+   * is what we can actually read.
+   */
+  priced: number;
   largest: string | null;
   /** The share the two biggest names carry, 0–1. */
   topTwo: number;
@@ -181,6 +189,16 @@ export interface DashboardView {
   /** SPY's own year, for the return card's comparison line. */
   index: number | null;
   allocation: Array<{ key: string; label: string; value: number }>;
+  /**
+   * The book, position by position, with what each is up or down.
+   *
+   * The dashboard's largest panel is the daily realised chart, and an account
+   * that has never closed a position renders it as an empty rectangle half the
+   * height of the screen. This is what that space holds instead: unrealised
+   * P&L needs no round trips, no equity history and no derivation — one synced
+   * snapshot answers it.
+   */
+  positions: Array<{ symbol: string; value: number; pnl: number | null; pnlPct: number | null }>;
   concentration: string | null;
   patterns: Pattern[];
   wrapped: { year: number; earned: number; total: number; archetype: string | null };
