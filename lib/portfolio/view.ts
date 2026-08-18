@@ -558,7 +558,19 @@ export function dashboardView({
       (flow) => flow.date.slice(0, 4) === String(year),
     ),
   );
-  const field = sameWindow ? raceField(ytd, peers) : null;
+  /*
+   * The field is built from the funds whether or not the reader can join it.
+   *
+   * It used to be `sameWindow ? raceField(...) : null`, so an account whose
+   * ledger did not reach January produced no field at all and the block
+   * vanished — which on a new account is *every* account, all year. The
+   * refusal was only ever about the reader's own row: a six-month figure set
+   * beside a fund's twelve is two measurements rather than a comparison. So
+   * the reader's figure is what gets withheld, not the race. `raceField`
+   * already returns a field with `place: null` when handed nothing, and the
+   * screen says who is missing and why.
+   */
+  const field = raceField(sameWindow ? ytd : null, peers);
   /*
    * One reason, in the order a reader can act on: no provider key is a
    * deployment fact, too few quotes is a provider fact, and a short year is
@@ -566,11 +578,9 @@ export function dashboardView({
    */
   const fieldAbsence: DashboardView["fieldAbsence"] = field
     ? null
-    : !peers.length
-      ? "market-key"
-      : !sameWindow
-        ? "year-too-short"
-        : "too-few-funds";
+    : peers.length
+      ? "too-few-funds"
+      : "market-key";
 
   const ranked = [...facts.holdings].sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
   const concentration =
@@ -593,6 +603,16 @@ export function dashboardView({
     performance,
     field,
     fieldAbsence,
+    /*
+     * The account's own value over time.
+     *
+     * Not P&L and never labelled as it: portfolio value moves when money
+     * crosses the account's edge, so a deposit lifts this line exactly like a
+     * gain. It is drawn where the cumulative *realised* line cannot be —
+     * an account that has never sold has no realised series at all, which is
+     * most new accounts — and the surface that draws it says which it is.
+     */
+    curve: facts.curve.map((mark) => ({ date: mark.date, value: mark.value })),
     index: peers.find((peer) => peer.key === "SPY")?.value ?? null,
     allocation: facts.holdings.map((holding) => ({
       key: holding.symbol,

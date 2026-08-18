@@ -281,6 +281,12 @@ export interface DashboardView {
    * remove, wearing a new shape.
    */
   cumulative: Array<{ date: string; total: number }>;
+  /**
+   * Daily account value. **Value, not profit** — the distinction is the whole
+   * reason this is a separate field from `cumulative`, and any surface drawing
+   * it has to say so, because a deposit moves it exactly like a gain does.
+   */
+  curve: Array<{ date: string; value: number }>;
   calendar: HeatDay[];
   /**
    * Where the money sits by *industry*, largest first.

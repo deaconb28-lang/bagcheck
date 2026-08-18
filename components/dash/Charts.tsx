@@ -467,7 +467,8 @@ export function SectorMix({
       </dl>
       {cover < 0.995 ? (
         <p className={styles.sectorNote}>
-          Across the {(cover * 100).toFixed(0)}% of your book your brokerage names a sector for.
+          Sectors cover {(cover * 100).toFixed(0)}% of your book — the rest is
+          names no sector could be found for, left out rather than bucketed.
         </p>
       ) : null}
     </div>

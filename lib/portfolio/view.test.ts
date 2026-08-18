@@ -480,9 +480,17 @@ test("no quotes at all reads as a missing market key, not a short year", () => {
   assert.equal(view.fieldAbsence, "market-key");
 });
 
-test("quotes with a ledger that misses January reads as a short year", () => {
+/*
+ * The field is the funds; the reader's row is what a short year withholds.
+ * Before this the whole block vanished, which on a new account meant no race
+ * all year — and a new account is every account at some point.
+ */
+test("a short year withholds the reader's row, not the field", () => {
   const view = dash({
-    peers: [{ key: "SPY", label: "S&P 500", note: "", value: 0.117 }],
+    peers: [
+      { key: "SPY", label: "S&P 500", note: "", value: 0.117 },
+      { key: "DBMF", label: "Managed futures", note: "", value: 0.064 },
+    ],
     facts: facts({
       curve: [
         { date: "2026-06-01", value: 1000, filled: false, withCash: false },
@@ -490,8 +498,33 @@ test("quotes with a ledger that misses January reads as a short year", () => {
       ],
     }),
   });
+  assert.ok(view.field, "the funds still race");
+  assert.equal(view.field?.place, null, "the reader is not placed in it");
+  assert.equal(view.field?.of, 2);
+  assert.equal(view.fieldAbsence, null);
+});
+
+test("one quotable fund is not a field", () => {
+  const view = dash({ peers: [{ key: "SPY", label: "S&P 500", note: "", value: 0.117 }] });
   assert.equal(view.field, null);
-  assert.equal(view.fieldAbsence, "year-too-short");
+  assert.equal(view.fieldAbsence, "too-few-funds");
+});
+
+/* Value, never profit — and it reaches the screen even with nothing sold. */
+test("the value curve is carried whether or not anything has closed", () => {
+  const view = dash({
+    facts: facts({
+      curve: [
+        { date: "2026-06-01", value: 1000, filled: false, withCash: false },
+        { date: "2026-06-02", value: 1010, filled: false, withCash: false },
+      ],
+    }),
+  });
+  assert.equal(view.cumulative.length, 0, "nothing realised");
+  assert.deepEqual(view.curve, [
+    { date: "2026-06-01", value: 1000 },
+    { date: "2026-06-02", value: 1010 },
+  ]);
 });
 
 test("a drawn field states no absence", () => {

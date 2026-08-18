@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getUserId, isAuthConfigured } from "@/auth";
 import { accessFor, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
 import { dashboardFor, fieldLine, rangeOf } from "@/lib/portfolio/load";
+import { MIN_SESSIONS } from "@/lib/portfolio/view";
 import type { RangeKey } from "@/lib/portfolio/types";
 import { EmptyState } from "@/components/app/EmptyState";
 import { FirstScore } from "@/components/app/FirstScore";
@@ -43,7 +44,7 @@ import {
 import { InsightRow, WrappedPromo } from "@/components/dash/Cards";
 import { ScoreHero } from "@/components/dash/ScoreHero";
 import { Collection } from "@/components/dash/Collection";
-import { HeatGrid } from "@/components/idioms";
+import { EquityCurve, HeatGrid } from "@/components/idioms";
 
 const RANGES: Array<{ key: RangeKey; label: string }> = [
   { key: "45d", label: "45D" },
@@ -340,21 +341,36 @@ export default async function DashboardPage({
           * without two quotable funds, or without a window the reader's own
           * curve can answer for on the same terms.
           */}
-        {view.field && view.field.place != null ? (
+        {view.field ? (
           <Row kind="full">
             <Panel>
               <PanelHead
                 eyebrow="The race"
                 title={
-                  view.field.place === 1
-                    ? "You are out in front of the field"
-                    : `You are ${view.field.place} of ${view.field.of} this year`
+                  view.field.place == null
+                    ? "The field, this year"
+                    : view.field.place === 1
+                      ? "You are out in front of the field"
+                      : `You are ${view.field.place} of ${view.field.of} this year`
                 }
               >
                 <PanelNote>Year to date · price return</PanelNote>
               </PanelHead>
               <RaceBars field={view.field} />
-              <p className="dashProv">{fieldLine(view.field.of - 1, view.provenance.asOf ?? "")}</p>
+              {view.field.place == null ? (
+                <p className="dashEmpty">
+                  Your own row joins this once your ledger reaches the first
+                  fortnight of January. A few months of your year set against a
+                  fund&rsquo;s twelve is two measurements rather than a
+                  comparison, so it waits rather than guessing.
+                </p>
+              ) : null}
+              <p className="dashProv">
+                {fieldLine(
+                  view.field.place == null ? view.field.of : view.field.of - 1,
+                  view.provenance.asOf ?? "",
+                )}
+              </p>
             </Panel>
           </Row>
         ) : (
@@ -480,22 +496,58 @@ export default async function DashboardPage({
           * and a year of blank cells. The view gates both on `MIN_SESSIONS`,
           * which is the engine's own floor for reporting a pattern at all.
           */}
-        {view.cumulative.length ? (
+        {/*
+          * The running total — or, for an account that has never sold, the
+          * account's own value instead.
+          *
+          * `cumulative` is realised P&L, so it is empty until eight sessions
+          * have closed something. That is most new accounts and *every*
+          * buy-and-hold one, and the block simply vanished for them: the
+          * widest panel on the screen, absent, on an account with a perfectly
+          * good curve behind it.
+          *
+          * The substitute is value rather than profit and is labelled as
+          * value, because a deposit moves it exactly like a gain does. Calling
+          * it P&L would be the one thing this screen must not do; calling it
+          * what it is costs nothing.
+          */}
+        {view.cumulative.length || view.curve.length >= 2 ? (
           <Row kind="wide">
             <Panel>
-              <PanelHead eyebrow={`Cumulative P&L · ${window.label}`}>
-                <PanelNote>Running total, session by session</PanelNote>
-              </PanelHead>
-              <div className="dashFigureRow">
-                <span className="num dashFigure">
-                  {signedMoney(view.cumulative[view.cumulative.length - 1].total)}
-                </span>
-              </div>
-              <PnlWave points={view.cumulative} />
-              <p className="dashProv">
-                Realised only · the line moves when a position closes, not when a
-                day passes
-              </p>
+              {view.cumulative.length ? (
+                <>
+                  <PanelHead eyebrow={`Cumulative P&L · ${window.label}`}>
+                    <PanelNote>Running total, session by session</PanelNote>
+                  </PanelHead>
+                  <div className="dashFigureRow">
+                    <span className="num dashFigure">
+                      {signedMoney(view.cumulative[view.cumulative.length - 1].total)}
+                    </span>
+                  </div>
+                  <PnlWave points={view.cumulative} />
+                  <p className="dashProv">
+                    Realised only · the line moves when a position closes, not
+                    when a day passes
+                  </p>
+                </>
+              ) : (
+                <>
+                  <PanelHead eyebrow="Account value">
+                    <PanelNote>Every day your brokerage reported one</PanelNote>
+                  </PanelHead>
+                  <div className="dashFigureRow">
+                    <span className="num dashFigure">
+                      {money(view.curve[view.curve.length - 1].value)}
+                    </span>
+                  </div>
+                  <EquityCurve series={view.curve} />
+                  <p className="dashProv">
+                    Value, not profit — a deposit lifts this line the same way a
+                    gain does. The realised total takes its place once you have
+                    closed {MIN_SESSIONS} sessions.
+                  </p>
+                </>
+              )}
             </Panel>
 
             <Panel>

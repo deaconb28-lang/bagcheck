@@ -116,10 +116,29 @@ export function ScoreHero({ read, year }: { read: Read; year: number }) {
                 {read.best.date}
               </span>
             ) : null}
+            {/*
+              * The percentile, phrased by where it actually lands.
+              *
+              * At the ends the percentage is the worst way to say it: a
+              * reader whose newest score is their lowest so far met "Higher
+              * than 0% of your own scored days", which is true, tells them
+              * nothing they can act on, and reads as a broken figure. The
+              * fact is the same in all three branches — this is the reader's
+              * own distribution, never a cohort, and it says so.
+              */}
             {read.percentile != null ? (
               <span className={styles.chip}>
-                Higher than <span className={`num ${styles.chipNum}`}>{read.percentile}%</span> of
-                your own scored days
+                {read.percentile === 0 ? (
+                  "Your lowest scored day so far"
+                ) : read.percentile === 100 ? (
+                  "Your best scored day so far"
+                ) : (
+                  <>
+                    Higher than{" "}
+                    <span className={`num ${styles.chipNum}`}>{read.percentile}%</span> of your
+                    own scored days
+                  </>
+                )}
               </span>
             ) : null}
           </div>
