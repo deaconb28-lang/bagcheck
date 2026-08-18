@@ -5,8 +5,14 @@
  *
  * `--inset` is the chip fill, which is exactly one step off the panel: enough
  * to read as a surface, not enough to read as content.
+ *
+ * The one thing here that is *not* a grey rectangle is the field behind it and
+ * the ring in front. Both are drawn — inline SVG and CSS gradients, no bytes
+ * over the wire — because an image on a loading screen is a download you are
+ * asked to wait for while you are already waiting for a download.
  */
 .wrap {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100%;
@@ -21,6 +27,58 @@
   white-space: nowrap;
 }
 
+/*
+ * ── The field ──
+ *
+ * Two vast soft blooms on the plum ground — gold low and left, violet upper
+ * right — the same two hues the screen that is arriving leads with. Dark only,
+ * like the shell's own drifting ridge: at any opacity that reads as atmosphere
+ * on plum it reads as a smudge on white.
+ */
+.field {
+  display: none;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+:global(html[data-mode="dark"]) .field {
+  display: block;
+}
+
+.aurora {
+  position: absolute;
+  inset: -24%;
+  display: block;
+  background-image:
+    radial-gradient(
+      42% 38% at 22% 74%,
+      color-mix(in srgb, var(--gold) 16%, transparent) 0%,
+      transparent 68%
+    ),
+    radial-gradient(
+      46% 40% at 82% 14%,
+      color-mix(in srgb, var(--accent) 20%, transparent) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      38% 34% at 62% 96%,
+      color-mix(in srgb, var(--ember) 9%, transparent) 0%,
+      transparent 72%
+    );
+  /* Soft enough that no edge of a bloom is ever findable. */
+  filter: blur(38px);
+}
+
+/* Everything real sits above the field. */
+.head,
+.wrap > div:not(.field) {
+  position: relative;
+  z-index: 1;
+}
+
 .head {
   display: flex;
   flex-direction: column;
@@ -31,7 +89,7 @@
 
 .bar {
   display: block;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   background: var(--inset);
 }
 
@@ -55,61 +113,221 @@
  * winner decided by whichever stylesheet the bundler emitted last. Losing that
  * tie stacked the skeleton at 28px on a phone while the negative margin on the
  * top row stayed at −32px, which put the door bar through the first plate.
- * See the twin of this note in `you/you.module.css`.
  */
 .wide {
-  --measure: 1240px;
-  --gap-block: 64px;
+  --measure: 1560px;
+  --gap-block: 34px;
 }
 
 .wide.wide {
   gap: var(--gap-block);
 }
 
-.topRow {
+/* ── The hero ─────────────────────────────────────────────────────────── */
+
+.hero {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: calc(var(--gap-block, 64px) * -0.5);
+  gap: 48px;
+  flex-wrap: wrap;
+  padding: 8px 0 20px;
 }
 
-.stamp {
-  width: 240px;
+.ring {
+  position: relative;
+  flex: none;
+  width: var(--ring-size, 228px);
+  height: var(--ring-size, 228px);
+  display: grid;
+  place-items: center;
+}
+
+.ringSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.ringTrack {
+  fill: none;
+  stroke: var(--track);
+  stroke-width: 12;
+}
+
+/*
+ * The arc is placed, not chasing. A ring that sweeps is a spinner wearing the
+ * product's signature shape, and the rule this file has always followed is
+ * that a spinner says "working" where a skeleton says "here, shortly".
+ *
+ * It is quieter than the real arc but not by much: at a third strength the
+ * mix fell below the plum ground's own warmth and read as muddy brown rather
+ * than as gold waiting to arrive.
+ */
+.ringArc {
+  fill: none;
+  stroke: color-mix(in srgb, var(--gold) 62%, transparent);
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+/* Where the archetype's character lands. */
+.character {
+  display: block;
+  width: calc(var(--ring-size, 228px) * 0.58);
+  height: calc(var(--ring-size, 228px) * 0.58);
+  border-radius: 50%;
+  background: var(--inset);
+}
+
+.words {
+  min-width: 0;
+  flex: 1 1 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.eyebrow {
+  width: 168px;
   height: 11px;
 }
 
-.door {
-  width: 210px;
-  height: 44px;
-  border-radius: 14px;
+/* The 140px numeral's own footprint, so nothing shifts when it lands. */
+.figure {
+  width: 196px;
+  height: 108px;
+  border-radius: var(--r-row);
+}
+
+.name {
+  width: min(300px, 62%);
+  height: 34px;
+  border-radius: var(--r-control);
+}
+
+.line {
+  width: min(420px, 84%);
+  height: 15px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.chip {
+  width: 180px;
+  height: 36px;
+}
+
+.chipWide {
+  width: 232px;
+}
+
+/* ── The four component dials ─────────────────────────────────────────── */
+
+.arcs {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  flex-wrap: wrap;
+  padding-top: 28px;
+  border-top: 1px solid var(--edge);
+}
+
+.arc {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.arcSvg {
+  width: 66px;
+  height: 66px;
+  flex: none;
+}
+
+.arcTrack {
+  fill: none;
+  stroke: var(--track);
+  stroke-width: 6;
+}
+
+.arcBar {
+  width: 88px;
+  height: 30px;
+  border-radius: var(--r-control);
+}
+
+/* ── The money, under it ──────────────────────────────────────────────── */
+
+.total {
+  width: min(460px, 74%);
+  height: 62px;
+  border-radius: var(--r-row);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+/* A rule above the column, exactly as the shipped stat now draws it. */
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--edge);
+}
+
+.statLabel {
+  width: 74px;
+  height: 10px;
+}
+
+.statValue {
+  width: 118px;
+  height: 30px;
+  border-radius: var(--r-control);
+}
+
+.statTail {
+  width: 100%;
+  max-width: 150px;
+  height: 11px;
 }
 
 .pair {
   display: grid;
   grid-template-columns: minmax(0, 1.32fr) minmax(0, 1fr);
-  gap: 40px;
+  gap: 34px;
   align-items: start;
 }
 
 @media (max-width: 1080px) {
   .pair {
     grid-template-columns: minmax(0, 1fr);
-    gap: 40px;
   }
 }
 
 .plate {
-  height: 240px;
-  border-radius: 32px;
+  height: 260px;
+  border-radius: var(--r-panel);
   border: 1px solid var(--edge);
   background: var(--s1);
   box-shadow: var(--lift);
 }
 
 .tall {
-  height: 420px;
-  border-radius: 40px;
+  height: 380px;
+  border-radius: var(--r-hero);
   box-shadow: var(--lift-hero);
 }
 
@@ -118,10 +336,18 @@
  * A travelling highlight is an ambient loop on a surface, which this system
  * does not do — and at three plates it reads as three separate things
  * loading rather than one screen.
+ *
+ * The field drifts on its own much longer cycle, so the two never beat
+ * against each other into a pulse.
  */
 @media (prefers-reduced-motion: no-preference) {
   .wrap {
     animation: settle 1.4s ease-in-out infinite alternate;
+  }
+
+  .aurora {
+    animation: drift 62s ease-in-out infinite;
+    will-change: transform;
   }
 
   @keyframes settle {
@@ -134,12 +360,35 @@
   }
 }
 
+@media (max-width: 899px) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 780px) {
+  .hero {
+    gap: 24px;
+  }
+
+  .ring {
+    --ring-size: 132px;
+  }
+
+  .figure {
+    width: 140px;
+    height: 74px;
+  }
+
+  .arcs {
+    gap: 20px 26px;
+  }
+
   .plate {
     height: 200px;
   }
 
   .tall {
-    height: 320px;
+    height: 300px;
   }
 }

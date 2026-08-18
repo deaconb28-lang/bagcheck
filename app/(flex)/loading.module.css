@@ -1,13 +1,18 @@
 /*
  * The Wrapped flow's waiting state, in --mk-* like everything else in this
- * group. Frames at the deck's own width and inset, so when the real cards
- * land nothing moves sideways.
+ * group — a card is an artefact with its own world, and the flow that hands
+ * one over speaks that world's palette rather than the app's.
+ *
+ * The art is drawn rather than fetched. A generated backdrop on a loading
+ * screen is a download you are asked to wait for while you are already
+ * waiting for a download, and it would arrive after the thing it stood in for.
  */
 .wrap {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 26px;
-  padding: 78px 0 60px;
+  min-height: 100%;
+  overflow: hidden;
 }
 
 .sr {
@@ -19,49 +24,241 @@
   white-space: nowrap;
 }
 
-.head {
+/*
+ * The field: violet at the head, amber low, a rose bloom off to the right.
+ * The deck's own recurring hues, and the ones the landing already runs this
+ * section on — so the wait belongs to the world of the thing it waits for.
+ *
+ * These sit far higher than a wash on the app's plum would, because
+ * `--mk-field` is a near-black: the same percentages that read as atmosphere
+ * on #151022 vanish entirely on #0b0b12.
+ */
+.field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.aurora {
+  position: absolute;
+  inset: -30%;
+  display: block;
+  background-image:
+    radial-gradient(
+      40% 34% at 16% 8%,
+      color-mix(in srgb, var(--mk-violet-lit) 62%, transparent) 0%,
+      transparent 68%
+    ),
+    radial-gradient(
+      38% 32% at 86% 78%,
+      color-mix(in srgb, var(--mk-amber) 46%, transparent) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      32% 28% at 72% 22%,
+      color-mix(in srgb, var(--mk-red-soft) 26%, transparent) 0%,
+      transparent 72%
+    );
+  filter: blur(60px);
+  opacity: 0.55;
+}
+
+.nav,
+.inner {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * The nav's stand-in. The page renders `<AppNav>` itself, so the wait has no
+ * nav at all — without a bar of its height everything below jumps when the
+ * real one lands.
+ */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  height: 76px;
+  padding-inline: 40px;
+  border-bottom: 1px solid color-mix(in srgb, var(--mk-bg) 8%, transparent);
+}
+
+.inner {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding-inline: max(24px, calc((100vw - 1240px) / 2 + 24px));
+  width: 100%;
+  max-width: 1560px;
+  margin-inline: auto;
+  padding: 22px 40px 72px;
 }
 
 .bar {
   display: block;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--mk-bg) 10%, transparent);
+  border-radius: var(--r-pill, 999px);
+  background: color-mix(in srgb, var(--mk-bg) 11%, transparent);
+}
+
+.mark {
+  width: 132px;
+  height: 20px;
+}
+
+.navTabs {
+  width: min(360px, 34%);
+  height: 13px;
+}
+
+.navEnd {
+  width: 150px;
+  height: 30px;
+  margin-left: auto;
+}
+
+/* ── The year, and each quarter that has begun ── */
+
+.windows {
+  display: flex;
+  gap: 8px;
+}
+
+.window {
+  display: block;
+  width: 62px;
+  height: 34px;
+  border-radius: var(--r-pill, 999px);
+  border: 1px solid color-mix(in srgb, var(--mk-bg) 14%, transparent);
+}
+
+/* The selected window is the inversion, exactly as the real bar draws it. */
+.window[data-on] {
+  width: 92px;
+  background: color-mix(in srgb, var(--mk-bg) 28%, transparent);
+  border-color: transparent;
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin-top: 26px;
+}
+
+.headText {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
 }
 
 .eyebrow {
-  width: 132px;
+  width: 168px;
   height: 11px;
 }
 
+/* The 62px headline's own footprint. */
 .title {
-  width: min(340px, 60%);
-  height: 46px;
-  border-radius: 14px;
+  width: min(520px, 74vw);
+  height: 58px;
+  border-radius: 16px;
 }
 
-.rail {
-  display: flex;
-  gap: 20px;
-  padding: 4px max(24px, calc((100vw - 1240px) / 2 + 24px)) 8px;
-  overflow: hidden;
+.door {
+  width: 186px;
+  height: 56px;
+  border-radius: var(--r-pill, 999px);
+  background: color-mix(in srgb, var(--mk-bg) 20%, transparent);
+}
+
+/* ── The pile ─────────────────────────────────────────────────────────── */
+
+.pile {
+  position: relative;
+  align-self: center;
+  width: clamp(268px, 27vw, 384px);
+  aspect-ratio: 1080 / 1920;
+  margin-top: 44px;
 }
 
 .frame {
-  flex: 0 0 auto;
-  width: clamp(206px, 19vw, 268px);
-  aspect-ratio: 2 / 3;
-  border-radius: 26px;
-  background: color-mix(in srgb, var(--mk-bg) 7%, transparent);
-  border: 1px solid color-mix(in srgb, var(--mk-bg) 12%, transparent);
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--mk-bg) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mk-bg) 11%, transparent);
+}
+
+/*
+ * The three behind, at the angles `<YearDeck>` fans its own depth by. Each
+ * steps down in light as it steps back, which is what makes four rectangles
+ * read as a stack rather than as a misprint.
+ */
+.back1 {
+  transform: translateY(-13px) scale(0.955) rotate(-2deg);
+  opacity: 0.66;
+}
+
+.back2 {
+  transform: translateY(-24px) scale(0.912) rotate(2.6deg);
+  opacity: 0.42;
+}
+
+.back3 {
+  transform: translateY(-33px) scale(0.87) rotate(-3.4deg);
+  opacity: 0.22;
+}
+
+/*
+ * The top card is the only one carrying a lockup — the rest are edges. A
+ * stack where every card shows type reads as four things loading; the pile is
+ * one object. The lockup sits in the lower third, where every card in the
+ * deck that is set at the foot puts it.
+ */
+.top {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 14px;
+  padding: 30px;
+  background: color-mix(in srgb, var(--mk-bg) 9%, transparent);
+  border-color: color-mix(in srgb, var(--mk-bg) 20%, transparent);
+  box-shadow: 0 40px 80px -34px rgba(0, 0, 0, 0.85);
+}
+
+.cardEyebrow {
+  width: 56%;
+  height: 9px;
+}
+
+.cardTitle {
+  width: 82%;
+  height: 20px;
+  border-radius: 8px;
+}
+
+.cardLabel {
+  width: 48%;
+  height: 8px;
+}
+
+.cardHero {
+  width: 88%;
+  height: 52px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--mk-bg) 17%, transparent);
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .wrap {
     animation: settle 1.4s ease-in-out infinite alternate;
+  }
+
+  .aurora {
+    animation: drift 74s ease-in-out infinite;
+    will-change: transform;
   }
 
   @keyframes settle {
@@ -75,16 +272,27 @@
 }
 
 @media (max-width: 860px) {
-  .wrap {
-    padding-top: 60px;
-  }
-
-  .head,
-  .rail {
+  .nav {
+    height: 64px;
     padding-inline: 20px;
+    gap: 16px;
   }
 
-  .rail {
-    gap: 14px;
+  .inner {
+    padding: 18px 20px 56px;
+  }
+
+  .title {
+    height: 42px;
+  }
+
+  .door {
+    height: 46px;
+    width: 158px;
+  }
+
+  .pile {
+    width: min(252px, 64vw);
+    margin-top: 32px;
   }
 }
