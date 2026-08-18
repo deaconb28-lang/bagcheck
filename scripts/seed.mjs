@@ -225,6 +225,19 @@ export async function seed({ quiet = false } = {}) {
    */
   const buys = txns.filter((t) => t.type === "BUY");
   const reasons = ["conviction", "dip", "rebalance", "momentum", "income"];
+  /*
+   * A claimed, published handle — so `/@handle` is shootable.
+   *
+   * That route has never been in the sweep, which is how it shipped setting
+   * near-black `--mk-ink` on the app's plum field and reading as very nearly
+   * nothing. A page nobody can screenshot is a page nobody checks.
+   */
+  await db.collection("prefs").insertOne({
+    userId: USER_ID,
+    handle: "deacon",
+    publicLedger: true,
+  });
+
   await db.collection("tags").insertMany(
     buys.slice(0, 24).map((t, i) => ({
       userId: USER_ID,

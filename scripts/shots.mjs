@@ -66,6 +66,12 @@ const SCREENS = [
    * while DEBUG_PAGE is set, which `serve()` below does.
    */
   { key: "loading", path: "/debug/loading", modes: ["dark"] },
+  /*
+   * The public handle page. It is the one surface a stranger reaches from a
+   * posted link and it had never been shot — the seed now claims and publishes
+   * `@deacon` so there is something here to look at.
+   */
+  { key: "handle", path: "/@deacon", modes: ["dark"] },
 ];
 
 /**

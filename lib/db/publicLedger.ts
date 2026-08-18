@@ -48,6 +48,28 @@ export function normaliseHandle(raw: string): string | null {
   return HANDLE_RE.test(handle) ? handle : null;
 }
 
+/**
+ * Whether this handle is claimed *and* published — nothing more.
+ *
+ * The public page shows a reserved name and a coming-soon note rather than a
+ * ledger, so loading a whole screen to render none of it is a read nobody
+ * needs. One projected lookup answers the only question the page asks.
+ *
+ * It keeps the property `publicLedgerFor` was built around: an unclaimed
+ * handle and an unpublished one are both simply absent, so the route cannot
+ * be used as an oracle for which names are taken.
+ */
+export async function publishedHandle(rawHandle: string): Promise<string | null> {
+  const handle = normaliseHandle(rawHandle);
+  if (!handle) return null;
+  const { prefs } = await getCollections();
+  const owner = await prefs.findOne(
+    { handle, publicLedger: true },
+    { projection: { _id: 0, handle: 1 } },
+  );
+  return owner?.handle ?? null;
+}
+
 export async function publicLedgerFor(rawHandle: string): Promise<PublicLedger | null> {
   const handle = normaliseHandle(rawHandle);
   if (!handle) return null;

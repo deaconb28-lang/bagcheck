@@ -1,94 +1,113 @@
+/*
+ * The public handle page: a reserved name and a promise.
+ *
+ * One centred column on the marketing field, in `--mk-*` like everything else
+ * in this group — a stranger arriving from a posted link has never seen the
+ * app, so this is the marketing world rather than the instrument.
+ *
+ * It carries no figure at all. The page it replaces drew a return, ten
+ * holdings and a sector split; every one of those is a fact about somebody's
+ * account, so the simplification and the privacy improvement are the same
+ * edit.
+ */
 .page {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 96px 24px 140px;
-  color: var(--mk-ink);
-}
-
-.head { margin: 0 0 40px; }
-
-.eyebrow {
-  margin: 0 0 12px;
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--mk-violet-soft);
-}
-
-.handle {
-  margin: 0 0 10px;
-  font-size: 44px;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-}
-
-.tail { margin: 0; font-size: 14px; color: var(--mk-dim); }
-
-.figure {
+  /*
+   * This page paints its own ground. The marketing group has no layout
+   * background — each section states its own — so without this the page
+   * inherits the app's plum field, and the version it replaces then set
+   * near-black `--mk-ink` on it and was very nearly invisible. Nothing caught
+   * that because `/@handle` has never been in the screenshot sweep; it is now.
+   */
+  background: var(--mk-field);
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin: 0 0 44px;
-  font-size: 62px;
-  font-weight: 600;
-  letter-spacing: -0.04em;
-}
-
-.figure[data-tone="moss"] { color: var(--mk-green-soft); }
-.figure[data-tone="loss"] { color: var(--mk-red-soft); }
-
-.figureLabel {
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--mk-dim);
-}
-
-.rows { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
-
-.row {
-  display: grid;
-  grid-template-columns: 26px 62px minmax(0, 1fr) 48px 62px;
   align-items: center;
-  gap: 12px;
-  padding: 11px 0;
-  border-bottom: 1px solid var(--mk-line);
+  justify-content: center;
+  gap: 0;
+  padding: 96px 24px 120px;
+  text-align: center;
+  color: var(--mk-bg);
 }
 
-.mark { display: flex; width: 26px; height: 26px; align-items: center; }
-.symbol { font-size: 14px; font-weight: 600; }
-
-.track {
-  display: flex;
-  height: 7px;
-  min-width: 0;
-  border-radius: 999px;
-  background: var(--mk-line);
+.mark {
+  display: block;
+  margin-bottom: 30px;
+  color: var(--mk-bg);
 }
 
-.bar { height: 7px; min-width: 3px; border-radius: 999px; background: var(--mk-violet-soft); }
-
-.weight { font-size: 13px; text-align: right; color: var(--mk-ink); }
-.pnl { font-size: 13px; text-align: right; color: var(--mk-dim); }
-.pnl[data-tone="moss"] { color: var(--mk-green-soft); }
-.pnl[data-tone="loss"] { color: var(--mk-red-soft); }
-
-.sectors {
-  margin: 26px 0 0;
-  font-family: var(--font-mono), ui-monospace, monospace;
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-mono), monospace;
   font-size: 11px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--mk-dim);
+  color: color-mix(in srgb, var(--mk-bg) 62%, transparent);
 }
 
-.note {
-  margin: 40px 0 0;
-  padding-top: 20px;
-  border-top: 1px solid var(--mk-line);
-  font-size: 13px;
-  color: var(--mk-dim);
+/*
+ * The name is the whole page, so it is set like one — the poster face, the
+ * one place this surface shouts. 32px is the floor everywhere Anton is used;
+ * this is well past it.
+ */
+.handle {
+  margin: 14px 0 0;
+  font-family: var(--font-poster), var(--font-display), system-ui, sans-serif;
+  font-weight: 400;
+  font-size: clamp(48px, 11vw, 96px);
+  line-height: 0.94;
+  letter-spacing: 0.005em;
+  overflow-wrap: anywhere;
+  max-width: 14ch;
+}
+
+.soon {
+  margin: 26px 0 0;
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.tail {
+  margin: 12px 0 0;
+  max-width: 46ch;
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--mk-bg) 68%, transparent);
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 34px;
+}
+
+/* The inversion, spent once — the only strong object on the page. */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: var(--r-pill, 999px);
+  background: var(--mk-bg);
+  color: var(--mk-field);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ghost {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: var(--r-pill, 999px);
+  border: 1px solid color-mix(in srgb, var(--mk-bg) 26%, transparent);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mk-bg);
+}
+
+.ghost:hover {
+  border-color: var(--mk-bg);
 }
