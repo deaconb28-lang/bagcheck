@@ -10,6 +10,7 @@
     "lint": "eslint . --max-warnings 0",
     "test": "tsx --test \"lib/**/*.test.ts\"",
     "cron": "node scripts/cron.mjs",
+    "ambient": "node --import tsx scripts/generate-ambient.mjs",
     "avatars": "node --import tsx scripts/generate-avatars.mjs",
     "avatars:manifest": "node --import tsx scripts/avatar-manifest.mjs",
     "avatars:sheet": "node --import tsx scripts/avatar-sheet.mjs",

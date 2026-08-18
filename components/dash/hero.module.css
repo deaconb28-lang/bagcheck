@@ -8,7 +8,41 @@
  * the whole block.
  */
 .hero {
+  position: relative;
   padding: 8px 0 44px;
+}
+
+/*
+ * The glow behind the ring.
+ *
+ * `--halo-gold` is the token that says "light behind live data", and the score
+ * is the one metric on this screen that is measured and current — so this is
+ * the screen's single halo, spent where CLAUDE.md says it may be spent.
+ *
+ * `npm run ambient` draws `hero-glow.webp` over the top of it: a generated
+ * bloom carries grain and falloff a radial-gradient cannot, and it is 900px
+ * square and a few kilobytes. Missing, the token underneath is the design —
+ * which is what makes this safe to ship before the file exists.
+ */
+.hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -12%;
+  top: -18%;
+  width: min(620px, 78%);
+  aspect-ratio: 1;
+  pointer-events: none;
+  background-image: url("/ambient/hero-glow.webp"), var(--halo-gold);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.75;
+}
+
+/* Dark only. On white the same wash is a smudge rather than light. */
+:global(html:not([data-mode="dark"])) .hero::before {
+  display: none;
 }
 
 .lockup {

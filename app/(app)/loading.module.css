@@ -48,11 +48,25 @@
   display: block;
 }
 
+/*
+ * The generated field sits on top of the gradient, not instead of it.
+ *
+ * `npm run ambient` draws `field-app.webp` — a few kilobytes, blurred at build
+ * time. If it is missing (no key on the deployment, a cold cache on a slow
+ * connection, a 404) the layer simply does not paint and the gradients below
+ * carry the whole design. That ordering is the rule for every generated asset
+ * on a *waiting* screen: the picture is a refinement, never the thing being
+ * waited for.
+ */
 .aurora {
   position: absolute;
   inset: -24%;
   display: block;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   background-image:
+    url("/ambient/field-app.webp"),
     radial-gradient(
       42% 38% at 22% 74%,
       color-mix(in srgb, var(--gold) 16%, transparent) 0%,
@@ -68,8 +82,13 @@
       color-mix(in srgb, var(--ember) 9%, transparent) 0%,
       transparent 72%
     );
-  /* Soft enough that no edge of a bloom is ever findable. */
+  /*
+   * Soft enough that no edge of a bloom is ever findable. The generated layer
+   * is already blurred on disk, so this is doing the work for the gradients
+   * underneath rather than for the picture.
+   */
   filter: blur(38px);
+  opacity: 0.9;
 }
 
 /* Everything real sits above the field. */

@@ -40,11 +40,20 @@
   z-index: 0;
 }
 
+/*
+ * Same contract as the app's field: the generated picture is layered over the
+ * gradients, so a deployment with no key — or a reader whose connection has
+ * not delivered it yet — sees a finished screen rather than a bare one.
+ */
 .aurora {
   position: absolute;
   inset: -30%;
   display: block;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   background-image:
+    url("/ambient/field-wrapped.webp"),
     radial-gradient(
       40% 34% at 16% 8%,
       color-mix(in srgb, var(--mk-violet-lit) 62%, transparent) 0%,
