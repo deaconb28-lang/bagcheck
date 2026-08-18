@@ -135,7 +135,7 @@ export function StoryViewer({
             symbol={card.symbol}
             kind={card.kind}
             photo={photos[card.kind] ?? null}
-            provenance={provenance ?? `Bagcheck · ${year} · read from your brokerage`}
+            provenance={provenance ?? `Steadyhands · ${year} · read from your brokerage`}
             hue={card.hue}
             layout={card.layout}
             rarity={card.rarity}

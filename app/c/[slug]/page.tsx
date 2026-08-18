@@ -1,3 +1,4 @@
+import { shareHost } from "@/lib/site";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cardBySlug, isDbConfigured } from "@/lib/db";
@@ -13,12 +14,12 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const card = isDbConfigured() ? await cardBySlug(slug) : null;
-  if (!card) return { title: "Bagcheck" };
+  if (!card) return { title: "Steadyhands" };
 
   const title = `${card.value} — ${card.tail}`;
   const image = `/og/${slug}`;
   return {
-    title: `${title} · Bagcheck`,
+    title: `${title} · Steadyhands`,
     description: "Read-only brokerage data behind every number.",
     openGraph: {
       title,
@@ -71,7 +72,9 @@ export default async function CardPage({ params }: Props) {
             ))}
           </div>
           <div className={styles.foot}>
-            <span className={styles.url}>bagcheck.app/c/{card.slug}</span>
+            <span className={styles.url}>
+              {shareHost()}/c/{card.slug}
+            </span>
             <span className={styles.verified}>verified</span>
           </div>
         </article>
@@ -81,7 +84,7 @@ export default async function CardPage({ params }: Props) {
             This came from a brokerage, not a screenshot
           </h1>
           <p className={styles.lede}>
-            Bagcheck reads a read-only connection to the account behind this
+            Steadyhands reads a read-only connection to the account behind this
             number. It measures behaviour — hold time, sizing, what someone does
             in a drawdown — and it never places a trade.
           </p>

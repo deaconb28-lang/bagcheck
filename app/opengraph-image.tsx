@@ -1,12 +1,12 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
-export const alt = "bagcheck — turn your portfolio into a flex";
+export const alt = "steadyhands — turn your portfolio into a flex";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 /*
- * The unfurl for the site itself — what a link to bagcheck looks like in a
+ * The unfurl for the site itself — what a link to steadyhands looks like in a
  * message, which for a product whose whole pitch is shareability is not an
  * afterthought. Twitter, iMessage, Slack and Discord all read this.
  *
@@ -36,7 +36,7 @@ export default async function Image() {
           fontFamily: "sans-serif",
         }}
       >
-        {/* The bag mark and the wordmark, drawn the way BagcheckMark draws them. */}
+        {/* The bag mark and the wordmark, drawn the way SteadyhandsMark draws them. */}
         <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
           <svg width="64" height="64" viewBox="0 0 34 34" fill="none">
             <path
@@ -58,7 +58,7 @@ export default async function Image() {
             />
           </svg>
           <span style={{ fontSize: 52, fontWeight: 700, letterSpacing: "-0.035em" }}>
-            bagcheck
+            steadyhands
           </span>
         </div>
 

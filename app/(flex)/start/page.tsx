@@ -3,7 +3,7 @@ import { getUserId, isAuthConfigured } from "@/auth";
 import { isDbConfigured, linkedBrokerage } from "@/lib/db";
 import { isSnapTradeConfigured } from "@/lib/snaptrade";
 import { appLocked } from "@/lib/launch";
-import { BagcheckMark } from "@/components/brand/BagcheckMark";
+import { SteadyhandsMark } from "@/components/brand/SteadyhandsMark";
 import { GoogleSignIn } from "@/components/app/GoogleSignIn";
 import { DancingCards } from "./DancingCards";
 import { ConnectButton } from "./ConnectButton";
@@ -69,7 +69,7 @@ export default async function StartPage({
             </h1>
             <p className={styles.lede}>
               {institutionLine(linked.institutions, linked.accounts)} It stays
-              linked to your Google account, so Bagcheck keeps reading new
+              linked to your Google account, so Steadyhands keeps reading new
               fills on its own — there is nothing to connect again.
             </p>
             {/*
@@ -147,7 +147,7 @@ export default async function StartPage({
             )}
           </h1>
           <p className={styles.lede}>
-            Bagcheck reads your filled orders through SnapTrade and makes a card
+            Steadyhands reads your filled orders through SnapTrade and makes a card
             out of everything the year can prove. Most accounts take about
             thirty seconds.
           </p>
@@ -186,7 +186,7 @@ export default async function StartPage({
             <li>
               <Tick />
               <span>
-                <b>Read-only, permanently.</b> bagcheck sees filled orders and
+                <b>Read-only, permanently.</b> steadyhands sees filled orders and
                 positions. It cannot place a trade, move money, or change a
                 setting.
               </span>
@@ -195,14 +195,14 @@ export default async function StartPage({
               <Tick />
               <span>
                 <b>Your login stays with your broker.</b> SnapTrade handles the
-                sign-in; Bagcheck never receives a password.
+                sign-in; Steadyhands never receives a password.
               </span>
             </li>
             <li>
               <Tick />
               <span>
                 <b>Unlink any time.</b> That stops the sync and takes the
-                history out of bagcheck.
+                history out of steadyhands.
               </span>
             </li>
           </ul>
@@ -259,8 +259,8 @@ function Header({ step }: { step: string }) {
   return (
     <header className={shell.bar}>
       <Link href="/" className={shell.brand}>
-        <BagcheckMark size={26} />
-        <span className={shell.wordmark}>bagcheck</span>
+        <SteadyhandsMark size={26} />
+        <span className={shell.wordmark}>steadyhands</span>
       </Link>
       <span className={shell.barNote}>{step}</span>
     </header>

@@ -21,7 +21,7 @@ import styles from "./Teaser.module.css";
  * show what it is hiding is worse than one that shows nothing.
  *
  * `--teaser-lit` is the one lit colour in a drawing and the caller sets it —
- * violet where the thing is Bagcheck's own reading, green where it is money,
+ * violet where the thing is Steadyhands's own reading, green where it is money,
  * amber where it is scarce.
  */
 

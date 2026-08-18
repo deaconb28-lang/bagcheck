@@ -58,15 +58,15 @@ const QA: Array<[string, string]> = [
   ],
   [
     `What happens after the ${TRIAL_DAYS} days?`,
-    "Bagcheck asks you to subscribe before it will read your ledger again. Anything you minted during the free month stays yours, at the URL it was minted at, whether or not you carry on — and your data stays exportable and deletable from your profile either way.",
+    "Steadyhands asks you to subscribe before it will read your ledger again. Anything you minted during the free month stays yours, at the URL it was minted at, whether or not you carry on — and your data stays exportable and deletable from your profile either way.",
   ],
   [
     "Can I cancel?",
     "Any time, from your profile. Stripe handles it directly and the plan runs to the end of the period you have already paid for.",
   ],
   [
-    "Does bagcheck touch my money?",
-    "No. The brokerage connection is read-only through SnapTrade — bagcheck can see what you did and cannot place a trade, move a dollar, or hold a credential.",
+    "Does steadyhands touch my money?",
+    "No. The brokerage connection is read-only through SnapTrade — steadyhands can see what you did and cannot place a trade, move a dollar, or hold a credential.",
   ],
   [
     "Can I delete it all?",
@@ -95,7 +95,7 @@ export default async function PricingPage() {
           <h1 className={styles.h1}>Thirty days free. Then fifteen a month.</h1>
         </div>
         <p className={styles.lede}>
-          Bagcheck reads your brokerage and turns the year into something worth
+          Steadyhands reads your brokerage and turns the year into something worth
           posting. The first {TRIAL_DAYS} days are free and take no card. After
           that it is {priceLine()} — one plan, everything in it, cancel from
           your profile whenever you like.
@@ -111,7 +111,7 @@ export default async function PricingPage() {
                 <i />
                 {TRIAL_DAYS} DAYS FREE
               </span>
-              <span className={styles.label}>BAGCHECK</span>
+              <span className={styles.label}>STEADYHANDS</span>
               <div className={styles.price}>
                 <b>${TIER_PRICE.pro.monthly}</b>
                 <span>/mo</span>
@@ -183,7 +183,7 @@ export default async function PricingPage() {
           <div className={styles.neverItem}>
             <h3>Read-only, permanently</h3>
             <p>
-              Bagcheck describes what you did. It never places a trade, never
+              Steadyhands describes what you did. It never places a trade, never
               recommends one, and never sends a price alert.
             </p>
           </div>

@@ -183,7 +183,7 @@ export interface TrialState {
 }
 
 /**
- * The day Bagcheck became a subscription.
+ * The day Steadyhands became a subscription.
  *
  * Everyone who connected *before* this has their thirty days measured from
  * here rather than from their connection — otherwise deploying the paywall
@@ -234,7 +234,7 @@ export function effectiveTier(paid: Tier, trial: TrialState): Tier {
 /** The one line the trial is allowed to say. A date, not a countdown. */
 export function trialLine(trial: TrialState): string | null {
   if (trial.active && trial.endsOn) {
-    return `Free through ${trial.endsOn}, no card. After that Bagcheck is ${priceLine()}.`;
+    return `Free through ${trial.endsOn}, no card. After that Steadyhands is ${priceLine()}.`;
   }
   if (trial.expired && trial.endsOn) {
     return `Your free month ended ${trial.endsOn}. Everything you have minted stays yours.`;
@@ -246,7 +246,7 @@ export function trialLine(trial: TrialState): string | null {
  * Whether this account may read the product at all.
  *
  * The model changed shape here: gating used to be per *capability*, and the
- * worst a lapsed account suffered was losing the export formats. Bagcheck is
+ * worst a lapsed account suffered was losing the export formats. Steadyhands is
  * a subscription now, so there is a second question above every capability —
  * whether there is any entitlement at all — and this is it.
  *

@@ -1,6 +1,7 @@
 import { STRONG } from "@/lib/archetypes";
 import { Avatar } from "@/components/primitives";
 import { ScoreRing } from "@/components/idioms";
+import { AllocationDonut } from "./Charts";
 import type { Read } from "@/lib/portfolio/types";
 import styles from "./hero.module.css";
 
@@ -9,7 +10,7 @@ import styles from "./hero.module.css";
  *
  * The dashboard used to open on account value. That is the least interesting
  * true thing this product knows — a brokerage app tells you the same number,
- * faster, and it moves whether or not you did anything. What Bagcheck knows
+ * faster, and it moves whether or not you did anything. What Steadyhands knows
  * that nothing else does is what the *conduct* looked like, and it has been
  * computing exactly that every night: a 0–100 score, four components, and one
  * of sixteen archetypes drawn as a character with a face.
@@ -65,7 +66,16 @@ function Arc({ name, value }: { name: string; value: number }) {
   );
 }
 
-export function ScoreHero({ read, year }: { read: Read; year: number }) {
+export function ScoreHero({
+  read,
+  year,
+  allocation = [],
+}: {
+  read: Read;
+  year: number;
+  /** The book, for the small ring beside the read. Empty hides it. */
+  allocation?: Array<{ key: string; label: string; value: number }>;
+}) {
   const { archetype, components } = read;
   const above = archetype.strong.length;
 
@@ -143,6 +153,27 @@ export function ScoreHero({ read, year }: { read: Read; year: number }) {
             ) : null}
           </div>
         </div>
+
+        {/*
+          * The book, beside the read.
+          *
+          * The hero's right half was empty at every width above a laptop while
+          * the one chart that answers "what is this made of" sat four blocks
+          * further down. It is the ring alone here — `AllocationDonut` already
+          * owns the honest arithmetic (the 3% floor, promoting a "Rest" of one
+          * back out, butt caps so a small slice is not inflated by half a
+          * stroke) and states its shares in an aria-label when it has no
+          * legend to state them in.
+          *
+          * `AllocationDonut` returns null under two priced positions, so an
+          * account this cannot describe simply leaves the space empty rather
+          * than drawing a single arc that means nothing.
+          */}
+        {allocation.length ? (
+          <div className={styles.book}>
+            <AllocationDonut slices={allocation} size={150} compact />
+          </div>
+        ) : null}
       </div>
 
       <div className={styles.arcs}>

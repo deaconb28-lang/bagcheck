@@ -1,3 +1,4 @@
+import { shareHost } from "@/lib/site";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
@@ -292,7 +293,7 @@ export async function renderCard(
               color: DIM,
             }}
           >
-            <div>{`bagcheck.app/c/${card.slug}`}</div>
+            <div>{`${shareHost()}/c/${card.slug}`}</div>
             <div style={{ letterSpacing: px(3), textTransform: "uppercase" }}>verified</div>
           </div>
         </div>

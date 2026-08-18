@@ -167,6 +167,22 @@
   color: var(--ember);
 }
 
+/*
+ * The allocation ring, pushed to the far edge of the lockup. It is the last
+ * thing in the row and the first thing to go: below a laptop the hero is
+ * already two stacked blocks, and a third would push the money off the fold.
+ */
+.book {
+  margin-left: auto;
+  flex: none;
+}
+
+@media (max-width: 1180px) {
+  .book {
+    display: none;
+  }
+}
+
 /* ── The four components, as dials you can close ── */
 .arcs {
   display: flex;

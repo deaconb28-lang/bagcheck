@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ledger = await publicLedgerFor(handle);
   if (!ledger) return {};
   return {
-    title: `@${ledger.handle} · bagcheck`,
+    title: `@${ledger.handle} · steadyhands`,
     description: `${ledger.positions} positions, read off a brokerage.`,
   };
 }

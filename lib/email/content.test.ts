@@ -79,7 +79,7 @@ test("the copy rules actually catch what they claim to", () => {
 });
 
 test("every message carries exactly one link plus the unsubscribe", () => {
-  const html = renderHtml(dailyBrief(brief), "https://bagcheck.app/unsub?t=x");
+  const html = renderHtml(dailyBrief(brief), "https://steadyhands.app/unsub?t=x");
   const hrefs = [...html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
   assert.equal(hrefs.length, 2);
   assert.ok(hrefs[1].includes("unsub"));
@@ -88,14 +88,14 @@ test("every message carries exactly one link plus the unsubscribe", () => {
 test("user content is escaped rather than interpolated into the markup", () => {
   const html = renderHtml(
     { ...dailyBrief(brief), lede: '<script>alert("x")</script>' },
-    "https://bagcheck.app/unsub",
+    "https://steadyhands.app/unsub",
   );
   assert.ok(!html.includes("<script>"));
   assert.ok(html.includes("&lt;script&gt;"));
 });
 
 test("every message ships a readable plain-text half", () => {
-  const text = renderText(weeklyRecap(recap), "https://bagcheck.app/unsub");
+  const text = renderText(weeklyRecap(recap), "https://steadyhands.app/unsub");
   assert.ok(!text.includes("<"));
   assert.ok(text.includes("The Sentinel"));
   assert.ok(text.includes("Stop these emails"));

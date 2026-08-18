@@ -54,7 +54,7 @@ export async function GET(req: Request) {
   return new NextResponse(new Uint8Array(bytes), {
     headers: {
       "content-type": "application/zip",
-      "content-disposition": `attachment; filename="bagcheck-${assembled.label.replaceAll(" ", "-").toLowerCase()}-carousel.zip"`,
+      "content-disposition": `attachment; filename="steadyhands-${assembled.label.replaceAll(" ", "-").toLowerCase()}-carousel.zip"`,
       "cache-control": "private, no-store",
     },
   });

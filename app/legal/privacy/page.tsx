@@ -6,7 +6,7 @@ import styles from "../legal.module.css";
 export const metadata: Metadata = {
   title: "Privacy",
   description:
-    "What Bagcheck reads from your brokerage, where it is stored, who else sees it, and how to get it back or delete it.",
+    "What Steadyhands reads from your brokerage, where it is stored, who else sees it, and how to get it back or delete it.",
 };
 
 export const dynamic = "force-dynamic";
@@ -29,7 +29,7 @@ export default function PrivacyPage() {
         <span className={styles.updated}>Last updated {POLICY_UPDATED}</span>
 
         <p className={styles.lede}>
-          Bagcheck reads your brokerage history and turns it into a score and a
+          Steadyhands reads your brokerage history and turns it into a score and a
           set of shareable cards. That means it holds a detailed record of how
           you invest, so this page states plainly what is stored, who else can
           see it, and how to take it back.
@@ -71,7 +71,7 @@ export default function PrivacyPage() {
             </li>
           </ul>
           <p>
-            Bagcheck never receives a brokerage password. The connection is made
+            Steadyhands never receives a brokerage password. The connection is made
             through SnapTrade and is read-only: it can see what you did and
             cannot place, cancel or modify an order.
           </p>
@@ -215,7 +215,7 @@ export default function PrivacyPage() {
         <section className={styles.section}>
           <h2>Children</h2>
           <p>
-            Bagcheck is not for anyone under 18, and accounts are not knowingly
+            Steadyhands is not for anyone under 18, and accounts are not knowingly
             created for them.
           </p>
         </section>

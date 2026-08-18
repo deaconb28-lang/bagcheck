@@ -21,11 +21,11 @@
 > summing `derived.roundTrips[].pnl` instead. Fixing the series itself means
 > changing what Wrapped's cards say and bumping `DERIVED_VERSION`.
 
-**Branch:** `claude/bagcheck-build-instructions-b97o06` (the repo's only branch; both
+**Branch:** `claude/steadyhands-build-instructions-b97o06` (the repo's only branch; both
 deployments build from it)
 **Head at handoff:** `3c88615`
-**Repo:** `deaconb28-lang/bagcheck` · product is named **Canopy**; the Mongo
-database is still `bagcheck` on purpose (a database name is an address, not a
+**Repo:** `deaconb28-lang/steadyhands` · product is named **Canopy**; the Mongo
+database is still `steadyhands` on purpose (a database name is an address, not a
 brand).
 
 ---
@@ -292,7 +292,7 @@ caught them.
   believing a screenshot.
 - `pkill -f <pattern>` matches the invoking shell's own command line. Use
   `pkill -x` or `fuser -k 3123/tcp`.
-- The seeded database is named `bagcheck` (`scripts/seed.mjs` `const DB`). A probe
+- The seeded database is named `steadyhands` (`scripts/seed.mjs` `const DB`). A probe
   pointed at the wrong name renders the signed-out empty state and looks like a
   bug in the page.
 - Playwright cannot reach the public internet through this environment's proxy;
@@ -310,9 +310,9 @@ caught them.
 
 | Host | Status |
 |---|---|
-| `bagcheck-oev7.vercel.app` | `/you`, `/wrapped`, `/profile` all **200** |
-| `bagcheck-production-860c.up.railway.app` | `/you` **200** |
-| `bagcheck-cron` (Railway) | cron service, `*/15 * * * *`, green |
+| `steadyhands-oev7.vercel.app` | `/you`, `/wrapped`, `/profile` all **200** |
+| `steadyhands-production-860c.up.railway.app` | `/you` **200** |
+| `steadyhands-cron` (Railway) | cron service, `*/15 * * * *`, green |
 
 **The launch gate now opens by default** (`3c88615`). It was `APP_UNLOCKED=1`-to-
 open, which meant every fresh deployment shipped shut — and a shut door here is
@@ -364,7 +364,7 @@ mention it.
 
 ## 11 · Standing constraints for whoever picks this up
 
-- Push only to `claude/bagcheck-build-instructions-b97o06`. Do **not** open a PR
+- Push only to `claude/steadyhands-build-instructions-b97o06`. Do **not** open a PR
   unless asked.
 - Never put a model identifier in a commit message, PR body, code comment, or any
   pushed artifact.

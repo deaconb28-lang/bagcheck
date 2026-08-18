@@ -57,7 +57,7 @@ export async function GET(
   return new NextResponse(png, {
     headers: {
       "content-type": "image/png",
-      "content-disposition": `attachment; filename="bagcheck-${card.type}-${w * scale}x${h * scale}${transparent ? "-transparent" : ""}.png"`,
+      "content-disposition": `attachment; filename="steadyhands-${card.type}-${w * scale}x${h * scale}${transparent ? "-transparent" : ""}.png"`,
       "cache-control": "private, no-store",
     },
   });

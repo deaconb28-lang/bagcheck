@@ -170,7 +170,7 @@ const KIND_OF = (type: string | null): string => {
   return "other";
 };
 
-/** The ledger itself, paged — every trade and transfer Bagcheck holds. */
+/** The ledger itself, paged — every trade and transfer Steadyhands holds. */
 export async function loadActivity(
   userId: string,
   { limit = 50, skip = 0, kind }: { limit?: number; skip?: number; kind?: string } = {},

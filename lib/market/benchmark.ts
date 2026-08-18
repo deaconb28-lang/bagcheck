@@ -3,7 +3,7 @@ import { cached, finnhub } from "./client";
 /**
  * The index's own year, for the one card that compares.
  *
- * Card 10 is the only place in Bagcheck that measures the reader against
+ * Card 10 is the only place in Steadyhands that measures the reader against
  * anything other than themselves, and it needs a real number to do it. The
  * obvious source — a year of daily candles — is behind Finnhub's paid tier,
  * and inferring a year's return from a current quote is not possible without

@@ -129,7 +129,24 @@ const NAMED = 5;
 /** Under this a slice is a hairline that reads as a rendering artefact. */
 const FLOOR = 0.03;
 
-export function AllocationDonut({ slices, size = 184 }: { slices: Slice[]; size?: number }) {
+export function AllocationDonut({
+  slices,
+  size = 184,
+  compact = false,
+}: {
+  slices: Slice[];
+  size?: number;
+  /**
+   * The ring alone, for the hero.
+   *
+   * The legend is normally *the accessible chart* — the SVG is `aria-hidden`
+   * and every share is in type — so dropping it cannot simply mean dropping
+   * the information. A compact ring states the same shares in an `aria-label`
+   * instead, which is the right trade at this size and the wrong one at full
+   * size, where a reader can actually use the rows.
+   */
+  compact?: boolean;
+}) {
   const priced = slices
     .filter((slice) => Number.isFinite(slice.value) && slice.value > 0)
     .sort((a, b) => b.value - a.value);
@@ -165,7 +182,18 @@ export function AllocationDonut({ slices, size = 184 }: { slices: Slice[]; size?
   return (
     <div className={styles.donutWrap}>
       <div className={styles.donut} style={{ "--size": `${size}px` } as React.CSSProperties}>
-        <svg viewBox="0 0 100 100" className={styles.donutSvg} aria-hidden="true">
+        <svg
+          viewBox="0 0 100 100"
+          className={styles.donutSvg}
+          {...(compact
+            ? {
+                role: "img",
+                "aria-label": `Allocation: ${rows
+                  .map((r) => `${r.label} ${Math.round(r.share * 100)}%`)
+                  .join(", ")}`,
+              }
+            : { "aria-hidden": true as const })}
+        >
           <circle cx="50" cy="50" r="40" fill="none" stroke="var(--track)" strokeWidth="14" />
           {rows.map((row, i) => {
             const pct = row.share * 100;
@@ -201,6 +229,7 @@ export function AllocationDonut({ slices, size = 184 }: { slices: Slice[]; size?
         </div>
       </div>
 
+      {compact ? null : (
       <dl className={styles.donutLegend}>
         {rows.map((row) => (
           <div key={row.key} className={styles.donutRow}>
@@ -227,6 +256,7 @@ export function AllocationDonut({ slices, size = 184 }: { slices: Slice[]; size?
           </div>
         ))}
       </dl>
+      )}
     </div>
   );
 }

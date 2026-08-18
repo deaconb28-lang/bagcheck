@@ -67,7 +67,7 @@ export function PlanCard({
       </div>
 
       <p className={styles.body}>
-        Bagcheck is one plan at {priceLine()}, free for your first{" "}
+        Steadyhands is one plan at {priceLine()}, free for your first{" "}
         {TRIAL_DAYS} days. Every card your behaviour earns is yours to post,
         rare ones included, and a minted card stays live at its URL whether or
         not you carry on.

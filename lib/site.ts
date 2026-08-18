@@ -19,7 +19,21 @@ export function siteOrigin(): string {
   return raw.replace(/\/+$/, "");
 }
 
-export const SITE_NAME = "bagcheck";
+export const SITE_NAME = "steadyhands";
 export const SITE_TAGLINE = "Turn your portfolio into a flex";
 export const SITE_DESCRIPTION =
-  "Connect your brokerage in two taps through SnapTrade. Bagcheck reads the numbers and turns your year into a Wrapped worth posting — returns, top holdings, best trades, and the ones that got away.";
+  "Connect your brokerage in two taps through SnapTrade. Steadyhands reads the numbers and turns your year into a Wrapped worth posting — returns, top holdings, best trades, and the ones that got away.";
+
+/**
+ * The host a share card prints under its own footer.
+ *
+ * It was the string "steadyhands.app", written out in three places — a card
+ * component, the OpenGraph renderer and the public card page — which meant a
+ * deployment served from anywhere else printed a URL that does not resolve to
+ * it. It is derived from the configured origin now, so the card advertises
+ * wherever the product actually lives and a rename of the domain reaches all
+ * three at once.
+ */
+export function shareHost(): string {
+  return siteOrigin().replace(/^https?:\/\//, "");
+}

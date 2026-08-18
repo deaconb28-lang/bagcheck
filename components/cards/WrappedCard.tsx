@@ -1,3 +1,4 @@
+import { shareHost } from "@/lib/site";
 import type { Archetype } from "@/lib/archetypes";
 import type { CardKind } from "@/lib/cards";
 import { Logo } from "@/components/primitives";
@@ -259,7 +260,7 @@ export function WrappedCard({
         <footer className={styles.foot}>
           <span className={styles.footDetail}>{provenance}</span>
           <span className={styles.url}>
-            {slug ? `bagcheck.app/c/${slug}` : "minted when you share"}
+            {slug ? `${shareHost()}/c/${slug}` : "minted when you share"}
           </span>
         </footer>
       </div>

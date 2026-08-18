@@ -125,7 +125,7 @@ function template(card) {
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>bagcheck · ${esc(card.title)}</title>
+<title>steadyhands · ${esc(card.title)}</title>
 <link rel="stylesheet" href="card.css">
 </head>
 <body>
@@ -158,7 +158,7 @@ function template(card) {
   <div class="scrim"></div>
 
   <div class="layer">
-    <p class="eyebrow">bagcheck &middot; <span data-token="YEAR">{{YEAR}}</span></p>
+    <p class="eyebrow">steadyhands &middot; <span data-token="YEAR">{{YEAR}}</span></p>
 ${card.measures ? `    <p class="heroLabel">${esc(card.measures)}</p>\n` : ""}    <p class="hero" data-kind="${heroKind}" data-token="${card.hero}">{{${card.hero}}}</p>
     <h1 class="title">${esc(card.title)}</h1>
 ${facts ? `
@@ -169,7 +169,7 @@ ${facts}
     <p class="caption" data-caption="">{{CAPTION}}</p>
   </div>
 
-  <span class="mark"><i class="markDot"></i>bagcheck</span>
+  <span class="mark"><i class="markDot"></i>steadyhands</span>
   <span class="provenance">Read-only via SnapTrade</span>
 </div>
 </body>

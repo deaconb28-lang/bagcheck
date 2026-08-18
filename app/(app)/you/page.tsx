@@ -95,7 +95,7 @@ export default async function DashboardPage({
     return (
       <PageGrid>
         <EmptyState
-          eyebrow="bagcheck"
+          eyebrow="steadyhands"
           icon={userId ? "setup" : "signin"}
           title={userId ? "Configure the ledger store" : "Sign in to see your dashboard"}
           body={
@@ -131,7 +131,7 @@ export default async function DashboardPage({
     return (
       <PageGrid>
         <EmptyState
-          eyebrow="bagcheck"
+          eyebrow="steadyhands"
           icon={data.connection ? "waiting" : "connect"}
           title={data.connection ? "Nothing read yet" : "Connect a brokerage"}
           body={
@@ -202,7 +202,11 @@ export default async function DashboardPage({
           */}
         {view.read ? (
           <div data-reveal>
-            <ScoreHero read={view.read} year={view.wrapped.year} />
+            <ScoreHero
+              read={view.read}
+              year={view.wrapped.year}
+              allocation={view.allocation}
+            />
           </div>
         ) : null}
 

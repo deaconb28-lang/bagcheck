@@ -4,7 +4,7 @@ import { accessFor, getCollections, isDbConfigured, syncClock } from "@/lib/db";
 import { appLocked } from "@/lib/launch";
 import { wrappedDeck } from "@/lib/wrapped/year";
 import { windowFor, windowsFor } from "@/lib/wrapped/window";
-import { BagcheckMark } from "@/components/brand/BagcheckMark";
+import { SteadyhandsMark } from "@/components/brand/SteadyhandsMark";
 import { GoogleSignIn } from "@/components/app/GoogleSignIn";
 import { AppNav } from "@/components/app/AppNav";
 import { Paywall } from "@/components/app/Paywall";
@@ -332,9 +332,9 @@ async function Bar({
 
   return (
     <header className={styles.bar}>
-      <Link href="/" className={styles.brand} aria-label="bagcheck home">
-        <BagcheckMark size={24} />
-        <span>bagcheck</span>
+      <Link href="/" className={styles.brand} aria-label="steadyhands home">
+        <SteadyhandsMark size={24} />
+        <span>steadyhands</span>
       </Link>
       <span className={styles.barLabel}>
         {example ? "Sample year" : "Wrapped"} · {label}

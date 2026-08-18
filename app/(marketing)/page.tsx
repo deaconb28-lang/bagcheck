@@ -13,7 +13,7 @@ import styles from "./landing.module.css";
 
 /*
  * The one page whose title is not run through the root template — a landing
- * called "bagcheck · bagcheck" is what a template does when nobody checks.
+ * called "steadyhands · steadyhands" is what a template does when nobody checks.
  */
 export const metadata: Metadata = {
   title: { absolute: `${SITE_NAME} — ${SITE_TAGLINE.toLowerCase()}` },
@@ -132,12 +132,12 @@ export default async function LandingPage() {
             <span>Robinhood, Fidelity, Schwab and 20+ more</span>
           </div>
           <h1 className={styles.h1}>
-            <span className={styles.h1Strong}>Meet bagcheck</span>
+            <span className={styles.h1Strong}>Meet steadyhands</span>
             <span>Turn your portfolio</span>
             <span>into a flex</span>
           </h1>
           <p className={styles.lede}>
-            Connect your brokerage in two taps through SnapTrade. Bagcheck reads
+            Connect your brokerage in two taps through SnapTrade. Steadyhands reads
             the numbers and turns your year into a Wrapped worth posting —
             returns, top holdings, best trades, and the ones that got away.
           </p>
@@ -310,7 +310,7 @@ export default async function LandingPage() {
                       <span>@jordan</span>
                     </div>
                     <div className={styles.wrapReturn}>+38.4%</div>
-                    <div className={styles.wrapSub}>Return this year · Top 3% of bagcheck</div>
+                    <div className={styles.wrapSub}>Return this year · Top 3% of steadyhands</div>
                     <div className={styles.wrapChips}>
                       <span className={styles.typeChip}>The Conviction Buyer</span>
                       <span className={styles.tradesChip}>142 trades</span>
@@ -374,7 +374,7 @@ export default async function LandingPage() {
               </div>
               <span className={styles.cardPill}>
                 <i />
-                Top 3% of bagcheck
+                Top 3% of steadyhands
               </span>
             </div>,
 
@@ -663,7 +663,7 @@ export default async function LandingPage() {
        * ── The plans ──
        *
        * This was three waitlist tiers with prices nobody could pay, then two
-       * plans of which one was free. Bagcheck is a subscription now — one
+       * plans of which one was free. Steadyhands is a subscription now — one
        * price, a free month in front of it — so there is one plan card here
        * and the score's waitlist beside it, which is the only thing on this
        * section that is genuinely still coming.
@@ -693,7 +693,7 @@ export default async function LandingPage() {
                 <i />
                 {TRIAL_DAYS} DAYS FREE
               </span>
-              <span className={styles.tierLabel}>BAGCHECK</span>
+              <span className={styles.tierLabel}>STEADYHANDS</span>
               <div className={styles.tierPrice}>
                 <b>${TIER_PRICE.pro.monthly}</b>
                 <span>/mo</span>
