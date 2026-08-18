@@ -98,6 +98,19 @@ export async function factsFor(userId: string, data: ScreenData): Promise<Facts>
     scoredDays: data.scores.length,
     investorAge: data.investorAge,
     components: (data.scores[0]?.components ?? null) as unknown as Record<string, number> | null,
+    /*
+     * The scores were already in hand — `loadScreen` fetched 400 of them and
+     * the facts kept a count and one day's components. Projecting the four
+     * fields the shape functions actually read costs nothing and is what lets
+     * the streak, the personal best and the year of days be computed in the
+     * view rather than in a page file, where no test can reach them.
+     */
+    scored: data.scores.map((doc) => ({
+      date: doc.date,
+      score: doc.score,
+      components: doc.components,
+      contributors: doc.contributors ?? [],
+    })),
   };
 }
 
@@ -162,6 +175,10 @@ export async function dashboardFor(userId: string, range: RangeKey, preloaded?: 
       wrapped: {
         earned: deck && !deck.example ? deck.cards.length : 0,
         total: (CARDS as unknown[]).length,
+        earnedNos:
+          deck && !deck.example
+            ? deck.cards.map((card) => (card as unknown as { no: string }).no)
+            : [],
       },
     }),
   };

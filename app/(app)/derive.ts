@@ -1,6 +1,5 @@
 import { archetypeFor } from "@/lib/archetypes";
 import type { Archetype } from "@/lib/archetypes";
-import type { HeatDay } from "@/components/idioms";
 import type { ScoreDoc, TransactionDoc } from "@/lib/db";
 import type { ScoreComponents } from "@/lib/score";
 import type { WaveDay } from "@/components/idioms";
@@ -49,31 +48,6 @@ export function waveSummary(days: WaveDay[]): WaveSummary {
     worst: amounts.length ? Math.min(...amounts) : null,
     total: amounts.reduce((s, a) => s + a, 0),
   };
-}
-
-/**
- * Scored days as a heat grid. The level is the score banded into five, so
- * the grid reads as one measurement — a day inside your rules is dark, a day
- * outside is pale, and an unscored day is the empty cell.
- */
-export function heatFromScores(scores: ScoreDoc[], weeks = 26): HeatDay[] {
-  const byDate = new Map(scores.map((s) => [s.date, s.score]));
-  const out: HeatDay[] = [];
-  const today = new Date();
-  const total = weeks * 7;
-
-  for (let i = total - 1; i >= 0; i -= 1) {
-    const d = new Date(today);
-    d.setUTCDate(d.getUTCDate() - i);
-    const date = d.toISOString().slice(0, 10);
-    const score = byDate.get(date);
-    out.push({
-      date,
-      level: score == null ? 0 : score >= 90 ? 4 : score >= 78 ? 3 : score >= 64 ? 2 : 1,
-      note: score == null ? `${date} — not scored` : `${date} — ${score}`,
-    });
-  }
-  return out;
 }
 
 /** The longest run of scored days at or above the baseline, ending today. */

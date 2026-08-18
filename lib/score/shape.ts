@@ -11,9 +11,32 @@ export interface ScoredDay {
   contributors: Contributor[];
 }
 
+/**
+ * What a score means, stated once.
+ *
+ * These were duplicated: this file banded a day at 78/62/58 while the heat
+ * grid banded it at 90/78/64, so the same Tuesday could be "inside your
+ * rules" in the ring and a pale cell in the grid beside it — a disagreement a
+ * reader can see and nobody can explain. There is one table now and every
+ * surface reads it.
+ *
+ * `EXCEPTIONAL` exists only for the grid's top band: a four-level ramp needs
+ * a fourth edge, and putting it here keeps it with the other three rather
+ * than inventing it inside a chart.
+ */
+const EXCEPTIONAL = 90;
 const KEPT = 78;
 const PARTIAL = 62;
 const EXPOSED = 58;
+
+/** A scored day as one of four levels of a heat ramp. Never zero — an unscored
+ *  day is the caller's empty cell, which is a different fact from a bad day. */
+export function scoreBand(score: number): 1 | 2 | 3 | 4 {
+  if (score >= EXCEPTIONAL) return 4;
+  if (score >= KEPT) return 3;
+  if (score >= PARTIAL) return 2;
+  return 1;
+}
 
 function shapeOf(day: ScoredDay): DayShape {
   // Exposure running under its floor is the more interesting reading, so it

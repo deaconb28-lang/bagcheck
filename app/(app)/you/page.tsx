@@ -40,6 +40,8 @@ import {
   WeekdayBars,
 } from "@/components/dash/Charts";
 import { InsightRow, WrappedPromo } from "@/components/dash/Cards";
+import { ScoreHero } from "@/components/dash/ScoreHero";
+import { Collection } from "@/components/dash/Collection";
 import { HeatGrid } from "@/components/idioms";
 
 const RANGES: Array<{ key: RangeKey; label: string }> = [
@@ -47,6 +49,13 @@ const RANGES: Array<{ key: RangeKey; label: string }> = [
   { key: "ytd", label: "YTD" },
   { key: "all", label: "ALL" },
 ];
+
+/**
+ * Below this the grid is one lit cell in a field of empties, which reads as a
+ * broken chart rather than as a young account. The hero already states the
+ * score and the run; the history waits until there is one.
+ */
+const MIN_SCORED_DAYS = 8;
 
 export const metadata: Metadata = { title: "Dashboard" };
 export const dynamic = "force-dynamic";
@@ -142,6 +151,16 @@ export default async function DashboardPage({
   ]);
   const { book, performance: perf, window } = view;
 
+  /*
+   * The archetype has a hero now, so it stops being a row in the insight list.
+   * It was rendering three times on one screen — in the ring, in this list,
+   * and on the Wrapped promo — and a reading restated three ways reads as a
+   * product with one thing to say.
+   */
+  const insights = view.read
+    ? view.patterns.filter((pattern) => pattern.chart.type !== "profile")
+    : view.patterns;
+
   return (
     <>
       {syncDialog}
@@ -153,6 +172,27 @@ export default async function DashboardPage({
       />
 
       <Page>
+        {/*
+          * ── The read leads ──
+          *
+          * Account value used to open this screen, and it is the least
+          * interesting true thing here: a brokerage app says the same number
+          * faster, and it moves whether or not the reader did anything. What
+          * this product knows that nothing else does is what the conduct
+          * looked like — it has been computing exactly that every night and
+          * drawing it at 64px on a settings page.
+          *
+          * Absent, not defaulted: `view.read` is null until the first nightly
+          * score lands, and an account with holdings but no score falls
+          * straight through to the dashboard. On that path the money leads,
+          * exactly as it used to.
+          */}
+        {view.read ? (
+          <div data-reveal>
+            <ScoreHero read={view.read} year={view.wrapped.year} />
+          </div>
+        ) : null}
+
         <div data-reveal>
           <PageHead eyebrow="Total value" title={<TotalValue value={book.value} delta={perf.gain} deltaPct={perf.ret} />}>
             <Chips>
@@ -429,11 +469,38 @@ export default async function DashboardPage({
           </Row>
         ) : null}
 
+        {/*
+          * The one place the score has a *history* rather than a value, and
+          * the twin of the money calendar above it. It reads the same band
+          * table the streaks do — before those were reconciled, the same
+          * Tuesday could be "inside your rules" in the ring and a pale cell
+          * in the grid beside it.
+          */}
+        {view.read && view.read.scoredDays >= MIN_SCORED_DAYS ? (
+          <Row kind="full">
+            <Panel>
+              <PanelHead eyebrow="Every scored day">
+                <PanelNote>
+                  {view.read.scoredDays.toLocaleString("en-US")} scored ·{" "}
+                  {view.read.streaks[0]
+                    ? `${view.read.streaks[0].days} ${view.read.streaks[0].name}`
+                    : "no run live today"}
+                </PanelNote>
+              </PanelHead>
+              <HeatGrid days={view.read.heat} />
+              <p className="dashProv">
+                Each cell is one night&apos;s score · an empty cell is a day nothing
+                was scored, not a bad one
+              </p>
+            </Panel>
+          </Row>
+        ) : null}
+
         <Row kind="thirds">
           <Panel span>
             <PanelHead eyebrow="Insights this week">
-              {view.patterns.length ? (
-                <span className="dashNew">{view.patterns.length} on file</span>
+              {insights.length ? (
+                <span className="dashNew">{insights.length} on file</span>
               ) : null}
             </PanelHead>
 
@@ -442,9 +509,9 @@ export default async function DashboardPage({
               * the data its thumbnail draws — so this loop never branches on
               * where a pattern came from.
               */}
-            {view.patterns.length ? (
+            {insights.length ? (
               <div className="dashInsights">
-                {view.patterns.slice(0, 3).map((pattern, i) => (
+                {insights.slice(0, 3).map((pattern, i) => (
                   <InsightRow
                     key={pattern.key}
                     delay={50 + i * 80}
@@ -477,18 +544,29 @@ export default async function DashboardPage({
             )}
           </Panel>
 
+          {/*
+            * The door, not the tally. The count moved to the set at the foot
+            * of the page, where twelve frames say it better than a sentence
+            * can — printing "9 of 12" in both places is one screen making the
+            * same statement twice, in the weaker form.
+            */}
           <WrappedPromo
             year={String(view.wrapped.year)}
             headline={perf.ret == null ? "—" : signedPct(perf.ret * 100)}
-            sub={
-              view.wrapped.archetype
-                ? `${view.wrapped.archetype} · ${view.wrapped.earned} of ${view.wrapped.total} cards`
-                : `${view.wrapped.earned} of ${view.wrapped.total} cards earned`
-            }
+            sub="Your year, read straight off your brokerage"
             pills={view.wrapped.archetype ? [view.wrapped.archetype] : []}
             ready={view.wrapped.earned > 0}
           />
         </Row>
+        {/*
+          * The set, last, and it is the only block on the screen that is about
+          * what happens next. Twelve frames and which the ledger has proved —
+          * the count used to be a sentence on a promo tile, which is the least
+          * legible form a collection can take.
+          */}
+        <div data-reveal>
+          <Collection year={view.wrapped.year} earnedNos={view.wrapped.earnedNos} />
+        </div>
       </Page>
     </>
   );

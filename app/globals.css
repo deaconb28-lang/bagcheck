@@ -137,6 +137,39 @@ button {
 }
 
 /*
+ * ── The poster face, indoors ──
+ *
+ * Anton was confined to share cards, on the reasoning that a fourth face is
+ * how an app's type system starts to smear. That reasoning holds for
+ * *sentences* and it does not hold for a scoreboard. This product's own
+ * tagline is fitness tracking for a portfolio, and a fitness app opens on a
+ * number you are meant to feel rather than parse — a condensed poster face
+ * set enormous is what that looks like, and it ties the app to its most
+ * distinctive artefact instead of leaving the deck to be the only place the
+ * product has a voice.
+ *
+ * The rules that keep it from smearing anything:
+ *
+ *   · It sets **figures and section heads only** — never a sentence, never a
+ *     label, never a button.
+ *   · **32px is the floor.** Anton is weight 400, so WCAG's large-text
+ *     allowance (3:1 at 18.66px/bold, or 24px at any weight) barely reaches
+ *     it, and it is condensed — it reads a size smaller than its px value. A
+ *     floor well above the threshold means the contrast probe never has to
+ *     arbitrate.
+ *   · One per surface. If two things on a screen shout, neither does.
+ */
+.poster {
+  font-family: var(--font-poster), var(--font-display), system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 32px;
+  letter-spacing: 0.005em;
+  line-height: 0.92;
+  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
+}
+
+/*
  * Motion is part of the product now, and it is still quiet.
  *
  * Sections carry data-reveal and the `rise` keyframe with a small delay, so
@@ -323,14 +356,14 @@ button {
   border-top: 1px solid var(--edge);
   font-size: 15px;
   line-height: 1.45;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--ink3);
 }
 
 .dashEmpty {
   margin: 24px 0 0;
   font-size: 16px;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--ink3);
   max-width: 54ch;
 }
 
@@ -338,6 +371,24 @@ button {
   font-size: 13px;
   font-weight: 600;
   color: var(--ember);
+}
+
+/*
+ * The provenance line under a chart: where the figure came from, in mono.
+ *
+ * It was used five times in the dashboard and defined nowhere, so it
+ * inherited the shell's own `color: var(--ink)` at the body's 15.5px — pure
+ * white, the loudest text in the panel, in the one slot the design wants
+ * quietest. The contrast probe never caught it because white passes
+ * everything; only reading the page did.
+ */
+.dashProv {
+  margin: 14px 0 0;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+  color: var(--meta);
 }
 
 .dashInsights {

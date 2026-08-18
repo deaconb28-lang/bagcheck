@@ -1,6 +1,8 @@
 import { periodReturn, raceField } from "@/lib/returns";
 import type { RaceEntry } from "@/lib/returns";
 import { archetypeFor } from "@/lib/archetypes";
+import { activeStreaks, scoreBand, selfPercentile } from "@/lib/score";
+import type { ScoredDay } from "@/lib/score";
 import type { HeatDay } from "@/components/idioms";
 import type { ScoreComponents } from "@/lib/score";
 import type {
@@ -11,6 +13,7 @@ import type {
   Pattern,
   Performance,
   RangeKey,
+  Read,
   Session,
   Window,
 } from "./types";
@@ -439,6 +442,76 @@ export function pnlHeat(
 }
 
 
+/**
+ * The last N weeks of scored days as cells.
+ *
+ * The twin of `pnlHeat`, and deliberately not the same function: there a
+ * level is the *magnitude* of a day's money against the window's peak and the
+ * tone is its direction, here a level is the score banded against fixed bars
+ * and there is no direction to carry. Both agree on the one thing that
+ * matters — a day with nothing on file is level 0, an empty cell rather than
+ * a zero one.
+ *
+ * `today` is a parameter for the same reason it is on `pnlHeat`: a function
+ * that reads the clock cannot be tested.
+ */
+export function scoreHeat(days: ScoredDay[], weeks = 26, today = new Date()): HeatDay[] {
+  const byDate = new Map(days.map((day) => [day.date, day.score]));
+  const out: HeatDay[] = [];
+  const start = new Date(today.getTime() - (weeks * 7 - 1) * 86_400_000);
+  for (let i = 0; i < weeks * 7; i += 1) {
+    const date = new Date(start.getTime() + i * 86_400_000).toISOString().slice(0, 10);
+    const score = byDate.get(date);
+    out.push(
+      score == null
+        ? { date, level: 0, note: `${date} — not scored` }
+        : { date, level: scoreBand(score), note: `${date} — scored ${score}` },
+    );
+  }
+  return out;
+}
+
+/**
+ * Everything the instrument concluded, assembled once.
+ *
+ * Absent rather than defaulted at every step, because each of these is a
+ * claim about a person: no scored day means no read at all; a streak below
+ * its own floor is nothing rather than a run of one; a percentile under five
+ * days on file is null rather than a number nobody could check. The functions
+ * doing the deciding already existed and were unit-tested and had never once
+ * rendered — this is the wiring, not new arithmetic.
+ */
+export function readFrom(days: ScoredDay[], today = new Date()): Read | null {
+  if (!days.length) return null;
+  /* Newest first, whatever order the store handed over. */
+  const desc = [...days].sort((a, b) => b.date.localeCompare(a.date));
+  const latest = desc[0];
+
+  /*
+   * The delta is against the oldest of the last seven scored days, not
+   * against yesterday. A score moves a point or two a night, so a
+   * day-over-day figure is noise wearing the shape of a trend.
+   */
+  const week = desc.slice(0, 7);
+  const delta = week.length >= 2 ? latest.score - week[week.length - 1].score : null;
+
+  const best = desc.reduce((top, day) => (day.score > top.score ? day : top), latest);
+
+  return {
+    score: latest.score,
+    delta,
+    components: latest.components,
+    archetype: archetypeFor(latest.components),
+    contributors: latest.contributors,
+    streaks: activeStreaks(desc),
+    percentile: selfPercentile(desc, latest.score),
+    /* Only worth stating as a record once there is something to have beaten. */
+    best: desc.length >= 5 && best.score > latest.score ? { score: best.score, date: best.date } : null,
+    heat: scoreHeat(desc, 26, today),
+    scoredDays: desc.length,
+  };
+}
+
 export function cumulativePnl(sessions: Session[]): Array<{ date: string; total: number }> {
   let total = 0;
   return sessions.map((session) => {
@@ -459,7 +532,7 @@ export function dashboardView({
   range: RangeKey;
   today: string;
   peers: RaceEntry[];
-  wrapped: { earned: number; total: number };
+  wrapped: { earned: number; total: number; earnedNos: string[] };
   /** Symbol to industry, from the market layer. Empty without a key. */
   sectors?: Map<string, string | null>;
 }): DashboardView {
@@ -499,6 +572,11 @@ export function dashboardView({
 
   return {
     window,
+    /*
+     * The read leads the screen, so it is built first and gated once. A page
+     * that receives `null` here draws no hero — it does not draw an empty one.
+     */
+    read: readFrom(facts.scored, new Date(today)),
     book,
     performance,
     field,
@@ -536,7 +614,13 @@ export function dashboardView({
     calendar: facts.sessions.length >= MIN_SESSIONS ? pnlHeat(facts.sessions, 52, new Date(today)) : [],
     ...sectorsFrom(facts.holdings, sectors),
     patterns: patternsFrom(facts, window),
-    wrapped: { year, earned: wrapped.earned, total: wrapped.total, archetype },
+    wrapped: {
+      year,
+      earned: wrapped.earned,
+      total: wrapped.total,
+      archetype,
+      earnedNos: wrapped.earnedNos,
+    },
     provenance: {
       ...facts.provenance,
       /*

@@ -63,7 +63,16 @@ export default async function ProfilePage() {
     );
   }
 
-  const { connection, scores, transactionCount } = await loadAppData(userId, 90);
+  /*
+   * 400, the same window the dashboard reads.
+   *
+   * This was 90, which meant the two screens computed a *different* personal
+   * best and a different percentile off the same ledger — "best 86 on
+   * 2026-05-18" in the hero and "best 85 on 2026-07-07" here, both true of
+   * their own window and neither explicable to the reader looking at them.
+   * One figure, one window.
+   */
+  const { connection, scores, transactionCount } = await loadAppData(userId, 400);
   const [tier, subscription, emailPrefs, trial, footprint] = await Promise.all([
     tierFor(userId),
     subscriptionFor(userId),

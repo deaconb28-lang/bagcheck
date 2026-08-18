@@ -1,5 +1,6 @@
 import type { ConnectionAccount, HoldingRow } from "@/lib/db";
-import type { RoundTrip } from "@/lib/score";
+import type { Contributor, RoundTrip, ScoreComponents, ScoredDay, Streak } from "@/lib/score";
+import type { Archetype } from "@/lib/archetypes";
 import type { HeatDay } from "@/components/idioms";
 import type { RaceField } from "@/lib/returns";
 
@@ -74,6 +75,17 @@ export interface Window {
 export interface Facts {
   /** Every FIFO-matched close. The spine of every realised figure. */
   trips: RoundTrip[];
+  /**
+   * Every scored day the screen read, newest first.
+   *
+   * The nightly score was already being fetched — 400 documents, on every
+   * view — and then reduced to two things: how many there were, and the
+   * newest one's four components. Everything the score can say about a
+   * *history* was thrown away one line after it arrived: the streak, the
+   * personal best, the year of days. This carries it the rest of the way at
+   * no extra I/O.
+   */
+  scored: ScoredDay[];
   /** Realised P&L per session — matched gain plus cash dividends. */
   sessions: Session[];
   /** Daily portfolio value, forward-filled. */
@@ -193,8 +205,43 @@ export interface Pattern {
     | { type: "figure" };
 }
 
+/**
+ * What the instrument concluded, as one object.
+ *
+ * `null` when nothing has been scored, and that is the whole contract: an
+ * account with holdings but no scored day yet falls straight through to the
+ * dashboard, and `archetypeFor` never returns null — hand it nothing and it
+ * confidently answers "The Improviser". A character with a name, drawn beside
+ * someone's own ledger, is the single loudest claim this product makes about
+ * a person; it does not get to be a default.
+ */
+export interface Read {
+  score: number;
+  /** Against the oldest of the last seven scored days. Null under two. */
+  delta: number | null;
+  components: ScoreComponents;
+  archetype: Archetype;
+  /** Top movers behind today's number, already ranked. */
+  contributors: Contributor[];
+  /** Only runs that are live today. Empty below their own floors. */
+  streaks: Streak[];
+  /**
+   * Where today sits in the reader's **own** distribution — never a cohort.
+   * Null under five scored days. Any surface drawing it says whose
+   * distribution it is, in words.
+   */
+  percentile: number | null;
+  /** The best score on file, and the day it happened. */
+  best: { score: number; date: string } | null;
+  /** The last 26 weeks as cells, banded by the same thresholds as everything else. */
+  heat: HeatDay[];
+  scoredDays: number;
+}
+
 export interface DashboardView {
   window: Window;
+  /** Absent until the first nightly score lands. */
+  read: Read | null;
   book: Book;
   performance: Performance;
   /** Absent unless the field can be quoted on the same terms. */
@@ -240,7 +287,21 @@ export interface DashboardView {
   /** How much of the book the sectors above could actually account for, 0–1. */
   sectorsCover: number;
   patterns: Pattern[];
-  wrapped: { year: number; earned: number; total: number; archetype: string | null };
+  wrapped: {
+    year: number;
+    earned: number;
+    total: number;
+    archetype: string | null;
+    /**
+     * Which frames were minted, by their number.
+     *
+     * The deck was already being fetched and reduced to a count — the frame
+     * numbers came back in the same object and were dropped one line later.
+     * The collection block reads them to say which twelve are which, at zero
+     * extra I/O.
+     */
+    earnedNos: string[];
+  };
   provenance: Provenance;
   accounts: number;
   syncedAt: string | null;

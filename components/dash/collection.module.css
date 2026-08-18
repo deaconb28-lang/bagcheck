@@ -1,0 +1,159 @@
+/*
+ * The set, as a set.
+ *
+ * Twelve frames on a grid rather than a sentence counting them. A minted
+ * frame is lit and its teaser takes the ember it earned; an unminted one is
+ * the same tile at the ground's own weight — present, legible, and stating
+ * one condition. Nothing is blurred and nothing is locked: this product's
+ * whole argument is that a card exists or it does not.
+ */
+.block {
+  margin-top: 34px;
+  padding: 30px 32px;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-panel);
+  background: var(--s1);
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.eyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.title {
+  margin: 10px 0 0;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.door {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink3);
+  padding-bottom: 4px;
+}
+
+.door:hover {
+  color: var(--ink);
+}
+
+.grid {
+  list-style: none;
+  margin: 26px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+}
+
+.frame {
+  min-width: 0;
+}
+
+.link {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 8px;
+  height: 100%;
+  padding: 16px;
+  border: 1px solid var(--line-light);
+  border-radius: var(--r-tile);
+  background: var(--sunken);
+  transition: border-color 0.16s ease, transform 0.16s ease;
+}
+
+.link:hover {
+  border-color: var(--line2-hover);
+  transform: translateY(-2px);
+}
+
+/*
+ * The one difference between a minted frame and an unminted one is light. No
+ * blur, no lock glyph, no second treatment — the reader is not being sold
+ * anything here, they are being shown what their own history has proved.
+ */
+.frame[data-minted] .link {
+  border-color: var(--ember-line);
+  background: var(--ember-tint);
+}
+
+.no {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--meta);
+}
+
+.frame[data-minted] .no {
+  color: var(--ember);
+}
+
+/*
+ * `--teaser-lit` is the one lit colour in a drawing and the caller sets it —
+ * ember here, because a minted frame is scarcity. Everything else in the
+ * drawing is `currentColor`, so the tile's own ink carries it.
+ */
+.art {
+  --teaser-accent: var(--meta);
+  --teaser-radius: 10px;
+  display: block;
+  color: var(--meta);
+}
+
+.frame[data-minted] .art {
+  --teaser-accent: var(--ember);
+  color: var(--ink3);
+}
+
+.name {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink2);
+}
+
+.frame[data-minted] .name {
+  color: var(--ink);
+}
+
+.need {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+  color: var(--meta);
+}
+
+.foot {
+  margin: 22px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--line-light);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--meta);
+  max-width: 68ch;
+}
+
+@media (max-width: 780px) {
+  .block {
+    padding: 24px 20px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(126px, 1fr));
+    gap: 10px;
+  }
+}

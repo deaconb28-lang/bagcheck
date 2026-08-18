@@ -42,6 +42,27 @@
    */
   --rail-w: 220px;
 
+  /*
+   * ── The corner scale ──
+   *
+   * There were no radius tokens: every module stated its own corner, which is
+   * how one surface ended up at 22px, its neighbour at 30px and a nested tile
+   * at 20px on the same plate. A corner is the only shaping a quiet surface
+   * has — with no border weight doing the work, the radius *is* the character
+   * — so it belongs in the one file that owns character.
+   *
+   * Big and soft, because the plates are quiet and the type is large. A 12px
+   * corner on a 40px-padded plate reads as a form field.
+   */
+  --r-hero: 40px;
+  --r-panel: 32px;
+  --r-card: 28px;
+  --r-tile: 26px;
+  --r-row: 18px;
+  --r-btn: 14px;
+  --r-control: 12px;
+  --r-pill: 999px;
+
   --bg: #f4f4f6;
   --s1: #ffffff;
   --sunken: #ffffff;
@@ -367,19 +388,25 @@ html[data-mode="dark"] {
   color-scheme: dark;
 
   /*
-   * The field is #08080D, and every surface above it is white at a fraction
-   * rather than a mixed grey. That is the whole reason the panels read as one
-   * material: a translucent plate picks up whatever is behind it, so a card
-   * over the field and a card over a gradient are the same object rather than
-   * two greys that nearly match. It is not #000 — a true black smears on OLED
-   * as a panel scrolls, and leaves the darkest surfaces indistinguishable from
-   * the gaps between them.
+   * ── Midnight plum, and the plates are solid ──
+   *
+   * The field was #08080D, a neutral near-black, and every surface above it
+   * was white at a fraction. Both of those are why the screen read as an
+   * instrument rather than as something anyone would open twice: neutral
+   * black has no temperature, and a plate at 3.5% white is fog rather than an
+   * object — it picks up whatever is behind it, so it never quite lands.
+   *
+   * The ground now carries hue (violet in the black) and the plates are
+   * opaque greys mixed *from* that hue, so a plate over the field and a plate
+   * over the drifting ridge are the same solid object. It is still not #000:
+   * a true black smears on OLED as a panel scrolls, and leaves the darkest
+   * surfaces indistinguishable from the gaps between them.
    */
-  --bg: #08080d;
-  --s1: rgba(255, 255, 255, 0.035);
-  --sunken: rgba(255, 255, 255, 0.022);
-  --inset: rgba(255, 255, 255, 0.055);
-  --tile: rgba(255, 255, 255, 0.03);
+  --bg: #151022;
+  --s1: #1e1733;
+  --sunken: #191330;
+  --inset: #292048;
+  --tile: #231b3d;
   --track: rgba(255, 255, 255, 0.1);
   --control: rgba(255, 255, 255, 0.07);
 
@@ -432,6 +459,30 @@ html[data-mode="dark"] {
   --accent-line: rgba(167, 139, 250, 0.4);
   --accent-wash: rgba(167, 139, 250, 0.07);
 
+  /*
+   * ── Gold — the score, and only the score ──
+   *
+   * The sixth family, and it was added for one reason: the number this
+   * product computes about you every night was drawn in the same violet as
+   * the sentence it writes about you, so the reading and the *voice* saying
+   * it were the same colour. Gold is the reading — the hero numeral, its
+   * ring, the four component arcs, and the ramp the year of days is drawn in.
+   *
+   * It is deliberately *not* given to streaks or records: those are `--ember`
+   * and have been since this file started. Two warm hues carrying two nearly
+   * identical meanings is how a palette stops meaning anything, so gold takes
+   * a figure and an arc and stops.
+   *
+   * 12.1:1 on the field, which is what lets it be the one hue in the system
+   * that may set small text.
+   */
+  --gold: #ffc857;
+  --gold-deep: #e0a72e;
+  --gold-tint: rgba(255, 200, 87, 0.13);
+  --gold-line: rgba(255, 200, 87, 0.34);
+  --glow-gold: 0 0 40px -6px rgba(255, 200, 87, 0.34);
+  --halo-gold: radial-gradient(60% 54% at 50% 26%, rgba(255, 200, 87, 0.09), transparent 72%);
+
   --glow-moss: 0 0 34px -6px rgba(74, 222, 128, 0.36);
   --glow-ember: 0 0 34px -6px rgba(245, 158, 11, 0.3);
   --glow-azure: 0 0 34px -6px rgba(164, 176, 189, 0.24);
@@ -441,11 +492,16 @@ html[data-mode="dark"] {
   --halo-azure: radial-gradient(60% 54% at 50% 26%, rgba(164, 176, 189, 0.08), transparent 72%);
   --halo-accent: radial-gradient(60% 54% at 50% 26%, rgba(167, 139, 250, 0.1), transparent 72%);
 
-  --h0: rgba(255, 255, 255, 0.06);
-  --h1: #1d1832;
-  --h2: #2f2563;
-  --h3: #5443a4;
-  --h4: #a78bfa;
+  /*
+   * The consistency ramp is the score with a history rather than a value, so
+   * it climbs to gold rather than to violet — the grid and the hero numeral
+   * are now the same measurement, and a reader can see that they are.
+   */
+  --h0: rgba(255, 255, 255, 0.07);
+  --h1: #3a2f1a;
+  --h2: #6b5322;
+  --h3: #b58a30;
+  --h4: #ffc857;
 
   /*
    * The ramp again, retuned. Dark-mode `--signal` is a pale steel, so the same
@@ -490,7 +546,7 @@ html[data-mode="dark"] {
   --wedge-5: #60a5fa;
   --wedge-rest: rgba(255, 255, 255, 0.3);
 
-  --chrome: rgba(8, 8, 13, 0.92);
+  --chrome: rgba(21, 16, 34, 0.9);
   --nav-dim: rgba(255, 255, 255, 0.62);
   --avatar-grad: linear-gradient(140deg, #6d28d9, #a78bfa);
   --lead-grad: linear-gradient(150deg, #7c3aed, #f59e0b);

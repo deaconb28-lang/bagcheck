@@ -203,14 +203,21 @@
   transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
 }
 
+/*
+ * `--mk-ink` is the marketing *light* ink — #0b0b0c, near-black, for the white
+ * editorial hero. This bar runs on the dark field, so both of these were
+ * painting near-black on near-black: the active pill measured 1.00:1 and the
+ * quarter you were reading was literally invisible. The inversion on a dark
+ * field is the white one, which is `--mk-bg`.
+ */
 .window:hover {
-  color: var(--mk-ink, #fff);
-  border-color: var(--mk-ink, #fff);
+  color: var(--mk-bg, #fff);
+  border-color: var(--mk-bg, #fff);
 }
 
 /* The active window is the inversion — the strongest gesture, spent once. */
 .window[data-active] {
-  background: var(--mk-ink, #fff);
-  border-color: var(--mk-ink, #fff);
-  color: var(--mk-field, #08080d);
+  background: var(--mk-bg, #fff);
+  border-color: var(--mk-bg, #fff);
+  color: var(--mk-field, #0b0b12);
 }

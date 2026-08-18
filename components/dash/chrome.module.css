@@ -1,13 +1,17 @@
 /*
- * The dashboard's shared chrome: the page frame, the panel, the stat card and
- * the chips.
+ * The dashboard's shared chrome: the page frame, the panel, the stat and the
+ * chips.
  *
- * A panel here is a *translucent* plate — white at 3.5% over the field — held
- * by a 1px hairline at 9%. That is the whole reason the four pages read as one
- * material: a translucent plate picks up whatever is behind it, so a card over
- * the field and a card beside a gradient are the same object rather than two
- * greys that nearly match. Nothing is lifted; there is no shadow anywhere in
- * this file.
+ * A panel is now an **opaque** plate — a plum grey mixed from the ground it
+ * sits on — held by a 1px hairline. It used to be white at 3.5%, which made
+ * every surface pick up whatever was behind it, and the result reads as fog
+ * rather than as an object: a plate you can see the field through never quite
+ * lands. Solid surfaces are more legible and more toy-like, and they are what
+ * lets the ground carry a hue without muddying everything on top of it.
+ *
+ * Every corner cites `--r-*`. They were hardcoded per module, which is how one
+ * surface ended up at 30px, its stat at 22px and a tile inside it at 20px on
+ * the same screen. Nothing is lifted; there is no shadow anywhere in this file.
  */
 .page {
   max-width: 1560px;
@@ -80,7 +84,7 @@
  * ever notice by eye and every contrast probe notices immediately.
  */
 .cents {
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--meta);
 }
 
 .delta {
@@ -107,16 +111,16 @@
   font-family: inherit;
   font-size: 14px;
   font-weight: 600;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   padding: 10px 20px;
   background: transparent;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--ink3);
   /*
    * The border is on both states and only changes colour. Authored without one
    * on the active chip, the selected pill is two pixels smaller than its
    * neighbours and the row twitches as you move along it.
    */
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--line2);
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.24s ease, color 0.24s ease, border-color 0.24s ease;
@@ -137,7 +141,7 @@
 .panel {
   border: 1px solid var(--edge);
   background: var(--s1);
-  border-radius: 30px;
+  border-radius: var(--r-panel);
   padding: 30px 32px;
   min-width: 0;
 }
@@ -179,11 +183,20 @@
   margin-top: 34px;
 }
 
+/*
+ * A stat is not a box, and this one had been one since it was written: a
+ * border, a fill and a 22px corner, four of them sitting inside the page —
+ * which is the small-rectangles-inside-a-big-one tell in its purest form, and
+ * it contradicted the rule stated two files away.
+ *
+ * A rule above it does the separating instead. That is the print vernacular
+ * the rest of this redesign borrows from, it costs no fill, and four ruled
+ * columns under one enormous figure read as a table of contents for it rather
+ * than as four competing cards.
+ */
 .stat {
-  border: 1px solid var(--edge);
-  background: var(--s1);
-  border-radius: 22px;
-  padding: 22px 24px;
+  border-top: 1px solid var(--edge);
+  padding-top: 18px;
   min-width: 0;
 }
 
@@ -228,8 +241,8 @@
   font-weight: 600;
   color: var(--ink);
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 999px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
   padding: 10px 18px;
   cursor: pointer;
   white-space: nowrap;
@@ -237,7 +250,7 @@
 }
 
 .pill:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--ink-fill-active);
 }
 
 .pill[data-solid] {
@@ -313,7 +326,7 @@
   }
 
   .panel {
-    border-radius: 24px;
+    border-radius: var(--r-tile);
     padding: 24px 20px;
   }
 }

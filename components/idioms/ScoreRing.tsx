@@ -16,6 +16,15 @@ type ScoreRingProps = {
    * repeating what it is.
    */
   bare?: boolean;
+  /**
+   * What sits in the middle instead of the figure.
+   *
+   * Only read when `bare`. The hero puts the archetype's character here: the
+   * arc says how far along the score is, the character says what the four
+   * components add up to, and the numeral beside them says the number — three
+   * readings of the same night, one object.
+   */
+  children?: React.ReactNode;
 };
 
 /**
@@ -26,7 +35,13 @@ type ScoreRingProps = {
  * effect never runs — under reduced motion the offset is set immediately and
  * the transition is suppressed, so the ring is simply right.
  */
-export function ScoreRing({ score, size = 246, label = "Health", bare = false }: ScoreRingProps) {
+export function ScoreRing({
+  score,
+  size = 246,
+  label = "Health",
+  bare = false,
+  children,
+}: ScoreRingProps) {
   const stroke = Math.round(size * 0.053);
   const r = size / 2 - stroke / 2 - 8;
   const circumference = 2 * Math.PI * r;
@@ -79,7 +94,9 @@ export function ScoreRing({ score, size = 246, label = "Health", bare = false }:
           className={styles.arc}
         />
       </svg>
-      {bare ? null : (
+      {bare ? (
+        children ? <div className={styles.inner}>{children}</div> : null
+      ) : (
         <div className={styles.inner}>
           <div className={`num ${styles.value}`} style={{ fontSize: Math.round(size * 0.358) }}>
             {shown}

@@ -1,0 +1,259 @@
+/*
+ * The hero, and it is the one place in the app that shouts.
+ *
+ * Everything else on this screen is a quiet plate with a hairline. This block
+ * has no plate at all: it sits directly on the field with 96px of air under
+ * it, because a filled rectangle around the loudest thing on the page is a
+ * frame around a shout. The rule under the component arcs is the only edge in
+ * the whole block.
+ */
+.hero {
+  padding: 8px 0 44px;
+}
+
+.lockup {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+
+/*
+ * The ring's own light. `--ring-stroke` is what `ScoreRing` paints the arc,
+ * the numeral and the drop shadow with, and gold is what this product's own
+ * reading is drawn in — see the note beside `--gold` in tokens.css.
+ */
+.ringWrap {
+  --ring-stroke: var(--gold);
+  flex: none;
+}
+
+.words {
+  min-width: 0;
+  flex: 1 1 340px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.figureRow {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+/*
+ * 140px of Anton. This is the risk in the design and it is spent here and
+ * nowhere else: one shout per screen, on the figure the product exists to
+ * produce.
+ */
+.figure {
+  font-size: 140px;
+  line-height: 0.84;
+  color: var(--gold);
+  text-shadow: 0 0 60px color-mix(in srgb, var(--gold) 30%, transparent);
+}
+
+.delta {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.delta[data-tone="up"] {
+  color: var(--moss);
+}
+
+.delta[data-tone="down"] {
+  color: var(--loss);
+}
+
+/* The comparison's own terms, stated quietly beside it rather than assumed. */
+.deltaTail {
+  margin-left: 7px;
+  font-family: var(--font-voice), system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--meta);
+}
+
+.name {
+  margin: 18px 0 0;
+  font-size: 38px;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+
+.line {
+  margin: 12px 0 0;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--ink3);
+  max-width: 46ch;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line2);
+  font-size: 13.5px;
+  color: var(--ink3);
+}
+
+/* Streaks and records are ember, as they have been since this file started. */
+.chip[data-tone="ember"] {
+  border-color: var(--ember-line);
+  background: var(--ember-tint);
+  color: var(--ink2);
+}
+
+.chipNum {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.chip[data-tone="ember"] .chipNum {
+  color: var(--ember);
+}
+
+/* ── The four components, as dials you can close ── */
+.arcs {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  flex-wrap: wrap;
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid var(--edge);
+}
+
+/*
+ * A component under the bar draws in the track's own grey, so the reader can
+ * see at a glance which of the four are carrying the score and which are
+ * not. That is the whole game layer: nothing is invented, the bar is the same
+ * fixed 60 the sixteen archetypes are cornered on, and closing one changes
+ * the character in the ring above.
+ */
+.arc {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 12px;
+  color: var(--meta);
+}
+
+.arc[data-strong] {
+  color: var(--gold-deep);
+}
+
+.arc > svg {
+  grid-row: 1 / 3;
+}
+
+.arcValue {
+  align-self: end;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink2);
+}
+
+.arc[data-strong] .arcValue {
+  color: var(--ink);
+}
+
+.arcLabel {
+  align-self: start;
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.arcsNote {
+  flex: 1 1 220px;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--meta);
+  text-align: right;
+}
+
+/*
+ * The phone. The ring halves and the numeral comes down to a size that still
+ * shouts at 390px but does not push the archetype's name off the fold — and
+ * everything stays left-aligned, because a centred lockup over a column of
+ * left-aligned panels makes the phone look like a different screen.
+ */
+@media (max-width: 780px) {
+  .lockup {
+    gap: 24px;
+  }
+
+  .ringWrap {
+    --ring-size: 132px;
+    --hero-avatar: 76px;
+  }
+
+  .figure {
+    font-size: 86px;
+  }
+
+  .name {
+    margin-top: 12px;
+    font-size: 28px;
+  }
+
+  .line {
+    margin-top: 10px;
+    font-size: 15.5px;
+  }
+
+  /*
+   * The chips are the tallest thing on the phone: four of them, each a
+   * sentence long, each on its own line. Nothing is dropped — a streak the
+   * reader is holding is the reason they opened the app — so the saving comes
+   * out of the box rather than out of the information.
+   */
+  .chips {
+    margin-top: 16px;
+    gap: 8px;
+  }
+
+  .chip {
+    padding: 6px 12px;
+    font-size: 12.5px;
+  }
+
+  .chipNum {
+    font-size: 13.5px;
+  }
+
+  .arcs {
+    gap: 20px 26px;
+    margin-top: 30px;
+    padding-top: 22px;
+  }
+
+  .arcsNote {
+    text-align: left;
+  }
+}

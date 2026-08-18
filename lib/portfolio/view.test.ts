@@ -1,6 +1,18 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { MIN_SESSIONS, bookFrom, cumulativePnl, pnlHeat, sectorsFrom, patternsFrom, performanceFrom, windowFor } from "./view";
+import {
+  MIN_SESSIONS,
+  bookFrom,
+  cumulativePnl,
+  dashboardView,
+  pnlHeat,
+  readFrom,
+  scoreHeat,
+  sectorsFrom,
+  patternsFrom,
+  performanceFrom,
+  windowFor,
+} from "./view";
 import type { Facts } from "./types";
 import { normaliseHandle } from "@/lib/db/publicLedger";
 
@@ -27,6 +39,7 @@ const trip = (closeDate: string, pnl: number) => ({
 
 const facts = (over: Partial<Facts> = {}): Facts => ({
   trips: [],
+  scored: [],
   sessions: [],
   curve: [],
   flows: { trades: [], transfers: [] },
@@ -376,4 +389,74 @@ test("the grid spans the window it was asked for, sparse or not", () => {
   const cells = pnlHeat([{ date: "2026-08-15", amount: 5 }], 4, new Date("2026-08-17T00:00:00Z"));
   assert.equal(cells.length, 28);
   assert.equal(cells.filter((c) => c.level > 0).length, 1);
+});
+
+/* ── The read: what the instrument concluded, and what it refuses to ───── */
+
+const scored = (date: string, score: number, over: Record<string, unknown> = {}) => ({
+  date,
+  score,
+  components: { adherence: score, consistency: score, patience: score, exposure: score },
+  contributors: [],
+  ...over,
+}) as Parameters<typeof readFrom>[0][number];
+
+test("with nothing scored there is no read at all", () => {
+  assert.equal(readFrom([]), null);
+  assert.equal(
+    dashboardView({
+      facts: facts(),
+      range: "45d",
+      today: "2026-03-10",
+      peers: [],
+      wrapped: { earned: 0, total: 12, earnedNos: [] },
+    }).read,
+    null,
+  );
+});
+
+test("the read takes the newest day, whatever order the store handed over", () => {
+  const read = readFrom([scored("2026-03-01", 60), scored("2026-03-05", 82), scored("2026-03-03", 71)]);
+  assert.equal(read?.score, 82);
+});
+
+test("the delta is against the oldest of the last seven, and absent under two days", () => {
+  assert.equal(readFrom([scored("2026-03-05", 82)])?.delta, null);
+  const week = [88, 80, 79, 77, 75, 74, 70].map((s, i) =>
+    scored(`2026-03-${String(10 - i).padStart(2, "0")}`, s),
+  );
+  /* Seven days: newest 88, oldest of the seven 70. */
+  assert.equal(readFrom(week)?.delta, 18);
+});
+
+test("a percentile needs five days on file and is the reader's own distribution", () => {
+  const four = [70, 71, 72, 90].map((s, i) => scored(`2026-03-0${i + 1}`, s));
+  assert.equal(readFrom(four)?.percentile, null);
+  const five = [70, 71, 72, 73, 90].map((s, i) => scored(`2026-03-0${i + 1}`, s));
+  assert.equal(readFrom(five)?.percentile, 80);
+});
+
+test("a personal best is only stated once it has been beaten and passed", () => {
+  /* Today *is* the best — there is no record to state. */
+  const rising = [70, 72, 74, 76, 90].map((s, i) => scored(`2026-03-0${i + 1}`, s));
+  assert.equal(readFrom(rising)?.best, null);
+  const fallen = [70, 72, 91, 76, 74].map((s, i) => scored(`2026-03-0${i + 1}`, s));
+  assert.deepEqual(readFrom(fallen)?.best, { score: 91, date: "2026-03-03" });
+});
+
+test("a streak below its own floor is nothing, never a run of one", () => {
+  const one = readFrom([scored("2026-03-05", 90)]);
+  assert.deepEqual(one?.streaks, []);
+});
+
+test("the grid bands on the same table the streaks do", () => {
+  const today = new Date("2026-03-10T00:00:00Z");
+  const cells = scoreHeat([scored("2026-03-10", 91), scored("2026-03-09", 78), scored("2026-03-08", 63), scored("2026-03-07", 40)], 2, today);
+  const level = (d: string) => cells.find((c) => c.date === d)?.level;
+  assert.equal(level("2026-03-10"), 4);
+  assert.equal(level("2026-03-09"), 3);
+  assert.equal(level("2026-03-08"), 2);
+  assert.equal(level("2026-03-07"), 1);
+  /* A day with nothing on file is empty, not bad. */
+  assert.equal(level("2026-03-06"), 0);
 });

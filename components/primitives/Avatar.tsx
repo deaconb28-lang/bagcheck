@@ -19,10 +19,31 @@ import styles from "./Avatar.module.css";
 export function Avatar({
   archetype,
   size = 44,
+  shape = "tile",
 }: {
   /** An archetype key from lib/archetypes.ts. */
   archetype: string;
-  size?: number;
+  /**
+   * A number of pixels, or any CSS length — including a custom property, so a
+   * surface can resize the character in a media query. The drawing is a
+   * viewBox, so it costs nothing either way; what needs a real length is the
+   * plate, and that is this element.
+   */
+  size?: number | string;
+  /**
+   * The plate the character sits on.
+   *
+   * `tile` is the squircle it wears in a row or beside a name. `circle` is
+   * for the one place the character sits *inside* something already round —
+   * the score ring — where a rounded square inside a circle reads as two
+   * frames arguing.
+   *
+   * There is no "no plate" option, and that is deliberate: the drawing is
+   * coloured entirely by `--av-lit`/`--av-mid`/`--av-deep`, which this
+   * wrapper is what sets. Render the SVG outside it and all three resolve to
+   * nothing and the character draws invisible.
+   */
+  shape?: "tile" | "circle";
 }) {
   const meta = archetypeByKey(archetype);
   if (!meta) return null;
@@ -30,7 +51,16 @@ export function Avatar({
   return (
     <span
       className={styles.avatar}
-      style={{ width: size, height: size, borderRadius: Math.round(size * 0.28) }}
+      style={{
+        width: size,
+        height: size,
+        borderRadius:
+          shape === "circle"
+            ? "50%"
+            : typeof size === "number"
+              ? Math.round(size * 0.28)
+              : "28%",
+      }}
       data-tone={meta.tone}
       data-family={avatarFamily(meta)}
     >
@@ -40,15 +70,13 @@ export function Avatar({
         <img
           src={avatarSrc(archetype)}
           alt=""
-          width={size}
-          height={size}
           className={styles.art}
         />
       ) : (
         <svg
           viewBox={AVATAR_VIEWBOX}
-          width={size}
-          height={size}
+          width="100%"
+          height="100%"
           aria-hidden="true"
           dangerouslySetInnerHTML={{ __html: emblemBody(archetype) }}
         />
