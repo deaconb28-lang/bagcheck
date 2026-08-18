@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { getUserId, isAuthConfigured } from "@/auth";
-import { isDbConfigured, loadScreen, syncClock } from "@/lib/db";
+import { accessFor, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
 import { dashboardFor, fieldLine, rangeOf } from "@/lib/portfolio/load";
 import type { RangeKey } from "@/lib/portfolio/types";
 import { EmptyState } from "@/components/app/EmptyState";
 import { FirstScore } from "@/components/app/FirstScore";
 import { PageGrid } from "@/components/app/PageGrid";
 import { AppNav } from "@/components/app/AppNav";
+import { Paywall } from "@/components/app/Paywall";
 import { shellUser } from "@/components/app/shellUser";
 import { SignInCta } from "@/components/app/SignInCta";
 import { SyncDialog } from "@/components/app/SyncDialog";
@@ -110,6 +111,17 @@ export default async function DashboardPage({
       </PageGrid>
     );
   }
+
+
+  /*
+   * The subscription gate, above everything this screen does.
+   *
+   * It runs before the ledger is read rather than after: a lapsed account
+   * should not cost a full dashboard assembly to be turned away, and the
+   * paywall has nothing to say that needs the data.
+   */
+  const access = await accessFor(userId);
+  if (!access.allowed) return <Paywall trial={access.trial} />;
 
   const data = await loadScreen(userId, 400);
   const latest = data.scores[0] ?? null;
@@ -345,7 +357,35 @@ export default async function DashboardPage({
               <p className="dashProv">{fieldLine(view.field.of - 1, view.provenance.asOf ?? "")}</p>
             </Panel>
           </Row>
-        ) : null}
+        ) : (
+          /*
+           * The field, absent, saying why.
+           *
+           * It used to render nothing at all, which is indistinguishable from
+           * a broken screen: a dashboard that promises a comparison and shows
+           * no comparison has to say whether it is missing or refusing. The
+           * refusal itself is unchanged — a fund the provider will not quote
+           * is dropped rather than drawn at zero, and a six-month figure is
+           * never set beside a twelve-month one — because a comparison nobody
+           * can check is the one thing this screen must not print.
+           */
+          <Row kind="full">
+            <Panel>
+              <PanelHead eyebrow="The race" title="Not a comparison yet" />
+              <p className="dashEmpty">
+                {view.fieldAbsence === "market-key"
+                  ? "The field is five funds quoted from market data, and this deployment has no market key set. Nothing here is estimated in the meantime."
+                  : view.fieldAbsence === "year-too-short"
+                    ? "The field is quoted year to date, and your ledger does not reach the first fortnight of January. A six-month figure drawn at a twelve-month scale is two measurements rather than a comparison, so it waits."
+                    : "Fewer than two of the five funds could be quoted just now. A fund nobody will quote is dropped rather than drawn at zero."}
+              </p>
+              <p className="dashProv">
+                DBMF · QAI · MNA · BTAL · SPY — hedge-fund replication strategies
+                and the S&amp;P, each with a ticker you can check
+              </p>
+            </Panel>
+          </Row>
+        )}
 
         <Row kind="wide">
           {/*

@@ -246,6 +246,17 @@ export interface DashboardView {
   performance: Performance;
   /** Absent unless the field can be quoted on the same terms. */
   field: RaceField | null;
+  /**
+   * Why the field is absent, when it is.
+   *
+   * The block used to vanish with nothing said, which is indistinguishable
+   * from a bug: a reader who has been told the dashboard compares them to a
+   * field of funds, and sees no field, has no way to learn whether it is
+   * broken, unbuilt, or simply refusing to make a claim it cannot support.
+   * The refusals stay — none of these is a reason to draw a fund at zero —
+   * but they are now stated.
+   */
+  fieldAbsence: "market-key" | "too-few-funds" | "year-too-short" | null;
   /** SPY's own year, for the return card's comparison line. */
   index: number | null;
   allocation: Array<{ key: string; label: string; value: number }>;

@@ -460,3 +460,52 @@ test("the grid bands on the same table the streaks do", () => {
   /* A day with nothing on file is empty, not bad. */
   assert.equal(level("2026-03-06"), 0);
 });
+
+
+/* ── Why the field is absent, when it is ── */
+
+const dash = (over = {}) =>
+  dashboardView({
+    facts: facts(),
+    range: "45d",
+    today: "2026-03-10",
+    peers: [],
+    wrapped: { earned: 0, total: 12, earnedNos: [] },
+    ...over,
+  });
+
+test("no quotes at all reads as a missing market key, not a short year", () => {
+  const view = dash();
+  assert.equal(view.field, null);
+  assert.equal(view.fieldAbsence, "market-key");
+});
+
+test("quotes with a ledger that misses January reads as a short year", () => {
+  const view = dash({
+    peers: [{ key: "SPY", label: "S&P 500", note: "", value: 0.117 }],
+    facts: facts({
+      curve: [
+        { date: "2026-06-01", value: 1000, filled: false, withCash: false },
+        { date: "2026-06-02", value: 1010, filled: false, withCash: false },
+      ],
+    }),
+  });
+  assert.equal(view.field, null);
+  assert.equal(view.fieldAbsence, "year-too-short");
+});
+
+test("a drawn field states no absence", () => {
+  const view = dash({
+    peers: [
+      { key: "SPY", label: "S&P 500", note: "", value: 0.117 },
+      { key: "DBMF", label: "Managed futures", note: "", value: 0.064 },
+    ],
+    facts: facts({
+      curve: [
+        { date: "2026-01-02", value: 1000, filled: false, withCash: false },
+        { date: "2026-03-09", value: 1100, filled: false, withCash: false },
+      ],
+    }),
+  });
+  if (view.field) assert.equal(view.fieldAbsence, null);
+});

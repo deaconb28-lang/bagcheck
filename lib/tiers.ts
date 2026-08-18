@@ -98,10 +98,24 @@ export const TIER_LABEL: Record<Tier, string> = {
   pro: "Pro",
 };
 
+/**
+ * One price, monthly, and no annual plan.
+ *
+ * There was a $86 year alongside the $9 month. An annual price is a second
+ * thing to state on every surface that mentions the first, and nothing in the
+ * product asked for one — so it is `null` here rather than quietly carried,
+ * and the surfaces that used to print it now print nothing.
+ */
 export const TIER_PRICE: Record<Tier, { monthly: number; yearly: number | null }> = {
   free: { monthly: 0, yearly: null },
-  pro: { monthly: 9, yearly: 86 },
+  pro: { monthly: 14.99, yearly: null },
 };
+
+/** The price as it is written down. `14.99` must never print as `$14.99/mo`
+ *  in one place and `$15/mo` in another. */
+export function priceLine(): string {
+  return `$${TIER_PRICE.pro.monthly.toFixed(2)}/month`;
+}
 
 /** What the plan actually contains, for the pricing table and the plan card. */
 export const CAPABILITY_LABEL: Record<Capability, string> = {
@@ -112,11 +126,20 @@ export const CAPABILITY_LABEL: Record<Capability, string> = {
   liveBadge: "A live badge at its own URL, for a profile or a README",
 };
 
-export const FREE_ALWAYS: string[] = [
+/**
+ * What the subscription contains — which is everything.
+ *
+ * This was `FREE_ALWAYS`, the list of things that survived a lapsed trial.
+ * Under a subscription nothing survives it, so a list headed "always free"
+ * would be the exact failure this file's own header warns about: a paywall
+ * must never advertise something it does not deliver. Same items, honest
+ * heading — they are what the thirty days shows you and what the plan keeps.
+ */
+export const PLAN_INCLUDES: string[] = [
   "Every card your behaviour earns, including the scarce ones",
-  "Sharing, at full quality, forever",
+  "Sharing, at full quality — a minted card stays yours",
   "The Health score, its four components and the daily read",
-  "Your whole ledger, read-only",
+  "Your whole ledger, read-only, and every pattern it can prove",
 ];
 
 /** A subscription only entitles anything while Stripe says it is live. */
@@ -127,21 +150,26 @@ export function tierFromStatus(tier: Tier, status: string | null): Tier {
 }
 
 /**
- * The reverse trial.
+ * The trial, and it is now the only way in.
  *
- * A week of everything, starting when a brokerage connects — not when an
- * account is created, because an account with no ledger has nothing to unlock
- * and would burn the window on an empty screen.
+ * Thirty days of the whole product, no card, starting when a brokerage
+ * connects — **not** when an account is created, and that anchor is what
+ * keeps a hard paywall humane: a person who signed up and never linked an
+ * account has never seen the product, and locking them out of something they
+ * were never shown would be indefensible. `trialState` returns
+ * `expired: false` with no connection on file for exactly that reason.
  *
- * It was fourteen days, which meant every launch user had full access and no
- * reason to look at the plan for the entire window in which we would be
- * measuring whether anyone wants it. Seven still shows the whole product.
+ * It was seven days on a freemium model, where running out cost you the
+ * export formats and nothing else. It buys the whole product now, so it is
+ * long enough to contain a full monthly cycle of the thing being sold: a
+ * month of conduct is the shortest window in which this product can say
+ * anything about how someone trades.
  *
- * There is no countdown and no nag. A trial states the date it ends, once,
- * where the plan is described. "Three days left" is urgency, and urgency is
- * the thing this product does not do.
+ * There is still no countdown and no nag. A trial states the date it ends,
+ * once, where the plan is described. "Three days left" is urgency, and
+ * urgency is the thing this product does not do.
  */
-export const TRIAL_DAYS = 7;
+export const TRIAL_DAYS = 30;
 
 /** Full access during the trial — the point is to show the whole product. */
 export const TRIAL_TIER: Tier = "pro";
@@ -154,13 +182,37 @@ export interface TrialState {
   expired: boolean;
 }
 
+/**
+ * The day Bagcheck became a subscription.
+ *
+ * Everyone who connected *before* this has their thirty days measured from
+ * here rather than from their connection — otherwise deploying the paywall
+ * locks out the entire existing user base in the same instant it ships, with
+ * no notice and no window in which to decide. Someone who linked an account
+ * eight months ago would open the app to a pay screen having been given
+ * nothing at all.
+ *
+ * This is a one-line cutover rather than a migration because the trial has
+ * never been stored: it is derived from the connection date on every read, so
+ * moving the anchor moves every existing account's window at once and there is
+ * no table to backfill and nothing to get half-done.
+ *
+ * It can be deleted once it is far enough in the past to be irrelevant — every
+ * account connected after it takes its own date, so the branch below stops
+ * doing anything the moment the oldest live trial is newer than this.
+ */
+export const SUBSCRIPTION_FROM = new Date("2026-08-18T00:00:00Z");
+
 export function trialState(
   connectedAt: Date | null | undefined,
   now: Date,
   days = TRIAL_DAYS,
 ): TrialState {
   if (!connectedAt) return { active: false, endsOn: null, expired: false };
-  const end = new Date(connectedAt.getTime() + days * 86_400_000);
+  /* Whichever is later: your connection, or the day the plan came in. */
+  const from =
+    connectedAt.getTime() > SUBSCRIPTION_FROM.getTime() ? connectedAt : SUBSCRIPTION_FROM;
+  const end = new Date(from.getTime() + days * 86_400_000);
   const endsOn = end.toISOString().slice(0, 10);
   return now < end
     ? { active: true, endsOn, expired: false }
@@ -182,12 +234,31 @@ export function effectiveTier(paid: Tier, trial: TrialState): Tier {
 /** The one line the trial is allowed to say. A date, not a countdown. */
 export function trialLine(trial: TrialState): string | null {
   if (trial.active && trial.endsOn) {
-    return `Full access through ${trial.endsOn}. After that, Bagcheck stays free and the paid formats lock.`;
+    return `Free through ${trial.endsOn}, no card. After that Bagcheck is ${priceLine()}.`;
   }
   if (trial.expired && trial.endsOn) {
-    return `Your full-access window ended ${trial.endsOn}. Everything you have minted stays yours.`;
+    return `Your free month ended ${trial.endsOn}. Everything you have minted stays yours.`;
   }
   return null;
+}
+
+/**
+ * Whether this account may read the product at all.
+ *
+ * The model changed shape here: gating used to be per *capability*, and the
+ * worst a lapsed account suffered was losing the export formats. Bagcheck is
+ * a subscription now, so there is a second question above every capability —
+ * whether there is any entitlement at all — and this is it.
+ *
+ * Three ways to be true, and the third is the important one: **an account
+ * with no trial on file has not started one**, so it is not locked. That is
+ * what stops a person who signed up and never connected a brokerage from
+ * meeting a pay screen for a product they have never seen.
+ */
+export function hasAccess(paid: Tier, trial: TrialState): boolean {
+  if (normaliseTier(paid) !== "free") return true;
+  if (trial.active) return true;
+  return !trial.expired;
 }
 
 /**

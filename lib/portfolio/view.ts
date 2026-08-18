@@ -559,6 +559,18 @@ export function dashboardView({
     ),
   );
   const field = sameWindow ? raceField(ytd, peers) : null;
+  /*
+   * One reason, in the order a reader can act on: no provider key is a
+   * deployment fact, too few quotes is a provider fact, and a short year is
+   * a fact about the reader's own ledger that time alone fixes.
+   */
+  const fieldAbsence: DashboardView["fieldAbsence"] = field
+    ? null
+    : !peers.length
+      ? "market-key"
+      : !sameWindow
+        ? "year-too-short"
+        : "too-few-funds";
 
   const ranked = [...facts.holdings].sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
   const concentration =
@@ -580,6 +592,7 @@ export function dashboardView({
     book,
     performance,
     field,
+    fieldAbsence,
     index: peers.find((peer) => peer.key === "SPY")?.value ?? null,
     allocation: facts.holdings.map((holding) => ({
       key: holding.symbol,

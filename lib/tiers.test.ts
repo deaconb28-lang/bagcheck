@@ -2,6 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   TRIAL_DAYS,
+  TIER_PRICE,
+  CAPABILITY_LABEL,
+  hasAccess,
+  priceLine,
   TRIAL_TIER,
   can,
   canMintCards,
@@ -111,43 +115,63 @@ test("no connection means no trial to describe", () => {
   assert.equal(trialLine(state), null);
 });
 
-test("the trial runs a week from the connection", () => {
-  assert.equal(TRIAL_DAYS, 7);
-  const connected = new Date("2026-08-01T12:00:00Z");
-  const state = trialState(connected, new Date("2026-08-05T12:00:00Z"));
+test("the trial runs thirty days from the connection", () => {
+  assert.equal(TRIAL_DAYS, 30);
+  const connected = new Date("2026-09-01T12:00:00Z");
+  const state = trialState(connected, new Date("2026-09-20T12:00:00Z"));
   assert.equal(state.active, true);
   assert.equal(state.expired, false);
-  assert.equal(state.endsOn, "2026-08-08");
+  assert.equal(state.endsOn, "2026-10-01");
 });
 
 test("it expires on the day it says it will", () => {
-  const connected = new Date("2026-08-01T12:00:00Z");
-  const state = trialState(connected, new Date("2026-08-09T12:00:00Z"));
+  const connected = new Date("2026-09-01T12:00:00Z");
+  const state = trialState(connected, new Date("2026-10-02T12:00:00Z"));
   assert.equal(state.active, false);
   assert.equal(state.expired, true);
 });
 
+/*
+ * The clause that stops the paywall landing on everyone at once. An account
+ * connected long before the plan existed gets its thirty days from the
+ * cutover, not from a date eight months in the past.
+ */
+test("a connection older than the cutover is measured from the cutover", () => {
+  const longAgo = new Date("2026-01-05T12:00:00Z");
+  const state = trialState(longAgo, new Date("2026-08-25T12:00:00Z"));
+  assert.equal(state.active, true);
+  assert.equal(state.expired, false);
+  assert.equal(state.endsOn, "2026-09-17");
+});
+
+test("the cutover never shortens a window it does not own", () => {
+  /* Connected after it — their own date wins, and is later. */
+  const after = new Date("2026-10-10T12:00:00Z");
+  const state = trialState(after, new Date("2026-10-20T12:00:00Z"));
+  assert.equal(state.endsOn, "2026-11-09");
+});
+
 test("the trial grants the paid plan while it runs", () => {
-  const active = trialState(new Date("2026-08-01"), new Date("2026-08-03"));
+  const active = trialState(new Date("2026-09-01"), new Date("2026-09-03"));
   assert.equal(effectiveTier("free", active), TRIAL_TIER);
   assert.equal(TRIAL_TIER, "pro");
 });
 
 test("an expired trial falls back to free", () => {
-  const expired = trialState(new Date("2026-08-01"), new Date("2026-08-20"));
+  const expired = trialState(new Date("2026-09-01"), new Date("2026-10-20"));
   assert.equal(effectiveTier("free", expired), "free");
 });
 
 /* Paid always wins — a subscriber is on their plan, not on a trial clock. */
 test("a paid plan outlives its own trial", () => {
-  const expired = trialState(new Date("2026-08-01"), new Date("2026-08-20"));
+  const expired = trialState(new Date("2026-09-01"), new Date("2026-10-20"));
   assert.equal(effectiveTier("pro", expired), "pro");
 });
 
 test("the trial line states a date and never a countdown", () => {
-  const active = trialState(new Date("2026-08-01"), new Date("2026-08-03"));
+  const active = trialState(new Date("2026-09-01"), new Date("2026-09-03"));
   const line = trialLine(active) ?? "";
-  assert.ok(line.includes("2026-08-08"));
+  assert.ok(line.includes("2026-10-01"));
   assert.ok(!/\bdays? left\b/i.test(line));
   assert.ok(!line.includes("!"));
 });
@@ -162,4 +186,45 @@ test("readiness is ready once the samples are there", () => {
 test("readiness counts what is actually missing", () => {
   assert.deepEqual(readiness(62, 100), { ready: false, label: "38 tags to go" });
   assert.deepEqual(readiness(99, 100), { ready: false, label: "1 tag to go" });
+});
+
+/* ── The gate above every capability ── */
+
+test("a subscriber has access whatever the trial says", () => {
+  const expired = trialState(new Date("2026-09-01"), new Date("2026-10-20"));
+  assert.equal(hasAccess("pro", expired), true);
+});
+
+test("a running trial has access without a card", () => {
+  const active = trialState(new Date("2026-09-01"), new Date("2026-09-20"));
+  assert.equal(hasAccess("free", active), true);
+});
+
+test("an expired trial with no plan does not", () => {
+  const expired = trialState(new Date("2026-09-01"), new Date("2026-10-20"));
+  assert.equal(hasAccess("free", expired), false);
+});
+
+/*
+ * The one that keeps a hard paywall humane: an account that never connected a
+ * brokerage has never started a trial, so it has never used the product and
+ * must not meet a pay screen for something it has not been shown.
+ */
+test("an account that never connected is not locked out", () => {
+  const none = trialState(null, new Date("2026-10-20"));
+  assert.equal(hasAccess("free", none), true);
+});
+
+test("the price is written once and printed the same everywhere", () => {
+  assert.equal(priceLine(), "$14.99/month");
+  assert.equal(TIER_PRICE.pro.monthly, 14.99);
+  /* No annual plan — a second price is a second thing to keep in step. */
+  assert.equal(TIER_PRICE.pro.yearly, null);
+});
+
+test("the plan advertises nothing the gates do not deliver", () => {
+  /* Every capability named on a pricing surface is one a route checks. */
+  for (const name of Object.keys(CAPABILITY_LABEL)) {
+    assert.ok(capabilities("pro").includes(name as never), name);
+  }
 });

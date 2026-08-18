@@ -120,15 +120,31 @@ export default async function StartPage({
   return (
     <>
       <DancingCards />
-      <Header step="Step 1 of 2" />
+      {/*
+        * The counter says which step you are actually on. It read "Step 1 of
+        * 2" for everybody, including someone already signed in with one thing
+        * left to do — a progress indicator that never progresses is worse
+        * than none, because it quietly says the flow is longer than it is.
+        */}
+      <Header step={userId ? "Step 2 of 2 · Connect" : "Step 1 of 2 · Sign in"} />
 
       <main className={styles.main}>
         <div className={styles.panel}>
-          <span className={styles.eyebrow}>CONNECT</span>
+          <span className={styles.eyebrow}>{userId ? "ONE STEP LEFT" : "CONNECT"}</span>
           <h1 className={styles.h1}>
-            Your year is already
-            <br />
-            in your order history.
+            {userId ? (
+              <>
+                Link your broker
+                <br />
+                and your year is done.
+              </>
+            ) : (
+              <>
+                Your year is already
+                <br />
+                in your order history.
+              </>
+            )}
           </h1>
           <p className={styles.lede}>
             Bagcheck reads your filled orders through SnapTrade and makes a card
@@ -140,6 +156,22 @@ export default async function StartPage({
             <p className={styles.warn} role="status">
               {problem}
             </p>
+          ) : null}
+
+          {/*
+            * Signed in, the action goes above the four facts rather than
+            * below them. The facts answer the objection to *linking a
+            * brokerage*, which is the right thing to say to someone deciding
+            * — and the wrong thing to make someone scroll past who has
+            * already decided and come back from Google to finish.
+            */}
+          {userId && canLink ? (
+            <div className={styles.actions} data-lead="">
+              <ConnectButton />
+              <a className={styles.secondary} href="/wrapped?demo=1">
+                See a sample year first
+              </a>
+            </div>
           ) : null}
 
           <ul className={styles.facts}>
@@ -188,12 +220,8 @@ export default async function StartPage({
                 </p>
               </>
             ) : userId ? (
-              <>
-                <ConnectButton />
-                <a className={styles.secondary} href="/wrapped?demo=1">
-                  See a sample year first
-                </a>
-              </>
+              /* Already offered above the facts — one button, not two. */
+              null
             ) : (
               <>
                 {/*

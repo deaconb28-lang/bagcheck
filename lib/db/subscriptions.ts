@@ -1,6 +1,6 @@
 import { getCollections } from "./collections";
 import { normaliseTier, tierFromStatus, type Tier } from "@/lib/tiers";
-import { effectiveTier, trialState } from "@/lib/tiers";
+import { effectiveTier, hasAccess, trialState } from "@/lib/tiers";
 import type { TrialState } from "@/lib/tiers";
 import type { SubscriptionDoc } from "./types";
 
@@ -62,4 +62,29 @@ export async function userIdForCustomer(customerId: string): Promise<string | nu
     { projection: { _id: 0, userId: 1 } },
   );
   return doc?.userId ?? null;
+}
+
+/**
+ * Whether this account may read the product right now.
+ *
+ * One round trip for both facts the answer needs — the stored subscription and
+ * the connection the trial clock is anchored to — because every gated screen
+ * calls this before it does anything else, and two queries per screen to
+ * answer one question is the kind of thing that only shows up under load.
+ *
+ * The shape is deliberately not a boolean: a screen that has to turn someone
+ * away also has to say *why*, and "your free month ended on the 14th" and "you
+ * need a plan" are different sentences.
+ */
+export async function accessFor(
+  userId: string,
+): Promise<{ allowed: boolean; tier: Tier; trial: TrialState }> {
+  const { subscriptions, connections } = await getCollections();
+  const [doc, connection] = await Promise.all([
+    subscriptions.findOne({ userId }, { projection: { _id: 0, tier: 1, status: 1 } }),
+    connections.findOne({ userId }, { projection: { _id: 0, createdAt: 1 } }),
+  ]);
+  const paid = doc ? tierFromStatus(normaliseTier(doc.tier), doc.status) : "free";
+  const trial = trialState(connection?.createdAt ?? null, new Date());
+  return { allowed: hasAccess(paid, trial), tier: effectiveTier(paid, trial), trial };
 }

@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { auth, getUserId, isAuthConfigured } from "@/auth";
-import { getCollections, isDbConfigured, syncClock } from "@/lib/db";
+import { accessFor, getCollections, isDbConfigured, syncClock } from "@/lib/db";
 import { appLocked } from "@/lib/launch";
 import { wrappedDeck } from "@/lib/wrapped/year";
 import { windowFor, windowsFor } from "@/lib/wrapped/window";
 import { BagcheckMark } from "@/components/brand/BagcheckMark";
 import { GoogleSignIn } from "@/components/app/GoogleSignIn";
 import { AppNav } from "@/components/app/AppNav";
+import { Paywall } from "@/components/app/Paywall";
 import { shellUser } from "@/components/app/shellUser";
 import { CardFonts } from "@/components/cards/CardFonts";
 import { StillToCome } from "./StillToCome";
@@ -55,6 +56,20 @@ export default async function WrappedPage({
    * `wrappedStats` off a sample ledger, and every card in it says so on its
    * own face rather than only in a line under the rail.
    */
+  /*
+   * The subscription gate — for a signed-in reader only.
+   *
+   * A signed-out visitor still gets the sample deck, and that is deliberate:
+   * the landing hands off to this route directly, so gating it on a session
+   * would put a pay screen in front of someone who has not been shown
+   * anything yet. What is gated is a reader asking for *their own* year after
+   * their free month ran out.
+   */
+  if (userId && isDbConfigured()) {
+    const access = await accessFor(userId);
+    if (!access.allowed) return <Paywall trial={access.trial} />;
+  }
+
   const asDemo = demo === "1" || !isDbConfigured();
   /*
    * Which slice of the year. A quarter is a window a new account can actually

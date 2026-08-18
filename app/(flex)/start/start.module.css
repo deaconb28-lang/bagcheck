@@ -85,6 +85,15 @@
 }
 
 /*
+ * The action, hoisted above the facts for a reader who has already signed in.
+ * It carries the top margin the facts list would otherwise open with, so the
+ * rhythm of the panel is the same either way round.
+ */
+.actions[data-lead] {
+  margin-top: 28px;
+}
+
+/*
  * The sign-in button arrives wrapped in its own form (a server action, not a
  * link). `display: contents` lets that form drop out of the layout so the
  * button sits in this column exactly as the anchors beside it do.

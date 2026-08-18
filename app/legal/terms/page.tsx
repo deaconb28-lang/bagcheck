@@ -102,12 +102,14 @@ export default function TermsPage() {
         <section className={styles.section}>
           <h2>The plan</h2>
           <p>
-            Bagcheck is free to use. Pro costs ${TIER_PRICE.pro.monthly} a month,
-            is billed by Stripe, and adds export formats — nothing behind it is
-            data you would not otherwise see. Connecting a brokerage opens{" "}
-            {TRIAL_DAYS} days of full access with no card required; when the
-            window closes the paid formats lock and everything else keeps
-            working.
+            Bagcheck is a subscription. Connecting a brokerage opens{" "}
+            {TRIAL_DAYS} days of the whole product with no card required; when
+            that window closes, reading your ledger here needs an active plan
+            at ${TIER_PRICE.pro.monthly} a month, billed by Stripe. Two things
+            do not depend on the plan and never will: a card you minted stays
+            live at the URL it was minted at, and exporting or deleting
+            everything we hold about you stays available from your profile
+            whether or not you are subscribed.
           </p>
           <p>
             A subscription renews monthly until you cancel. Cancel any time from

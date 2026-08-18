@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getUserId } from "@/auth";
-import { isDbConfigured, syncClock } from "@/lib/db";
+import { accessFor, isDbConfigured, syncClock } from "@/lib/db";
 import { dashboardFor } from "@/lib/portfolio/load";
 import type { HoldingRow } from "@/lib/db";
 import { AppNav } from "@/components/app/AppNav";
+import { Paywall } from "@/components/app/Paywall";
 import { shellUser } from "@/components/app/shellUser";
 import { Logo } from "@/components/primitives";
 import {
@@ -47,6 +48,10 @@ export default async function HoldingsPage({
 }) {
   const userId = await getUserId();
   if (!userId || !isDbConfigured()) redirect("/you");
+
+  /* The subscription gate, before the ledger is read. */
+  const access = await accessFor(userId);
+  if (!access.allowed) return <Paywall trial={access.trial} />;
 
   const { data, view, facts } = await dashboardFor(userId, "all");
   const { sort: sortParam } = await searchParams;

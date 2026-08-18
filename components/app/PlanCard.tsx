@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button, Chip, Eyebrow } from "@/components/primitives";
-import { TIER_LABEL, TIER_PRICE, type Tier } from "@/lib/tiers";
+import { TIER_LABEL, TRIAL_DAYS, priceLine, type Tier } from "@/lib/tiers";
 import styles from "./PlanCard.module.css";
 
 type Props = {
@@ -67,8 +67,10 @@ export function PlanCard({
       </div>
 
       <p className={styles.body}>
-        Every card your behaviour earns is yours to post on either plan, rare ones
-        included. Pro adds formats.
+        Bagcheck is one plan at {priceLine()}, free for your first{" "}
+        {TRIAL_DAYS} days. Every card your behaviour earns is yours to post,
+        rare ones included, and a minted card stays live at its URL whether or
+        not you carry on.
       </p>
 
       {trialLine ? <p className={styles.meta}>{trialLine}</p> : null}
@@ -90,10 +92,10 @@ export function PlanCard({
           {tier === "free" ? (
             <div className={styles.option}>
               <Button ghost onClick={() => go("/api/billing/checkout", { tier: "pro" })}>
-                {busy ? "Opening…" : `Go Pro — $${TIER_PRICE.pro.monthly}/mo`}
+                {busy ? "Opening…" : `Subscribe — ${priceLine()}`}
               </Button>
               <Link className={styles.who} href="/pricing">
-                What Pro adds
+                See the plan
               </Link>
             </div>
           ) : null}

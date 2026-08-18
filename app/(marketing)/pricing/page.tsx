@@ -5,7 +5,8 @@ import { isDbConfigured, tierFor } from "@/lib/db";
 import { isStripeConfigured } from "@/lib/billing";
 import {
   CAPABILITY_LABEL,
-  FREE_ALWAYS,
+  PLAN_INCLUDES,
+  priceLine,
   TIER_PRICE,
   TRIAL_DAYS,
   type Tier,
@@ -18,7 +19,7 @@ import styles from "../pricing.module.css";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Bagcheck is free to use and $9 a month to publish. Every card your behaviour earns is yours to post on either plan, rare ones included.",
+    "Thirty days free with no card, then $14.99 a month. Every card your behaviour earns is yours to post, rare ones included, and a minted card stays live at its URL whether or not you carry on.",
 };
 
 /*
@@ -48,8 +49,8 @@ function Check({ tone }: { tone: "green" | "white" }) {
 /* The plain answers, in the order someone about to pay would ask them. */
 const QA: Array<[string, string]> = [
   [
-    "What do I get without paying?",
-    "The whole product. Every card your behaviour earns, the score and its four components, your ledger, and sharing at full quality. Pro adds export formats, not access.",
+    "What do I get during the free month?",
+    "All of it. Every card your behaviour earns, the score and its four components, your ledger, the patterns, and sharing at full quality. Nothing is held back for the paid month, because there is nothing else to show you.",
   ],
   [
     "Are the rare cards paid?",
@@ -57,7 +58,7 @@ const QA: Array<[string, string]> = [
   ],
   [
     `What happens after the ${TRIAL_DAYS} days?`,
-    "The paid formats lock and everything else keeps working. Anything you minted during the window stays yours, at the URL it was minted at.",
+    "Bagcheck asks you to subscribe before it will read your ledger again. Anything you minted during the free month stays yours, at the URL it was minted at, whether or not you carry on — and your data stays exportable and deletable from your profile either way.",
   ],
   [
     "Can I cancel?",
@@ -91,13 +92,13 @@ export default async function PricingPage() {
       <section className={styles.head}>
         <div className={styles.headCopy}>
           <span className={styles.eyebrow}>PRICING</span>
-          <h1 className={styles.h1}>Free to use. Nine dollars to publish.</h1>
+          <h1 className={styles.h1}>Thirty days free. Then fifteen a month.</h1>
         </div>
         <p className={styles.lede}>
           Bagcheck reads your brokerage and turns the year into something worth
-          posting. That part is free and stays free. Pro is for the formats —
-          publication-size exports, the carousel, a live badge — and it is the
-          only thing there is to buy.
+          posting. The first {TRIAL_DAYS} days are free and take no card. After
+          that it is {priceLine()} — one plan, everything in it, cancel from
+          your profile whenever you like.
         </p>
       </section>
 
@@ -105,42 +106,35 @@ export default async function PricingPage() {
         <div className={styles.glow} aria-hidden="true" />
         <div className={styles.inner}>
           <div className={styles.cards}>
-            <div className={styles.card}>
-              <span className={styles.label}>FREE</span>
-              <div className={styles.price}>
-                <b>$0</b>
-                <span>forever</span>
-              </div>
-              <p className={styles.note} data-mute="">
-                No card to start
-              </p>
-              <ul className={styles.list}>
-                {FREE_ALWAYS.map((f) => (
-                  <li key={f}>
-                    <Check tone="green" />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link href={userId ? "/you" : "/start"} className={styles.cta}>
-                {userId ? "Open your dashboard" : "Connect a brokerage"}
-              </Link>
-            </div>
-
             <div className={styles.card} data-paid="">
               <span className={styles.flag}>
                 <i />
                 {TRIAL_DAYS} DAYS FREE
               </span>
-              <span className={styles.label}>PRO</span>
+              <span className={styles.label}>BAGCHECK</span>
               <div className={styles.price}>
                 <b>${TIER_PRICE.pro.monthly}</b>
                 <span>/mo</span>
               </div>
               <p className={styles.note}>
-                Everything free has, plus every format below
+                {TRIAL_DAYS} days free, no card. Then {priceLine()}.
               </p>
+              {/*
+                * One list, because there is one plan. This was two cards —
+                * FREE at $0 forever beside PRO — and both halves of that are
+                * now untrue: there is no free tier, and the paid one is not a
+                * set of extra formats bolted onto it. A pricing page that
+                * still showed a free column would be selling something the
+                * gates do not deliver, which is the one thing a paywall must
+                * never do.
+                */}
               <ul className={styles.list}>
+                {PLAN_INCLUDES.map((f) => (
+                  <li key={f}>
+                    <Check tone="green" />
+                    <span>{f}</span>
+                  </li>
+                ))}
                 {Object.values(CAPABILITY_LABEL).map((f) => (
                   <li key={f}>
                     <Check tone="white" />
@@ -150,13 +144,13 @@ export default async function PricingPage() {
               </ul>
               {tier !== "free" ? (
                 <Link href="/profile" className={styles.cta} data-solid="">
-                  You are on Pro — manage it
+                  You are subscribed — manage it
                 </Link>
               ) : canCheckout ? (
-                <PricingCta label="Go Pro" />
+                <PricingCta label="Subscribe" />
               ) : (
-                <Link href="/start" className={styles.cta} data-solid="">
-                  Connect a brokerage first
+                <Link href={userId ? "/start" : "/start"} className={styles.cta} data-solid="">
+                  Start your {TRIAL_DAYS} days
                 </Link>
               )}
             </div>

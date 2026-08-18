@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getUserId } from "@/auth";
-import { isDbConfigured, syncClock } from "@/lib/db";
+import { accessFor, getCollections, isDbConfigured, syncClock } from "@/lib/db";
 import { dashboardFor } from "@/lib/portfolio/load";
+import { INSIGHTS_MARKET_DAYS, insightsGate } from "@/lib/market/days";
 import type { Pattern } from "@/lib/portfolio/types";
 import { AppNav } from "@/components/app/AppNav";
+import { EmptyState } from "@/components/app/EmptyState";
+import { PageGrid } from "@/components/app/PageGrid";
+import { Paywall } from "@/components/app/Paywall";
 import { shellUser } from "@/components/app/shellUser";
 import { Page, PageHead, signedMoney } from "@/components/dash/Chrome";
 import { HoldMeters, WeekdayBars } from "@/components/dash/Charts";
@@ -46,6 +50,70 @@ const WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six"];
 export default async function InsightsPage() {
   const userId = await getUserId();
   if (!userId || !isDbConfigured()) redirect("/you");
+
+
+  /*
+   * The subscription gate, above everything this screen does.
+   *
+   * It runs before the ledger is read rather than after: a lapsed account
+   * should not cost a full dashboard assembly to be turned away, and the
+   * paywall has nothing to say that needs the data.
+   */
+  const access = await accessFor(userId);
+  if (!access.allowed) return <Paywall trial={access.trial} />;
+
+  /*
+   * ── Ten market days before this screen says anything ──
+   *
+   * The engine already refuses to report a finding below its own sample
+   * floor, so nothing here was ever *fabricated*. What it did do was greet a
+   * reader on day two with "Nothing your history can prove yet", which is a
+   * true sentence that reads as a broken screen — the ledger it is reading at
+   * that point is mostly one opening snapshot.
+   *
+   * The clock is time, not activity, so it is reachable by every account
+   * including one that holds and never trades. It runs from the brokerage
+   * connection, which is the same anchor the trial uses.
+   */
+  const { connections } = await getCollections();
+  const connection = await connections.findOne(
+    { userId },
+    { projection: { _id: 0, createdAt: 1, accounts: 1 } },
+  );
+  const gate = insightsGate(connection?.createdAt ?? null, new Date());
+  if (!gate.unlocked) {
+    return (
+      <>
+        <AppNav
+          active="insights"
+          accounts={connection?.accounts?.length ?? 0}
+          syncedAt={null}
+          user={await shellUser()}
+        />
+        <PageGrid>
+          <EmptyState
+            eyebrow="Insights"
+            icon={connection ? "waiting" : "connect"}
+            title={
+              connection
+                ? "Reading your first fortnight"
+                : "Connect a brokerage to find your patterns"
+            }
+            body={
+              connection
+                ? `Patterns need ${INSIGHTS_MARKET_DAYS} market days of your ledger before this screen will claim one — ${gate.have} so far, ${gate.left} to go. Nothing is being withheld: a pattern read off a few days of one opening snapshot would be a coincidence with a headline.`
+                : "One tap via SnapTrade, read-only. The clock on this screen starts when your account links."
+            }
+            actions={
+              connection
+                ? [{ label: "Back to the dashboard", href: "/you" }]
+                : [{ label: "Connect a brokerage", href: "/start" }]
+            }
+          />
+        </PageGrid>
+      </>
+    );
+  }
 
   const { data, view, facts } = await dashboardFor(userId, "all");
   const months = facts.curve.length ? Math.max(1, Math.round(facts.curve.length / 30)) : 0;

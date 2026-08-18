@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CAPABILITY_LABEL, FREE_ALWAYS, TIER_PRICE, TRIAL_DAYS } from "@/lib/tiers";
+import { CAPABILITY_LABEL, PLAN_INCLUDES, TIER_PRICE, TRIAL_DAYS, priceLine } from "@/lib/tiers";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 import { MarketingFooter, MarketingNav } from "./Chrome";
 import { GoToApp, isSignedIn } from "./GoToApp";
+import { StartFree } from "./StartFree";
 import { FirstWeek } from "./FirstWeek";
 import { PnlChart } from "./PnlChart";
 import { WaitlistForm } from "./WaitlistForm";
@@ -145,6 +146,9 @@ export default async function LandingPage() {
             * account. "Get started free" is what you say to someone who has
             * not started; a returning reader who lands here has, and used to
             * have no way into the product from the page that sells it.
+            *
+            * For the reader with no account it is now the sign-in itself
+            * rather than a link to a screen holding one — see StartFree.
             */}
           <div className={styles.heroActions}>
             {signedIn ? (
@@ -156,13 +160,8 @@ export default async function LandingPage() {
                 </svg>
               </Link>
             ) : (
-              <Link href="/start" className={styles.ctaDark}>
-                Get started free
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M5 12h14" />
-                  <path d="M13 5l7 7-7 7" />
-                </svg>
-              </Link>
+              /* One tap to Google, landing on the connect step. */
+              <StartFree />
             )}
             {signedIn ? null : <GoToApp />}
             <a href="#waitlist" className={styles.ctaGhost}>
@@ -663,12 +662,11 @@ export default async function LandingPage() {
       {/*
        * ── The plans ──
        *
-       * This was three waitlist tiers with prices nobody could pay: $5 once
-       * "refunded if we miss our launch window", $9/mo "with early access",
-       * $18/mo "at launch". Checkout is live now and charges $9, so those
-       * three cards were selling a different product from the one behind the
-       * button. Two real plans and the score's waitlist, which is the only
-       * thing here that is genuinely still coming.
+       * This was three waitlist tiers with prices nobody could pay, then two
+       * plans of which one was free. Bagcheck is a subscription now — one
+       * price, a free month in front of it — so there is one plan card here
+       * and the score's waitlist beside it, which is the only thing on this
+       * section that is genuinely still coming.
        */}
       <section id="waitlist" className={styles.waitlist}>
         <div className={styles.waitGlow} aria-hidden="true" />
@@ -678,46 +676,38 @@ export default async function LandingPage() {
               {/* Not the pricing page's own headline — a reader who clicks
                   through should not meet the same sentence twice. */}
               <span className={styles.eyebrow}>THE PLANS</span>
-              <h2 className={styles.h2}>Two plans. One of them is free.</h2>
+              <h2 className={styles.h2}>One plan. The first month is free.</h2>
             </div>
-            <p className={styles.waitCount}>Every card you earn is yours on either one</p>
+            <p className={styles.waitCount}>No card to start, and every card you earn stays yours</p>
           </div>
 
           <div className={styles.tiers}>
-            <div className={styles.tier}>
-              <span className={styles.tierLabel}>FREE</span>
-              <div className={styles.tierPrice}>
-                <b>$0</b>
-                <span>forever</span>
-              </div>
-              <p className={styles.tierNote} data-mute="">
-                No card to start
-              </p>
-              <ul className={styles.tierList}>
-                {FREE_ALWAYS.map((f) => (
-                  <li key={f}>
-                    <Check tone="green" />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link href="/start" className={styles.tierCta}>
-                Get started free
-              </Link>
-            </div>
-
+            {/*
+              * One plan, one card. This was FREE at $0 forever beside PRO —
+              * a two-column table for a product that now has a single price,
+              * and the free column would be advertising a tier the gates no
+              * longer hand out.
+              */}
             <div className={styles.tier} data-popular="">
               <span className={styles.popular}>
                 <i />
                 {TRIAL_DAYS} DAYS FREE
               </span>
-              <span className={styles.tierLabel}>PRO</span>
+              <span className={styles.tierLabel}>BAGCHECK</span>
               <div className={styles.tierPrice}>
                 <b>${TIER_PRICE.pro.monthly}</b>
                 <span>/mo</span>
               </div>
-              <p className={styles.tierNote}>Everything free has, plus the formats</p>
+              <p className={styles.tierNote}>
+                {TRIAL_DAYS} days free, no card. Then {priceLine()}.
+              </p>
               <ul className={styles.tierList}>
+                {PLAN_INCLUDES.map((f: string) => (
+                  <li key={f}>
+                    <Check tone="green" />
+                    <span>{f}</span>
+                  </li>
+                ))}
                 {Object.values(CAPABILITY_LABEL).map((f) => (
                   <li key={f}>
                     <Check tone="white" />
@@ -726,7 +716,7 @@ export default async function LandingPage() {
                 ))}
               </ul>
               <Link href="/pricing" className={styles.tierCta} data-solid="">
-                What Pro adds
+                See the plan
               </Link>
             </div>
 
