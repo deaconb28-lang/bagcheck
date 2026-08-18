@@ -8,6 +8,8 @@
  * waiting for a download, and it would arrive after the thing it stood in for.
  */
 .wrap {
+  /* The arrival easing, stated once. */
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -260,9 +262,60 @@
   background: color-mix(in srgb, var(--mk-bg) 17%, transparent);
 }
 
+/*
+ * ── Motion ──
+ *
+ * The same three gestures as the app's waiting state, in this world's register.
+ *
+ * The breath came off `.wrap`, where it dimmed the field along with the
+ * placeholders, and softened from 0.6/1.4s to 0.75/2.2s — at page scale the
+ * old values blinked.
+ *
+ * The pile settles rather than simply appearing: each depth card slides the
+ * last few pixels into its fan, back to front, once. `YearDeck` fans on drag,
+ * so the wait rehearses the gesture that is coming instead of inventing one.
+ * Each card's resting `transform` is on the element, and the keyframe only
+ * states where it comes *from*, so a card that never animates is already in
+ * place.
+ */
 @media (prefers-reduced-motion: no-preference) {
-  .wrap {
-    animation: settle 1.4s ease-in-out infinite alternate;
+  .nav {
+    animation: rise 0.42s var(--ease) both;
+  }
+
+  .windows,
+  .head {
+    animation: rise 0.42s var(--ease) 90ms both;
+  }
+
+  .pile {
+    animation: rise 0.42s var(--ease) 180ms both;
+  }
+
+  .bar {
+    animation: settle 2.2s ease-in-out infinite alternate;
+  }
+
+  /*
+   * Back to front, 60ms apart. `settleBack` is a translate on top of whatever
+   * the card's own resting transform is, so the fan angles stay where the
+   * layout put them — a keyframe restating each rotation would be the fan
+   * written twice.
+   */
+  .back3 {
+    animation: settleBack 0.5s var(--ease) 180ms both;
+  }
+
+  .back2 {
+    animation: settleBack 0.5s var(--ease) 240ms both;
+  }
+
+  .back1 {
+    animation: settleBack 0.5s var(--ease) 300ms both;
+  }
+
+  .top {
+    animation: settleTop 0.5s var(--ease) 360ms both;
   }
 
   .aurora {
@@ -272,10 +325,29 @@
 
   @keyframes settle {
     from {
-      opacity: 0.6;
+      opacity: 0.75;
     }
     to {
       opacity: 1;
+    }
+  }
+
+  /*
+   * `from`-only, and it moves the card's *own* box rather than its transform:
+   * `translate` composes with the `transform` each depth class already sets,
+   * so the fan is stated once in the layout and never restated here.
+   */
+  @keyframes settleBack {
+    from {
+      translate: 0 18px;
+      opacity: 0;
+    }
+  }
+
+  @keyframes settleTop {
+    from {
+      translate: 0 24px;
+      opacity: 0;
     }
   }
 }

@@ -12,6 +12,8 @@
  * asked to wait for while you are already waiting for a download.
  */
 .wrap {
+  /* The arrival easing, stated once — five rules below read it. */
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -351,30 +353,116 @@
 }
 
 /*
- * One slow breath across the whole set, not a shimmer sweeping each plate.
- * A travelling highlight is an ambient loop on a surface, which this system
- * does not do — and at three plates it reads as three separate things
- * loading rather than one screen.
+ * ── Motion ──
  *
- * The field drifts on its own much longer cycle, so the two never beat
- * against each other into a pulse.
+ * Three gestures, each doing one job, and only the last of them repeats.
+ *
+ * **The arrival.** The blocks rise in reading order, oldest-first, under 300ms
+ * end to end — the figure this system already uses for every other arrival,
+ * and the same `rise` the real panels take when they land. That last part is
+ * the point: the skeleton and the screen replacing it now move alike, so the
+ * handover reads as a continuation rather than as a swap. `rise` runs
+ * `both`, so the resting state is the finished design and nothing here
+ * depends on an animation having run.
+ *
+ * **The breath.** It used to sit on `.wrap`, which dimmed the entire page —
+ * the drifting field included — so the atmosphere throbbed along with the
+ * placeholders. That is an ambient loop on a surface, which this system does
+ * not do. It is on the grey elements alone now, and softer: 0.75 rather than
+ * 0.62, over 2.2s rather than 1.4s. At the old amplitude and rate a full hero,
+ * four dials, a stat row and three panels blinked; the values were tuned when
+ * this screen was four plates.
+ *
+ * Still no shimmer sweeping each plate. A travelling highlight at three plates
+ * reads as three separate things loading rather than as one screen.
+ *
+ * **The arc.** The one gesture that is the product's own. It draws itself to
+ * its resting angle once, exactly as `ScoreRing` transitions its offset on
+ * mount, and then holds a slow pulse of light.
+ *
+ * It is not a spinner, and the distinction is load-bearing rather than
+ * semantic: a spinner claims work is in progress by *rotating*, and this never
+ * rotates. What repeats is opacity — light behind the product's key metric,
+ * which is the one place this system has always allowed an ambient loop. And
+ * because the pulse oscillates around a resting 1 and the draw is a `from`-only
+ * keyframe, an arc that never animates is simply the finished arc.
+ *
+ * The field drifts on its own much longer cycle, so no two of these ever beat
+ * against each other into a single pulse.
  */
 @media (prefers-reduced-motion: no-preference) {
-  .wrap {
-    animation: settle 1.4s ease-in-out infinite alternate;
+  /*
+   * ── The arrival, on the blocks ──
+   * Reading order, oldest first, 260ms end to end.
+   */
+  .hero {
+    animation: rise 0.42s var(--ease) both;
   }
 
+  /* The words follow the ring rather than arriving with it. */
+  .words {
+    animation: rise 0.42s var(--ease) 90ms both;
+  }
+
+  .arcs {
+    animation: rise 0.42s var(--ease) 180ms both;
+  }
+
+  .stats {
+    animation: rise 0.42s var(--ease) 260ms both;
+  }
+
+  /*
+   * ── The breath, on the grey ──
+   * Two elements are both a block and a placeholder, so they state the
+   * arrival and the breath together rather than inheriting a half of each
+   * from two rules that would tie on specificity.
+   */
+  .bar,
+  .character {
+    animation: settle 2.2s ease-in-out infinite alternate;
+  }
+
+  .total {
+    animation:
+      rise 0.42s var(--ease) 260ms both,
+      settle 2.2s ease-in-out infinite alternate;
+  }
+
+  .plate {
+    animation:
+      rise 0.42s var(--ease) 260ms both,
+      settle 2.2s ease-in-out infinite alternate;
+  }
+
+  /* ── The field, and the one gesture that is the product's own ── */
   .aurora {
     animation: drift 62s ease-in-out infinite;
     will-change: transform;
   }
 
+  .ringArc {
+    animation:
+      draw 1.1s cubic-bezier(0.2, 0.8, 0.3, 1) both,
+      breathe 3.8s ease-in-out 1.1s infinite;
+  }
+
   @keyframes settle {
     from {
-      opacity: 0.62;
+      opacity: 0.75;
     }
     to {
       opacity: 1;
+    }
+  }
+
+  /*
+   * `from`-only: the resting `stroke-dasharray` sits on the element itself, so
+   * the arc is correct whether or not this keyframe ever runs.
+   */
+  @keyframes draw {
+    from {
+      stroke-dasharray: 0 100;
     }
   }
 }

@@ -59,6 +59,13 @@ const SCREENS = [
   { key: "insights", path: "/insights", modes: ["dark"] },
   { key: "wrapped", path: "/wrapped", modes: ["dark"] },
   { key: "profile", path: "/profile", modes: ["dark"] },
+  /*
+   * The two waiting states. They are transient in the app — Next swaps a
+   * `loading.tsx` out the moment its segment resolves — so this is the only
+   * way the sweep can see them. `/debug/loading` renders both and exists only
+   * while DEBUG_PAGE is set, which `serve()` below does.
+   */
+  { key: "loading", path: "/debug/loading", modes: ["dark"] },
 ];
 
 /**
@@ -78,6 +85,14 @@ const SECTIONS = [
    * thousand pixels — the insight grid had never been looked at below the fold.
    */
   { key: "page-dash", path: "/you", selector: '[class*="chrome_page"]', mode: "dark" },
+  /*
+   * Each waiting state whole. The viewport shot above catches the app one's
+   * fold and cuts the Wrapped one off entirely, since the preview stacks both
+   * on one page — and the fold is the least interesting thing about a screen
+   * whose whole job is to stand in for another screen's shape.
+   */
+  { key: "loading-app", path: "/debug/loading", selector: "section:nth-of-type(1)", mode: "dark" },
+  { key: "loading-wrapped", path: "/debug/loading", selector: "section:nth-of-type(2)", mode: "dark" },
   { key: "page-holdings", path: "/holdings", selector: '[class*="chrome_page"]', mode: "dark" },
   { key: "page-insights", path: "/insights", selector: '[class*="chrome_page"]', mode: "dark" },
 ];
@@ -204,6 +219,8 @@ function serve(uri, userId) {
         NODE_ENV: "production",
         PORT: String(PORT),
         APP_LOCKED: "",
+        /* Opens /debug/loading, the only surface that can show a loading state. */
+        DEBUG_PAGE: "1",
         APP_URL: BASE,
         MONGODB_URI: uri,
         MONGODB_DB: "bagcheck",
