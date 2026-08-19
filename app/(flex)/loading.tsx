@@ -61,7 +61,7 @@ export default function Loading() {
 
       <div className={styles.words} aria-hidden="true">
         <p className={styles.title}>Reading your year</p>
-        <p className={styles.note}>Every trade you closed, in order.</p>
+        <p className={styles.note}>Every trade you closed, in the order you flew it.</p>
       </div>
     </div>
   );

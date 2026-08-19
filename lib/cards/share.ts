@@ -89,7 +89,7 @@ export function imageUrl(slug: string, format: ShareFormat): string {
 
 /** The filename a download lands under. Readable in a camera roll. */
 export function downloadName(kind: string, format: ShareFormat): string {
-  return `steadyhands-${kind}-${format}.png`;
+  return `supercruise-${kind}-${format}.png`;
 }
 
 /**

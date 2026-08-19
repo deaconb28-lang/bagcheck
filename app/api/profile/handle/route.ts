@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
  */
 const RESERVED = new Set([
   "you", "holdings", "insights", "wrapped", "profile", "start", "pricing",
-  "admin", "api", "legal", "debug", "steadyhands", "support", "help", "settings",
+  "admin", "api", "legal", "debug", "supercruise", "support", "help", "settings",
 ]);
 
 export async function POST(req: Request) {

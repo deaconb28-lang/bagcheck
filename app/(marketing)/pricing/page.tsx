@@ -65,7 +65,7 @@ const QA: Array<[string, string]> = [
     "Any time, from your profile. It runs to the end of the period you paid for.",
   ],
   [
-    "Does steadyhands touch my money?",
+    "Does supercruise touch my money?",
     "No. Read-only through SnapTrade — it cannot trade, move a dollar, or hold a credential.",
   ],
   [
@@ -109,7 +109,7 @@ export default async function PricingPage() {
                 <i />
                 {TRIAL_DAYS} DAYS FREE
               </span>
-              <span className={styles.label}>STEADYHANDS</span>
+              <span className={styles.label}>SUPERCRUISE</span>
               <div className={styles.price}>
                 <b>${TIER_PRICE.pro.monthly}</b>
                 <span>/mo</span>

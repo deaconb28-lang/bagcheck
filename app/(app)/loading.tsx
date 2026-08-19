@@ -37,7 +37,7 @@ export default function Loading() {
 
       <div className={styles.words} aria-hidden="true">
         <p className={styles.title}>Calculating P&amp;L</p>
-        <p className={styles.note}>reading your positions</p>
+        <p className={styles.note}>reading the flight data</p>
       </div>
     </div>
   );

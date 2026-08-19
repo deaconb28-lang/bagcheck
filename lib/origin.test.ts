@@ -19,19 +19,19 @@ const withEnv = (value: string | undefined, run: () => void) => {
 };
 
 test("a declared APP_URL wins over anything the request claims", () => {
-  withEnv("https://steadyhands.app", () => {
+  withEnv("https://supercruise.app", () => {
     assert.equal(
       originOf(req("https://localhost:8080/api/x", { host: "localhost:8080" })),
-      "https://steadyhands.app",
+      "https://supercruise.app",
     );
   });
 });
 
 test("a declared origin is normalised, so a trailing slash cannot double up", () => {
-  withEnv("https://steadyhands.app/", () => {
+  withEnv("https://supercruise.app/", () => {
     assert.equal(
       absoluteUrl(req("https://localhost:8080/x"), "/api/snaptrade/callback"),
-      "https://steadyhands.app/api/snaptrade/callback",
+      "https://supercruise.app/api/snaptrade/callback",
     );
   });
 });
@@ -80,10 +80,10 @@ test("with no headers at all it falls back to the request, which is right in dev
 });
 
 test("a query string survives the join", () => {
-  withEnv("https://steadyhands.app", () => {
+  withEnv("https://supercruise.app", () => {
     assert.equal(
       absoluteUrl(req("http://x/y"), "/wrapped?connected=1"),
-      "https://steadyhands.app/wrapped?connected=1",
+      "https://supercruise.app/wrapped?connected=1",
     );
   });
 });

@@ -92,7 +92,7 @@ function WrappedScreen() {
         <div>
           <div className={styles.fwMiniEyebrow}>2026 WRAPPED</div>
           <div className={styles.fwMiniReturn}>+38.4%</div>
-          <div className={styles.fwMiniSub}>Top 3% of steadyhands</div>
+          <div className={styles.fwMiniSub}>Top 3% of supercruise</div>
         </div>
       </div>
       <div className={styles.fwChecklist}>

@@ -13,7 +13,7 @@ import styles from "./landing.module.css";
 
 /*
  * The one page whose title is not run through the root template — a landing
- * called "steadyhands · steadyhands" is what a template does when nobody checks.
+ * called "supercruise · supercruise" is what a template does when nobody checks.
  */
 export const metadata: Metadata = {
   title: { absolute: `${SITE_NAME} — ${SITE_TAGLINE.toLowerCase()}` },
@@ -132,13 +132,14 @@ export default async function LandingPage() {
             <span>Robinhood, Fidelity, Schwab and 20+ more</span>
           </div>
           <h1 className={styles.h1}>
-            <span className={styles.h1Strong}>Meet steadyhands</span>
-            <span>Turn your portfolio</span>
-            <span>into a flex</span>
+            <span className={styles.h1Strong}>Meet supercruise</span>
+            <span>A flight recorder</span>
+            <span>for your portfolio</span>
           </h1>
           <p className={styles.lede}>
-            Connect your brokerage in two taps through SnapTrade. Steadyhands reads
-            the numbers and turns your year into a Wrapped worth posting.
+            Connect your brokerage in two taps through SnapTrade. Supercruise
+            reads every trade you made and writes down how you actually flew —
+            then turns the year into a Wrapped worth posting.
           </p>
           {/*
             * The hero's first action depends on whether the reader has an
@@ -309,7 +310,7 @@ export default async function LandingPage() {
                       <span>@jordan</span>
                     </div>
                     <div className={styles.wrapReturn}>+38.4%</div>
-                    <div className={styles.wrapSub}>Return this year · Top 3% of steadyhands</div>
+                    <div className={styles.wrapSub}>Return this year · Top 3% of supercruise</div>
                     <div className={styles.wrapChips}>
                       <span className={styles.typeChip}>The Conviction Buyer</span>
                       <span className={styles.tradesChip}>142 trades</span>
@@ -373,7 +374,7 @@ export default async function LandingPage() {
               </div>
               <span className={styles.cardPill}>
                 <i />
-                Top 3% of steadyhands
+                Top 3% of supercruise
               </span>
             </div>,
 
@@ -662,7 +663,7 @@ export default async function LandingPage() {
        * ── The plans ──
        *
        * This was three waitlist tiers with prices nobody could pay, then two
-       * plans of which one was free. Steadyhands is a subscription now — one
+       * plans of which one was free. Supercruise is a subscription now — one
        * price, a free month in front of it — so there is one plan card here
        * and the score's waitlist beside it, which is the only thing on this
        * section that is genuinely still coming.
@@ -692,7 +693,7 @@ export default async function LandingPage() {
                 <i />
                 {TRIAL_DAYS} DAYS FREE
               </span>
-              <span className={styles.tierLabel}>STEADYHANDS</span>
+              <span className={styles.tierLabel}>SUPERCRUISE</span>
               <div className={styles.tierPrice}>
                 <b>${TIER_PRICE.pro.monthly}</b>
                 <span>/mo</span>

@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
-import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 
 /**
- * The web manifest, so a phone that adds Steadyhands to its home screen gets the
+ * The web manifest, so a phone that adds Supercruise to its home screen gets the
  * mark and the light field rather than a screenshot and a white flash.
  *
  * `background_color` and `theme_color` are the one place besides
@@ -11,7 +11,7 @@ import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: `${SITE_NAME} — fitness tracking for your portfolio`,
+    name: `${SITE_NAME} — ${SITE_TAGLINE.toLowerCase()}`,
     short_name: SITE_NAME,
     description: SITE_DESCRIPTION,
     start_url: "/you",

@@ -20,7 +20,7 @@ import type { WrappedStats } from "./stats";
  */
 
 const TEMPLATE = `<div class="card" data-card="05">
-  <p class="eyebrow">steadyhands &middot; <span data-token="YEAR">{{YEAR}}</span></p>
+  <p class="eyebrow">supercruise &middot; <span data-token="YEAR">{{YEAR}}</span></p>
   <p class="hero" data-kind="figure" data-token="BEST_RETURN_PCT">{{BEST_RETURN_PCT}}</p>
   <h1 class="title">Best performer</h1>
   <span class="factValue" data-kind="word" data-token="BEST_TICKER">{{BEST_TICKER}}</span>

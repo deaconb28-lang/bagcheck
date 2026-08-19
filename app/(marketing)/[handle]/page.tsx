@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { publishedHandle } from "@/lib/db/publicLedger";
-import { SteadyhandsMark } from "@/components/brand/SteadyhandsMark";
+import { SupercruiseMark } from "@/components/brand/SupercruiseMark";
 import styles from "./handle.module.css";
 
 /**
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const claimed = await publishedHandle(handle);
   if (!claimed) return {};
   return {
-    title: `@${claimed} · steadyhands`,
+    title: `@${claimed} · supercruise`,
     description: "A public ledger, read off a brokerage. Coming soon.",
   };
 }
@@ -67,7 +67,7 @@ export default async function PublicLedgerPage({ params }: Props) {
   return (
     <main className={styles.page}>
       <span className={styles.mark} aria-hidden="true">
-        <SteadyhandsMark size={34} ground="var(--mk-field)" />
+        <SupercruiseMark size={34} />
       </span>
 
       <p className={styles.eyebrow}>reserved</p>
@@ -83,7 +83,7 @@ export default async function PublicLedgerPage({ params }: Props) {
           Claim your handle
         </Link>
         <Link href="/" className={styles.ghost}>
-          What steadyhands is
+          What supercruise is
         </Link>
       </div>
     </main>

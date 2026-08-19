@@ -3,7 +3,7 @@ import { getUserId, isAuthConfigured } from "@/auth";
 import { isDbConfigured, linkedBrokerage } from "@/lib/db";
 import { isSnapTradeConfigured } from "@/lib/snaptrade";
 import { appLocked } from "@/lib/launch";
-import { SteadyhandsMark } from "@/components/brand/SteadyhandsMark";
+import { SupercruiseMark } from "@/components/brand/SupercruiseMark";
 import { GoogleSignIn } from "@/components/app/GoogleSignIn";
 import { DancingCards } from "./DancingCards";
 import { ConnectButton } from "./ConnectButton";
@@ -69,7 +69,7 @@ export default async function StartPage({
             </h1>
             <p className={styles.lede}>
               {institutionLine(linked.institutions, linked.accounts)} It stays
-              linked to your Google account, so Steadyhands keeps reading new
+              linked to your Google account, so Supercruise keeps reading new
               fills on its own — there is nothing to connect again.
             </p>
             {/*
@@ -250,8 +250,8 @@ function Header({ step }: { step: string }) {
   return (
     <header className={shell.bar}>
       <Link href="/" className={shell.brand}>
-        <SteadyhandsMark size={26} />
-        <span className={shell.wordmark}>steadyhands</span>
+        <SupercruiseMark size={26} />
+        <span className={shell.wordmark}>supercruise</span>
       </Link>
       <span className={shell.barNote}>{step}</span>
     </header>

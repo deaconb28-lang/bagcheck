@@ -9,7 +9,7 @@ import type { CardKind } from "@/lib/cards";
  */
 
 /** Unsplash asks for the app name on every referral link. */
-export const APP_NAME = "steadyhands";
+export const APP_NAME = "supercruise";
 
 /**
  * One fixed query per card kind.

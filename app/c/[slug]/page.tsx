@@ -14,12 +14,12 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const card = isDbConfigured() ? await cardBySlug(slug) : null;
-  if (!card) return { title: "Steadyhands" };
+  if (!card) return { title: "Supercruise" };
 
   const title = `${card.value} — ${card.tail}`;
   const image = `/og/${slug}`;
   return {
-    title: `${title} · Steadyhands`,
+    title: `${title} · Supercruise`,
     description: "Read-only brokerage data behind every number.",
     openGraph: {
       title,
@@ -84,7 +84,7 @@ export default async function CardPage({ params }: Props) {
             This came from a brokerage, not a screenshot
           </h1>
           <p className={styles.lede}>
-            Steadyhands reads a read-only connection to the account behind this
+            Supercruise reads a read-only connection to the account behind this
             number. It measures behaviour — hold time, sizing, what someone does
             in a drawdown — and it never places a trade.
           </p>

@@ -1,6 +1,6 @@
-# Canopy
+# Supercruise
 
-Fitness tracking for your investment portfolio. Connect a brokerage read-only,
+A flight recorder for your portfolio. Connect a brokerage read-only,
 get a score for how you actually invest — behaviour, not returns.
 
 Product and visual specs live in `docs/`; the working rules are in `CLAUDE.md`.

@@ -10,7 +10,7 @@ import styles from "./hero.module.css";
  *
  * The dashboard used to open on account value. That is the least interesting
  * true thing this product knows — a brokerage app tells you the same number,
- * faster, and it moves whether or not you did anything. What Steadyhands knows
+ * faster, and it moves whether or not you did anything. What Supercruise knows
  * that nothing else does is what the *conduct* looked like, and it has been
  * computing exactly that every night: a 0–100 score, four components, and one
  * of sixteen archetypes drawn as a character with a face.

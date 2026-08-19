@@ -6,7 +6,7 @@ import type { TrialState } from "@/lib/tiers";
 /**
  * The screen a lapsed account meets.
  *
- * Steadyhands is a subscription: the free month buys the whole product, and when
+ * Supercruise is a subscription: the free month buys the whole product, and when
  * it runs out this stands where the screen would be. That is a real departure
  * — monetization used to be "present, never blocking", with a locked tile
  * sitting in the slot its unlocked twin would occupy — and the two rules that
@@ -30,9 +30,9 @@ export function Paywall({ trial }: { trial: TrialState }) {
   return (
     <PageGrid>
       <EmptyState
-        eyebrow="steadyhands"
+        eyebrow="supercruise"
         icon="waiting"
-        title={trial.expired ? "Your free month has ended" : "Steadyhands needs a plan"}
+        title={trial.expired ? "Your free month has ended" : "Supercruise needs a plan"}
         body={
           trial.endsOn
             ? `Your free ${TRIAL_DAYS} days ended ${trial.endsOn}. Reading your ledger needs a plan — ${priceLine()}, cancel whenever. Minted cards stay live, and export stays open.`

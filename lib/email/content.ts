@@ -36,7 +36,7 @@ export interface RecapInput {
   archetype: string;
 }
 
-const BASE = process.env.APP_URL || "https://steadyhands.app";
+const BASE = process.env.APP_URL || "https://supercruise.app";
 
 const signed = (n: number) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n)}`;
 const money = (n: number) =>
@@ -75,7 +75,7 @@ export function dailyBrief(input: BriefInput): EmailContent {
   }
 
   return {
-    subject: `Steadyhands — ${input.score} on ${input.date}`,
+    subject: `Supercruise — ${input.score} on ${input.date}`,
     lede: input.sentence || `Your Health score read ${input.score} today.`,
     blocks,
     provenance: `Read from your brokerage · ${input.date}`,
@@ -113,7 +113,7 @@ export function weeklyRecap(input: RecapInput): EmailContent {
   }
 
   return {
-    subject: `Steadyhands — your week of ${input.weekOf}`,
+    subject: `Supercruise — your week of ${input.weekOf}`,
     lede: `Seven days as ${input.archetype}, read from your own ledger.`,
     blocks,
     provenance: `Week of ${input.weekOf} · read from your brokerage`,

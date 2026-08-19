@@ -1,5 +1,5 @@
 /*
- * Steadyhands colour tokens — the single source of colour.
+ * Supercruise colour tokens — the single source of colour.
  * A palette hex anywhere else in the repo's source is a bug.
  *
  * ── The system ────────────────────────────────────────────────────────────
@@ -16,7 +16,7 @@
  *   moss    green   money up, and discipline — the score, sessions inside
  *                   your rules, a positive figure
  *   loss    red     money down, and nothing else
- *   accent  violet  Steadyhands's own voice — the written insight, the nightly
+ *   accent  violet  Supercruise's own voice — the written insight, the nightly
  *                   score arriving, Investor Age
  *   ember   amber   scarcity and the live
  *   signal  steel   comparison and exposure, a deliberate step down
@@ -125,7 +125,7 @@
   --loss-tint: rgba(198, 47, 55, 0.09);
   --loss-line: rgba(198, 47, 55, 0.28);
 
-  /* ── The accent, reserved: Steadyhands's own voice. ── */
+  /* ── The accent, reserved: Supercruise's own voice. ── */
   --accent: #6d3fd4;
   --accent-deep: #5a2fbe;
   --accent-tint: rgba(109, 63, 212, 0.1);
@@ -152,7 +152,7 @@
    * It used to be moss, which put a hundred green cells on a dashboard that
    * already had a green ring and eight green meters — at that point the hue
    * had stopped carrying information and was just the colour of the product.
-   * "Days inside your rules" is Steadyhands's own reading of the conduct, which
+   * "Days inside your rules" is Supercruise's own reading of the conduct, which
    * is exactly what the violet is reserved for, and it leaves green meaning
    * one thing on this screen: money went up.
    */

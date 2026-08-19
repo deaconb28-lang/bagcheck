@@ -115,7 +115,7 @@ export default async function DebugPage() {
     <main className={styles.page}>
       <ModeScope mode="light" />
       <header className={styles.head}>
-        <Eyebrow>Steadyhands · debug · M1 ledger</Eyebrow>
+        <Eyebrow>Supercruise · debug · M1 ledger</Eyebrow>
         <h1 className={`disp ${styles.title}`}>Raw parsed history</h1>
         <Button href="/today" ghost>
           Back to the app

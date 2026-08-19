@@ -14,7 +14,7 @@ import styles from "./flex.module.css";
  * the marketing page reads as one product rather than two.
  */
 export const metadata: Metadata = {
-  title: "steadyhands — your Wrapped",
+  title: "supercruise — your Wrapped",
   description: "Connect a brokerage and get your year back as a set of cards worth posting.",
 };
 

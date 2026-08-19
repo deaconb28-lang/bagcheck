@@ -107,7 +107,7 @@ export default async function DashboardPage({
     return (
       <PageGrid>
         <EmptyState
-          eyebrow="steadyhands"
+          eyebrow="supercruise"
           icon={userId ? "setup" : "signin"}
           title={userId ? "Configure the ledger store" : "Sign in to see your dashboard"}
           body={
@@ -143,7 +143,7 @@ export default async function DashboardPage({
     return (
       <PageGrid>
         <EmptyState
-          eyebrow="steadyhands"
+          eyebrow="supercruise"
           icon={data.connection ? "waiting" : "connect"}
           title={data.connection ? "Nothing read yet" : "Connect a brokerage"}
           body={

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { appLocked } from "@/lib/launch";
 import { GoToApp } from "./GoToApp";
-import { SteadyhandsMark } from "@/components/brand/SteadyhandsMark";
+import { SupercruiseMark } from "@/components/brand/SupercruiseMark";
 import styles from "./landing.module.css";
 
 /*
@@ -17,8 +17,8 @@ export async function MarketingNav({ current }: { current?: "pricing" }) {
   return (
     <header className={styles.nav}>
       <Link href="/" className={styles.brand}>
-        <SteadyhandsMark />
-        <span className={styles.wordmark}>steadyhands</span>
+        <SupercruiseMark />
+        <span className={styles.wordmark}>supercruise</span>
       </Link>
       <nav className={styles.navLinks} aria-label="Sections">
         <Link href="/#deck">Wrapped</Link>
@@ -53,9 +53,9 @@ export async function MarketingFooter() {
     <footer className={styles.foot}>
       <div className={styles.footInner}>
         <span className={styles.brand} data-foot="">
-          <SteadyhandsMark size={28} ground="var(--mk-field)" />
+          <SupercruiseMark size={28} />
           <span className={styles.wordmark} data-small="">
-            steadyhands
+            supercruise
           </span>
         </span>
         <div className={styles.footLinks}>
@@ -66,7 +66,7 @@ export async function MarketingFooter() {
           <Link href="/legal/photos">Photo credits</Link>
           {!locked ? <Link href="/app">Go to app</Link> : null}
         </div>
-        <span className={styles.footNote}>© 2026 steadyhands</span>
+        <span className={styles.footNote}>© 2026 supercruise</span>
       </div>
     </footer>
   );

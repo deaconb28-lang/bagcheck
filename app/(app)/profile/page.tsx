@@ -47,7 +47,7 @@ export default async function ProfilePage() {
     return (
       <PageGrid>
         <EmptyState
-          eyebrow="Steadyhands · profile"
+          eyebrow="Supercruise · profile"
           icon={userId ? "setup" : "signin"}
           title={userId ? "Configure the ledger store" : "Sign in to open your profile"}
           body={
@@ -206,7 +206,7 @@ export default async function ProfilePage() {
                 .
               </p>
               <p className={styles.note}>
-                Steadyhands can see what you did. It cannot place, cancel, or modify
+                Supercruise can see what you did. It cannot place, cancel, or modify
                 an order.
               </p>
             </div>
@@ -244,7 +244,7 @@ export default async function ProfilePage() {
       <Card>
         <div className={styles.block}>
           <Eyebrow>Notifications</Eyebrow>
-          <h2 className={`disp ${styles.h2}`}>What Steadyhands sends you</h2>
+          <h2 className={`disp ${styles.h2}`}>What Supercruise sends you</h2>
           <EmailPrefs
             daily={Boolean(emailPrefs?.emailDaily)}
             weekly={Boolean(emailPrefs?.emailWeekly)}

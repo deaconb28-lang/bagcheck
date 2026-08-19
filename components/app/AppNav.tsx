@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SteadyhandsMark, Wordmark } from "@/components/brand/SteadyhandsMark";
+import { SupercruiseMark, Wordmark } from "@/components/brand/SupercruiseMark";
 import { SyncNow } from "./SyncNow";
 import type { ShellUser } from "./AppRail";
 import styles from "./AppNav.module.css";
@@ -49,8 +49,8 @@ export function AppNav({
   return (
     <header className={styles.head}>
       <div className={styles.left}>
-        <Link href="/you" className={styles.brand} aria-label="steadyhands">
-          <SteadyhandsMark size={28} ground="var(--bg)" />
+        <Link href="/you" className={styles.brand} aria-label="supercruise">
+          <SupercruiseMark size={28} />
           <Wordmark />
         </Link>
 
