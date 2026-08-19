@@ -39,32 +39,60 @@
   align-items: flex-start;
 }
 
+/*
+ * Direction is fill here for the same reason it is in the race: a gained day
+ * is solid and a lost day is hatched inside a hairline. Two bar charts on one
+ * screen separating direction two different ways — one by fill, one by a step
+ * of grey — is the screen contradicting itself, and a pair of greys is exactly
+ * the distinction a reader is least able to make at column width.
+ *
+ * They grow by `clip-path` rather than `scaleY`: scaling a hatched column
+ * shears its own hatch and thickens its hairline on the way up.
+ */
 .up,
 .down {
   display: block;
   width: 100%;
-  animation: riseBar 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --lane: color-mix(in srgb, var(--moss) 58%, transparent);
 }
 
 .up {
   border-radius: 5px 5px 2px 2px;
-  transform-origin: bottom;
-  background: color-mix(in srgb, var(--moss) 58%, transparent);
+  background: var(--lane);
+  animation: growUp 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .down {
   border-radius: 2px 2px 5px 5px;
-  transform-origin: top;
-  background: color-mix(in srgb, var(--loss) 62%, transparent);
+  --lane: color-mix(in srgb, var(--loss) 76%, transparent);
+  box-shadow: inset 0 0 0 1px var(--lane);
+  background: repeating-linear-gradient(
+    135deg,
+    var(--lane) 0 1.5px,
+    transparent 1.5px 6px
+  );
+  animation: growDown 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Only the largest moves in the window take the hue at full strength. */
+/* Only the largest moves in the window take the ramp at full strength. */
 .up[data-strong] {
-  background: var(--moss-deep);
+  --lane: var(--moss);
 }
 
 .down[data-strong] {
-  background: var(--loss-deep);
+  --lane: var(--loss);
+}
+
+@keyframes growUp {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+}
+
+@keyframes growDown {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
 }
 
 @keyframes riseBar {
@@ -105,12 +133,18 @@
   border-radius: 3px;
 }
 
+/* The legend states the same two treatments the columns wear. */
 .swatchUp {
-  background: var(--moss-deep);
+  background: var(--moss);
 }
 
 .swatchDown {
-  background: var(--loss-deep);
+  box-shadow: inset 0 0 0 1px var(--loss);
+  background: repeating-linear-gradient(
+    135deg,
+    var(--loss) 0 1.5px,
+    transparent 1.5px 5px
+  );
 }
 
 /* ── Allocation donut ───────────────────────────────────────────────────── */
