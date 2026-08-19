@@ -558,7 +558,7 @@ export function PnlWave({
             * and a browser handed one drops the attribute and paints nothing.
             */}
           <linearGradient id="waveFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={ends >= 0 ? "var(--moss)" : "var(--loss)"} stopOpacity="0.28" />
+            <stop offset="0%" stopColor={ends >= 0 ? "var(--moss)" : "var(--loss)"} stopOpacity="0.2" />
             <stop offset="100%" stopColor={ends >= 0 ? "var(--moss)" : "var(--loss)"} stopOpacity="0.02" />
           </linearGradient>
         </defs>
@@ -571,10 +571,18 @@ export function PnlWave({
           strokeWidth="0.6"
           vectorEffect="non-scaling-stroke"
         />
-        <path d={area} fill="url(#waveFill)" />
+        <path className={styles.waveArea} d={area} fill="url(#waveFill)" />
+        {/*
+          * The line draws itself left to right. `pathLength` normalises the
+          * run to 1, so one dash unit is the whole path and the offset is a
+          * share of it — no length arithmetic, and the finished state is a
+          * zero offset, which is what renders if the animation never starts.
+          */}
         <path
+          className={styles.waveLine}
           d={`M${line}`}
           fill="none"
+          pathLength={1}
           stroke={ends >= 0 ? "var(--moss)" : "var(--loss)"}
           strokeWidth="2"
           strokeLinejoin="round"

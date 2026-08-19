@@ -167,7 +167,7 @@ export default async function InsightsPage() {
                   <HoldMeters winners={pattern.chart.winners} losers={pattern.chart.losers} />
                 ) : pattern.chart.type === "profile" ? (
                   <div className={styles.type}>
-                    <Avatar archetype={pattern.chart.archetype} size={92} tone="ink" />
+                    <Avatar archetype={pattern.chart.archetype} size={92} />
                     <dl className={styles.typeList}>
                       {Object.entries(pattern.chart.components).map(([name, value]) => (
                         <div key={name} className={styles.typeRow}>

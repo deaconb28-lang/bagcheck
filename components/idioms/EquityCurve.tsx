@@ -52,8 +52,23 @@ export function EquityCurve({ series }: { series: CurvePoint[] }) {
         {gridlines.map((y) => (
           <line key={y} x1={0} x2={W} y1={y} y2={y} stroke="var(--line-light)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
         ))}
-        <path d={fill} fill="var(--moss-tint)" />
-        <path d={line} fill="none" stroke="var(--moss)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+        <path className={styles.area} d={fill} fill="var(--moss-tint)" />
+        {/*
+          * `pathLength` normalises the run to 1, so one dash unit is the whole
+          * curve and the offset is a share of it. The finished state is a zero
+          * offset — what renders if the animation never starts.
+          */}
+        <path
+          className={styles.line}
+          d={line}
+          fill="none"
+          pathLength={1}
+          stroke="var(--moss)"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
+        />
         <circle cx={end[0]} cy={end[1]} r="4" fill="var(--moss)" />
       </svg>
       <figcaption className={styles.axis}>

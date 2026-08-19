@@ -43,7 +43,7 @@ import {
 import { InsightCard, WrappedPromo } from "@/components/dash/Cards";
 import { ScoreHero } from "@/components/dash/ScoreHero";
 import { Collection } from "@/components/dash/Collection";
-import { EquityCurve, HeatGrid } from "@/components/idioms";
+import { CountUp, EquityCurve, HeatGrid } from "@/components/idioms";
 
 const RANGES: Array<{ key: RangeKey; label: string }> = [
   { key: "45d", label: "45D" },
@@ -434,11 +434,13 @@ export default async function DashboardPage({
             </PanelHead>
             <div className="dashFigureRow">
               <span className={"num dashFigure"}>
-                {perf.sessions.length
-                  ? signedMoney(perf.realised)
-                  : book.priced
-                    ? signedMoney(book.unrealised)
-                    : "—"}
+                {perf.sessions.length ? (
+                  <CountUp value={perf.realised} kind="signedMoney" />
+                ) : book.priced ? (
+                  <CountUp value={book.unrealised} kind="signedMoney" />
+                ) : (
+                  "—"
+                )}
               </span>
               {perf.sessions.length && perf.ret != null ? (
                 <span className="dashFigurePct" data-tone={perf.ret >= 0 ? "moss" : "loss"}>
@@ -530,7 +532,10 @@ export default async function DashboardPage({
                   </PanelHead>
                   <div className="dashFigureRow">
                     <span className="num dashFigure">
-                      {signedMoney(view.cumulative[view.cumulative.length - 1].total)}
+                      <CountUp
+                        value={view.cumulative[view.cumulative.length - 1].total}
+                        kind="signedMoney"
+                      />
                     </span>
                   </div>
                   <PnlWave points={view.cumulative} />
@@ -543,7 +548,7 @@ export default async function DashboardPage({
                   </PanelHead>
                   <div className="dashFigureRow">
                     <span className="num dashFigure">
-                      {money(view.curve[view.curve.length - 1].value)}
+                      <CountUp value={view.curve[view.curve.length - 1].value} kind="money" />
                     </span>
                   </div>
                   <EquityCurve series={view.curve} />

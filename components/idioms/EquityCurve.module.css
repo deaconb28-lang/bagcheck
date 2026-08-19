@@ -26,3 +26,36 @@
   letter-spacing: 0.08em;
   color: var(--meta);
 }
+
+/* The curve draws itself, then the area fills in behind it. */
+.line {
+  stroke-dasharray: 1;
+  animation: drawCurve 1300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.area {
+  animation: fadeArea 800ms ease-out 500ms both;
+}
+
+@keyframes drawCurve {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+@keyframes fadeArea {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line,
+  .area {
+    animation: none;
+  }
+
+  .line {
+    stroke-dasharray: none;
+  }
+}

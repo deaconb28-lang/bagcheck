@@ -52,10 +52,20 @@ export function Collection({ year, earnedNos }: { year: number; earnedNos: strin
       </div>
 
       <ul className={styles.grid}>
-        {ROSTER.map((card) => {
+        {ROSTER.map((card, i) => {
           const minted = have.has(card.no);
           return (
-            <li key={card.no} className={styles.frame} data-minted={minted || undefined}>
+            <li
+              key={card.no}
+              className={styles.frame}
+              data-minted={minted || undefined}
+              /*
+               * A capped cascade: twelve frames land inside the 300ms an
+               * arrival is allowed, and a longer roster would not slow the
+               * last one down.
+               */
+              style={{ animationDelay: `${Math.min(i * 28, 300)}ms` }}
+            >
               <a className={styles.link} href="/wrapped" aria-label={`${card.title}, frame ${card.no}`}>
                 <span className={styles.no}>{card.no}</span>
                 <span className={styles.art} aria-hidden="true">

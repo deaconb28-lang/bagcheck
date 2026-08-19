@@ -61,6 +61,28 @@
 
 .frame {
   min-width: 0;
+  animation: frameIn 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes frameIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame {
+    animation: none;
+  }
+
+  .link {
+    transition: none;
+  }
+
+  .link:hover {
+    transform: none;
+  }
 }
 
 .link {
@@ -84,10 +106,15 @@
  * The one difference between a minted frame and an unminted one is light. No
  * blur, no lock glyph, no second treatment — the reader is not being sold
  * anything here, they are being shown what their own history has proved.
+ *
+ * The light is the edge and the drawing inside it, not a fill. It carried
+ * `--ember-tint` as a plate as well, which is invisible while ember is a grey
+ * and is nine amber panels in a row the moment ember is amber again — a hue
+ * filling a surface, which is the one thing this palette does not do.
  */
 .frame[data-minted] .link {
   border-color: var(--ember-line);
-  background: var(--ember-tint);
+  background: color-mix(in srgb, var(--ember) 4%, var(--sunken));
 }
 
 .no {

@@ -437,33 +437,33 @@ html[data-mode="dark"] {
   --ink-fill-active: rgba(255, 255, 255, 0.1);
   --ink-line: rgba(255, 255, 255, 0.1);
 
-  --moss: #ffffff;
-  --moss-hover: #ffffff;
-  --moss-deep: #c4c4c4;
-  --moss-tint: rgba(255, 255, 255, 0.1);
-  --moss-line: rgba(255, 255, 255, 0.3);
-  --moss-dim: rgba(255, 255, 255, 0.38);
-  --on-moss: #000000;
+  --moss: #35e07f;
+  --moss-hover: #6ef0a4;
+  --moss-deep: #17b45c;
+  --moss-tint: rgba(53, 224, 127, 0.12);
+  --moss-line: rgba(53, 224, 127, 0.34);
+  --moss-dim: rgba(53, 224, 127, 0.42);
+  --on-moss: #06130c;
 
-  --signal: #7a7a7a;
-  --signal-tint: rgba(255, 255, 255, 0.07);
-  --signal-line: rgba(255, 255, 255, 0.22);
+  --signal: #a4b0bd;
+  --signal-tint: rgba(164, 176, 189, 0.1);
+  --signal-line: rgba(164, 176, 189, 0.28);
 
-  --ember: #c8c8c8;
-  --ember-tint: rgba(255, 255, 255, 0.08);
-  --ember-line: rgba(255, 255, 255, 0.26);
+  --ember: #f59e0b;
+  --ember-tint: rgba(245, 158, 11, 0.12);
+  --ember-line: rgba(245, 158, 11, 0.32);
 
-  --loss: #9a9a9a;
-  --loss-tint: rgba(255, 255, 255, 0.06);
-  --loss-line: rgba(255, 255, 255, 0.2);
+  --loss: #ff5a70;
+  --loss-tint: rgba(255, 90, 112, 0.12);
+  --loss-line: rgba(255, 90, 112, 0.32);
   /* The darkest step in the ramp: the single worst column in a chart. */
-  --loss-deep: #666666;
+  --loss-deep: #ff2d4a;
 
-  --accent: #e0e0e0;
-  --accent-deep: #f2f2f2;
-  --accent-tint: rgba(255, 255, 255, 0.09);
-  --accent-line: rgba(255, 255, 255, 0.28);
-  --accent-wash: rgba(255, 255, 255, 0.05);
+  --accent: #a78bfa;
+  --accent-deep: #c4b5fd;
+  --accent-tint: rgba(167, 139, 250, 0.14);
+  --accent-line: rgba(167, 139, 250, 0.4);
+  --accent-wash: rgba(167, 139, 250, 0.07);
 
   /*
    * ── Gold — the score, and only the score ──
@@ -476,21 +476,21 @@ html[data-mode="dark"] {
    *
    * 21:1 on the field, which is what lets it set small text.
    */
-  --gold: #ffffff;
-  --gold-deep: #b8b8b8;
-  --gold-tint: rgba(255, 255, 255, 0.09);
-  --gold-line: rgba(255, 255, 255, 0.28);
-  --glow-gold: 0 0 38px -8px rgba(255, 255, 255, 0.22);
-  --halo-gold: radial-gradient(60% 54% at 50% 26%, rgba(255, 255, 255, 0.07), transparent 72%);
+  --gold: #ffc857;
+  --gold-deep: #e0a72e;
+  --gold-tint: rgba(255, 200, 87, 0.13);
+  --gold-line: rgba(255, 200, 87, 0.34);
+  --glow-gold: 0 0 40px -6px rgba(255, 200, 87, 0.34);
+  --halo-gold: radial-gradient(60% 54% at 50% 26%, rgba(255, 200, 87, 0.09), transparent 72%);
 
-  --glow-moss: 0 0 38px -8px rgba(255, 255, 255, 0.22);
-  --glow-ember: 0 0 38px -8px rgba(255, 255, 255, 0.22);
-  --glow-azure: 0 0 38px -8px rgba(255, 255, 255, 0.22);
-  --glow-accent: 0 0 38px -8px rgba(255, 255, 255, 0.22);
-  --halo-moss: radial-gradient(60% 54% at 50% 26%, rgba(255, 255, 255, 0.07), transparent 72%);
-  --halo-ember: radial-gradient(60% 54% at 50% 26%, rgba(255, 255, 255, 0.07), transparent 72%);
-  --halo-azure: radial-gradient(60% 54% at 50% 26%, rgba(255, 255, 255, 0.07), transparent 72%);
-  --halo-accent: radial-gradient(60% 54% at 50% 26%, rgba(255, 255, 255, 0.07), transparent 72%);
+  --glow-moss: 0 0 34px -6px rgba(53, 224, 127, 0.36);
+  --glow-ember: 0 0 34px -6px rgba(245, 158, 11, 0.3);
+  --glow-azure: 0 0 34px -6px rgba(164, 176, 189, 0.24);
+  --glow-accent: 0 0 34px -6px rgba(167, 139, 250, 0.34);
+  --halo-moss: radial-gradient(60% 54% at 50% 26%, rgba(53, 224, 127, 0.09), transparent 72%);
+  --halo-ember: radial-gradient(60% 54% at 50% 26%, rgba(245, 158, 11, 0.08), transparent 72%);
+  --halo-azure: radial-gradient(60% 54% at 50% 26%, rgba(164, 176, 189, 0.08), transparent 72%);
+  --halo-accent: radial-gradient(60% 54% at 50% 26%, rgba(167, 139, 250, 0.1), transparent 72%);
 
   /*
    * The consistency ramp is the score with a history rather than a value, so
@@ -498,10 +498,10 @@ html[data-mode="dark"] {
    * measurement, and a reader can see that they are.
    */
   --h0: rgba(255, 255, 255, 0.07);
-  --h1: #262626;
-  --h2: #545454;
-  --h3: #9c9c9c;
-  --h4: #ffffff;
+  --h1: #3a2f1a;
+  --h2: #6b5322;
+  --h3: #b58a30;
+  --h4: #ffc857;
 
   /*
    * The ramp again, retuned. Dark-mode `--signal` is a mid grey, so the same
@@ -539,12 +539,12 @@ html[data-mode="dark"] {
    * largest holding is always white and the remainder always the darkest step.
    * They identify by rank, which is the one thing rank is honest about here.
    */
-  --wedge-1: #ffffff;
-  --wedge-2: #c9c9c9;
-  --wedge-3: #999999;
-  --wedge-4: #6d6d6d;
-  --wedge-5: #4a4a4a;
-  --wedge-rest: #2e2e2e;
+  --wedge-1: #a855f7;
+  --wedge-2: #f59e0b;
+  --wedge-3: #35e07f;
+  --wedge-4: #ff5a70;
+  --wedge-5: #60a5fa;
+  --wedge-rest: rgba(255, 255, 255, 0.3);
 
   --chrome: rgba(0, 0, 0, 0.92);
   --nav-dim: rgba(255, 255, 255, 0.62);
@@ -558,7 +558,7 @@ html[data-mode="dark"] {
    * one that still rendered: a saturated disc in the header of a screen with
    * no other hue on it.
    */
-  --avatar-grad: linear-gradient(140deg, #3c3c3c, #7a7a7a);
+  --avatar-grad: linear-gradient(140deg, #6d28d9, #a78bfa);
 
   --lift: 0 1px 2px rgba(0, 0, 0, 0.5);
   --lift-hero: 0 1px 2px rgba(0, 0, 0, 0.5), 0 24px 60px -34px rgba(0, 0, 0, 0.85);

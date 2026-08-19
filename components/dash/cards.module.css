@@ -1,17 +1,17 @@
 /*
  * ── The Wrapped promo ───────────────────────────────────────────────────
  *
- * It used to be the one gradient surface in the app — violet into amber, with
- * the amber stop pushed past the frame so only its leading edge reached the
- * corner. On a screen that now says everything in black and white, a saturated
- * plate is not an accent, it is the only colour in the room, and the eye goes
- * there rather than to the reading. The gradient also carried a raw `#7c3aed`,
- * which is a palette hex outside `tokens.css` and a bug on its own terms.
+ * The one saturated plate in the app, and it earns that because it is the
+ * door to the artefact world — a deck whose whole design brief is that it is
+ * chaotic on purpose and carries its own palette. Everything around it says
+ * money in green and red on black; this says *the other thing*.
  *
- * What is left is the same plate one step lighter than the panels around it,
- * and the orb — a soft white wash bleeding off the corner, which is the only
- * light on the dashboard and is what still marks this as the door to the
- * artefact rather than another panel.
+ * The amber stop sits past the box on purpose, so only its leading edge
+ * reaches the bottom-right corner. A gradient that lands its last stop inside
+ * the frame reads as two colours meeting; this one reads as light. It used to
+ * carry a raw `#7c3aed` in the middle, which is a palette hex outside
+ * `tokens.css` and a bug on its own terms — the card families say the same
+ * thing and stay in one file.
  */
 .promo {
   position: relative;
@@ -20,9 +20,14 @@
   border-radius: var(--r-panel);
   padding: 30px 32px;
   overflow: hidden;
-  color: var(--ink);
-  background: var(--tile);
-  border: 1px solid var(--line2);
+  color: var(--share-ink);
+  background: linear-gradient(
+    160deg,
+    var(--card-violet-deep) 0%,
+    var(--card-violet-mid) 46%,
+    var(--ember) 132%
+  );
+  border: 0;
 }
 
 /* Clipped by the card, so it reads as an arc bleeding off the corner. */
@@ -35,18 +40,12 @@
   border-radius: var(--r-pill);
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(255, 255, 255, 0.16) 0%,
-    rgba(255, 255, 255, 0.05) 46%,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.06) 46%,
     transparent 70%
   );
 }
 
-/*
- * Held to a measure. The promo is a full-width band now that the findings took
- * the three-up row, and a lockup stretched across 1240px puts its heading at
- * one end of the plate and its buttons at the other. The light keeps the space
- * to the right.
- */
 .promoBody {
   position: relative;
   display: flex;
@@ -67,14 +66,14 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--ink3);
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .promoState {
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  color: var(--ink3);
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .promoFigure {
@@ -89,7 +88,7 @@
   margin-top: 12px;
   font-size: 16px;
   font-weight: 500;
-  color: var(--ink3);
+  color: rgba(255, 255, 255, 0.86);
 }
 
 .promoPills {
@@ -104,8 +103,8 @@
   font-weight: 600;
   border-radius: var(--r-pill);
   padding: 7px 13px;
-  color: var(--ink2);
-  border: 1px solid var(--line2);
+  color: var(--share-ink);
+  border: 1px solid rgba(255, 255, 255, 0.45);
 }
 
 .promoPill[data-solid] {
@@ -138,14 +137,14 @@
 
 .promoGhost {
   flex: none;
-  background: var(--control);
-  border: 1px solid var(--line2);
-  color: var(--ink);
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--share-ink);
 }
 
 .promoGhost:hover {
-  background: var(--inset);
-  color: var(--ink);
+  background: rgba(255, 255, 255, 0.26);
+  color: var(--share-ink);
 }
 
 .promoSolid {
@@ -179,6 +178,28 @@
   padding: 26px 26px 28px;
   min-width: 0;
   animation: insightRise 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.24s ease;
+}
+
+/*
+ * A card lifts and its edge comes up. Panels do not do this — with borders
+ * gone there is nothing on them to lift — but a finding is a thing you are
+ * meant to want to read, and this is the one hover on the page that says so.
+ */
+.insight:hover {
+  transform: translateY(-4px);
+  border-color: var(--line2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .insight {
+    animation: none;
+    transition: none;
+  }
+
+  .insight:hover {
+    transform: none;
+  }
 }
 
 @keyframes insightRise {

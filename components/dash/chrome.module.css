@@ -198,6 +198,36 @@
   border-top: 1px solid var(--edge);
   padding-top: 18px;
   min-width: 0;
+  /*
+   * The rule draws itself first and the reading follows, left to right. It is
+   * one gesture across four columns rather than four separate arrivals, which
+   * is why the whole cascade is inside the 300ms an arrival is allowed.
+   */
+  animation: ruleIn 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.stat:nth-child(2) {
+  animation-delay: 70ms;
+}
+.stat:nth-child(3) {
+  animation-delay: 140ms;
+}
+.stat:nth-child(4) {
+  animation-delay: 210ms;
+}
+
+@keyframes ruleIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    border-top-color: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat {
+    animation: none;
+  }
 }
 
 .statLabel {

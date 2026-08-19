@@ -1,6 +1,6 @@
 import { STRONG } from "@/lib/archetypes";
 import { Avatar } from "@/components/primitives";
-import { ScoreRing } from "@/components/idioms";
+import { CountUp, ScoreRing } from "@/components/idioms";
 import { AllocationDonut } from "./Charts";
 import type { Read } from "@/lib/portfolio/types";
 import styles from "./hero.module.css";
@@ -88,7 +88,7 @@ export function ScoreHero({
           */}
         <div className={styles.ringWrap}>
           <ScoreRing score={read.score} size={228} bare>
-            <Avatar archetype={archetype.key} size="var(--hero-avatar, 132px)" shape="circle" tone="ink" />
+            <Avatar archetype={archetype.key} size="var(--hero-avatar, 132px)" shape="circle" />
           </ScoreRing>
         </div>
 
@@ -96,7 +96,7 @@ export function ScoreHero({
           <p className={styles.eyebrow}>Tonight&rsquo;s read · {year}</p>
           <div className={styles.figureRow}>
             <span className={`poster ${styles.figure}`} id="hero-score">
-              {read.score}
+              <CountUp value={read.score} kind="int" duration={1100} />
             </span>
             {read.delta != null && read.delta !== 0 ? (
               <span className={`num ${styles.delta}`} data-tone={read.delta > 0 ? "up" : "down"}>

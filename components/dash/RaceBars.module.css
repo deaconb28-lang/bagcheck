@@ -35,6 +35,36 @@
   align-items: center;
   gap: 20px;
   padding: 14px 0;
+  /*
+   * The standing settles from the front of the field back, and the reader's
+   * row is last — which on a chart about where you placed is the one arrival
+   * order that says something. The bars then run from the line outward, so
+   * the row is there before the measurement is.
+   */
+  animation: lane 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.row:nth-child(2) {
+  animation-delay: 55ms;
+}
+.row:nth-child(3) {
+  animation-delay: 110ms;
+}
+.row:nth-child(4) {
+  animation-delay: 165ms;
+}
+.row:nth-child(5) {
+  animation-delay: 220ms;
+}
+.row:nth-child(n + 6) {
+  animation-delay: 275ms;
+}
+
+@keyframes lane {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
 }
 
 /*
@@ -142,13 +172,23 @@
   position: absolute;
   top: 0;
   height: 22px;
-  /* Every lane in the field is one step down; the reader's is full ink. */
-  --lane: var(--wedge-4);
+  /*
+   * The field is comparison, so every lane in it is `--signal` — a cool steel
+   * that is meant to sit back. The reader's lane is the one figure on this
+   * chart that is money, so it takes money's colour, and the direction is
+   * still drawn in fill as well: a lane that gained is solid and a lane that
+   * lost is hatched, whatever hue it is in.
+   */
+  --lane: var(--signal);
   animation: 0.72s cubic-bezier(0.2, 0.8, 0.3, 1) both;
 }
 
-.row[data-you] .bar {
-  --lane: var(--ink);
+.row[data-you][data-dir="up"] .bar {
+  --lane: var(--moss);
+}
+
+.row[data-you][data-dir="down"] .bar {
+  --lane: var(--loss);
 }
 
 /*
@@ -191,7 +231,15 @@
 .row[data-you] .figure {
   font-size: 17px;
   font-weight: 600;
-  color: var(--ink);
+}
+
+/* Hue reaches exactly one figure in this chart and it is the reader's own. */
+.row[data-you][data-dir="up"] .figure {
+  color: var(--moss);
+}
+
+.row[data-you][data-dir="down"] .figure {
+  color: var(--loss);
 }
 
 /*
@@ -212,7 +260,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bar {
+  .bar,
+  .row {
     animation: none;
   }
 }
