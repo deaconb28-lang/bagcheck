@@ -35,10 +35,27 @@ export function SteadyhandsMark({
     <svg width={size} height={size} viewBox="0 0 34 34" fill="none" aria-hidden="true">
       {/* The dial, which is the shape this product's own hero is drawn in. */}
       <circle cx="17" cy="17" r="15" fill="currentColor" />
-      {/* The vial, knocked through it. */}
-      <rect x="5.6" y="13.4" width="22.8" height="7.2" rx="3.6" fill={knock} />
-      {/* The bubble, dead centre — which is the whole point of the drawing. */}
-      <circle cx="17" cy="17" r="2.5" fill="currentColor" />
+      {/*
+        * The vial. Narrower and thinner than the first cut, which spanned two
+        * thirds of the disc at a fifth of its height: at that weight the slot
+        * dominated the drawing and the whole mark read as an eye with a pupil
+        * rather than as an instrument with a bubble.
+        */}
+      <rect x="7.5" y="14" width="19" height="6" rx="3" fill={knock} />
+      {/*
+        * The bubble, dead centre and nearly filling the vial — which is what a
+        * real level's bubble does, and what stops this reading as a dot
+        * floating in a slot.
+        */}
+      <circle cx="17" cy="17" r="2.4" fill="currentColor" />
+      {/* The marks the bubble is read against, faint and inside the vial. */}
+      <path
+        d="M12.4 15.5v3M21.6 15.5v3"
+        stroke="currentColor"
+        strokeWidth="1.1"
+        strokeLinecap="round"
+        opacity="0.5"
+      />
     </svg>
   );
 }
