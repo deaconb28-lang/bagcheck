@@ -172,13 +172,12 @@
   /* head, art, text, then whatever is left — so three cards of different
    * sentence lengths still line their figures up on one row. */
   grid-template-rows: auto auto auto 1fr;
-  border: 1px solid var(--edge);
   background: var(--s1);
   border-radius: var(--r-panel);
   padding: 26px 26px 28px;
   min-width: 0;
   animation: insightRise 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.24s ease;
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), background 0.24s ease;
 }
 
 /*
@@ -188,7 +187,7 @@
  */
 .insight:hover {
   transform: translateY(-4px);
-  border-color: var(--line2);
+  background: var(--tile);
 }
 
 @media (prefers-reduced-motion: reduce) {

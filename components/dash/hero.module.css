@@ -59,6 +59,13 @@
  */
 .ringWrap {
   --ring-stroke: var(--gold);
+  /*
+   * The character sits *inside* the ring rather than filling it. At 132px in
+   * a 228px dial it crowded the arc — the reading is the ring and the numeral,
+   * and a mascot pressed against the stroke makes the gauge look like a frame
+   * around a portrait. 96px leaves the arc its own air.
+   */
+  --hero-avatar: 96px;
   flex: none;
 }
 
@@ -130,6 +137,38 @@
   line-height: 1.45;
   color: var(--ink3);
   max-width: 46ch;
+}
+
+/*
+ * ── The written reading ──────────────────────────────────────────────────
+ *
+ * The one sentence on this screen a model wrote, held to the fact pack by
+ * `validateInsight` and falling back to a deterministic line when the model is
+ * unreachable. It takes `--accent`, which is the product's own voice, and a
+ * 2px rule down its left rather than a heading — the eyebrow above already
+ * says "tonight's read", and labelling it twice would be the screen saying the
+ * same thing in the weaker form.
+ */
+.note {
+  margin-top: 18px;
+  padding-left: 16px;
+  border-left: 2px solid var(--accent);
+  max-width: 52ch;
+}
+
+.noteLine {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.45;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.noteTail {
+  margin: 6px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--ink3);
 }
 
 .chips {
@@ -260,7 +299,7 @@
 
   .ringWrap {
     --ring-size: 132px;
-    --hero-avatar: 76px;
+    --hero-avatar: 58px;
   }
 
   .figure {

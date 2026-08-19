@@ -138,8 +138,17 @@
 }
 
 /* ── The panel ── */
+/*
+ * A plate, and not an outlined one.
+ *
+ * Every panel carried a 1px `--edge`, which on a black ground draws a visible
+ * rectangle around every block on the page — eight of them stacked reads as a
+ * form, not as a document. With the outline gone the fill is the whole
+ * separation, which is why `--s1` sits a step above the ground rather than at
+ * it: a plate has to be an object, and on black the only thing that can make
+ * it one is its own value.
+ */
 .panel {
-  border: 1px solid var(--edge);
   background: var(--s1);
   border-radius: var(--r-panel);
   padding: 30px 32px;

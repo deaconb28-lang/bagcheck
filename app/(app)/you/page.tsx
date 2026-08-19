@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getUserId, isAuthConfigured } from "@/auth";
-import { accessFor, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
+import { accessFor, factsFrom, getDailyInsight, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
 import { dashboardFor, fieldLine, rangeOf } from "@/lib/portfolio/load";
 import type { Pattern, RangeKey } from "@/lib/portfolio/types";
 import { EmptyState } from "@/components/app/EmptyState";
@@ -170,9 +170,31 @@ export default async function DashboardPage({
    * JSX below, which made it a second round trip that only started once the
    * whole dashboard had finished assembling.
    */
-  const [{ view }, user] = await Promise.all([
+  /*
+   * The night's written reading, fetched alongside the assembly rather than
+   * after it.
+   *
+   * It is normally a single indexed read: the nightly job warms this row for
+   * every connected user, so by the time a screen asks it is already there.
+   * The uncached path — a fresh account whose first score landed today — is a
+   * model call, which is exactly what this group's `loading.tsx` exists for.
+   * Swallowed on failure, because a dashboard must not fail on a sentence.
+   */
+  const [{ view }, user, note] = await Promise.all([
     dashboardFor(userId, range, data),
     shellUser(),
+    latest
+      ? getDailyInsight(
+          userId,
+          factsFrom(
+            latest,
+            data.scores[1] ?? null,
+            data.scores[6] ?? null,
+            data.transactionCount,
+            data.connection?.accounts?.length ?? 0,
+          ),
+        ).catch(() => null)
+      : Promise.resolve(null),
   ]);
   const { book, performance: perf, window } = view;
 
@@ -218,6 +240,7 @@ export default async function DashboardPage({
               read={view.read}
               year={view.wrapped.year}
               allocation={view.allocation}
+              note={note}
             />
           </div>
         ) : null}

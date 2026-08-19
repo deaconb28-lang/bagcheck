@@ -451,7 +451,8 @@ test("a streak below its own floor is nothing, never a run of one", () => {
 
 test("the grid bands on the same table the streaks do", () => {
   const today = new Date("2026-03-10T00:00:00Z");
-  const cells = scoreHeat([scored("2026-03-10", 91), scored("2026-03-09", 78), scored("2026-03-08", 63), scored("2026-03-07", 40)], 2, today);
+  /* 95 rather than 91: the top band is the rare one, and its edge is 94. */
+  const cells = scoreHeat([scored("2026-03-10", 95), scored("2026-03-09", 78), scored("2026-03-08", 63), scored("2026-03-07", 40)], 2, today);
   const level = (d: string) => cells.find((c) => c.date === d)?.level;
   assert.equal(level("2026-03-10"), 4);
   assert.equal(level("2026-03-09"), 3);

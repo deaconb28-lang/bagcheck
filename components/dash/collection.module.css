@@ -10,7 +10,6 @@
 .block {
   margin-top: 34px;
   padding: 30px 32px;
-  border: 1px solid var(--edge);
   border-radius: var(--r-panel);
   background: var(--s1);
 }
@@ -91,14 +90,13 @@
   gap: 8px;
   height: 100%;
   padding: 16px;
-  border: 1px solid var(--line-light);
   border-radius: var(--r-tile);
-  background: var(--sunken);
-  transition: border-color 0.16s ease, transform 0.16s ease;
+  background: var(--tile);
+  transition: background 0.16s ease, transform 0.16s ease;
 }
 
 .link:hover {
-  border-color: var(--line2-hover);
+  background: var(--inset);
   transform: translateY(-2px);
 }
 
@@ -107,14 +105,15 @@
  * blur, no lock glyph, no second treatment — the reader is not being sold
  * anything here, they are being shown what their own history has proved.
  *
- * The light is the edge and the drawing inside it, not a fill. It carried
- * `--ember-tint` as a plate as well, which is invisible while ember is a grey
- * and is nine amber panels in a row the moment ember is amber again — a hue
- * filling a surface, which is the one thing this palette does not do.
+ * The light is the drawing, plus the faintest warmth in the plate. It was an
+ * `--ember-tint` fill and an `--ember-line` edge, which is invisible while
+ * ember is a grey and is nine amber panels in a row the moment ember is amber
+ * again — a hue filling a surface, which is the one thing this palette does
+ * not do. With outlines gone from the dashboard the plate carries it alone, at
+ * a strength you read as *warmer* rather than as coloured.
  */
 .frame[data-minted] .link {
-  border-color: var(--ember-line);
-  background: color-mix(in srgb, var(--ember) 4%, var(--sunken));
+  background: color-mix(in srgb, var(--ember) 7%, var(--tile));
 }
 
 .no {

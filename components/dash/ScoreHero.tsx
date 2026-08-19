@@ -70,11 +70,24 @@ export function ScoreHero({
   read,
   year,
   allocation = [],
+  note,
 }: {
   read: Read;
   year: number;
   /** The book, for the small ring beside the read. Empty hides it. */
   allocation?: Array<{ key: string; label: string; value: number }>;
+  /**
+   * The night's written reading, and the one thing on this screen a model
+   * wrote.
+   *
+   * It had been generated every night, validated against the fact pack,
+   * stored per user per day — and rendered on no screen in the product. The
+   * only reader it ever reached was the notify email. Absent rather than
+   * placeholdered: an account with no scored day has nothing to say, and the
+   * deterministic fallback is what shows when the model is unreachable, which
+   * is a sentence rather than a gap.
+   */
+  note?: { sentence: string; tail: string } | null;
 }) {
   const { archetype, components } = read;
   const above = archetype.strong.length;
@@ -107,6 +120,19 @@ export function ScoreHero({
           </div>
           <h1 className={`poster ${styles.name}`}>{archetype.name}</h1>
           <p className={styles.line}>{archetype.line}</p>
+
+          {/*
+            * The instrument speaking, rather than the archetype naming itself.
+            * `--accent` is what CLAUDE.md gives the product's own voice, and
+            * the rule to its left is what separates today's reading from the
+            * static line above it without adding a heading nobody needs.
+            */}
+          {note?.sentence ? (
+            <div className={styles.note}>
+              <p className={styles.noteLine}>{note.sentence}</p>
+              {note.tail ? <p className={styles.noteTail}>{note.tail}</p> : null}
+            </div>
+          ) : null}
 
           {/*
             * Chips, and every one of them is absent rather than zeroed. A

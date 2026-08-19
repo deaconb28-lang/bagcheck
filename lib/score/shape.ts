@@ -23,8 +23,15 @@ export interface ScoredDay {
  * `EXCEPTIONAL` exists only for the grid's top band: a four-level ramp needs
  * a fourth edge, and putting it here keeps it with the other three rather
  * than inventing it inside a chart.
+ *
+ * It was 90, and on a disciplined account that put nearly every cell in the
+ * year grid at full strength — a hundred and eighty tiles of one colour, which
+ * is a fill rather than a texture and is the failure `HeatGrid`'s own note
+ * warns about. The top of a four-step ramp has to be *rare* or the ramp has
+ * three usable steps and a background. 94 keeps the other three edges where
+ * they were, so nothing else that reads this table moves.
  */
-const EXCEPTIONAL = 90;
+const EXCEPTIONAL = 94;
 const KEPT = 78;
 const PARTIAL = 62;
 const EXPOSED = 58;
