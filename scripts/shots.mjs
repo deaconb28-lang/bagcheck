@@ -72,6 +72,13 @@ const SCREENS = [
    * `@deacon` so there is something here to look at.
    */
   { key: "handle", path: "/@deacon", modes: ["dark"] },
+  /*
+   * `/app` is a redirect, so this shot is really an assertion: the seeded
+   * account has a linked brokerage, so it must land on the dashboard. If it
+   * ever lands on `/start` instead, the entry router has started sending
+   * connected people back through onboarding.
+   */
+  { key: "entry", path: "/app", modes: ["dark"] },
 ];
 
 /**

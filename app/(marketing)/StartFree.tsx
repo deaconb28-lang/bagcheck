@@ -13,11 +13,13 @@ import styles from "./landing.module.css";
  * and two full round trips to reach the one action that matters, and the step
  * counter on it said "Step 1 of 2" the whole way through.
  *
- * So the sign-in happens here, and `/start` is what you land on afterwards:
- * the connect screen, in its signed-in state, with every reassurance about
- * read-only access still on it. Nothing is skipped — the reassurance simply
- * sits on the screen where the action it reassures about actually happens,
- * rather than on a screen in front of it.
+ * So the sign-in happens here and `/app` is what you come back to, which
+ * sends a new account straight on to `/start`: the connect screen, in its
+ * signed-in state, with every reassurance about read-only access still on it.
+ * Nothing is skipped — the reassurance simply sits on the screen where the
+ * action it reassures about actually happens, rather than on one in front of
+ * it. Returning through `/app` rather than pinning `/start` means somebody who
+ * already linked an account is not walked through connecting again.
  *
  * The Google mark is on the button, so "Get started free" is not hiding what
  * pressing it does.
@@ -37,7 +39,7 @@ export function StartFree({ label = "Get started free" }: { label?: string }) {
   }
 
   return (
-    <GoogleSignIn redirectTo="/start" className={styles.ctaDark}>
+    <GoogleSignIn redirectTo="/app" className={styles.ctaDark}>
       {label}
     </GoogleSignIn>
   );

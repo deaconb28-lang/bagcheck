@@ -151,7 +151,7 @@ export default async function LandingPage() {
             */}
           <div className={styles.heroActions}>
             {signedIn ? (
-              <Link href="/you" className={styles.ctaDark}>
+              <Link href="/app" className={styles.ctaDark}>
                 Go to app
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M5 12h14" />

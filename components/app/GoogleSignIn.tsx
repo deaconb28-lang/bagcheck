@@ -8,12 +8,17 @@ import { isAuthConfigured, signIn } from "@/auth";
  * the middle of a designed flow, listing one provider. Posting the action
  * goes straight to Google and comes back where the caller asked.
  *
+ * `redirectTo` defaults to `/app`, which decides between the dashboard and
+ * the connect screen once there is a session to ask about. It defaulted to
+ * `/you`, which is why a brand new account could sign in and land on an empty
+ * dashboard having connected nothing.
+ *
  * It renders nothing when the deployment has no OAuth credentials. A button
  * that cannot finish is worse than no button, and every caller already has a
  * sensible fallback to show in its place.
  */
 export function GoogleSignIn({
-  redirectTo = "/you",
+  redirectTo = "/app",
   className,
   children = "Continue with Google",
 }: {

@@ -16,8 +16,13 @@ import styles from "./landing.module.css";
  *
  * So there is one button and it names the destination. Signed in, it is a
  * link. Signed out, it *is* the sign-in — one click posts to Google and comes
- * back at the dashboard rather than at whichever screen the reader happened to
- * be on, which is what makes "go to app" true rather than "go to a login".
+ * back at the app rather than at whichever screen the reader happened to be
+ * on, which is what makes "go to app" true rather than "go to a login".
+ *
+ * Both point at `/app` rather than at `/you`, because "the app" is the
+ * dashboard for somebody who has connected a brokerage and the connect screen
+ * for somebody who has not — and only `/app` knows which, since a sign-in's
+ * destination is chosen before there is a session to ask about.
  *
  * It renders nothing while the launch lock is on. A door that is shut is not
  * drawn: the app group answers `appLocked()` with a bare redirect to the
@@ -42,7 +47,7 @@ export async function GoToApp({
    */
   if (!isAuthConfigured()) {
     return (
-      <Link href="/you" className={className}>
+      <Link href="/app" className={className}>
         {label}
       </Link>
     );
@@ -51,14 +56,14 @@ export async function GoToApp({
   const userId = await getUserId();
   if (userId) {
     return (
-      <Link href="/you" className={className}>
+      <Link href="/app" className={className}>
         {label}
       </Link>
     );
   }
 
   return (
-    <GoogleSignIn redirectTo="/you" className={className}>
+    <GoogleSignIn redirectTo="/app" className={className}>
       {label}
     </GoogleSignIn>
   );

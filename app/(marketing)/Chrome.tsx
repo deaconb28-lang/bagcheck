@@ -64,7 +64,7 @@ export async function MarketingFooter() {
           <Link href="/legal/terms">Terms</Link>
           <Link href="/legal/icons">Icon credits</Link>
           <Link href="/legal/photos">Photo credits</Link>
-          {!locked ? <Link href="/you">Go to app</Link> : null}
+          {!locked ? <Link href="/app">Go to app</Link> : null}
         </div>
         <span className={styles.footNote}>© 2026 steadyhands</span>
       </div>
