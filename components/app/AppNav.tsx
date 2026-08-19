@@ -11,14 +11,8 @@ const TABS: Array<{ key: AppTab; label: string; href: string }> = [
   { key: "holdings", label: "Holdings", href: "/holdings" },
   { key: "insights", label: "Insights", href: "/insights" },
   { key: "wrapped", label: "Wrapped", href: "/wrapped" },
-  /*
-   * The public ledger. The href is decided per render rather than fixed: a
-   * reader who has claimed a handle goes to their own page, and one who has
-   * not goes to the settings that let them claim one. A tab that leads to a
-   * 404 until you have configured something is a tab that teaches people not
-   * to press it.
-   */
-  { key: "ledger", label: "Public", href: "/profile#ledger" },
+  /* The public ledger. A tab leads to a place, not to a settings anchor. */
+  { key: "ledger", label: "Public", href: "/public" },
 ];
 
 /**

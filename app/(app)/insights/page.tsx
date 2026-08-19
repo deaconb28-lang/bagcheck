@@ -101,8 +101,8 @@ export default async function InsightsPage() {
             }
             body={
               connection
-                ? `Patterns need ${INSIGHTS_MARKET_DAYS} market days of your ledger before this screen will claim one — ${gate.have} so far, ${gate.left} to go. Nothing is being withheld: a pattern read off a few days of one opening snapshot would be a coincidence with a headline.`
-                : "One tap via SnapTrade, read-only. The clock on this screen starts when your account links."
+                ? `${gate.have} of ${INSIGHTS_MARKET_DAYS} market days. A pattern read off a few days would be a coincidence with a headline.`
+                : "One tap via SnapTrade, read-only. The clock starts when you link."
             }
             actions={
               connection

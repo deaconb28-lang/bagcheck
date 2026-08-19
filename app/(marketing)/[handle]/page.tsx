@@ -75,8 +75,7 @@ export default async function PublicLedgerPage({ params }: Props) {
 
       <p className={styles.soon}>Public ledgers are coming soon.</p>
       <p className={styles.tail}>
-        This name is held. When it opens, it will show what this account holds
-        as weights and returns — never balances, never trades, never dates.
+        Weights and returns. Never balances, trades or dates.
       </p>
 
       <div className={styles.actions}>

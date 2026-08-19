@@ -138,8 +138,7 @@ export default async function LandingPage() {
           </h1>
           <p className={styles.lede}>
             Connect your brokerage in two taps through SnapTrade. Steadyhands reads
-            the numbers and turns your year into a Wrapped worth posting —
-            returns, top holdings, best trades, and the ones that got away.
+            the numbers and turns your year into a Wrapped worth posting.
           </p>
           {/*
             * The hero's first action depends on whether the reader has an

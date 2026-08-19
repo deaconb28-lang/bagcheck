@@ -230,10 +230,8 @@ export default async function ProfilePage() {
             <Eyebrow>Public ledger</Eyebrow>
             <h2 className={`disp ${styles.h2}`}>Your ledger, at an address</h2>
             <p className={styles.body}>
-              A card is shared by its link and nothing else. A handle is
-              different — it is short, it is yours, and anyone can type it. So
-              it takes two deliberate steps, and what it shows is weights and
-              returns: never a balance, never a trade, never a date.
+              A handle is short and anyone can type it, so it takes two
+              deliberate steps. Weights and returns only.
             </p>
             <PublicLedger
               handle={emailPrefs?.handle ?? null}

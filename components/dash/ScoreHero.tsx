@@ -182,10 +182,8 @@ export function ScoreHero({
         ))}
         <p className={styles.arcsNote}>
           {above === 4
-            ? `All four are above ${STRONG}.`
-            : above === 0
-              ? `None are above ${STRONG} yet. The character fills in as they clear it.`
-              : `${above === 1 ? "One" : above === 2 ? "Two" : "Three"} of the four are above ${STRONG}. The character fills in as the rest clear it.`}
+            ? `All four above ${STRONG}.`
+            : `${above} of four above ${STRONG}. The character fills in as the rest clear it.`}
         </p>
       </div>
     </section>

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { getUserId, isAuthConfigured } from "@/auth";
 import { accessFor, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
 import { dashboardFor, fieldLine, rangeOf } from "@/lib/portfolio/load";
-import { MIN_SESSIONS } from "@/lib/portfolio/view";
 import type { RangeKey } from "@/lib/portfolio/types";
 import { EmptyState } from "@/components/app/EmptyState";
 import { FirstScore } from "@/components/app/FirstScore";
@@ -102,8 +101,8 @@ export default async function DashboardPage({
             userId
               ? "Set MONGODB_URI on this deployment to store synced history and scores."
               : isAuthConfigured()
-                ? "Your P&L, your holdings, your year and the patterns your own history is hiding."
-                : "Sign-in is not configured on this deployment yet."
+                ? "Your P&L, your holdings, your year."
+                : "Sign-in is not configured here."
           }
           actions={[{ label: "Connect a brokerage", href: "/start", ghost: true }]}
         >
@@ -136,8 +135,8 @@ export default async function DashboardPage({
           title={data.connection ? "Nothing read yet" : "Connect a brokerage"}
           body={
             data.connection
-              ? `Your ledger holds ${data.transactionCount.toLocaleString("en-US")} transactions. Scoring reads them and builds the dashboard.`
-              : "One tap via SnapTrade, read-only. Positions and history arrive together."
+              ? `${data.transactionCount.toLocaleString("en-US")} transactions on file. Scoring builds the dashboard from them.`
+              : "One tap via SnapTrade, read-only."
           }
           actions={
             data.connection
@@ -269,11 +268,11 @@ export default async function DashboardPage({
                   view.index != null
                   ? `vs ${signedPct(view.index * 100)} S&P`
                   : perf.basis === "account"
-                    ? "Your account, contributions taken out."
-                    : "Your invested book, buys and sells taken out."
+                    ? "Contributions taken out"
+                    : "Buys and sells taken out"
                 : book.unrealisedPct != null
-                  ? "Unrealised, against what you paid."
-                  : "Your brokerage reports no cost basis."
+                  ? "Against what you paid"
+                  : "No cost basis reported"
             }
           />
           <Stat
@@ -290,7 +289,7 @@ export default async function DashboardPage({
                 ? `${perf.winRate.wins} of ${perf.winRate.trades} round trips`
                 : book.priced
                   ? `positions up right now${book.priced < book.positions ? `, of ${book.priced} priced` : ""}`
-                  : "No position reports a P&L yet."
+                  : "No P&L reported yet"
             }
           />
           <Stat
@@ -317,8 +316,8 @@ export default async function DashboardPage({
               perf.sessions.length
                 ? `${perf.up} up, ${perf.down} down`
                 : book.priced
-                  ? "On what you hold, nothing sold yet."
-                  : "Nothing has closed in this window."
+                  ? "On what you hold"
+                  : "Nothing closed in this window"
             }
           />
           <Stat
@@ -332,10 +331,10 @@ export default async function DashboardPage({
             }
             tail={
               perf.sharpe != null
-                ? "Annualised on daily marks, no risk-free rate."
+                ? "Annualised, no risk-free rate"
                 : book.cost > 0
                   ? `what ${book.positions} ${book.positions === 1 ? "position" : "positions"} cost you`
-                  : "Needs a season of daily marks."
+                  : "Needs a season of marks"
             }
           />
         </Stats>
@@ -363,10 +362,8 @@ export default async function DashboardPage({
               <RaceBars field={view.field} />
               {view.field.place == null ? (
                 <p className="dashEmpty">
-                  Your own row joins this once your ledger reaches the first
-                  fortnight of January. A few months of your year set against a
-                  fund&rsquo;s twelve is two measurements rather than a
-                  comparison, so it waits rather than guessing.
+                  Your row joins once your ledger reaches January. A part-year
+                  against a full one is not a comparison.
                 </p>
               ) : null}
               <p className="dashProv">
@@ -394,15 +391,12 @@ export default async function DashboardPage({
               <PanelHead eyebrow="The race" title="Not a comparison yet" />
               <p className="dashEmpty">
                 {view.fieldAbsence === "market-key"
-                  ? "The field is five funds quoted from market data, and this deployment has no market key set. Nothing here is estimated in the meantime."
+                  ? "No market key on this deployment. Nothing is estimated in the meantime."
                   : view.fieldAbsence === "year-too-short"
-                    ? "The field is quoted year to date, and your ledger does not reach the first fortnight of January. A six-month figure drawn at a twelve-month scale is two measurements rather than a comparison, so it waits."
-                    : "Fewer than two of the five funds could be quoted just now. A fund nobody will quote is dropped rather than drawn at zero."}
+                    ? "Your ledger does not reach January yet. A part-year against a full one is not a comparison."
+                    : "Under two funds could be quoted. A fund nobody will quote is dropped, never drawn at zero."}
               </p>
-              <p className="dashProv">
-                DBMF · QAI · MNA · BTAL · SPY — hedge-fund replication strategies
-                and the S&amp;P, each with a ticker you can check
-              </p>
+              <p className="dashProv">DBMF · QAI · MNA · BTAL · SPY</p>
             </Panel>
           </Row>
         )}
@@ -452,14 +446,12 @@ export default async function DashboardPage({
               <>
                 <HoldingBars rows={view.positions} money={signedMoney} />
                 <p className="dashProv">
-                  Unrealised, off your latest snapshot · the daily chart draws itself
-                  the first time a position is sold
+                  Unrealised, off your latest snapshot
                 </p>
               </>
             ) : (
               <p className="dashEmpty">
-                Nothing has closed in this window. The chart draws itself the first
-                time a position is sold.
+                Nothing closed in this window. The chart draws when you sell.
               </p>
             )}
           </Panel>
@@ -529,10 +521,7 @@ export default async function DashboardPage({
                     </span>
                   </div>
                   <PnlWave points={view.cumulative} />
-                  <p className="dashProv">
-                    Realised only · the line moves when a position closes, not
-                    when a day passes
-                  </p>
+                  <p className="dashProv">Realised only · moves when a position closes</p>
                 </>
               ) : (
                 <>
@@ -546,9 +535,7 @@ export default async function DashboardPage({
                   </div>
                   <EquityCurve series={view.curve} />
                   <p className="dashProv">
-                    Value, not profit — a deposit lifts this line the same way a
-                    gain does. The realised total takes its place once you have
-                    closed {MIN_SESSIONS} sessions.
+                    Value, not profit — a deposit lifts it like a gain does
                   </p>
                 </>
               )}
@@ -558,8 +545,7 @@ export default async function DashboardPage({
               <PanelHead eyebrow="The year in days" />
               {view.calendar.length ? <HeatGrid days={view.calendar} /> : null}
               <p className="dashProv">
-                Each cell is one day&apos;s realised P&amp;L · an empty cell is a day
-                nothing closed, not a flat one
+                One day&apos;s realised P&amp;L · empty means nothing closed
               </p>
             </Panel>
           </Row>
@@ -585,8 +571,7 @@ export default async function DashboardPage({
               </PanelHead>
               <HeatGrid days={view.read.heat} />
               <p className="dashProv">
-                Each cell is one night&apos;s score · an empty cell is a day nothing
-                was scored, not a bad one
+                One night&apos;s score · empty means nothing scored
               </p>
             </Panel>
           </Row>
@@ -634,8 +619,7 @@ export default async function DashboardPage({
               </div>
             ) : (
               <p className="dashEmpty">
-                Nothing has cleared a sample floor yet. A pattern is reported when
-                your own history can prove it, and not before.
+                Nothing has cleared a sample floor yet.
               </p>
             )}
           </Panel>

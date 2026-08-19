@@ -19,7 +19,7 @@ import styles from "../pricing.module.css";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Thirty days free with no card, then $14.99 a month. Every card your behaviour earns is yours to post, rare ones included, and a minted card stays live at its URL whether or not you carry on.",
+    "Thirty days free, no card. Then $14.99 a month.",
 };
 
 /*
@@ -50,27 +50,27 @@ function Check({ tone }: { tone: "green" | "white" }) {
 const QA: Array<[string, string]> = [
   [
     "What do I get during the free month?",
-    "All of it. Every card your behaviour earns, the score and its four components, your ledger, the patterns, and sharing at full quality. Nothing is held back for the paid month, because there is nothing else to show you.",
+    "All of it. Nothing is held back for the paid month, because there is nothing else to show you.",
   ],
   [
     "Are the rare cards paid?",
-    "No. Rarity is earned and never sold — the code has no way to gate a card by plan, which is deliberate rather than a promise.",
+    "No. The code has no way to gate a card by plan — that is structural, not a promise.",
   ],
   [
     `What happens after the ${TRIAL_DAYS} days?`,
-    "Steadyhands asks you to subscribe before it will read your ledger again. Anything you minted during the free month stays yours, at the URL it was minted at, whether or not you carry on — and your data stays exportable and deletable from your profile either way.",
+    "Reading your ledger needs a plan. Minted cards stay live either way, and export and deletion stay open.",
   ],
   [
     "Can I cancel?",
-    "Any time, from your profile. Stripe handles it directly and the plan runs to the end of the period you have already paid for.",
+    "Any time, from your profile. It runs to the end of the period you paid for.",
   ],
   [
     "Does steadyhands touch my money?",
-    "No. The brokerage connection is read-only through SnapTrade — steadyhands can see what you did and cannot place a trade, move a dollar, or hold a credential.",
+    "No. Read-only through SnapTrade — it cannot trade, move a dollar, or hold a credential.",
   ],
   [
     "Can I delete it all?",
-    "Yes. Deleting your account removes the ledger, the scores and the connection from our store in one action.",
+    "Yes. One action removes the ledger, the scores and the connection.",
   ],
 ];
 
@@ -95,10 +95,8 @@ export default async function PricingPage() {
           <h1 className={styles.h1}>Thirty days free. Then fifteen a month.</h1>
         </div>
         <p className={styles.lede}>
-          Steadyhands reads your brokerage and turns the year into something worth
-          posting. The first {TRIAL_DAYS} days are free and take no card. After
-          that it is {priceLine()} — one plan, everything in it, cancel from
-          your profile whenever you like.
+          The first {TRIAL_DAYS} days are free and take no card. After that it
+          is {priceLine()} — one plan, everything in it.
         </p>
       </section>
 
@@ -169,22 +167,19 @@ export default async function PricingPage() {
           <div className={styles.neverItem}>
             <h3>Sharing is never paid</h3>
             <p>
-              Minting and posting a card take no plan and never will. The gating
-              code has no way to express it.
+              The gating code has no way to express it.
             </p>
           </div>
           <div className={styles.neverItem}>
             <h3>Rarity is earned</h3>
             <p>
-              A scarce card comes off your ledger. There is no plan that mints
-              one and no plan that withholds one.
+              A scarce card comes off your ledger, not off a plan.
             </p>
           </div>
           <div className={styles.neverItem}>
             <h3>Read-only, permanently</h3>
             <p>
-              Steadyhands describes what you did. It never places a trade, never
-              recommends one, and never sends a price alert.
+              It never places a trade, recommends one, or sends a price alert.
             </p>
           </div>
         </div>

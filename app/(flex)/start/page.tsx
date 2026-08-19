@@ -147,9 +147,7 @@ export default async function StartPage({
             )}
           </h1>
           <p className={styles.lede}>
-            Steadyhands reads your filled orders through SnapTrade and makes a card
-            out of everything the year can prove. Most accounts take about
-            thirty seconds.
+            We read your filled orders through SnapTrade. About thirty seconds.
           </p>
 
           {problem ? (
@@ -178,31 +176,25 @@ export default async function StartPage({
             <li>
               <Tick />
               <span>
-                <b>You do this once.</b> The link belongs to your Google
-                account, so every visit after this one opens straight onto your
-                cards. New fills arrive on their own.
+                <b>You do this once.</b> New fills arrive on their own.
               </span>
             </li>
             <li>
               <Tick />
               <span>
-                <b>Read-only, permanently.</b> steadyhands sees filled orders and
-                positions. It cannot place a trade, move money, or change a
-                setting.
+                <b>Read-only, permanently.</b> It cannot trade or move money.
               </span>
             </li>
             <li>
               <Tick />
               <span>
-                <b>Your login stays with your broker.</b> SnapTrade handles the
-                sign-in; Steadyhands never receives a password.
+                <b>Your login stays with your broker.</b> We never see a password.
               </span>
             </li>
             <li>
               <Tick />
               <span>
-                <b>Unlink any time.</b> That stops the sync and takes the
-                history out of steadyhands.
+                <b>Unlink any time.</b> That stops the sync and clears the history.
               </span>
             </li>
           </ul>
@@ -214,9 +206,8 @@ export default async function StartPage({
                   See a sample year
                 </a>
                 <p className={styles.warn}>
-                  Brokerage linking is not open on this deployment yet. The
-                  sample year comes off an example ledger, and says so on every
-                  card.
+                  Linking is not open here yet. The sample comes off an example
+                  ledger and says so.
                 </p>
               </>
             ) : userId ? (

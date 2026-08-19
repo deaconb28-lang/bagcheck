@@ -35,8 +35,8 @@ export function Paywall({ trial }: { trial: TrialState }) {
         title={trial.expired ? "Your free month has ended" : "Steadyhands needs a plan"}
         body={
           trial.endsOn
-            ? `The ${TRIAL_DAYS} days that started when you connected ran out on ${trial.endsOn}. Reading your ledger here needs a plan — ${priceLine()}, cancel whenever. Everything you minted stays yours at the URL it was minted at, and your data stays exportable from your profile either way.`
-            : `Reading your ledger here needs a plan — ${priceLine()}, cancel whenever. Everything you minted stays yours at the URL it was minted at, and your data stays exportable from your profile either way.`
+            ? `Your free ${TRIAL_DAYS} days ended ${trial.endsOn}. Reading your ledger needs a plan — ${priceLine()}, cancel whenever. Minted cards stay live, and export stays open.`
+            : `Reading your ledger needs a plan — ${priceLine()}, cancel whenever. Minted cards stay live, and export stays open.`
         }
         actions={[
           { label: "See the plan", href: "/pricing" },
