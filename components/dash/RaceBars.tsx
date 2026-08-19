@@ -10,15 +10,20 @@ import type { RaceField } from "@/lib/returns";
  * is negative, so a good year does not spend half its width on the half
  * nothing reaches.
  *
- * **Hue is the only thing separating the reader from the field, and it is the
- * one hue that means what it says.** Every comparison row is `--signal`, which
- * is what this palette gives exposure and percentile; the reader's own row is
- * money, so it takes moss or loss like every other figure they own. Nothing
- * here fills, ranks by colour, or paints a winner.
+ * **Nothing here is separated by hue, and it never was the right tool for it.**
+ * The field is a standing, so the position is drawn: `raceField` returns the
+ * rows already sorted, and each wears its place as a numeral. The reader's is
+ * the one inverted chip on the row — the strongest gesture the palette has,
+ * spent once. Direction is structural too: a bar that gained is solid and a bar
+ * that lost is hatched behind a hairline, which is what the accessible reading
+ * of a chart asks for anyway — a direction encoded in colour alone is a
+ * direction a good share of readers cannot see.
  *
  * The bars run at the same time and arrive at different lengths, which is what
- * a race looks like. Under reduced motion they are simply already there — the
- * static state is the finished chart, as it must be.
+ * a race looks like. They are revealed by `clip-path` rather than scaled: an
+ * outlined, hatched bar stretched in X thickens its own hairline and shears the
+ * hatch. Under reduced motion they are simply already there — the static state
+ * is the finished chart, as it must be.
  */
 export function RaceBars({ field }: { field: RaceField }) {
   const rows = field.rows;
@@ -45,6 +50,10 @@ export function RaceBars({ field }: { field: RaceField }) {
               data-you={row.you || undefined}
               data-dir={up ? "up" : "down"}
             >
+              <span className={`num ${styles.place}`} aria-hidden>
+                {i + 1}
+              </span>
+
               <span className={styles.label}>
                 <span className={styles.name}>{row.label}</span>
                 <span className={styles.note}>{row.note}</span>

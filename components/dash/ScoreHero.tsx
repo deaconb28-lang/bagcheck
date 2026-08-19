@@ -88,7 +88,7 @@ export function ScoreHero({
           */}
         <div className={styles.ringWrap}>
           <ScoreRing score={read.score} size={228} bare>
-            <Avatar archetype={archetype.key} size="var(--hero-avatar, 132px)" shape="circle" />
+            <Avatar archetype={archetype.key} size="var(--hero-avatar, 132px)" shape="circle" tone="ink" />
           </ScoreRing>
         </div>
 
@@ -182,8 +182,8 @@ export function ScoreHero({
         ))}
         <p className={styles.arcsNote}>
           {above === 4
-            ? `All four above ${STRONG}.`
-            : `${above} of four above ${STRONG}. The character fills in as the rest clear it.`}
+            ? `All 4 above ${STRONG}.`
+            : `${above} of 4 above ${STRONG}. The character fills in as the rest clear the bar.`}
         </p>
       </div>
     </section>

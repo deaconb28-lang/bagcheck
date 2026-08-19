@@ -141,10 +141,10 @@
   --glow-ember: 0 0 0 1px rgba(168, 80, 10, 0.16);
   --glow-azure: 0 0 0 1px rgba(91, 102, 114, 0.16);
   --glow-accent: 0 0 0 1px rgba(109, 63, 212, 0.16);
-  --halo-moss: radial-gradient(60% 54% at 50% 26%, rgba(18, 146, 79, 0.05), transparent 72%);
-  --halo-ember: radial-gradient(60% 54% at 50% 26%, rgba(168, 80, 10, 0.05), transparent 72%);
-  --halo-azure: radial-gradient(60% 54% at 50% 26%, rgba(91, 102, 114, 0.05), transparent 72%);
-  --halo-accent: radial-gradient(60% 54% at 50% 26%, rgba(109, 63, 212, 0.06), transparent 72%);
+  --halo-moss: radial-gradient(60% 54% at 50% 26%, rgba(255, 255, 255, 0.07), transparent 72%);
+  --halo-ember: radial-gradient(60% 54% at 50% 26%, rgba(255, 255, 255, 0.07), transparent 72%);
+  --halo-azure: radial-gradient(60% 54% at 50% 26%, rgba(255, 255, 255, 0.07), transparent 72%);
+  --halo-accent: radial-gradient(60% 54% at 50% 26%, rgba(255, 255, 255, 0.07), transparent 72%);
 
   /*
    * The consistency ramp, in the reserved violet.
@@ -388,25 +388,31 @@ html[data-mode="dark"] {
   color-scheme: dark;
 
   /*
-   * ── Midnight plum, and the plates are solid ──
+   * ── Black, and one ramp of white on it ──
    *
-   * The field was #08080D, a neutral near-black, and every surface above it
-   * was white at a fraction. Both of those are why the screen read as an
-   * instrument rather than as something anyone would open twice: neutral
-   * black has no temperature, and a plate at 3.5% white is fog rather than an
-   * object — it picks up whatever is behind it, so it never quite lands.
+   * The ground was midnight plum with six hue families over it. It is pure
+   * black now and the palette is a single ramp of white, because hue was
+   * doing decorative work more often than semantic work: a screen carrying
+   * gold, moss, loss, ember, signal, violet and five wedge colours has no
+   * spare hue left to mean anything with.
    *
-   * The ground now carries hue (violet in the black) and the plates are
-   * opaque greys mixed *from* that hue, so a plate over the field and a plate
-   * over the drifting ridge are the same solid object. It is still not #000:
-   * a true black smears on OLED as a panel scrolls, and leaves the darkest
-   * surfaces indistinguishable from the gaps between them.
+   * **The meanings did not go away — they moved into form.** Direction is a
+   * sign and a shape rather than green-versus-red, rank is a step down the
+   * ramp rather than a different colour, and the one chart that needs to
+   * distinguish slices does it by lightness. That is a strictly *better*
+   * accessible position than the palette it replaces: nothing here is
+   * conveyed by colour alone, so nothing here fails for a reader who cannot
+   * separate two hues.
+   *
+   * The plates are near-black rather than black so a surface still reads as
+   * an object against the ground — #0C0C0C on #000 is a real edge at this
+   * scale, and it is the whole separation the design has left.
    */
-  --bg: #151022;
-  --s1: #1e1733;
-  --sunken: #191330;
-  --inset: #292048;
-  --tile: #231b3d;
+  --bg: #000000;
+  --s1: #0c0c0c;
+  --sunken: #070707;
+  --inset: #1a1a1a;
+  --tile: #111111;
   --track: rgba(255, 255, 255, 0.1);
   --control: rgba(255, 255, 255, 0.07);
 
@@ -431,82 +437,76 @@ html[data-mode="dark"] {
   --ink-fill-active: rgba(255, 255, 255, 0.1);
   --ink-line: rgba(255, 255, 255, 0.1);
 
-  --moss: #4ade80;
-  --moss-hover: #6ee7a0;
-  --moss-deep: #2e9c5a;
-  --moss-tint: rgba(74, 222, 128, 0.12);
-  --moss-line: rgba(74, 222, 128, 0.32);
-  --moss-dim: rgba(74, 222, 128, 0.4);
-  --on-moss: #06130c;
+  --moss: #ffffff;
+  --moss-hover: #ffffff;
+  --moss-deep: #c4c4c4;
+  --moss-tint: rgba(255, 255, 255, 0.1);
+  --moss-line: rgba(255, 255, 255, 0.3);
+  --moss-dim: rgba(255, 255, 255, 0.38);
+  --on-moss: #000000;
 
-  --signal: #a4b0bd;
-  --signal-tint: rgba(164, 176, 189, 0.1);
-  --signal-line: rgba(164, 176, 189, 0.28);
+  --signal: #7a7a7a;
+  --signal-tint: rgba(255, 255, 255, 0.07);
+  --signal-line: rgba(255, 255, 255, 0.22);
 
-  --ember: #f59e0b;
-  --ember-tint: rgba(245, 158, 11, 0.12);
-  --ember-line: rgba(245, 158, 11, 0.32);
+  --ember: #c8c8c8;
+  --ember-tint: rgba(255, 255, 255, 0.08);
+  --ember-line: rgba(255, 255, 255, 0.26);
 
-  --loss: #fb7185;
-  --loss-tint: rgba(251, 113, 133, 0.12);
-  --loss-line: rgba(251, 113, 133, 0.32);
-  /* The deepest red in the system: the single worst column in a chart. */
-  --loss-deep: #e11d48;
+  --loss: #9a9a9a;
+  --loss-tint: rgba(255, 255, 255, 0.06);
+  --loss-line: rgba(255, 255, 255, 0.2);
+  /* The darkest step in the ramp: the single worst column in a chart. */
+  --loss-deep: #666666;
 
-  --accent: #a78bfa;
-  --accent-deep: #c4b5fd;
-  --accent-tint: rgba(167, 139, 250, 0.14);
-  --accent-line: rgba(167, 139, 250, 0.4);
-  --accent-wash: rgba(167, 139, 250, 0.07);
+  --accent: #e0e0e0;
+  --accent-deep: #f2f2f2;
+  --accent-tint: rgba(255, 255, 255, 0.09);
+  --accent-line: rgba(255, 255, 255, 0.28);
+  --accent-wash: rgba(255, 255, 255, 0.05);
 
   /*
    * ── Gold — the score, and only the score ──
    *
-   * The sixth family, and it was added for one reason: the number this
-   * product computes about you every night was drawn in the same violet as
-   * the sentence it writes about you, so the reading and the *voice* saying
-   * it were the same colour. Gold is the reading — the hero numeral, its
-   * ring, the four component arcs, and the ramp the year of days is drawn in.
+   * The score family. In light it is a real gold; here it is full ink, which
+   * is the strongest thing on a black ground and is therefore still the one
+   * value reserved for the number this product computes about you — the hero
+   * numeral, its ring, the four component arcs, and the ramp the year of days
+   * is drawn in. `--ember` keeps streaks and records one step below it.
    *
-   * It is deliberately *not* given to streaks or records: those are `--ember`
-   * and have been since this file started. Two warm hues carrying two nearly
-   * identical meanings is how a palette stops meaning anything, so gold takes
-   * a figure and an arc and stops.
-   *
-   * 12.1:1 on the field, which is what lets it be the one hue in the system
-   * that may set small text.
+   * 21:1 on the field, which is what lets it set small text.
    */
-  --gold: #ffc857;
-  --gold-deep: #e0a72e;
-  --gold-tint: rgba(255, 200, 87, 0.13);
-  --gold-line: rgba(255, 200, 87, 0.34);
-  --glow-gold: 0 0 40px -6px rgba(255, 200, 87, 0.34);
-  --halo-gold: radial-gradient(60% 54% at 50% 26%, rgba(255, 200, 87, 0.09), transparent 72%);
+  --gold: #ffffff;
+  --gold-deep: #b8b8b8;
+  --gold-tint: rgba(255, 255, 255, 0.09);
+  --gold-line: rgba(255, 255, 255, 0.28);
+  --glow-gold: 0 0 38px -8px rgba(255, 255, 255, 0.22);
+  --halo-gold: radial-gradient(60% 54% at 50% 26%, rgba(255, 255, 255, 0.07), transparent 72%);
 
-  --glow-moss: 0 0 34px -6px rgba(74, 222, 128, 0.36);
-  --glow-ember: 0 0 34px -6px rgba(245, 158, 11, 0.3);
-  --glow-azure: 0 0 34px -6px rgba(164, 176, 189, 0.24);
-  --glow-accent: 0 0 34px -6px rgba(167, 139, 250, 0.34);
-  --halo-moss: radial-gradient(60% 54% at 50% 26%, rgba(74, 222, 128, 0.09), transparent 72%);
-  --halo-ember: radial-gradient(60% 54% at 50% 26%, rgba(245, 158, 11, 0.08), transparent 72%);
-  --halo-azure: radial-gradient(60% 54% at 50% 26%, rgba(164, 176, 189, 0.08), transparent 72%);
-  --halo-accent: radial-gradient(60% 54% at 50% 26%, rgba(167, 139, 250, 0.1), transparent 72%);
+  --glow-moss: 0 0 38px -8px rgba(255, 255, 255, 0.22);
+  --glow-ember: 0 0 38px -8px rgba(255, 255, 255, 0.22);
+  --glow-azure: 0 0 38px -8px rgba(255, 255, 255, 0.22);
+  --glow-accent: 0 0 38px -8px rgba(255, 255, 255, 0.22);
+  --halo-moss: radial-gradient(60% 54% at 50% 26%, rgba(255, 255, 255, 0.07), transparent 72%);
+  --halo-ember: radial-gradient(60% 54% at 50% 26%, rgba(255, 255, 255, 0.07), transparent 72%);
+  --halo-azure: radial-gradient(60% 54% at 50% 26%, rgba(255, 255, 255, 0.07), transparent 72%);
+  --halo-accent: radial-gradient(60% 54% at 50% 26%, rgba(255, 255, 255, 0.07), transparent 72%);
 
   /*
    * The consistency ramp is the score with a history rather than a value, so
-   * it climbs to gold rather than to violet — the grid and the hero numeral
-   * are now the same measurement, and a reader can see that they are.
+   * it climbs to `--gold` — the grid and the hero numeral are the same
+   * measurement, and a reader can see that they are.
    */
   --h0: rgba(255, 255, 255, 0.07);
-  --h1: #3a2f1a;
-  --h2: #6b5322;
-  --h3: #b58a30;
-  --h4: #ffc857;
+  --h1: #262626;
+  --h2: #545454;
+  --h3: #9c9c9c;
+  --h4: #ffffff;
 
   /*
-   * The ramp again, retuned. Dark-mode `--signal` is a pale steel, so the same
+   * The ramp again, retuned. Dark-mode `--signal` is a mid grey, so the same
    * percentages that separate cleanly on white collapse into the ground here —
-   * the floor comes up and the steps between the quiet end widen.
+   * the floor comes up and the steps at the quiet end widen.
    */
   --w1: color-mix(in srgb, var(--signal) 96%, transparent);
   --w2: color-mix(in srgb, var(--signal) 76%, transparent);
@@ -530,41 +530,35 @@ html[data-mode="dark"] {
    * palette value does: so a component never states a hex.
    */
   /*
-   * ── The wedge palette: the one place a hue may mean "which" ──
+   * ── The wedge palette: the one place a value may mean "which" ──
    *
-   * Everywhere else a hue means one thing and never variety. A part-to-whole
-   * chart is the exception the rule has to make: with no colour per slice
-   * nothing ties an arc to its legend row, and one hue rampted across seven
-   * names is a chart nobody reads at a glance. Fixed and ordered by weight, so
-   * the largest holding is always violet and the remainder always neutral —
-   * these identify, they never grade.
+   * A part-to-whole chart is the exception every other rule here has to make:
+   * with nothing per slice, nothing ties an arc to its legend row. On a black
+   * and white screen the distinguishing device is lightness, so this is six
+   * fixed steps from full ink down to the ground, ordered by weight — the
+   * largest holding is always white and the remainder always the darkest step.
+   * They identify by rank, which is the one thing rank is honest about here.
    */
-  --wedge-1: #a855f7;
-  --wedge-2: #f59e0b;
-  --wedge-3: #4ade80;
-  --wedge-4: #fb7185;
-  --wedge-5: #60a5fa;
-  --wedge-rest: rgba(255, 255, 255, 0.3);
+  --wedge-1: #ffffff;
+  --wedge-2: #c9c9c9;
+  --wedge-3: #999999;
+  --wedge-4: #6d6d6d;
+  --wedge-5: #4a4a4a;
+  --wedge-rest: #2e2e2e;
 
-  --chrome: rgba(21, 16, 34, 0.9);
+  --chrome: rgba(0, 0, 0, 0.92);
   --nav-dim: rgba(255, 255, 255, 0.62);
-  --avatar-grad: linear-gradient(140deg, #6d28d9, #a78bfa);
-  --lead-grad: linear-gradient(150deg, #7c3aed, #f59e0b);
-  --lead-car-from: #7c3aed;
-  --lead-car-mid: #a855f7;
-  --lead-car-to: #f59e0b;
-  --car-2: #5b5b6b;
-  --car-3: #4a4a58;
-  --car-4: #43434f;
-  --car-5: #3c3c47;
-  --tyre: #191922;
-  --tyre-lead: #2b1500;
-  --lead-trail: linear-gradient(
-    90deg,
-    rgba(124, 58, 237, 0) 0%,
-    rgba(168, 85, 247, 0.5) 60%,
-    rgba(245, 158, 11, 0.75) 100%
-  );
+  /*
+   * The avatar plate, and the eleven tokens beside it are gone.
+   *
+   * They painted the five-lane car race — a violet-to-amber leader, four
+   * grey-violet rivals, two tyre colours and a trailing gradient — and the
+   * race has been a bar chart since `RaceBars` replaced it, so every one of
+   * them was a colour nothing could reach. The avatar's own violet was the
+   * one that still rendered: a saturated disc in the header of a screen with
+   * no other hue on it.
+   */
+  --avatar-grad: linear-gradient(140deg, #3c3c3c, #7a7a7a);
 
   --lift: 0 1px 2px rgba(0, 0, 0, 0.5);
   --lift-hero: 0 1px 2px rgba(0, 0, 0, 0.5), 0 24px 60px -34px rgba(0, 0, 0, 0.85);

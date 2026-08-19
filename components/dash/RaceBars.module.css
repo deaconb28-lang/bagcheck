@@ -6,6 +6,12 @@
  * There is no track fill behind a bar. A track implies a maximum and there
  * isn't one; the line is the only chrome, which is the same discipline the
  * zero-bar chart keeps.
+ *
+ * The palette here is black and white, so the two things a race has to say —
+ * who is where, and which way each ran — are said in form. Position is a
+ * numeral, because `raceField` sorts the rows and a standing is the one place
+ * a numbered marker carries information rather than decorating. Direction is
+ * fill: gained is solid, lost is hatched behind a hairline.
  */
 .race {
   position: relative;
@@ -25,10 +31,10 @@
 
 .row {
   display: grid;
-  grid-template-columns: minmax(0, 17ch) minmax(0, 1fr) 8ch;
+  grid-template-columns: 24px minmax(0, 16ch) minmax(0, 1fr) 8ch;
   align-items: center;
   gap: 20px;
-  padding: 15px 0;
+  padding: 14px 0;
 }
 
 /*
@@ -39,6 +45,31 @@
   border-bottom: 1px solid var(--line-light);
   padding-bottom: 20px;
   margin-bottom: 5px;
+}
+
+/*
+ * The standing. A hairline square holding its place, and the reader's is the
+ * one inverted chip on the surface — the strongest gesture this palette has,
+ * spent exactly once. It is `aria-hidden`: the rows are already in order and a
+ * screen reader announcing "1" before every fund name reads as a figure.
+ */
+.place {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--line2);
+  border-radius: var(--r-control);
+  font-size: 11.5px;
+  line-height: 1;
+  color: var(--meta);
+}
+
+.row[data-you] .place {
+  background: var(--ink-field);
+  border-color: var(--ink-field);
+  color: var(--on-ink);
+  font-weight: 600;
 }
 
 .label {
@@ -83,15 +114,15 @@
  */
 .track {
   position: relative;
-  height: 14px;
+  height: 22px;
   min-width: 0;
 }
 
 .track::before {
   content: "";
   position: absolute;
-  top: -15px;
-  bottom: -15px;
+  top: -14px;
+  bottom: -14px;
   /*
    * Held inside the lane. At 100% — a field where everything is down — a bare
    * `left: 100%` puts the rule one pixel into the column gap beside it.
@@ -101,45 +132,55 @@
   background: var(--axis);
 }
 
+/*
+ * A bar is 22px, not the 10px it was. At ten pixels in a fourteen-pixel lane
+ * the whole block read as a stack of hairlines with no weight of its own,
+ * which is what a race is least able to afford — the thing being compared was
+ * the thinnest mark on the screen.
+ */
 .bar {
   position: absolute;
-  top: 2px;
-  height: 10px;
-  /* Comparison is exposure, and exposure is the one hue it may take. */
-  background: var(--signal);
-  animation: run 0.8s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+  top: 0;
+  height: 22px;
+  /* Every lane in the field is one step down; the reader's is full ink. */
+  --lane: var(--wedge-4);
+  animation: 0.72s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+.row[data-you] .bar {
+  --lane: var(--ink);
 }
 
 /*
- * Square on the zero side, rounded away from it. A pill cap on a ten-pixel bar
- * overhangs the line by five pixels, which inflates every near-zero row —
- * a drawn number disagreeing with the printed one.
+ * Square on the zero side, rounded away from it. A pill cap overhangs the line
+ * by half the bar's height, which inflates every near-zero row — a drawn
+ * number disagreeing with the printed one.
  */
 .row[data-dir="up"] .bar {
   left: var(--zero, 0%);
-  transform-origin: left center;
   border-radius: 0 3px 3px 0;
-}
-
-.row[data-dir="down"] .bar {
-  right: calc(100% - var(--zero, 0%));
-  transform-origin: right center;
-  border-radius: 3px 0 0 3px;
-}
-
-/* The reader's own return is money, so it takes money's colour. */
-.row[data-you][data-dir="up"] .bar {
-  background: var(--moss);
-}
-
-.row[data-you][data-dir="down"] .bar {
-  background: var(--loss);
+  background: var(--lane);
+  animation-name: runUp;
 }
 
 /*
- * A fund's return is not the reader's money, so it never takes money's colour.
- * Hue reaches exactly one figure in this chart and it is theirs.
+ * A losing lane is hatched inside a hairline rather than filled. Solid-versus-
+ * hatched is the one direction cue that survives a monochrome palette, and it
+ * is the one an accessible chart is meant to carry regardless — a direction
+ * stated in colour alone is a direction a good share of readers never see.
  */
+.row[data-dir="down"] .bar {
+  right: calc(100% - var(--zero, 0%));
+  border-radius: 3px 0 0 3px;
+  box-shadow: inset 0 0 0 1px var(--lane);
+  background: repeating-linear-gradient(
+    135deg,
+    var(--lane) 0 1.5px,
+    transparent 1.5px 6px
+  );
+  animation-name: runDown;
+}
+
 .figure {
   font-size: 14.5px;
   text-align: right;
@@ -150,19 +191,23 @@
 .row[data-you] .figure {
   font-size: 17px;
   font-weight: 600;
+  color: var(--ink);
 }
 
-.row[data-you][data-dir="up"] .figure {
-  color: var(--moss);
-}
-
-.row[data-you][data-dir="down"] .figure {
-  color: var(--loss);
-}
-
-@keyframes run {
+/*
+ * Revealed from the line outward, never scaled. `scaleX` on an outlined,
+ * hatched bar thickens its own hairline and shears the hatch with it; a clip
+ * moves no geometry and leaves the finished bar as the static state.
+ */
+@keyframes runUp {
   from {
-    transform: scaleX(0);
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+@keyframes runDown {
+  from {
+    clip-path: inset(0 0 0 100%);
   }
 }
 
@@ -174,25 +219,29 @@
 
 @media (max-width: 720px) {
   .row {
-    grid-template-columns: minmax(0, 1fr) 7ch;
+    grid-template-columns: 24px minmax(0, 1fr) 7ch;
     gap: 8px 14px;
     padding: 14px 0;
   }
 
-  .label {
+  .place {
     grid-column: 1;
   }
 
-  .figure {
+  .label {
     grid-column: 2;
+  }
+
+  .figure {
+    grid-column: 3;
     grid-row: 1;
-    align-self: start;
+    align-self: center;
   }
 
   /* Stacked, the lane is a full-width row under the name it belongs to. */
   .track {
     grid-column: 1 / -1;
-    height: 12px;
+    height: 20px;
   }
 
   .track::before {
@@ -201,7 +250,7 @@
   }
 
   .bar {
-    top: 1px;
+    height: 20px;
   }
 
   .note {

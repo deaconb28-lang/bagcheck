@@ -1,20 +1,21 @@
 /*
- * The Wrapped flow's waiting state, in --mk-* like everything else in this
- * group — a card is an artefact with its own world, and the flow that hands
- * one over speaks that world's palette rather than the app's.
+ * The Wrapped flow's wait.
  *
- * The art is drawn rather than fetched. A generated backdrop on a loading
- * screen is a download you are asked to wait for while you are already
- * waiting for a download, and it would arrive after the thing it stood in for.
+ * Black ground, one dial, and every value off `tokens.css`. The light behind
+ * it is the one glow on the screen, which is what this palette rations glow
+ * for — a surface that is live and being read.
  */
 .wrap {
-  /* The arrival easing, stated once. */
-  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 76px;
+  min-height: 100vh;
+  padding: 64px 24px;
   overflow: hidden;
+  background: var(--bg);
 }
 
 .sr {
@@ -26,354 +27,154 @@
   white-space: nowrap;
 }
 
-/*
- * The field: violet at the head, amber low, a rose bloom off to the right.
- * The deck's own recurring hues, and the ones the landing already runs this
- * section on — so the wait belongs to the world of the thing it waits for.
- *
- * These sit far higher than a wash on the app's plum would, because
- * `--mk-field` is a near-black: the same percentages that read as atmosphere
- * on #151022 vanish entirely on #0b0b12.
- */
-.field {
+/* A single soft corner, so the ground is a room rather than a void. */
+.corner {
   position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
+  top: -90px;
+  left: -60px;
+  width: 340px;
+  height: 340px;
+  border-radius: var(--r-pill);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--ink) 16%, transparent) 0%,
+    transparent 70%
+  );
 }
 
-/*
- * Same contract as the app's field: the generated picture is layered over the
- * gradients, so a deployment with no key — or a reader whose connection has
- * not delivered it yet — sees a finished screen rather than a bare one.
- */
-.aurora {
-  position: absolute;
-  inset: -30%;
-  display: block;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-image:
-    url("/ambient/field-wrapped.webp"),
-    radial-gradient(
-      40% 34% at 16% 8%,
-      color-mix(in srgb, var(--mk-violet-lit) 62%, transparent) 0%,
-      transparent 68%
-    ),
-    radial-gradient(
-      38% 32% at 86% 78%,
-      color-mix(in srgb, var(--mk-amber) 46%, transparent) 0%,
-      transparent 70%
-    ),
-    radial-gradient(
-      32% 28% at 72% 22%,
-      color-mix(in srgb, var(--mk-red-soft) 26%, transparent) 0%,
-      transparent 72%
-    );
-  filter: blur(60px);
-  opacity: 0.55;
-}
-
-.nav,
-.inner {
+.dial {
   position: relative;
-  z-index: 1;
-}
-
-/*
- * The nav's stand-in. The page renders `<AppNav>` itself, so the wait has no
- * nav at all — without a bar of its height everything below jumps when the
- * real one lands.
- */
-.nav {
   display: flex;
   align-items: center;
-  gap: 26px;
-  height: 76px;
-  padding-inline: 40px;
-  border-bottom: 1px solid color-mix(in srgb, var(--mk-bg) 8%, transparent);
+  justify-content: center;
+  width: 260px;
+  height: 260px;
+}
+
+.glow {
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  border-radius: var(--r-pill);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--ink) 55%, transparent) 0%,
+    transparent 68%
+  );
+  animation: glow 3.6s ease-in-out infinite;
+}
+
+.ring {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+}
+
+.outer {
+  animation: spinf 7s linear infinite;
 }
 
 .inner {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 1560px;
-  margin-inline: auto;
-  padding: 22px 40px 72px;
+  animation: spinr 11s linear infinite;
 }
 
-.bar {
-  display: block;
-  border-radius: var(--r-pill, 999px);
-  background: color-mix(in srgb, var(--mk-bg) 11%, transparent);
-}
-
-.mark {
-  width: 132px;
-  height: 20px;
-}
-
-.navTabs {
-  width: min(360px, 34%);
-  height: 13px;
-}
-
-.navEnd {
-  width: 150px;
-  height: 30px;
-  margin-left: auto;
-}
-
-/* ── The year, and each quarter that has begun ── */
-
-.windows {
-  display: flex;
-  gap: 8px;
-}
-
-.window {
-  display: block;
-  width: 62px;
-  height: 34px;
-  border-radius: var(--r-pill, 999px);
-  border: 1px solid color-mix(in srgb, var(--mk-bg) 14%, transparent);
-}
-
-/* The selected window is the inversion, exactly as the real bar draws it. */
-.window[data-on] {
-  width: 92px;
-  background: color-mix(in srgb, var(--mk-bg) 28%, transparent);
-  border-color: transparent;
-}
-
-.head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 32px;
-  flex-wrap: wrap;
-  margin-top: 26px;
-}
-
-.headText {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-width: 0;
-}
-
-.eyebrow {
-  width: 168px;
-  height: 11px;
-}
-
-/* The 62px headline's own footprint. */
-.title {
-  width: min(520px, 74vw);
-  height: 58px;
-  border-radius: 16px;
-}
-
-.door {
-  width: 186px;
-  height: 56px;
-  border-radius: var(--r-pill, 999px);
-  background: color-mix(in srgb, var(--mk-bg) 20%, transparent);
-}
-
-/* ── The pile ─────────────────────────────────────────────────────────── */
-
-.pile {
-  position: relative;
-  align-self: center;
-  width: clamp(268px, 27vw, 384px);
-  aspect-ratio: 1080 / 1920;
-  margin-top: 44px;
-}
-
-.frame {
+/*
+ * The coin, and it is still.
+ *
+ * It flipped on `rotateY` in the design this came from, and rendering it is
+ * what showed why that cannot ship: half of every cycle draws the glyph
+ * *mirrored* — a backwards dollar sign — and most of the rest draws the disc
+ * foreshortened into an ellipse. There is already a glow breathing and two
+ * rings turning against each other; the third motion was the one to cut, and
+ * cutting it also gives the rings a fixed point to turn around.
+ */
+.coin {
   position: absolute;
-  inset: 0;
-  display: block;
-  border-radius: 28px;
-  background: color-mix(in srgb, var(--mk-bg) 6%, transparent);
-  border: 1px solid color-mix(in srgb, var(--mk-bg) 11%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 132px;
+  height: 132px;
+  border-radius: var(--r-pill);
+  border: 2px solid var(--ink);
+  font-size: 44px;
+  line-height: 1;
+  font-weight: 500;
+  color: var(--ink);
 }
 
-/*
- * The three behind, at the angles `<YearDeck>` fans its own depth by. Each
- * steps down in light as it steps back, which is what makes four rectangles
- * read as a stack rather than as a misprint.
- */
-.back1 {
-  transform: translateY(-13px) scale(0.955) rotate(-2deg);
-  opacity: 0.66;
-}
-
-.back2 {
-  transform: translateY(-24px) scale(0.912) rotate(2.6deg);
-  opacity: 0.42;
-}
-
-.back3 {
-  transform: translateY(-33px) scale(0.87) rotate(-3.4deg);
-  opacity: 0.22;
-}
-
-/*
- * The top card is the only one carrying a lockup — the rest are edges. A
- * stack where every card shows type reads as four things loading; the pile is
- * one object. The lockup sits in the lower third, where every card in the
- * deck that is set at the foot puts it.
- */
-.top {
+.words {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  gap: 14px;
-  padding: 30px;
-  background: color-mix(in srgb, var(--mk-bg) 9%, transparent);
-  border-color: color-mix(in srgb, var(--mk-bg) 20%, transparent);
-  box-shadow: 0 40px 80px -34px rgba(0, 0, 0, 0.85);
+  align-items: center;
+  gap: 10px;
+  text-align: center;
 }
 
-.cardEyebrow {
-  width: 56%;
-  height: 9px;
+.title {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
 }
 
-.cardTitle {
-  width: 82%;
-  height: 20px;
-  border-radius: 8px;
+.note {
+  margin: 0;
+  max-width: 250px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--ink3);
+  text-wrap: pretty;
 }
 
-.cardLabel {
-  width: 48%;
-  height: 8px;
-}
-
-.cardHero {
-  width: 88%;
-  height: 52px;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--mk-bg) 17%, transparent);
-}
-
-/*
- * ── Motion ──
- *
- * The same three gestures as the app's waiting state, in this world's register.
- *
- * The breath came off `.wrap`, where it dimmed the field along with the
- * placeholders, and softened from 0.6/1.4s to 0.75/2.2s — at page scale the
- * old values blinked.
- *
- * The pile settles rather than simply appearing: each depth card slides the
- * last few pixels into its fan, back to front, once. `YearDeck` fans on drag,
- * so the wait rehearses the gesture that is coming instead of inventing one.
- * Each card's resting `transform` is on the element, and the keyframe only
- * states where it comes *from*, so a card that never animates is already in
- * place.
- */
-@media (prefers-reduced-motion: no-preference) {
-  .nav {
-    animation: rise 0.42s var(--ease) both;
-  }
-
-  .windows,
-  .head {
-    animation: rise 0.42s var(--ease) 90ms both;
-  }
-
-  .pile {
-    animation: rise 0.42s var(--ease) 180ms both;
-  }
-
-  .bar {
-    animation: settle 2.2s ease-in-out infinite alternate;
-  }
-
-  /*
-   * Back to front, 60ms apart. `settleBack` is a translate on top of whatever
-   * the card's own resting transform is, so the fan angles stay where the
-   * layout put them — a keyframe restating each rotation would be the fan
-   * written twice.
-   */
-  .back3 {
-    animation: settleBack 0.5s var(--ease) 180ms both;
-  }
-
-  .back2 {
-    animation: settleBack 0.5s var(--ease) 240ms both;
-  }
-
-  .back1 {
-    animation: settleBack 0.5s var(--ease) 300ms both;
-  }
-
-  .top {
-    animation: settleTop 0.5s var(--ease) 360ms both;
-  }
-
-  .aurora {
-    animation: drift 74s ease-in-out infinite;
-    will-change: transform;
-  }
-
-  @keyframes settle {
-    from {
-      opacity: 0.75;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  /*
-   * `from`-only, and it moves the card's *own* box rather than its transform:
-   * `translate` composes with the `transform` each depth class already sets,
-   * so the fan is stated once in the layout and never restated here.
-   */
-  @keyframes settleBack {
-    from {
-      translate: 0 18px;
-      opacity: 0;
-    }
-  }
-
-  @keyframes settleTop {
-    from {
-      translate: 0 24px;
-      opacity: 0;
-    }
+@keyframes spinf {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-@media (max-width: 860px) {
-  .nav {
-    height: 64px;
-    padding-inline: 20px;
-    gap: 16px;
+@keyframes spinr {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .outer,
+  .inner,
+  .glow {
+    animation: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .wrap {
+    gap: 56px;
   }
 
-  .inner {
-    padding: 18px 20px 56px;
+  .dial,
+  .ring {
+    width: 210px;
+    height: 210px;
   }
 
-  .title {
-    height: 42px;
-  }
-
-  .door {
-    height: 46px;
-    width: 158px;
-  }
-
-  .pile {
-    width: min(252px, 64vw);
-    margin-top: 32px;
+  .coin {
+    width: 108px;
+    height: 108px;
+    font-size: 36px;
   }
 }

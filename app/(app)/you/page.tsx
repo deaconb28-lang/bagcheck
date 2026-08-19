@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getUserId, isAuthConfigured } from "@/auth";
 import { accessFor, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
 import { dashboardFor, fieldLine, rangeOf } from "@/lib/portfolio/load";
-import type { RangeKey } from "@/lib/portfolio/types";
+import type { Pattern, RangeKey } from "@/lib/portfolio/types";
 import { EmptyState } from "@/components/app/EmptyState";
 import { FirstScore } from "@/components/app/FirstScore";
 import { PageGrid } from "@/components/app/PageGrid";
@@ -40,7 +40,7 @@ import {
   SectorMix,
   WeekdayBars,
 } from "@/components/dash/Charts";
-import { InsightRow, WrappedPromo } from "@/components/dash/Cards";
+import { InsightCard, WrappedPromo } from "@/components/dash/Cards";
 import { ScoreHero } from "@/components/dash/ScoreHero";
 import { Collection } from "@/components/dash/Collection";
 import { EquityCurve, HeatGrid } from "@/components/idioms";
@@ -57,6 +57,19 @@ const RANGES: Array<{ key: RangeKey; label: string }> = [
  * score and the run; the history waits until there is one.
  */
 const MIN_SCORED_DAYS = 8;
+
+/*
+ * What each finding measured, as its card's eyebrow says it.
+ *
+ * The kind rather than the finding: the headline under it already states the
+ * finding, and a label restating its own heading is a label doing no work.
+ */
+const INSIGHT_EYEBROW: Record<Pattern["kind"], string> = {
+  weekday: "Weekday pattern",
+  holds: "Holding behaviour",
+  finding: "Ledger finding",
+  profile: "Your profile",
+};
 
 export const metadata: Metadata = { title: "Dashboard" };
 export const dynamic = "force-dynamic";
@@ -577,53 +590,54 @@ export default async function DashboardPage({
           </Row>
         ) : null}
 
-        <Row kind="thirds">
-          <Panel span>
-            <PanelHead eyebrow="Insights this week">
-              {insights.length ? (
-                <span className="dashNew">{insights.length} on file</span>
-              ) : null}
-            </PanelHead>
+        {/*
+          * The findings, drawn.
+          *
+          * They were three rows inside one panel, each with its chart shrunk
+          * to a 104px chip beside the sentence it was evidence for — so the
+          * reader could see that something had been measured and never what.
+          * Each is a card now: the chart across the top of its own plate, the
+          * reading under it. The row shape follows the count, because a
+          * third-width card sitting alone in a three-column grid reads as two
+          * cards that failed to load.
+          */}
+        {insights.length ? (
+          <Row kind={insights.length >= 3 ? "thirds" : insights.length === 2 ? "halves" : "full"}>
+            {insights.slice(0, 3).map((pattern, i) => (
+              <InsightCard
+                key={pattern.key}
+                delay={50 + i * 80}
+                eyebrow={INSIGHT_EYEBROW[pattern.kind]}
+                range={pattern.range}
+                chart={
+                  pattern.chart.type === "weekday" ? (
+                    <WeekdayBars cells={pattern.chart.cells} worst={pattern.chart.worst} />
+                  ) : pattern.chart.type === "holds" ? (
+                    <HoldMeters
+                      winners={pattern.chart.winners}
+                      losers={pattern.chart.losers}
+                    />
+                  ) : (
+                    <span className="dashImpact" data-tone={pattern.tone}>
+                      {pattern.impact != null ? signedMoney(pattern.impact) : "—"}
+                    </span>
+                  )
+                }
+                title={pattern.title}
+                body={pattern.body}
+              />
+            ))}
+          </Row>
+        ) : (
+          <Row kind="full">
+            <Panel>
+              <PanelHead eyebrow="Insights this week" />
+              <p className="dashEmpty">Nothing has cleared a sample floor yet.</p>
+            </Panel>
+          </Row>
+        )}
 
-            {/*
-              * One list, three kinds. The view shapes each pattern — including
-              * the data its thumbnail draws — so this loop never branches on
-              * where a pattern came from.
-              */}
-            {insights.length ? (
-              <div className="dashInsights">
-                {insights.slice(0, 3).map((pattern, i) => (
-                  <InsightRow
-                    key={pattern.key}
-                    delay={50 + i * 80}
-                    thumb={
-                      pattern.chart.type === "weekday" ? (
-                        <WeekdayBars cells={pattern.chart.cells} worst={pattern.chart.worst} />
-                      ) : pattern.chart.type === "holds" ? (
-                        <HoldMeters
-                          winners={pattern.chart.winners}
-                          losers={pattern.chart.losers}
-                          compact
-                        />
-                      ) : (
-                        <span className="dashImpact" data-tone={pattern.tone}>
-                          {pattern.impact != null ? signedMoney(pattern.impact) : "—"}
-                        </span>
-                      )
-                    }
-                    title={pattern.title}
-                    body={pattern.body}
-                    range={pattern.range}
-                  />
-                ))}
-              </div>
-            ) : (
-              <p className="dashEmpty">
-                Nothing has cleared a sample floor yet.
-              </p>
-            )}
-          </Panel>
-
+        <Row kind="full">
           {/*
             * The door, not the tally. The count moved to the set at the foot
             * of the page, where twelve frames say it better than a sentence

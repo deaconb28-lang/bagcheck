@@ -6,10 +6,13 @@
  * ground under it is that family's deep tone, which is what makes a set of
  * sixteen read as sixteen rather than as one shape in four inks.
  *
- * The colour lives here on purpose. The app is monochrome, but an archetype is
- * an identity that travels onto a share card, which is the one surface with its
- * own palette — so it is spoken in the `--card-*` families, exactly like the
- * card it ends up on.
+ * The colour lives here on purpose, and it is now chosen by the caller. An
+ * archetype travels onto a share card, which is the one surface with its own
+ * palette, so `data-paint="card"` speaks the `--card-*` families exactly like
+ * the card it ends up on. Every in-app surface passes `ink` instead: the
+ * screen is black and white, and a saturated character at the head of it is
+ * the loudest object on a page with no other hue. What identifies an archetype
+ * is the drawing — there are sixteen of those and only four colours.
  */
 .avatar {
   position: relative;
@@ -65,6 +68,18 @@
   --av-deep: var(--card-violet-deep);
   --av-mid: var(--card-violet-mid);
   --av-lit: var(--card-violet-lit);
+}
+
+/*
+ * The ink paint. Four steps of the ramp rather than a family: a near-black
+ * plate, a mid grey for the body and full ink for the lit parts, so more of a
+ * character above the bar still reads as more light on it.
+ */
+.avatar[data-paint="ink"] {
+  --av-deep: var(--tile);
+  --av-mid: var(--wedge-4);
+  --av-lit: var(--ink);
+  color: var(--ink);
 }
 
 .art {

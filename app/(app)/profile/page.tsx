@@ -158,7 +158,7 @@ export default async function ProfilePage() {
 
       <Card hero>
         <div className={styles.archBlock}>
-          <Avatar archetype={archetype.key} size={72} />
+          <Avatar archetype={archetype.key} size={72} tone="ink" />
           <div className={styles.block}>
             <Eyebrow>Your archetype</Eyebrow>
             <h2 className={`disp ${styles.archetype}`}>{archetype.name}</h2>

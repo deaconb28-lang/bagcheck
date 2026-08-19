@@ -221,12 +221,17 @@
 }
 
 /* ── Weekday thumbnail ──────────────────────────────────────────────────── */
+/*
+ * The weekday chart is the surface itself now, not a 104px thumbnail beside a
+ * sentence. It was drawn at chip size in the insight rows and full size
+ * nowhere, so the one chart that answers "which day" was the smallest mark on
+ * the screen it appeared on.
+ */
 .weekday {
   display: flex;
   align-items: flex-end;
-  gap: 6px;
-  width: 104px;
-  flex: none;
+  gap: 8px;
+  width: 100%;
 }
 
 .weekdayCol {
@@ -242,31 +247,37 @@
   display: flex;
   align-items: flex-end;
   width: 100%;
-  height: 48px;
+  height: 84px;
 }
 
+/*
+ * Every day is a step down; the outlier is the one full-ink bar. The chart
+ * answers "which day", not "which way" — the amounts are absolute — so the
+ * marked column is the thing to look at rather than a direction, and full ink
+ * against grey says that without asking a hue to.
+ */
 .weekdayBar {
   display: block;
   width: 100%;
   border-radius: 4px;
-  background: color-mix(in srgb, var(--accent) 50%, transparent);
+  background: var(--wedge-5);
   transform-origin: bottom;
   animation: riseBar 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .weekdayBar[data-bad] {
-  background: var(--loss);
+  background: var(--ink);
 }
 
 .weekdayLabel {
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--meta);
 }
 
 .weekdayLabel[data-bad] {
   font-weight: 700;
-  color: var(--loss);
+  color: var(--ink);
 }
 
 /* ── Hold meters ────────────────────────────────────────────────────────── */
@@ -276,13 +287,6 @@
   gap: 20px;
   padding: 14px 0;
   width: 100%;
-}
-
-.holds[data-compact] {
-  width: 104px;
-  flex: none;
-  gap: 9px;
-  padding: 0;
 }
 
 .holdHead {
@@ -295,25 +299,11 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-.holds[data-compact] .holdHead {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--meta);
-}
-
 .holdWin,
 .holdLoss {
   font-size: 20px;
   font-weight: 600;
   letter-spacing: -0.02em;
-}
-
-.holds[data-compact] .holdWin,
-.holds[data-compact] .holdLoss {
-  font-size: 10px;
-  font-weight: 700;
 }
 
 .holdWin {
@@ -331,12 +321,6 @@
   border-radius: var(--r-pill);
   background: rgba(255, 255, 255, 0.07);
   overflow: hidden;
-}
-
-.holds[data-compact] .holdTrack {
-  margin-top: 4px;
-  height: 9px;
-  background: rgba(255, 255, 255, 0.08);
 }
 
 .holdWinFill,

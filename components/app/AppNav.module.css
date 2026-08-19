@@ -60,9 +60,15 @@
   color: var(--ink);
 }
 
+/*
+ * Full ink, not a hue. The rule was `--ember`, which on this palette resolves
+ * to a light grey — and navigation furniture is the clearest case of chrome
+ * there is, so the active state is the strongest value in the ramp rather than
+ * a semantic family borrowed for decoration.
+ */
 .tab[data-active] {
   color: var(--ink);
-  border-bottom-color: var(--ember);
+  border-bottom-color: var(--ink);
 }
 
 .right {

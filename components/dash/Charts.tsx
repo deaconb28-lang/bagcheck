@@ -302,15 +302,13 @@ export function WeekdayBars({
 export function HoldMeters({
   winners,
   losers,
-  compact,
 }: {
   winners: number;
   losers: number;
-  compact?: boolean;
 }) {
   const longest = Math.max(winners, losers, 1);
   return (
-    <div className={styles.holds} data-compact={compact || undefined}>
+    <div className={styles.holds}>
       <div>
         <div className={styles.holdHead}>
           <span>Winners held</span>

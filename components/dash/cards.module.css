@@ -1,4 +1,18 @@
-/* ── The Wrapped promo: the one gradient surface in the app ─────────────── */
+/*
+ * ── The Wrapped promo ───────────────────────────────────────────────────
+ *
+ * It used to be the one gradient surface in the app — violet into amber, with
+ * the amber stop pushed past the frame so only its leading edge reached the
+ * corner. On a screen that now says everything in black and white, a saturated
+ * plate is not an accent, it is the only colour in the room, and the eye goes
+ * there rather than to the reading. The gradient also carried a raw `#7c3aed`,
+ * which is a palette hex outside `tokens.css` and a bug on its own terms.
+ *
+ * What is left is the same plate one step lighter than the panels around it,
+ * and the orb — a soft white wash bleeding off the corner, which is the only
+ * light on the dashboard and is what still marks this as the door to the
+ * artefact rather than another panel.
+ */
 .promo {
   position: relative;
   display: flex;
@@ -6,32 +20,39 @@
   border-radius: var(--r-panel);
   padding: 30px 32px;
   overflow: hidden;
-  color: #fff;
-  /*
-   * The amber stop sits past the box on purpose, so only its leading edge
-   * reaches the bottom-right corner. A gradient that lands its last stop
-   * inside the frame reads as two colours meeting; this one reads as light.
-   */
-  background: linear-gradient(160deg, var(--card-violet-mid) 0%, #7c3aed 52%, var(--ember) 130%);
-  border: 0;
+  color: var(--ink);
+  background: var(--tile);
+  border: 1px solid var(--line2);
 }
 
 /* Clipped by the card, so it reads as an arc bleeding off the corner. */
 .promoOrb {
   position: absolute;
-  right: -60px;
-  top: -60px;
-  width: 230px;
-  height: 230px;
+  right: -110px;
+  top: -110px;
+  width: 320px;
+  height: 320px;
   border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, 0.13);
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.05) 46%,
+    transparent 70%
+  );
 }
 
+/*
+ * Held to a measure. The promo is a full-width band now that the findings took
+ * the three-up row, and a lockup stretched across 1240px puts its heading at
+ * one end of the plate and its buttons at the other. The light keeps the space
+ * to the right.
+ */
 .promoBody {
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
+  max-width: 620px;
 }
 
 .promoTop {
@@ -46,14 +67,14 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--ink3);
 }
 
 .promoState {
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--ink3);
 }
 
 .promoFigure {
@@ -68,7 +89,7 @@
   margin-top: 12px;
   font-size: 16px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--ink3);
 }
 
 .promoPills {
@@ -83,14 +104,14 @@
   font-weight: 600;
   border-radius: var(--r-pill);
   padding: 7px 13px;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: var(--ink2);
+  border: 1px solid var(--line2);
 }
 
 .promoPill[data-solid] {
-  background: #fff;
-  color: var(--card-violet-deep);
-  border-color: #fff;
+  background: var(--ink-field);
+  color: var(--on-ink);
+  border-color: var(--ink-field);
 }
 
 .promoSpacer {
@@ -117,36 +138,46 @@
 
 .promoGhost {
   flex: none;
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #fff;
+  background: var(--control);
+  border: 1px solid var(--line2);
+  color: var(--ink);
 }
 
 .promoGhost:hover {
-  background: rgba(255, 255, 255, 0.26);
-  color: #fff;
+  background: var(--inset);
+  color: var(--ink);
 }
 
 .promoSolid {
   flex: 1;
   justify-content: center;
-  background: #fff;
-  color: var(--card-violet-deep);
+  background: var(--ink-field);
+  color: var(--on-ink);
 }
 
 .promoSolid:hover {
   opacity: 0.88;
-  color: var(--card-violet-deep);
+  color: var(--on-ink);
 }
 
-/* ── Insight rows ───────────────────────────────────────────────────────── */
+/*
+ * ── Insight cards ───────────────────────────────────────────────────────
+ *
+ * Chart at the top, reading at the foot, and the gap between them is the
+ * card's own — three cards side by side only read as a set if their headlines
+ * land on one line, so the art holds its height and the space between the two
+ * takes up the slack.
+ */
 .insight {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  border-radius: var(--r-row);
-  background: rgba(255, 255, 255, 0.04);
-  padding: 20px 22px;
+  display: grid;
+  /* head, art, text, then whatever is left — so three cards of different
+   * sentence lengths still line their figures up on one row. */
+  grid-template-rows: auto auto auto 1fr;
+  border: 1px solid var(--edge);
+  background: var(--s1);
+  border-radius: var(--r-panel);
+  padding: 26px 26px 28px;
+  min-width: 0;
   animation: insightRise 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -157,35 +188,73 @@
   }
 }
 
-.insightThumb {
-  width: 104px;
+.insightHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.insightEyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.insightRange {
+  font-family: var(--font-mono), monospace;
+  font-size: 11.5px;
+  color: var(--meta);
   flex: none;
 }
 
+/* The evidence, at the size evidence has to be read at. */
+.insightArt {
+  display: flex;
+  align-items: flex-end;
+  min-height: 118px;
+  margin-top: 22px;
+  min-width: 0;
+}
+
 .insightText {
-  flex: 1;
+  margin-top: 24px;
   min-width: 0;
 }
 
 .insightTitle {
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.03em;
   color: var(--ink);
+  text-wrap: balance;
 }
 
 .insightBody {
-  margin: 5px 0 0;
-  font-size: 16px;
-  line-height: 1.4;
-  color: rgba(255, 255, 255, 0.6);
+  margin: 10px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--ink3);
 }
 
-.insightRange {
-  font-size: 14px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
-  flex: none;
+@media (max-width: 900px) {
+  .insight {
+    padding: 22px 22px 24px;
+  }
+
+  .insightArt {
+    min-height: 96px;
+    margin-top: 18px;
+  }
+
+  .insightTitle {
+    font-size: 23px;
+  }
 }
 
 /* ── The locked tile ────────────────────────────────────────────────────── */

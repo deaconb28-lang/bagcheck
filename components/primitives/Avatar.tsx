@@ -20,6 +20,7 @@ export function Avatar({
   archetype,
   size = 44,
   shape = "tile",
+  tone = "card",
 }: {
   /** An archetype key from lib/archetypes.ts. */
   archetype: string;
@@ -44,6 +45,17 @@ export function Avatar({
    * nothing and the character draws invisible.
    */
   shape?: "tile" | "circle";
+  /**
+   * Which palette the character is drawn in.
+   *
+   * `card` is the four `--card-*` families — the archetype's own colour, worn
+   * on the surface that has its own palette. `ink` is the app's ramp, and it
+   * is what every in-app surface passes: the screen is black and white, and a
+   * saturated character at the head of it is the loudest thing on a page with
+   * no other hue. The identity survives the change because the identity is
+   * the *drawing* — sixteen different characters, not four colours.
+   */
+  tone?: "card" | "ink";
 }) {
   const meta = archetypeByKey(archetype);
   if (!meta) return null;
@@ -63,6 +75,7 @@ export function Avatar({
       }}
       data-tone={meta.tone}
       data-family={avatarFamily(meta)}
+      data-paint={tone}
     >
       {hasGeneratedAvatar(archetype) ? (
         // A static file at a fixed path, sized by the caller; next/image

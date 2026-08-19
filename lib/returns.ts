@@ -219,7 +219,7 @@ export function raceField(you: number | null, peers: RaceEntry[]): RaceField | n
   const field = [
     ...peers.filter((p) => Number.isFinite(p.value)),
     ...(you != null && Number.isFinite(you)
-      ? [{ key: "you", label: "You", note: "Your own book, year to date.", value: you, you: true }]
+      ? [{ key: "you", label: "You", note: "Your own book.", value: you, you: true }]
       : []),
   ].sort((a, b) => b.value - a.value);
 

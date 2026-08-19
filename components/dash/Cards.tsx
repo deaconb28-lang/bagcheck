@@ -69,30 +69,51 @@ export function WrappedPromo({
   );
 }
 
-/* ── An insight row ─────────────────────────────────────────────────────── */
+/* ── An insight card ────────────────────────────────────────────────────── */
 
-export function InsightRow({
-  thumb,
+/**
+ * One finding, drawn at the size the finding deserves.
+ *
+ * It was a row: a 104px thumbnail, a headline and a sentence, three of them
+ * stacked inside a panel. The chart in that thumbnail is the evidence for the
+ * sentence beside it, and at chip size it was the smallest mark on the screen —
+ * a reader could see that *something* had been measured and not what. The card
+ * gives the chart the top of the plate and puts the reading under it, so the
+ * shape and the sentence are read in that order.
+ *
+ * The eyebrow names the kind of measurement rather than the finding, because
+ * the headline already states the finding and a label that restates its own
+ * heading is a label doing no work.
+ */
+export function InsightCard({
+  eyebrow,
+  chart,
   title,
   body,
   range,
   delay,
 }: {
-  thumb: React.ReactNode;
+  eyebrow: string;
+  chart: React.ReactNode;
   title: string;
   body: string;
   range: string;
   delay: number;
 }) {
   return (
-    <div className={styles.insight} style={{ animationDelay: `${delay}ms` }}>
-      <div className={styles.insightThumb}>{thumb}</div>
+    <section className={styles.insight} style={{ animationDelay: `${delay}ms` }}>
+      <div className={styles.insightHead}>
+        <span className={styles.insightEyebrow}>{eyebrow}</span>
+        <span className={styles.insightRange}>{range}</span>
+      </div>
+
+      <div className={styles.insightArt}>{chart}</div>
+
       <div className={styles.insightText}>
-        <div className={styles.insightTitle}>{title}</div>
+        <h3 className={styles.insightTitle}>{title}</h3>
         <p className={styles.insightBody}>{body}</p>
       </div>
-      <span className={styles.insightRange}>{range}</span>
-    </div>
+    </section>
   );
 }
 

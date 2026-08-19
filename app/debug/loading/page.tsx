@@ -21,9 +21,9 @@ export const dynamic = "force-dynamic";
  * itself uses. Nothing ships: with the flag off this route does not exist.
  *
  * The two are stacked rather than tabbed because the point of looking at them
- * together is that they should feel like one product in two worlds — the app's
- * plum and the artefact world's near-black — and a tab hides the comparison
- * that makes that judgeable.
+ * together is that they should feel like one product — the same black ground,
+ * the same ink, one saying it is reading a ledger and the other a year — and a
+ * tab hides the comparison that makes that judgeable.
  */
 export default function LoadingPreview() {
   if (!debugEnabled()) notFound();
