@@ -37,7 +37,7 @@ import { assembleWrapped } from "../lib/wrapped/assemble.ts";
 import { storedFrom } from "../lib/cards/types.ts";
 
 const USER_ID = "000000000000000000000001";
-const DB = "bagcheck";
+const DB = "supercruise";
 const DAYS = 430;
 
 /*

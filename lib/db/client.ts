@@ -2,7 +2,7 @@ import { MongoClient } from "mongodb";
 
 declare global {
   // Cached across hot reloads in dev and across route invocations in prod.
-  var _canopyMongo: Promise<MongoClient> | undefined;
+  var _supercruiseMongo: Promise<MongoClient> | undefined;
 }
 
 export function isDbConfigured(): boolean {
@@ -18,21 +18,28 @@ export function getMongoClient(): Promise<MongoClient> {
   if (!uri) {
     throw new Error("MONGODB_URI is not set");
   }
-  if (!globalThis._canopyMongo) {
-    globalThis._canopyMongo = new MongoClient(uri).connect();
+  if (!globalThis._supercruiseMongo) {
+    globalThis._supercruiseMongo = new MongoClient(uri).connect();
   }
-  return globalThis._canopyMongo;
+  return globalThis._supercruiseMongo;
 }
 
 export function dbName(): string {
   /*
-   * Still "bagcheck", and deliberately.
+   * The fallback says "supercruise" now, and the thing that makes that safe is
+   * stated here rather than assumed: **`MONGODB_DB` is set explicitly on the
+   * deployment.** The live data sits in whatever database that variable names,
+   * and this line is never consulted there.
    *
-   * The product was renamed to Supercruise; its storage was not. A database
-   * name is an address, not a brand — pointing the fallback at "supercruise"
-   * would aim a fresh deployment at an empty database and read every live
-   * account as a new one. `MONGODB_DB` is set explicitly in production; this is the local and
-   * CI default, and it has to keep matching what the seed script writes.
+   * It was "bagcheck" for exactly one reason — a database name is an address
+   * rather than a brand, and moving an address silently is how a deployment
+   * ends up reading an empty database and treating every live account as new.
+   * That risk has not gone away; it has moved. **If `MONGODB_DB` is ever unset
+   * on a deployment that has real data, this line will point it at a fresh,
+   * empty database rather than at the ledger.** Keep it set.
+   *
+   * `scripts/seed.mjs` and the two harness scripts write and read the same
+   * name against an in-memory server, so all four move together or none do.
    */
-  return process.env.MONGODB_DB ?? "bagcheck";
+  return process.env.MONGODB_DB ?? "supercruise";
 }

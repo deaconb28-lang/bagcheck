@@ -46,11 +46,11 @@ test("without APP_URL the proxy's forwarding headers are believed, not the socke
     const origin = originOf(
       req("https://localhost:8080/api/snaptrade/connect", {
         host: "localhost:8080",
-        "x-forwarded-host": "bagcheck-production-860c.up.railway.app",
+        "x-forwarded-host": "supercruise-production-860c.up.railway.app",
         "x-forwarded-proto": "https",
       }),
     );
-    assert.equal(origin, "https://bagcheck-production-860c.up.railway.app");
+    assert.equal(origin, "https://supercruise-production-860c.up.railway.app");
   });
 });
 

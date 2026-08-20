@@ -50,7 +50,7 @@ const child = spawn(
       APP_LOCKED: "",
       APP_URL: BASE,
       MONGODB_URI: uri,
-      MONGODB_DB: "bagcheck",
+      MONGODB_DB: "supercruise",
       /* Seeded cache only — `finnhub()` is never reached. Same as the sweep. */
       FINNHUB_API_KEY: "seeded-cache-only",
       DEV_USER_ID: userId,

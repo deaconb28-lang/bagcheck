@@ -1,7 +1,7 @@
 Fonts vendored into this repository
 ===================================
 
-Every face Bagcheck renders is served from this directory rather than fetched
+Every face Supercruise renders is served from this directory rather than fetched
 from a CDN. That is a build-reliability decision first — `next/font/google`
 downloads its files during `next build`, and one failed fetch takes the whole
 build with it — and a privacy decision second: nothing about a reader is sent

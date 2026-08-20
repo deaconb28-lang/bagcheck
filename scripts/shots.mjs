@@ -236,7 +236,7 @@ function serve(uri, userId) {
         DEBUG_PAGE: "1",
         APP_URL: BASE,
         MONGODB_URI: uri,
-        MONGODB_DB: "bagcheck",
+        MONGODB_DB: "supercruise",
         /*
          * The market layer is on, and it never leaves the machine: the seed
          * primes `marketCache` with an unexpired entry for everything the
@@ -362,7 +362,7 @@ async function shoot(name, path, { width, height, mode, selector, full }) {
    */
   if (mode) {
     await page.addInitScript(`
-      try { localStorage.setItem("canopy-mode", ${JSON.stringify(mode)}); } catch {}
+      try { localStorage.setItem("supercruise-mode", ${JSON.stringify(mode)}); } catch {}
       document.addEventListener("DOMContentLoaded", () => {
         document.documentElement.dataset.mode = ${JSON.stringify(mode)};
       });
