@@ -442,7 +442,7 @@ body {
   z-index: 3;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   font-size: 34px;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -450,11 +450,19 @@ body {
   opacity: 0.86;
 }
 
-.markDot {
-  width: 18px;
-  height: 18px;
-  border-radius: 6px;
-  background: var(--card-ember-lit);
+/*
+ * The dart, not a dot.
+ *
+ * This was an 18px amber square with a 6px radius — the mark from two brands
+ * ago, surviving here because a card footer is a surface nobody looks at from
+ * inside the product. It is `currentColor`, like the mark everywhere else, so
+ * it reads on the four light cards and the eight dark ones without a variant.
+ */
+.markGlyph {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  color: currentColor;
 }
 
 .provenance {

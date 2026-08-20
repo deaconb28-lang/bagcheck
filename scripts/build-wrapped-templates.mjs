@@ -178,7 +178,14 @@ ${facts}
     <p class="caption" data-caption="">{{CAPTION}}</p>
   </div>
 
-  <span class="mark"><i class="markDot"></i>supercruise</span>
+  <span class="mark">
+    <svg class="markGlyph" viewBox="0 0 34 34" fill="none" aria-hidden="true">
+      <circle cx="17" cy="17" r="13" pathLength="100" stroke="currentColor" stroke-width="2.4"
+              stroke-dasharray="37 13 37 13" stroke-dashoffset="6"/>
+      <path d="M28 5.6 L9.6 16.8 L16.7 19.2 L17.3 26.4 Z" fill="currentColor"/>
+      <path d="M13.4 22.8 L7.2 29" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/>
+      <path d="M8.4 18.8 L3 24.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+    </svg>supercruise</span>
   <span class="provenance">Read-only via SnapTrade</span>
 </div>
 </body>
