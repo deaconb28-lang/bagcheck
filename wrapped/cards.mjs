@@ -131,7 +131,7 @@ export const CARDS = [
     no: "01",
     key: "cover",
     title: "Your year, all of it",
-    motif: "one enormous chrome droplet suspended in a void, warping the light around it",
+    motif: "one mirror-polished nose cone suspended in a void, warping the light around it",
     art: {
       medium: "iridescent liquid chrome, a molten metal blob rendered in 3D with mirror-sharp reflections and razor highlights",
       texture: "glossy, zero grain, hard specular edges",
@@ -159,7 +159,7 @@ export const CARDS = [
     no: "02",
     key: "return",
     title: "The year in one number",
-    motif: "one vast beam driven diagonally across the sheet, the two inks overlapping where it crosses",
+    motif: "one contrail driven diagonally across the sheet, the two inks overlapping along its edge",
     art: {
       medium: "risograph print, two ink layers slightly mis-registered",
       texture: "coarse paper tooth, visible dot screen, ink bleeding at the edges",
@@ -187,7 +187,7 @@ export const CARDS = [
     no: "03",
     key: "contributions",
     title: "What you put in",
-    motif: "a staircase of stacked paper rectangles climbing out of the bottom edge",
+    motif: "a climb profile: stacked paper steps rising out of the bottom edge into open sky",
     art: {
       medium: "cut-paper collage, matte construction paper layered in physical planes with real drop shadows",
       texture: "torn fibrous edges, flat unlit colour, no gradient anywhere",
@@ -215,7 +215,7 @@ export const CARDS = [
     no: "04",
     key: "longestHold",
     title: "The longest hold",
-    motif: "a single slow curtain of light hanging from the top of the frame, still and unhurried",
+    motif: "a single slow auroral curtain hanging over the curve of a horizon, still and unhurried",
     art: {
       medium: "deep gradient mesh, smooth volumetric fog with no visible edges",
       texture: "glassy and continuous, faint chromatic bloom, no grain",
@@ -243,7 +243,7 @@ export const CARDS = [
     no: "05",
     key: "best",
     title: "Best performer",
-    motif: "one huge starburst exploding from a single point, dots enlarging outward",
+    motif: "one huge shock diamond bursting from a single point, dots enlarging outward",
     art: {
       medium: "halftone pop-art print, oversized Ben-Day dots at screen-print scale",
       texture: "hard-edged dots, visible registration, flat comic-book ink",
@@ -271,7 +271,7 @@ export const CARDS = [
     no: "06",
     key: "heldThrough",
     title: "The one you held through",
-    motif: "a deep cold trough with one furious hot ridge along its far edge",
+    motif: "a deep cold upper atmosphere with one furious exhaust plume burning along its far edge",
     art: {
       medium: "thermal infrared imaging, a heat bloom read by a sensor",
       texture: "smooth isotherm banding, sensor noise in the cold areas",
@@ -299,7 +299,7 @@ export const CARDS = [
     no: "07",
     key: "busiest",
     title: "Most active month",
-    motif: "a dense field of light points tearing horizontally as the signal breaks",
+    motif: "a radar sweep field tearing horizontally as the signal breaks",
     art: {
       medium: "CRT phosphor screen, scanlines and signal glitch, datamosh tearing",
       texture: "horizontal scanline banding, chromatic fringing, analogue noise",
@@ -327,7 +327,7 @@ export const CARDS = [
     no: "08",
     key: "redDays",
     title: "Buying on red days",
-    motif: "scattered ink drops blooming and stretching into long marbled veins",
+    motif: "cloud tops blooming and stretching into long marbled storm veins",
     art: {
       medium: "suminagashi marbled ink floated on water and lifted onto paper",
       texture: "fine concentric ink rings, wet feathered edges, bone paper grain",
@@ -355,7 +355,7 @@ export const CARDS = [
     no: "09",
     key: "mix",
     title: "Your mix",
-    motif: "irregular stone chips of many sizes scattered evenly across the whole slab",
+    motif: "irregular parcels of many sizes scattered evenly, ground read from the stratosphere",
     art: {
       medium: "terrazzo, polished stone chips set in flat resin, shot straight on",
       texture: "hard chip edges, matte polished surface, completely flat lighting",
@@ -383,7 +383,7 @@ export const CARDS = [
     no: "10",
     key: "vsIndex",
     title: "You and the index",
-    motif: "two long ruled lines converging toward a marked vanishing point",
+    motif: "a wing section in drafting linework, two long reference lines converging on a vanishing point",
     art: {
       medium: "technical blueprint, drafting linework on coated paper",
       texture: "fine ruled grid, faint plotter ink bleed, paper fibre",
@@ -411,7 +411,7 @@ export const CARDS = [
     no: "11",
     key: "archetype",
     title: "Your archetype",
-    motif: "a lone abstract figure-like silhouette standing centred against banded sky",
+    motif: "a lone delta silhouette climbing centred against banded stratosphere",
     art: {
       medium: "airbrushed 1970s poster art, soft banded sky, heavy vignette",
       texture: "velvety airbrush gradients, subtle film grain, no hard edges",
@@ -439,7 +439,7 @@ export const CARDS = [
     no: "12",
     key: "share",
     title: "The card you share",
-    motif: "overlapping foil shapes catching the light at different angles",
+    motif: "a scatter of foil chaff catching the light at different angles",
     art: {
       medium: "holographic foil sticker sheet photographed under raking light",
       texture: "rainbow diffraction, glossy foil creases, die-cut edges",

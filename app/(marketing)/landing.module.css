@@ -644,13 +644,22 @@
   color: color-mix(in srgb, var(--mk-bg) 60%, transparent);
 }
 
-/* The curl between the phones */
+/*
+ * The contrail between the phones.
+ *
+ * It draws *over* the handsets, not behind them. At `z-index: 1` it slid under
+ * the Wrapped phone and the last third of it — including the dart on the end —
+ * was simply not on the page; the old arrowhead was hidden the same way and
+ * nobody noticed, because an arrow that ends behind something still reads as a
+ * line going somewhere. A contrail crossing above the handset is also the
+ * truer composition: the thing is flying over, not tucked behind.
+ */
 .heroCurl {
   position: absolute;
   left: 308px;
   top: 352px;
   width: 150px;
-  z-index: 1;
+  z-index: 3;
   pointer-events: none;
   color: var(--mk-ink);
 }

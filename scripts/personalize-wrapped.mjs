@@ -41,7 +41,7 @@ const OUT = new URL("../.wrapped-check/", import.meta.url);
  * `scripts/build-wrapped-templates.mjs` — a version the probe read wrong is a
  * probe rendering the drawn CSS ground and reporting on a set nobody shipped.
  */
-const ART_SET = "chaotic-01";
+const ART_SET = "stratosphere-01";
 
 /**
  * The CSS family behind each `type.face`, as `card.css` declares it.

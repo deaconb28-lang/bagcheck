@@ -262,20 +262,35 @@ export default async function LandingPage() {
             </div>
           </div>
 
-          {/* The equity line leaves the chart and points at the Wrapped */}
+          {/*
+            * The equity line leaves the chart and flies at the Wrapped.
+            *
+            * Same path it always took; what changed is what is on the end of
+            * it. An arrowhead is a diagram's punctuation — the mark's own dart
+            * says the same "this way" and says whose product it is at the same
+            * time, which is one element doing two jobs rather than two doing
+            * one each. The trail tapers behind it: full weight where the line
+            * leaves the chart, hairline where it started.
+            */}
           <svg className={styles.heroCurl} viewBox="0 0 150 120" fill="none">
+            <defs>
+              <linearGradient id="contrail" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="currentColor" stopOpacity="0.25" />
+                <stop offset="55%" stopColor="currentColor" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="currentColor" stopOpacity="1" />
+              </linearGradient>
+            </defs>
             <path
               d="M4 22c34-22 66 6 52 30-9 15-30 6-22-10 10-19 48-24 88-6"
-              stroke="currentColor"
+              stroke="url(#contrail)"
               strokeWidth="3"
               strokeLinecap="round"
             />
+            {/* The dart, nose along the path's own heading where it ends. */}
             <path
-              d="M112 26l14 10-17 8"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              d="M136 20.5 L112 35 L121.2 38 L122 47.6 Z"
+              fill="currentColor"
+              transform="rotate(20 124 34)"
             />
           </svg>
 

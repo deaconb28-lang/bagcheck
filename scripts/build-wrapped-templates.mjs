@@ -30,7 +30,16 @@ const OUT = new URL("../wrapped/templates/", import.meta.url);
  * all. Bumping this retires the old set without deleting it, and a deck renders
  * on its drawn CSS ground until the new one is generated.
  */
-const ART_SET = "chaotic-01";
+/*
+ * The art set, versioned and never overwritten.
+ *
+ * `chaotic-01` was declared and never drawn — that directory does not exist,
+ * and the twelve cards have been rendering on their own CSS grounds this whole
+ * time, which is the designed fallback rather than a bug. `stratosphere-01` is
+ * the first set that will actually be filled, on the flight direction the
+ * twelve motifs now describe.
+ */
+const ART_SET = "stratosphere-01";
 
 /*
  * Tokens whose value is a word rather than a figure. They take the body face

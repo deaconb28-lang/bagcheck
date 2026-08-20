@@ -28,6 +28,48 @@
   transition: stroke-dashoffset 1.2s cubic-bezier(0.2, 0.8, 0.3, 1);
 }
 
+/*
+ * ── The attitude indicator ───────────────────────────────────────────────
+ *
+ * Etching, not a second reading. It sits under the character and under the
+ * arc's own light, at a weight that cannot compete with either — the arc is
+ * the score and the character is the components, and a horizon shouting over
+ * them would be a third voice on an object that already says three things.
+ *
+ * It transitions rather than snapping, on the same curve the arc uses, so a
+ * refreshed screen rolls to the new week rather than jumping to it.
+ */
+.horizon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.horizon g {
+  transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.horizonLine {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  opacity: 0.26;
+}
+
+.horizonTick {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  opacity: 0.16;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .horizon g {
+    transition: none;
+  }
+}
+
 .inner {
   display: flex;
   flex-direction: column;

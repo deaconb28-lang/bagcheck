@@ -59,52 +59,98 @@
 }
 
 /*
- * The ridge, in CSS. Same 124deg light as the landing so the two surfaces
- * read as one product; the bright band stays inside one percent, which is
- * what makes it an edge rather than a wash.
+ * The stratosphere, in CSS.
+ *
+ * This was a ridge of light — a bright band across the field at 124deg, the
+ * same gesture the landing ran, and it belonged to a brand about being level.
+ * Same slot and same discipline, new subject: the curve of a horizon low in
+ * the frame, the thin band of atmosphere sitting on it, a scatter of stars
+ * above, and one contrail crossing at the flight axis.
+ *
+ * Everything is a gradient. No image, no request, nothing to fail — which is
+ * why this can be on every screen in the app without costing a byte.
+ *
+ * The suppression is the point and it is unchanged: 0.3 opacity, dark-only,
+ * behind the canvas, and drifting slowly enough that you notice it by looking
+ * rather than by it moving. At any strength that reads as texture on black it
+ * reads as a smudge on white, which is why `.field` is `display: none`
+ * outside dark mode.
  */
 .fieldRidge {
   position: absolute;
   inset: -14%;
-  opacity: 0.3;
+  /*
+   * Raised from 0.3. The ridge it replaces was invisible and got away with it,
+   * because a barely-there band of light is still a band of light — a star
+   * field crushed to nothing is just black. Rendering it at the old strength
+   * showed the contrail and nothing else, which is a field that costs its
+   * complexity and pays back one gradient.
+   */
+  opacity: 0.5;
   animation: drift 62s ease-in-out infinite;
   will-change: transform;
   background-image:
+    /* The contrail, on the mark's own axis. */
+    linear-gradient(
+      124deg,
+      rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 43%,
+      rgba(255, 255, 255, 0.3) 43.6%,
+      rgba(255, 255, 255, 0.1) 44.6%,
+      rgba(0, 0, 0, 0) 47%
+    ),
+    /* Its wake, wider and fainter, trailing behind it. */
+    linear-gradient(
+      124deg,
+      rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 47%,
+      rgba(255, 255, 255, 0.05) 49%,
+      rgba(0, 0, 0, 0) 58%
+    ),
+    /* The band of atmosphere sitting on the limb. */
     radial-gradient(
-      58% 42% at 82% 12%,
-      rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.05) 42%, rgba(0, 0, 0, 0) 72%
+      140% 58% at 50% 138%,
+      rgba(255, 255, 255, 0.24) 0%,
+      rgba(255, 255, 255, 0.09) 38%,
+      rgba(255, 255, 255, 0.02) 52%,
+      rgba(0, 0, 0, 0) 60%
     ),
-    linear-gradient(
-      124deg,
-      rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 40.5%,
-      rgba(255, 255, 255, 0.06) 41.2%,
-      rgba(255, 255, 255, 0.42) 42.2%,
-      rgba(255, 255, 255, 0.26) 43.4%,
-      rgba(255, 255, 255, 0.13) 46%,
-      rgba(255, 255, 255, 0.07) 52%,
-      rgba(0, 0, 0, 0) 70%
+    /*
+     * The stars. Two offset dot fields at different pitches rather than one,
+     * because a single repeating grid of dots reads as a screen door — the
+     * beat between two of them is what makes it read as a scatter.
+     */
+    radial-gradient(
+      rgba(255, 255, 255, 0.5) 0.6px, rgba(0, 0, 0, 0) 0.7px
     ),
-    linear-gradient(
-      124deg,
-      rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 57%,
-      rgba(255, 255, 255, 0.12) 57.7%, rgba(255, 255, 255, 0.07) 60%,
-      rgba(0, 0, 0, 0) 78%
-    ),
-    repeating-linear-gradient(
-      124deg,
-      rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px,
-      rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 7px
+    radial-gradient(
+      rgba(255, 255, 255, 0.32) 0.5px, rgba(0, 0, 0, 0) 0.6px
     );
+  background-size:
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    137px 119px,
+    89px 173px;
+  background-position:
+    0 0,
+    0 0,
+    0 0,
+    0 0,
+    43px 31px;
 }
 
 .fieldFade {
   position: absolute;
   inset: 0;
+  /*
+   * The fade pushes the field under the content rather than out of sight. It
+   * is heaviest at the foot, where the panels are densest, and lightest at the
+   * head, where the hero has air around it and the sky can actually be seen.
+   */
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--bg) 82%, transparent) 0%,
-    color-mix(in srgb, var(--bg) 93%, transparent) 44%,
-    color-mix(in srgb, var(--bg) 98%, transparent) 100%
+    color-mix(in srgb, var(--bg) 58%, transparent) 0%,
+    color-mix(in srgb, var(--bg) 84%, transparent) 44%,
+    color-mix(in srgb, var(--bg) 96%, transparent) 100%
   );
 }
 

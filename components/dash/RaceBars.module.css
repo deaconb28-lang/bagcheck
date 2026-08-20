@@ -243,6 +243,47 @@
 }
 
 /*
+ * ── The reader's lane ends in the mark's own nose ────────────────────────
+ *
+ * The dart from the wordmark, reappearing as the marker for "you" at the end
+ * of the lane — which is where the eye finishes, since the inverted rank chip
+ * is at the far left.
+ *
+ * **The nose is cut out of the bar, never added to it.** The shoulders pull in
+ * by 9px and the tip sits at exactly 100% — the true value — so the extreme of
+ * the drawing is the extreme of the figure. A marker appended past the end
+ * would be a drawn number disagreeing with the printed one, which is the thing
+ * this chart can least afford.
+ *
+ * Both keyframes carry the same five points as the resting shape, because a
+ * `clip-path` only interpolates between polygons of equal point count — a
+ * four-point `from` against a five-point `to` does not tween, it snaps.
+ */
+.row[data-you][data-dir="up"] .bar {
+  border-radius: 0;
+  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 0 100%);
+  animation-name: noseUp;
+}
+
+.row[data-you][data-dir="down"] .bar {
+  border-radius: 0;
+  clip-path: polygon(9px 0, 100% 0, 100% 100%, 9px 100%, 0 50%);
+  animation-name: noseDown;
+}
+
+@keyframes noseUp {
+  from {
+    clip-path: polygon(0 0, 0 0, 0 50%, 0 100%, 0 100%);
+  }
+}
+
+@keyframes noseDown {
+  from {
+    clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%, 100% 50%);
+  }
+}
+
+/*
  * Revealed from the line outward, never scaled. `scaleX` on an outlined,
  * hatched bar thickens its own hairline and shears the hatch with it; a clip
  * moves no geometry and leaves the finished bar as the static state.

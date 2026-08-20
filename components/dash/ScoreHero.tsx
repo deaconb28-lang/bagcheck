@@ -98,9 +98,13 @@ export function ScoreHero({
         {/*
           * The arc is gold and bare: the number is set at 140px an inch away,
           * and a ring printing it again is the same measurement twice.
+          *
+          * The horizon behind it takes the *delta* for the same reason — the
+          * arc says how far along, the horizon says which way you are going,
+          * and those are two facts rather than one said twice.
           */}
         <div className={styles.ringWrap}>
-          <ScoreRing score={read.score} size={228} bare>
+          <ScoreRing score={read.score} size={228} bare pitch={read.delta}>
             <Avatar archetype={archetype.key} size="var(--hero-avatar, 132px)" shape="circle" />
           </ScoreRing>
         </div>

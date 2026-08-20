@@ -76,5 +76,6 @@ test("a prompt names its own palette and subject", () => {
   const prompt = promptFor(halftone);
   assert.match(prompt, /halftone/i);
   assert.match(prompt, /canary yellow/);
-  assert.match(prompt, /starburst/);
+  /* The subject moved to the flight world; the medium and palette did not. */
+  assert.match(prompt, /shock diamond/);
 });

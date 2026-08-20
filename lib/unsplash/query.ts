@@ -21,23 +21,30 @@ export const APP_NAME = "supercruise";
  *
  * Every query asks for abstract material — texture, light, surface — and
  * never for a subject. A photograph of a trading floor or a laptop would be
- * stock imagery making a claim about the reader's life; a photograph of
- * brushed metal is a ground for type to sit on.
+ * stock imagery making a claim about the reader's life; a photograph of high
+ * cloud is a ground for type to sit on.
+ *
+ * The material is the sky now. That is the aesthetic, and the rule it has to
+ * obey is exactly the one it always obeyed: **atmosphere, never aviation as a
+ * subject**. No cockpits, no airports, no aircraft portraits, no people. A
+ * contrail, a cloud deck, an exhaust plume and the curve of a horizon are
+ * light and texture; a photograph of a pilot is a claim about who the reader
+ * is, and the ledger never made one.
  */
 export const QUERIES: Record<CardKind, string> = {
-  health: "abstract concentric ripple texture",
-  archetype: "abstract geometric concrete texture",
-  longestHold: "long exposure light streak abstract",
-  holdRatio: "abstract split gradient minimal surface",
-  noPanic: "calm still water abstract minimal",
-  streak: "repeating abstract pattern texture",
-  bestDecision: "abstract light beam dark minimal",
-  drawdownHeld: "abstract eroded stone texture",
-  cadence: "abstract radial motion blur",
-  monthlyPnl: "abstract layered sediment texture",
-  equity: "abstract topographic landscape aerial",
-  correlation: "abstract overlapping glass refraction",
-  wrapped: "abstract nebula dark texture",
+  health: "high altitude cirrus cloud texture abstract",
+  archetype: "stratosphere gradient sky abstract minimal",
+  longestHold: "contrail long exposure sky abstract",
+  holdRatio: "layered cloud deck horizon abstract",
+  noPanic: "calm dawn sky gradient minimal",
+  streak: "repeating cloud ripple pattern aerial",
+  bestDecision: "sun above the cloud layer light beam",
+  drawdownHeld: "storm cloud texture dark abstract",
+  cadence: "vapour swirl motion blur abstract",
+  monthlyPnl: "stacked cloud strata abstract",
+  equity: "aerial landscape from altitude abstract",
+  correlation: "ice crystal refraction abstract",
+  wrapped: "upper atmosphere night sky abstract",
 };
 
 /** Landscape only: the band the card crops to is roughly 2.4:1. */

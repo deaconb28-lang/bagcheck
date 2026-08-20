@@ -9,7 +9,7 @@ import { CARDS, COMPOSITION, CONSTRAINTS } from "../../wrapped/cards.mjs";
  * artefact, and two copies of it would drift the first time either was tuned.
  *
  * The images are drawn **once for everybody** and committed to
- * `public/wrapped/2026/art/chaotic-01`. Nothing here runs on a page view.
+ * `public/wrapped/2026/art/stratosphere-01`. Nothing here runs on a page view.
  */
 
 /** The story frame. The API renders 2:3; the card is 9:16. */
