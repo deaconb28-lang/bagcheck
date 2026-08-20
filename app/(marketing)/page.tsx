@@ -397,13 +397,13 @@ export default async function LandingPage() {
               <span className={styles.cardEyebrow}>TOP BAG</span>
               <div className={styles.cardRing}>
                 <svg width="210" height="210" viewBox="0 0 210 210">
-                  <circle cx="105" cy="105" r="85" fill="none" stroke="color-mix(in srgb, var(--mk-bg) 8%, transparent)" strokeWidth="22" />
+                  <circle cx="105" cy="105" r="85" fill="none" stroke="color-mix(in srgb, currentColor 12%, transparent)" strokeWidth="22" />
                   <circle
                     cx="105"
                     cy="105"
                     r="85"
                     fill="none"
-                    stroke="var(--mk-green-soft)"
+                    stroke="currentColor"
                     strokeWidth="22"
                     strokeLinecap="round"
                     strokeDasharray="534"
@@ -440,7 +440,7 @@ export default async function LandingPage() {
                   <path
                     d="M0 168 L26 150 L52 162 L78 128 L104 138 L130 96 L156 108 L182 62 L208 74 L234 30 L270 8"
                     fill="none"
-                    stroke="var(--mk-bg)"
+                    stroke="currentColor"
                     strokeWidth="4"
                     strokeLinecap="round"
                     strokeLinejoin="round"

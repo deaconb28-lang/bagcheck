@@ -211,12 +211,38 @@ body {
   background: var(--scrim);
 }
 
+/*
+ * ── The thirds ──────────────────────────────────────────────────────────
+ *
+ * The type gets a third of the stage and the art gets the other two, and the
+ * scrim is what draws the line between them.
+ *
+ * It used to be a long soft fade from 38% to the bottom edge — which reads as
+ * type floating *on* a picture, and on a busy card leaves the eyebrow sitting
+ * over whatever the model happened to put at 62%. Card 05's eyebrow landed on
+ * the point of a halftone star. A defined band fixes both: the art is
+ * uninterrupted for two thirds, the type has a ground of its own for one, and
+ * the short ramp between them (about 6% of the stage) is what keeps it from
+ * reading as two images stacked.
+ *
+ * `--band` is where the reading third starts; every placement sets it and the
+ * `.layer` padding is derived from the same number, so the type cannot drift
+ * outside the ground drawn for it.
+ */
 .card {
+  /*
+   * In pixels, not percent. The stage is a fixed 1080×1920, and percentage
+   * padding resolves against the containing block's *width* in both axes — so
+   * a `--band: 66.7%` fed to `padding-top` put the lockup at 38% of the height
+   * and left it stranded above its own ground. Pixels here are exact and mean
+   * the same thing to the gradient and to the padding.
+   */
+  --band: 900px;
   --scrim: linear-gradient(
     to bottom,
-    transparent 38%,
-    color-mix(in srgb, var(--share-bg) 55%, transparent) 61.6%,
-    color-mix(in srgb, var(--share-bg) 88%, transparent) 82.6%,
+    transparent calc(var(--band) - 130px),
+    color-mix(in srgb, var(--share-bg) 70%, transparent) calc(var(--band) + 10px),
+    color-mix(in srgb, var(--share-bg) 94%, transparent) calc(var(--band) + 100px),
     var(--share-bg) 100%
   );
 }
@@ -230,7 +256,16 @@ body {
   justify-content: flex-end;
   align-items: var(--lockup-align);
   text-align: var(--lockup-text);
-  padding: 96px 88px 104px;
+  /*
+   * The top padding is derived from `--band`, so the type starts where its
+   * ground starts rather than at a number that happens to look right. Change
+   * the band and the lockup follows it; the two cannot drift apart.
+   */
+  padding: var(--band) 88px 104px;
+}
+
+.card[data-place="head"] .layer {
+  padding: 60px 88px 44px;
 }
 
 /* ── The lockup: eyebrow → hero → support → caption ── */
@@ -595,33 +630,43 @@ body {
 
 .card[data-place="head"] .layer {
   justify-content: flex-start;
-  padding-top: 128px;
 }
 
 .card[data-place="head"] {
+  --band: 1120px;
   --scrim: linear-gradient(
-    to top,
-    transparent 38%,
-    color-mix(in srgb, var(--share-bg) 55%, transparent) 61.6%,
-    color-mix(in srgb, var(--share-bg) 88%, transparent) 82.6%,
-    var(--share-bg) 100%
+    to bottom,
+    var(--share-bg) 0%,
+    color-mix(in srgb, var(--share-bg) 94%, transparent) calc(var(--band) - 100px),
+    color-mix(in srgb, var(--share-bg) 70%, transparent) calc(var(--band) - 10px),
+    transparent calc(var(--band) + 130px)
   );
+}
+
+/*
+ * These two do not take the foot band: middle centres in its own third, and
+ * split puts the eyebrow at the head with an auto margin and lets the rest
+ * fall to the bottom.
+ */
+.card[data-place="middle"] .layer,
+.card[data-place="split"] .layer {
+  padding-top: 104px;
 }
 
 .card[data-place="middle"] .layer {
   justify-content: center;
 }
 
+/* The middle third, with the art running clear above and below it. */
 .card[data-place="middle"] {
   --scrim: linear-gradient(
     to bottom,
-    transparent 4%,
-    color-mix(in srgb, var(--share-bg) 52%, transparent) 22%,
-    color-mix(in srgb, var(--share-bg) 86%, transparent) 36%,
-    color-mix(in srgb, var(--share-bg) 92%, transparent) 64%,
-    color-mix(in srgb, var(--share-bg) 86%, transparent) 78%,
-    color-mix(in srgb, var(--share-bg) 52%, transparent) 90%,
-    transparent 99%
+    transparent 320px,
+    color-mix(in srgb, var(--share-bg) 76%, transparent) 440px,
+    color-mix(in srgb, var(--share-bg) 92%, transparent) 540px,
+    color-mix(in srgb, var(--share-bg) 92%, transparent) 1380px,
+    color-mix(in srgb, var(--share-bg) 76%, transparent) 1480px,
+    transparent 1600px
   );
 }
 
@@ -635,19 +680,23 @@ body {
   margin-bottom: auto;
 }
 
+/*
+ * Split takes two grounds, because its lockup is in two places: a shallow one
+ * at the head for the eyebrow alone, and the full reading third at the foot.
+ */
 .card[data-place="split"] {
   --scrim: linear-gradient(
       to bottom,
       var(--share-bg) 0%,
-      color-mix(in srgb, var(--share-bg) 82%, transparent) 7%,
-      color-mix(in srgb, var(--share-bg) 40%, transparent) 14%,
-      transparent 22%
+      color-mix(in srgb, var(--share-bg) 86%, transparent) 8%,
+      color-mix(in srgb, var(--share-bg) 34%, transparent) 15%,
+      transparent 21%
     ),
     linear-gradient(
       to bottom,
-      transparent 42%,
-      color-mix(in srgb, var(--share-bg) 55%, transparent) 64%,
-      color-mix(in srgb, var(--share-bg) 88%, transparent) 84%,
+      transparent 770px,
+      color-mix(in srgb, var(--share-bg) 70%, transparent) 910px,
+      color-mix(in srgb, var(--share-bg) 94%, transparent) 1000px,
       var(--share-bg) 100%
     );
 }

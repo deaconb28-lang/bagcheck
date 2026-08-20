@@ -149,10 +149,62 @@
  * it one is its own value.
  */
 .panel {
+  position: relative;
+  isolation: isolate;
   background: var(--s1);
   border-radius: var(--r-panel);
   padding: 30px 32px;
   min-width: 0;
+}
+
+/*
+ * ── The ground ───────────────────────────────────────────────────────────
+ *
+ * A generated image under the plate, at a strength you notice by its absence.
+ * It is what stops eight identical near-black rectangles reading as a form,
+ * and it is the one place this screen borrows the Wrapped grammar — the art is
+ * the stage, the figures are the subject, and the proportions between those
+ * two are the whole difference between a poster and an instrument.
+ *
+ * The images are drawn near-black with an empty middle on purpose
+ * (`scripts/generate-dash-art.mjs`), so the figures never lose contrast — but
+ * the opacity here is the real guarantee, and it is the number to turn down
+ * first if a reading ever gets harder to make.
+ *
+ * `z-index: -1` under an `isolation: isolate` parent keeps it behind the
+ * panel's own children without every child needing a stacking context of its
+ * own, and `pointer-events: none` keeps it out of the way of anything that can
+ * be pressed.
+ */
+.panel[data-art]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.panel[data-art="read"]::before {
+  background-image: url("/dash/read.webp");
+}
+.panel[data-art="race"]::before {
+  background-image: url("/dash/race.webp");
+}
+.panel[data-art="charts"]::before {
+  background-image: url("/dash/charts.webp");
+}
+.panel[data-art="grid"]::before {
+  background-image: url("/dash/grid.webp");
+}
+.panel[data-art="findings"]::before {
+  background-image: url("/dash/findings.webp");
+}
+.panel[data-art="set"]::before {
+  background-image: url("/dash/set.webp");
 }
 
 .panelHead {
@@ -163,19 +215,36 @@
   flex-wrap: wrap;
 }
 
+/*
+ * The section marker. It was 12px at `--meta` — correct for a label and too
+ * quiet to give the page any rhythm, which is what the Wrapped deck has and
+ * this screen did not. It is brighter and carries a short rule on the flight
+ * axis, so a reader scanning down the page sees where each band starts.
+ */
 .panelEyebrow {
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12.5px;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--meta);
+  color: var(--ink3);
+}
+
+.panelEyebrow::after {
+  content: "";
+  flex: none;
+  width: 26px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--line2), transparent);
 }
 
 .panelTitle {
   margin: 10px 0 0;
-  font-size: 30px;
-  font-weight: 600;
-  letter-spacing: -0.03em;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
   color: var(--ink);
 }
 

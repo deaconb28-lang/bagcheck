@@ -110,20 +110,38 @@ export function Chip({
   );
 }
 
+/**
+ * The six grounds, one per band of the page.
+ *
+ * They are drawn once by `npm run dash:art` and used at a fraction of a card's
+ * strength — a Wrapped card is a poster whose art is the subject, and a panel
+ * is the opposite: the figures are the subject and anything behind them is a
+ * ground or it is a problem. Each is near-black with an empty middle by brief,
+ * and the panel's own fill still sits on top of it.
+ *
+ * A panel with no `art` is exactly the panel that shipped before this, which
+ * is what keeps the mechanism from becoming something every caller has to
+ * think about.
+ */
+export type PanelArt = "read" | "race" | "charts" | "grid" | "findings" | "set";
+
 export function Panel({
   children,
   span,
   className,
+  art,
 }: {
   children: React.ReactNode;
   /** Take two of three columns in a thirds row. */
   span?: boolean;
   className?: string;
+  art?: PanelArt;
 }) {
   return (
     <section
       className={className ? `${styles.panel} ${className}` : styles.panel}
       data-span={span || undefined}
+      data-art={art}
       data-reveal
     >
       {children}

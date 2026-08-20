@@ -989,7 +989,27 @@
   transition: transform 540ms cubic-bezier(0.22, 1, 0.36, 1), opacity 420ms ease;
 }
 
+/*
+ * ── The deck faces ───────────────────────────────────────────────────────
+ *
+ * These were five flat gradients — a violet-to-amber, a card grey, a green —
+ * standing in for cards that did not exist yet. The cards exist now, and they
+ * are drawn on twelve distinct grounds; a landing that advertises a Wrapped
+ * with none of that on it is a landing showing a product from before the one
+ * it is selling.
+ *
+ * So each face wears a real ground from `stratosphere-01` and the real card
+ * grammar with it: art clean across the top, type on a scrim at the foot. The
+ * *figures* stay illustrative, as they always were and as the section's own
+ * tail says — the deck is a picture of the thing, not a claim about a reader.
+ *
+ * `--deck-ink` is per face because three of the five grounds are light cards.
+ * One ink for all five would put white type on a yellow halftone.
+ */
 .card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   width: 100%;
   height: 100%;
   border-radius: 34px;
@@ -997,31 +1017,74 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  color: var(--mk-bg);
+  color: var(--deck-ink, var(--mk-bg));
+  /*
+   * The base colour is set separately and per face, and it is not decoration:
+   * it is the state the card is in when the art has not loaded. Three of the
+   * five faces are light cards with dark ink — over a dark default they would
+   * be dark-on-dark, which is the "static state is the finished design" rule
+   * applied to an image that might never arrive. It is also what the contrast
+   * probe measures against, since a probe cannot read a background image.
+   */
+  background-color: var(--deck-base, var(--mk-card));
+  background-image: var(--deck-art);
+  background-size: cover;
+  background-position: center;
   box-shadow: 0 34px 70px -28px color-mix(in srgb, var(--mk-ink) 80%, transparent);
 }
 
+/*
+ * The reading ground, the same shape `card.css` gives the real thing: the art
+ * runs uninterrupted across the top and the type sits on a band at the foot.
+ */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to bottom,
+    transparent 34%,
+    color-mix(in srgb, var(--deck-scrim, var(--mk-ink)) 62%, transparent) 56%,
+    color-mix(in srgb, var(--deck-scrim, var(--mk-ink)) 90%, transparent) 74%,
+    var(--deck-scrim, var(--mk-ink)) 100%
+  );
+  pointer-events: none;
+}
+
 .card[data-card="return"] {
-  background: linear-gradient(155deg, var(--mk-violet) 0%, var(--mk-violet-lit) 46%, var(--mk-amber) 100%);
-  box-shadow: 0 40px 90px -40px color-mix(in srgb, var(--mk-violet) 90%, transparent);
+  --deck-art: url("/wrapped/2026/art/stratosphere-01/bg-02.webp");
+  --deck-ink: #16130e;
+  --deck-scrim: #efe7d8;
+  --deck-base: #efe7d8;
 }
 
 .card[data-card="topbag"] {
-  background: var(--mk-card);
-  border: 1px solid color-mix(in srgb, var(--mk-bg) 9%, transparent);
+  --deck-art: url("/wrapped/2026/art/stratosphere-01/bg-09.webp");
+  --deck-ink: #141414;
+  --deck-scrim: #f2efe6;
+  --deck-base: #f2efe6;
 }
 
 .card[data-card="trade"] {
-  background: linear-gradient(160deg, var(--mk-green-abyss) 0%, var(--mk-green-mid) 55%, var(--mk-green) 100%);
+  --deck-art: url("/wrapped/2026/art/stratosphere-01/bg-05.webp");
+  --deck-ink: #14120a;
+  --deck-scrim: #f5e04a;
+  --deck-base: #f5e04a;
 }
 
 .card[data-card="hands"] {
-  background: linear-gradient(160deg, var(--mk-amber-abyss) 0%, var(--mk-amber-deep) 52%, var(--mk-amber) 100%);
+  --deck-art: url("/wrapped/2026/art/stratosphere-01/bg-04.webp");
+  --deck-ink: #f4f2ef;
+  --deck-scrim: #0a0d16;
+  --deck-base: #0a0d16;
 }
 
 .card[data-card="type"] {
-  background: var(--mk-bg);
-  color: var(--mk-ink);
+  --deck-art: url("/wrapped/2026/art/stratosphere-01/bg-11.webp");
+  --deck-ink: #f6efe6;
+  --deck-scrim: #140609;
+  --deck-base: #140609;
 }
 
 .cardHead {
@@ -1047,13 +1110,14 @@
   opacity: 0.7;
 }
 
-.card[data-card="topbag"] .cardEyebrow {
-  color: color-mix(in srgb, var(--mk-bg) 52%, transparent);
-  opacity: 1;
-}
-
+/*
+ * The eyebrow sits at the head of the card, over clean art rather than over
+ * the scrim — so it takes the face's own ink at reduced strength rather than a
+ * fixed grey that was tuned against a flat gradient.
+ */
+.card[data-card="topbag"] .cardEyebrow,
 .card[data-card="type"] .cardEyebrow {
-  color: var(--mk-meta2);
+  color: color-mix(in srgb, var(--deck-ink) 62%, transparent);
   opacity: 1;
 }
 
@@ -1153,15 +1217,25 @@
   width: 46px;
 }
 
+/*
+ * The share, stepped back from the ticker beside it — in the face's own ink,
+ * for the same reason the track is. A 52% mix of `--mk-bg` is a pale grey that
+ * only reads on a dark card, and this face is terrazzo.
+ */
 .cardBars > div > span:last-child {
-  color: color-mix(in srgb, var(--mk-bg) 52%, transparent);
+  color: color-mix(in srgb, currentColor 72%, transparent);
 }
 
+/*
+ * `currentColor`, not `--mk-bg`. The deck faces sit on real card grounds now
+ * and three of the five are light — a track tinted with the light ink is
+ * invisible on a terrazzo card and was only ever right against a flat grey.
+ */
 .cardTrack {
   flex: 1;
   height: 7px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--mk-bg) 8%, transparent);
+  background: color-mix(in srgb, currentColor 14%, transparent);
   overflow: hidden;
 }
 
@@ -1211,8 +1285,8 @@
   width: 16px;
   height: 16px;
   border-radius: 999px;
-  background: var(--mk-bg);
-  box-shadow: 0 0 0 10px color-mix(in srgb, var(--mk-bg) 22%, transparent);
+  background: currentColor;
+  box-shadow: 0 0 0 10px color-mix(in srgb, currentColor 22%, transparent);
 }
 
 .cardWave {
@@ -1225,13 +1299,13 @@
 .cardWave span {
   flex: 1;
   border-radius: 8px 8px 3px 3px;
-  background: color-mix(in srgb, var(--mk-bg) 28%, transparent);
+  background: color-mix(in srgb, currentColor 30%, transparent);
   transform-origin: bottom;
   animation: bar 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .cardWave span[data-peak] {
-  background: var(--mk-bg);
+  background: currentColor;
 }
 
 .cardName {
@@ -1248,12 +1322,16 @@
   margin-top: 30px;
 }
 
+/*
+ * Follows the face's ink rather than a fixed grey. `--mk-ink3` was tuned
+ * against one flat card colour; on a dark airbrushed ground it reads 3.9:1.
+ */
 .cardTraitHead {
   display: flex;
   justify-content: space-between;
   font-size: 13px;
   font-weight: 600;
-  color: var(--mk-ink3);
+  color: color-mix(in srgb, currentColor 74%, transparent);
 }
 
 .cardTraitTrack {

@@ -382,7 +382,7 @@ export default async function DashboardPage({
           */}
         {view.field ? (
           <Row kind="full">
-            <Panel>
+            <Panel art="race">
               <PanelHead
                 eyebrow="The race"
                 title={
@@ -423,7 +423,7 @@ export default async function DashboardPage({
            * can check is the one thing this screen must not print.
            */
           <Row kind="full">
-            <Panel>
+            <Panel art="race">
               <PanelHead eyebrow="The race" title="Not a comparison yet" />
               <p className="dashEmpty">
                 {view.fieldAbsence === "market-key"
@@ -449,7 +449,7 @@ export default async function DashboardPage({
             * per position is a real figure off one synced snapshot, and for a
             * reader who only ever buys it is *the* answer to "how is it going".
             */}
-          <Panel>
+          <Panel art="charts">
             <PanelHead
               eyebrow={perf.sessions.length ? `Daily P&L · ${window.label}` : "Your positions"}
             >
@@ -494,7 +494,7 @@ export default async function DashboardPage({
             )}
           </Panel>
 
-          <Panel>
+          <Panel art="charts">
             <PanelHead eyebrow="Allocation" />
             <AllocationDonut
               slices={view.allocation}
@@ -582,7 +582,7 @@ export default async function DashboardPage({
               )}
             </Panel>
 
-            <Panel>
+            <Panel art="grid">
               <PanelHead eyebrow="The year in days" />
               {view.calendar.length ? <HeatGrid days={view.calendar} /> : null}
               <p className="dashProv">
@@ -601,7 +601,7 @@ export default async function DashboardPage({
           */}
         {view.read && view.read.scoredDays >= MIN_SCORED_DAYS ? (
           <Row kind="full">
-            <Panel>
+            <Panel art="grid">
               <PanelHead eyebrow="Every scored day">
                 <PanelNote>
                   {view.read.scoredDays.toLocaleString("en-US")} scored ·{" "}
@@ -658,7 +658,7 @@ export default async function DashboardPage({
           </Row>
         ) : (
           <Row kind="full">
-            <Panel>
+            <Panel art="findings">
               <PanelHead eyebrow="Insights this week" />
               <p className="dashEmpty">Nothing has cleared a sample floor yet.</p>
             </Panel>

@@ -41,6 +41,28 @@ const OUT = new URL("../.wrapped-check/", import.meta.url);
  * `scripts/build-wrapped-templates.mjs` — a version the probe read wrong is a
  * probe rendering the drawn CSS ground and reporting on a set nobody shipped.
  */
+/*
+ * Where each placement's reading zone is, in stage pixels, and the same
+ * numbers `card.css` scrims. Two copies of one table is how they drift, so if
+ * one moves the other has to move in the same commit — the check exists to
+ * make that loud rather than to be tidy.
+ *
+ * These are **measured, not chosen**. A lockup is an eyebrow, a hero label, a
+ * 380px hero, a title, a rule and two facts — about 900px, which is half the
+ * stage rather than the third it looks like it should be. Reserving a literal
+ * third pushed the type up out of its own scrim and onto raw art, which is
+ * worse than not reserving anything. So the rule of thirds here is the
+ * compositional one rather than the arithmetic one: the art runs clean for the
+ * top half, the hero lands near the lower-third line, and the ground under the
+ * type covers every line of it.
+ */
+const BANDS = {
+  foot: { from: 900, to: 1860 },
+  head: { from: 60, to: 1120 },
+  middle: { from: 440, to: 1480 },
+  split: { from: 60, to: 1860 },
+};
+
 const ART_SET = "stratosphere-01";
 
 /**
@@ -401,6 +423,28 @@ if (render) {
           `card-${card.no}: .${box.cls} runs to ${Math.round(box.top)}…${Math.round(box.bottom)}, off the 1920 stage`,
         );
     }
+
+    /*
+     * The lockup has to sit inside the ground drawn for it.
+     *
+     * `card.css` gives the type a third of the stage and scrims exactly that
+     * third; a lockup taller than its band overflows *upward* past the scrim
+     * and lands on raw art — which is how card 05's eyebrow came to sit on the
+     * point of a halftone star while every check above passed, because they all
+     * read the markup and none of them measured where the type went.
+     *
+     * The tolerance is one line of the eyebrow. Tighter than that and a font
+     * metric change fails the run for a pixel nobody can see.
+     */
+    const span = {
+      top: Math.round(Math.min(...type.boxes.map((b) => b.top))),
+      bottom: Math.round(Math.max(...type.boxes.map((b) => b.bottom))),
+    };
+    const band = BANDS[def.type.place] ?? BANDS.foot;
+    if (span.top < band.from - 40 || span.bottom > band.to + 40)
+      fail(
+        `card-${card.no}: lockup runs ${span.top}…${span.bottom}, outside its ${def.type.place} band ${band.from}…${band.to}`,
+      );
 
     await page.screenshot({
       path: fileURLToPath(new URL(`card-${card.no}.png`, OUT)),
