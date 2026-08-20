@@ -16,15 +16,25 @@ import { isAuthConfigured, signIn } from "@/auth";
  * It renders nothing when the deployment has no OAuth credentials. A button
  * that cannot finish is worse than no button, and every caller already has a
  * sensible fallback to show in its place.
+ *
+ * **The mark is optional, and the landing hero is the one place it is off.**
+ * It belongs on a button that says "Continue with Google", where it names the
+ * mechanism the label is already naming. It does not belong on the primary
+ * action of a marketing hero: there the button is the page's one strongest
+ * object, and a second brand's four-colour logo inside it is the loudest thing
+ * on a screen whose whole palette is rationed.
  */
 export function GoogleSignIn({
   redirectTo = "/app",
   className,
   children = "Continue with Google",
+  mark = true,
 }: {
   redirectTo?: string;
   className?: string;
   children?: React.ReactNode;
+  /** Draw Google's mark inside the button. Off where the label does not say Google. */
+  mark?: boolean;
 }) {
   if (!isAuthConfigured()) return null;
 
@@ -36,7 +46,7 @@ export function GoogleSignIn({
   return (
     <form action={action}>
       <button type="submit" className={className}>
-        <GoogleMark />
+        {mark ? <GoogleMark /> : null}
         {children}
       </button>
     </form>

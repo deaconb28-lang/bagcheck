@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getUserId } from "@/auth";
-import { isDbConfigured, linkedBrokerage } from "@/lib/db";
+import { isDbConfigured } from "@/lib/db";
+import { brokerageLink } from "@/lib/snaptrade";
 import { appLocked } from "@/lib/launch";
 
 export const dynamic = "force-dynamic";
@@ -20,10 +21,14 @@ export const dynamic = "force-dynamic";
  * whether this person has a brokerage. Deciding after the round trip is the
  * only place the answer exists.
  *
- * `linkedBrokerage` is the right question rather than "is there a connection
- * document": `ensureRegistered` writes one the moment somebody opens the
- * portal, so its existence only means they started. An account in `accounts`
- * means they finished.
+ * `brokerageLink` is the right question, and "is there a connection document"
+ * is not: `ensureRegistered` writes one the moment somebody opens the portal,
+ * so its existence only means they started. But `accounts` is not the answer
+ * on its own either — that array is written by a *sync*, so between finishing
+ * the portal and the first sync landing a linked account is indistinguishable
+ * from an abandoned one, and this route sent those people back to connect the
+ * brokerage they had just connected. `brokerageLink` asks SnapTrade in that
+ * one ambiguous state and believes what it says.
  *
  * It renders nothing and always redirects, so it never appears in history as a
  * page a reader can go back to.
@@ -42,5 +47,5 @@ export default async function AppEntry() {
    */
   if (!isDbConfigured()) redirect("/you");
 
-  redirect((await linkedBrokerage(userId)) ? "/you" : "/start");
+  redirect((await brokerageLink(userId)) ? "/you" : "/start");
 }

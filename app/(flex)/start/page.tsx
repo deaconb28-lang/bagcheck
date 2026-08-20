@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getUserId, isAuthConfigured } from "@/auth";
-import { isDbConfigured, linkedBrokerage } from "@/lib/db";
-import { isSnapTradeConfigured } from "@/lib/snaptrade";
+import { isDbConfigured } from "@/lib/db";
+import { brokerageLink, isSnapTradeConfigured } from "@/lib/snaptrade";
 import { appLocked } from "@/lib/launch";
 import { SupercruiseMark } from "@/components/brand/SupercruiseMark";
 import { GoogleSignIn } from "@/components/app/GoogleSignIn";
@@ -43,7 +43,7 @@ export default async function StartPage({
 }) {
   const { error } = await searchParams;
   const userId = await getUserId();
-  const linked = userId && isDbConfigured() ? await linkedBrokerage(userId) : null;
+  const linked = userId && isDbConfigured() ? await brokerageLink(userId) : null;
   const canLink = isSnapTradeConfigured() && (Boolean(userId) || isAuthConfigured());
   /* Read per request, server-side. The flag never reaches the client. */
   const dashboardOpen = !appLocked();
@@ -53,6 +53,11 @@ export default async function StartPage({
    * Someone who has already linked is not asked again — the whole promise of
    * this screen is that it happens once, and showing them the same button
    * would contradict it on the one screen that made the claim.
+   *
+   * `brokerageLink` rather than `linkedBrokerage`, because our own `accounts`
+   * array is written by a sync: somebody who finished the portal but whose
+   * first sync has not landed used to read as never having connected, and
+   * this screen asked them to do it again.
    */
   if (linked) {
     return (

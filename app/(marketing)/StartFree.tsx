@@ -21,8 +21,11 @@ import styles from "./landing.module.css";
  * it. Returning through `/app` rather than pinning `/start` means somebody who
  * already linked an account is not walked through connecting again.
  *
- * The Google mark is on the button, so "Get started free" is not hiding what
- * pressing it does.
+ * The Google mark is **not** on this one. It reads correctly on a button whose
+ * label says "Continue with Google" and wrongly on the hero's primary action,
+ * where it is a second brand's four-colour logo sitting inside the strongest
+ * object on the page. The reassurance it was carrying — that this posts to
+ * Google — is the job of the label on the *sign-in* buttons, which keep it.
  */
 export function StartFree({ label = "Get started free" }: { label?: string }) {
   /*
@@ -39,7 +42,7 @@ export function StartFree({ label = "Get started free" }: { label?: string }) {
   }
 
   return (
-    <GoogleSignIn redirectTo="/app" className={styles.ctaDark}>
+    <GoogleSignIn redirectTo="/app" className={styles.ctaDark} mark={false}>
       {label}
     </GoogleSignIn>
   );
