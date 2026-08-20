@@ -152,8 +152,8 @@ export function ArchetypeSet({ standings }: { standings: ArchetypeStanding[] }) 
         <div>
           <p className={styles.eyebrow}>The sixteen</p>
           <p className={styles.note}>
-            The score has four parts and each is above the bar or it is not, so there are exactly
-            sixteen profiles. These are the ones your nights have read as.
+            Four parts, each above the bar or not — sixteen profiles, and no seventeenth. These
+            are the ones your nights have read as.
           </p>
         </div>
         <p className={styles.tally}>

@@ -86,8 +86,6 @@ export function drawdownWindows(
 
 const dayOf = (iso: string | null): string | null => iso?.slice(0, 10) ?? null;
 const isBuy = (t: TxnLite) => (t.type ?? "").toLowerCase().includes("buy");
-const usd = (n: number) =>
-  `${n < 0 ? "−" : "+"}$${Math.abs(n).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 
 /**
  * What the reader did inside a window. Null when they were barely present —
@@ -118,7 +116,13 @@ export function segmentReading(
     lossSells === 0 && heldThrough > 0
       ? `${frame}you held ${heldThrough} ${heldThrough === 1 ? "position" : "positions"} and sold nothing at a loss.`
       : lossSells > 0
-        ? `${frame}you closed ${lossSells} ${lossSells === 1 ? "position" : "positions"} at a loss, ${usd(realised)} realised.`
+        /*
+         * The figure is not in the sentence. Every surface that draws a
+         * finding prints `impact` as the hero and again on the evidence line,
+         * so spelling it out here put one number on the card three times —
+         * which is how a two-line reading turns into a paragraph.
+         */
+        ? `${frame}you closed ${lossSells} ${lossSells === 1 ? "position" : "positions"} at a loss.`
         : `${frame}you added ${adds} ${adds === 1 ? "position" : "positions"}.`;
 
   return {

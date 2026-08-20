@@ -64,7 +64,7 @@ test("holding through with no loss sells reads as discipline", () => {
   assert.equal(f.tone, "moss");
 });
 
-test("selling into the hole is named with the realised figure", () => {
+test("selling into the hole is counted, and the figure stays on impact", () => {
   const [w] = drawdownWindows(series());
   const trips: RoundTrip[] = Array.from({ length: 4 }, (_, i) => ({
     symbol: `S${i}`,
@@ -77,7 +77,13 @@ test("selling into the hole is named with the realised figure", () => {
   const f = segmentReading(w, trips, []);
   assert.ok(f);
   assert.match(f.sentence, /closed 4 positions at a loss/);
-  assert.match(f.sentence, /−\$3,200 realised/);
+  /*
+   * Not in the sentence: every surface prints `impact` as the card's hero and
+   * again on its evidence line, so a third copy inside the reading is the
+   * same number three times on one card.
+   */
+  assert.doesNotMatch(f.sentence, /\$/);
+  assert.equal(f.impact, -3200);
   assert.equal(f.tone, "clay");
 });
 

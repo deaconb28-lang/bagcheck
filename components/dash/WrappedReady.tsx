@@ -34,7 +34,7 @@ export function WrappedReady({ year, earned, total }: { year: number; earned: nu
       <div className={styles.body}>
         <p className={styles.eyebrow}>Your {year} Wrapped is ready</p>
         <p className={styles.line}>
-          <span className={`num ${styles.count}`}>{earned}</span> of {total} cards, built from
+          <span className={`num ${styles.count}`}>{earned}</span> of {total} cards, straight off
           what your brokerage just handed over.
         </p>
       </div>

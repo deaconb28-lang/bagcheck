@@ -137,9 +137,8 @@ export default async function LandingPage() {
             <span>for your portfolio</span>
           </h1>
           <p className={styles.lede}>
-            Connect your brokerage in two taps through SnapTrade. Supercruise
-            reads every trade you made and writes down how you actually flew —
-            then turns the year into a Wrapped worth posting.
+            Two taps through SnapTrade and we read every fill you have ever
+            made. Then we hand the year back as something worth posting.
           </p>
           {/*
             * The hero's first action depends on whether the reader has an
@@ -572,14 +571,21 @@ export default async function LandingPage() {
               <i />
               COMING SOON
             </span>
+            {/*
+              * It said "Transform the way you trade" over "Whoop for your
+              * portfolio", which is two problems in four lines: this product
+              * never tells anybody to trade, and naming a competitor is not a
+              * description of what the thing does. What the score is, is a
+              * number for how the week actually went.
+              */}
             <h2 className={styles.h2}>
-              Transform the way
+              Every night,
               <br />
-              you trade.
+              a number for it.
             </h2>
             <p className={styles.lede}>
-              Whoop for your portfolio. Strain, recovery and risk — read every
-              morning, no spreadsheet required.
+              Four things a ledger can actually see: your rules, your rhythm,
+              your patience, your exposure. No spreadsheet, no journalling.
             </p>
             <WaitlistForm tier="waitlist" cta="Join the waitlist" />
             <p className={styles.fine}>Read-only, via SnapTrade. Cancel any time.</p>
@@ -626,16 +632,22 @@ export default async function LandingPage() {
                 </div>
               </div>
               <div className={styles.healthStats}>
+                {/*
+                  * "Strain 14.2" was borrowed vocabulary from a fitness band
+                  * and names nothing this product computes. The score has four
+                  * components and they have names; the preview says one of
+                  * them.
+                  */}
                 <div>
-                  <span>STRAIN</span>
-                  <b>14.2</b>
+                  <span>PATIENCE</span>
+                  <b>81</b>
                 </div>
                 <div>
-                  <span>TODAY&rsquo;S PERFORMANCE</span>
+                  <span>TODAY</span>
                   <b data-tone="red">−4.8%</b>
                 </div>
                 <div>
-                  <span>YTD PERFORMANCE</span>
+                  <span>YEAR TO DATE</span>
                   <b data-tone="green">+75%</b>
                 </div>
               </div>
@@ -748,9 +760,9 @@ export default async function LandingPage() {
               {/* Not the pricing page's own headline — a reader who clicks
                   through should not meet the same sentence twice. */}
               <span className={styles.eyebrow}>THE PLANS</span>
-              <h2 className={styles.h2}>One plan. The first month is free.</h2>
+              <h2 className={styles.h2}>One plan. First month on us.</h2>
             </div>
-            <p className={styles.waitCount}>No card to start, and every card you earn stays yours</p>
+            <p className={styles.waitCount}>No card. Every card you earn is yours to keep, plan or no plan</p>
           </div>
 
           <div className={styles.tiers}>
@@ -798,13 +810,13 @@ export default async function LandingPage() {
                 <b>Soon</b>
               </div>
               <p className={styles.tierNote} data-mute="">
-                Wrapped is live today; the score is the second act
+                Wrapped works today. The score is next.
               </p>
               <ul className={styles.tierList}>
                 {[
-                  "A daily read on how you are handling the account",
+                  "A read on the account, every night",
                   "Four components, each one measured",
-                  "An email the day it opens",
+                  "One email the day it opens",
                 ].map((f) => (
                   <li key={f}>
                     <Check tone="violet" />

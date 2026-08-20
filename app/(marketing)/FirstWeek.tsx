@@ -17,22 +17,22 @@ const STEPS = [
   {
     day: "MON",
     title: "Connect",
-    body: "Link every brokerage through SnapTrade. Read-only, two taps, no statements to upload.",
+    body: "Two taps through SnapTrade. Read-only for good, and nothing to upload.",
   },
   {
     day: "MON",
     title: "Get your Wrapped",
-    body: "Your year, scored and ranked in about thirty seconds. Five cards, ready to post.",
+    body: "Your year, built in about thirty seconds. Cards you would actually post.",
   },
   {
     day: "TUE",
     title: "Wake up to a briefing",
-    body: "A morning read on overnight moves, exposure, and the habit costing you the most.",
+    body: "One read each morning: what moved, what you are holding, what it cost.",
   },
   {
     day: "FRI",
-    title: "See where you stand",
-    body: "Return, patience, risk and diversification, ranked against investors trading like you.",
+    title: "Meet yourself",
+    body: "Rules, rhythm, patience, exposure. Measured against your own record and nobody else's.",
   },
 ] as const;
 
@@ -92,7 +92,7 @@ function WrappedScreen() {
         <div>
           <div className={styles.fwMiniEyebrow}>2026 WRAPPED</div>
           <div className={styles.fwMiniReturn}>+38.4%</div>
-          <div className={styles.fwMiniSub}>Top 3% of supercruise</div>
+          <div className={styles.fwMiniSub}>Ahead of your own best</div>
         </div>
       </div>
       <div className={styles.fwChecklist}>
@@ -178,21 +178,29 @@ function BriefingScreen() {
 }
 
 /*
- * Peer comparison is the one screen in this stepper that is not shipped yet,
- * so its sub-line names the comparison rather than counting the people in it.
- * It used to print a fabricated cohort size.
+ * The comparison is against the reader's own record, and it says so.
+ *
+ * This screen used to rank somebody in the top 3% of "investors trading like
+ * you" — a cohort this repository has no population for and no mechanism to
+ * build. Every surface inside the app refuses to print a peer percentile and
+ * draws a locked slot instead; a landing advertising the one figure the
+ * product will not compute is selling something that never arrives.
+ *
+ * `selfPercentile` is real and shipped: where today sits among the reader's
+ * own scored nights. So the four rows are the score's own four components,
+ * measured the way the app measures them.
  */
 function StandingScreen() {
   const ranks = [
-    { label: "Return", value: "Top 3%", tone: "green", width: 97 },
-    { label: "Patience", value: "Top 8%", tone: "violet", width: 92 },
-    { label: "Risk taken", value: "Top 41%", tone: "amber", width: 59 },
-    { label: "Diversification", value: "Bottom 22%", tone: "red", width: 22 },
+    { label: "Rules", value: "Better than 97%", tone: "green", width: 97 },
+    { label: "Rhythm", value: "Better than 92%", tone: "violet", width: 92 },
+    { label: "Patience", value: "Better than 59%", tone: "amber", width: 59 },
+    { label: "Exposure", value: "Better than 22%", tone: "red", width: 22 },
   ] as const;
   return (
     <div className={styles.fwScreen}>
-      <div className={styles.fwTitle}>You vs everyone</div>
-      <p className={styles.fwSub}>Against investors trading like you</p>
+      <div className={styles.fwTitle}>You vs you</div>
+      <p className={styles.fwSub}>Against your own record</p>
       <div className={styles.fwCurve}>
         <svg viewBox="0 0 260 118" preserveAspectRatio="none">
           <defs>
@@ -234,7 +242,7 @@ function StandingScreen() {
         ))}
       </div>
       <div className={styles.fwSpacer} />
-      <p className={styles.fwFine}>Peers matched by account size and holding period.</p>
+      <p className={styles.fwFine}>Every scored night you have on file.</p>
     </div>
   );
 }
@@ -309,7 +317,22 @@ export function FirstWeek() {
                   <i>{s.day}</i>
                   <b>{s.title}</b>
                 </span>
-                <p>{s.body}</p>
+                {/*
+                  * Only the step you are on says anything.
+                  *
+                  * Four steps each showing a two-line paragraph is four
+                  * paragraphs of body copy in a section whose whole argument
+                  * is "one thing a day" — the list stopped reading as a
+                  * sequence and started reading as a wall. The titles are the
+                  * sequence; the body belongs to the screen beside it.
+                  *
+                  * `grid-template-rows: 0fr → 1fr` opens it with no measured
+                  * height and no JS, and the static state is step one open,
+                  * which is what a reader with no scripts gets.
+                  */}
+                <span className={styles.fwStepBody}>
+                  <p>{s.body}</p>
+                </span>
                 {i === step && (
                   <span className={styles.fwTrack}>
                     <i key={`${step}-${auto}`} data-playing={auto || undefined} />

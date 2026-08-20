@@ -58,7 +58,7 @@ export default async function TrophiesPage() {
             title={data.connection ? "Nothing to show yet" : "Connect a brokerage"}
             body={
               data.connection
-                ? "The case fills from your own history — the first nightly score and the first closed position each put something in it."
+                ? "It fills itself. Your first scored night and your first closed position each put something in here."
                 : "One tap via SnapTrade, read-only."
             }
             actions={[
@@ -106,7 +106,7 @@ export default async function TrophiesPage() {
                 <span className={styles.of}>of {trophies.length} earned</span>
               </span>
             }
-            meta="Nothing here is behind a plan. Every one is a thing your own ledger did."
+            meta="None of it is behind a plan. Every one is something your ledger actually did."
           />
         </div>
 
@@ -132,7 +132,7 @@ export default async function TrophiesPage() {
         <a className={styles.door} href="/wrapped">
           <span className={styles.doorEyebrow}>The set</span>
           <span className={styles.doorLine}>
-            Your Wrapped frames mint from the same history. Play your year
+            Same history, twelve posters. Play your year
           </span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M5 12h14" />

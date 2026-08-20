@@ -2634,16 +2634,49 @@
   position: relative;
   text-align: left;
   border-radius: 24px;
-  padding: 24px 26px 30px;
+  /* Closed, a step is its title. The room for a body comes with the body. */
+  padding: 18px 26px;
   background: transparent;
   border: 1px solid color-mix(in srgb, var(--mk-bg) 6%, transparent);
   color: var(--mk-bg);
-  transition: background 380ms ease, border-color 380ms ease;
+  transition: background 380ms ease, border-color 380ms ease, padding 320ms ease;
 }
 
 .fwStep[data-active] {
+  padding: 24px 26px 30px;
   background: color-mix(in srgb, var(--mk-bg) 6%, transparent);
   border-color: color-mix(in srgb, var(--mk-bg) 14%, transparent);
+}
+
+/*
+ * The body opens with the step and is absent otherwise.
+ *
+ * `grid-template-rows: 0fr → 1fr` is the height-less height animation: no
+ * measured pixel value, no JS, and a closed row that is genuinely zero tall
+ * rather than clipped. The child needs `overflow: hidden`, or its own line
+ * box spills past a zero-height track.
+ */
+.fwStepBody {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 320ms ease, opacity 220ms ease;
+}
+
+.fwStepBody > p {
+  overflow: hidden;
+}
+
+.fwStep[data-active] .fwStepBody {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fwStep,
+  .fwStepBody {
+    transition: none;
+  }
 }
 
 .fwStepHead {

@@ -74,9 +74,8 @@ export default async function StartPage({
               you&rsquo;ll do that.
             </h1>
             <p className={styles.lede}>
-              {institutionLine(linked.institutions, linked.accounts)} It stays
-              linked to your Google account, so Supercruise keeps reading new
-              fills on its own — there is nothing to connect again.
+              {institutionLine(linked.institutions, linked.accounts)} New fills
+              arrive on their own from here.
             </p>
             {/*
               * Setup ends in the dashboard. Wrapped is right there on it — a
@@ -260,13 +259,20 @@ export default async function StartPage({
   );
 }
 
-/** Names what is linked without pretending to know more than the ledger does. */
+/**
+ * Names what is linked without pretending to know more than the ledger does.
+ *
+ * The verb agrees with the count of institutions, not with the sentence it was
+ * written for: "Interactive Brokers and Fidelity is connected" is what one
+ * hard-coded `is` does to anybody who linked twice, which is exactly the
+ * reader this screen most wants to sound sure of itself in front of.
+ */
 function institutionLine(institutions: string[], accounts: number): string {
-  const where = institutions.length
-    ? institutions.slice(0, 2).join(" and ")
-    : "Your brokerage";
+  const named = institutions.slice(0, 2);
+  const where = named.length ? named.join(" and ") : "Your brokerage";
+  const verb = named.length > 1 ? "are" : "is";
   const many = accounts === 1 ? "one account" : `${accounts} accounts`;
-  return `${where} is connected, ${many} deep.`;
+  return `${where} ${verb} in — ${many} of it.`;
 }
 
 function Header({ step }: { step: string }) {

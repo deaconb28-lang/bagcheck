@@ -190,6 +190,13 @@ Motion is the one warm gesture in an instrument aesthetic. The softening happens
 
 ## Copy rules, enforced in review
 
+- **Borrowed vocabulary is not a description.** The landing said "Transform the way you trade" over "Whoop for your portfolio" — a product that never tells anybody to trade, described by naming a fitness band. The preview card beside it printed "Strain 14.2", which measures nothing this repository computes. Say what the thing does in its own words, or the marketing is selling a different product from the one that ships.
+- **A figure appears once per card.** The drawdown finding stated its realised P&L in the sentence while every surface drawing a finding already prints `impact` as the hero and again on the evidence line — one number, three times, and a two-line reading that reads as a paragraph.
+- **A stepper shows one step's body.** Four steps each carrying a paragraph is four paragraphs in a section whose argument is "one thing a day". The titles are the sequence; `grid-template-rows: 0fr → 1fr` opens the active one with no measured height and no JS, and the static state is step one open.
+- **No peer claim anywhere it is not locked.** A percentile needs a population this product does not have. Every in-app surface refuses to print one and draws a `<LockedCard>` instead — so the landing advertising "top 3% of investors trading like you" was selling the one figure the product will not compute. `selfPercentile` is real: where today sits among the reader's own scored nights, and it says whose distribution it is.
+- **Agreement is computed, never assumed.** `institutionLine` hard-coded "is", so anybody who linked two brokerages read "Interactive Brokers and Fidelity is connected" on the screen this product most wants to sound sure of itself on.
+
+
 - Descriptive, never prescriptive. No "you should", no "consider", no urgency.
 - No exclamation marks. No coaching tone. Sentence case everywhere.
 - Buttons name what happens ("Recompute score", never "Submit"). Card headings say something rather than labelling.

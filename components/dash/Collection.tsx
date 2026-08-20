@@ -85,7 +85,7 @@ export function Collection({ year, earnedNos }: { year: number; earnedNos: strin
 
       <p className={styles.foot}>
         {left.length
-          ? `${left.length} appear when your ledger can support them. Never a projection.`
+          ? `${left.length} more show up when your ledger can back them. Never a guess.`
           : "Every frame this year can mint is minted."}
       </p>
     </section>
