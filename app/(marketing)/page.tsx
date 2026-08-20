@@ -183,6 +183,56 @@ export default async function LandingPage() {
                     Connected
                   </span>
                 </div>
+                {/*
+                  * ── The read, where the dashboard puts it ──
+                  *
+                  * The dashboard leads with what the conduct looked like and
+                  * puts the money second; this hero led with the money and
+                  * had nothing of the read on it at all, which advertised the
+                  * screen the product used to be. Same order here now: the
+                  * dial, the archetype, the four components, then the value.
+                  *
+                  * Illustrative like everything else in the handset — the
+                  * section's own tail says so — and drawn rather than
+                  * screenshotted, so it scales and needs no request.
+                  */}
+                <div className={styles.readStrip}>
+                  <span className={styles.readDial}>
+                    <svg viewBox="0 0 64 64" fill="none">
+                      <circle cx="32" cy="32" r="26" stroke="var(--mk-line2)" strokeWidth="6" />
+                      {/*
+                        * `pathLength` normalises the circumference to 100, so
+                        * the dash pair is percentage points and 73 is the
+                        * score. Two values, never one — an odd dash list is
+                        * repeated by SVG and lays a second mark on the ring.
+                        */}
+                      <circle
+                        cx="32"
+                        cy="32"
+                        r="26"
+                        pathLength="100"
+                        stroke="var(--mk-amber)"
+                        strokeWidth="6"
+                        strokeLinecap="round"
+                        strokeDasharray="73 27"
+                        transform="rotate(-90 32 32)"
+                      />
+                    </svg>
+                    <b>73</b>
+                  </span>
+                  <span className={styles.readWho}>
+                    <i>TONIGHT&rsquo;S READ</i>
+                    <b>The Steward</b>
+                    <em>3 of 4 above the bar</em>
+                  </span>
+                  <span className={styles.readPips}>
+                    {[70, 83, 78, 55].map((v, i) => (
+                      <span key={i} data-under={v < 60 || undefined}>
+                        <span style={{ transform: `scaleY(${v / 100})` }} />
+                      </span>
+                    ))}
+                  </span>
+                </div>
                 <div className={styles.bigMoney}>
                   $148,392<span>.11</span>
                 </div>
@@ -325,7 +375,7 @@ export default async function LandingPage() {
                       <span>@jordan</span>
                     </div>
                     <div className={styles.wrapReturn}>+38.4%</div>
-                    <div className={styles.wrapSub}>Return this year · Top 3% of supercruise</div>
+                    <div className={styles.wrapSub}>Return this year · deposits taken out</div>
                     <div className={styles.wrapChips}>
                       <span className={styles.typeChip}>The Conviction Buyer</span>
                       <span className={styles.tradesChip}>142 trades</span>
@@ -375,7 +425,7 @@ export default async function LandingPage() {
       </section>
 
       {/* ── The Wrapped deck ── */}
-      <section id="deck" className={styles.deckSection}>
+      <section id="deck" className={styles.deckSection} data-expand>
         <WrappedDeck
           faces={[
             <div key="return" className={styles.card} data-card="return">
@@ -387,9 +437,16 @@ export default async function LandingPage() {
                 <div className={styles.cardHuge}>+38.4%</div>
                 <div className={styles.cardTail}>Return this year</div>
               </div>
+              {/*
+                * A percentile needs a population this product does not have,
+                * and every surface inside the app refuses to print one — a
+                * landing advertising the one figure the product will not
+                * compute is selling something that never arrives. What the
+                * card actually says is how the figure was arrived at.
+                */}
               <span className={styles.cardPill}>
                 <i />
-                Top 3% of supercruise
+                Deposits taken out
               </span>
             </div>,
 
@@ -505,7 +562,7 @@ export default async function LandingPage() {
       </section>
 
       {/* ── Coming soon: the score, and what it reads ── */}
-      <section id="soon" className={styles.soon}>
+      <section id="soon" className={styles.soon} data-expand>
         <div className={styles.soonGlowVioleta} aria-hidden="true" />
         <div className={styles.soonGlowAmber} aria-hidden="true" />
 
@@ -683,7 +740,7 @@ export default async function LandingPage() {
        * and the score's waitlist beside it, which is the only thing on this
        * section that is genuinely still coming.
        */}
-      <section id="waitlist" className={styles.waitlist}>
+      <section id="waitlist" className={styles.waitlist} data-expand>
         <div className={styles.waitGlow} aria-hidden="true" />
         <div className={styles.waitInner}>
           <div className={styles.waitHead}>

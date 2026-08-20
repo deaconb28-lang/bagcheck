@@ -13,7 +13,26 @@
  * surface ended up at 30px, its stat at 22px and a tile inside it at 20px on
  * the same screen. Nothing is lifted; there is no shadow anywhere in this file.
  */
+/*
+ * The page frame — and `width: 100%` is load-bearing, not belt-and-braces.
+ *
+ * `.canvas` is a column flex container, so this is a flex item, and flexbox
+ * only stretches an item across the cross axis when its cross-size is `auto`
+ * **and neither cross-axis margin is auto**. `margin: 0 auto` is exactly two
+ * auto cross-axis margins, so the frame was never stretched at all: it was
+ * shrink-to-fit, sized to its own widest content and then centred by those
+ * margins.
+ *
+ * On the dashboard that is invisible, because a chart row wants more than the
+ * viewport and the fit clamps at the full width. On a screen built out of
+ * wrapping text and auto-fill grids — which want nothing in particular — it
+ * collapsed to about 800px in a 1440px window and centred there, leaving a
+ * third of the display empty on either side. Stating the width explicitly
+ * makes the fill the intent rather than a side effect of what happens to be
+ * on the page.
+ */
 .page {
+  width: 100%;
   max-width: 1560px;
   margin: 0 auto;
   padding: 38px 44px 56px;

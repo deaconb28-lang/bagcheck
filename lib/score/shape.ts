@@ -119,3 +119,49 @@ export function selfPercentile(days: ScoredDay[], score: number): number | null 
   const below = days.filter((d) => d.score < score).length;
   return Math.round((below / days.length) * 100);
 }
+
+/** The three runs, named once so the live and the longest agree on what they are. */
+export type StreakKind = "insideRules" | "noCostlyExit" | "steadyExposure";
+
+/**
+ * Whether a given day continues each kind of run.
+ *
+ * `activeStreaks` and `bestStreaks` ask the same three questions, and asking
+ * them in two places is how a trophy comes to be awarded for a run the ring
+ * beside it does not recognise. One predicate table, two readers.
+ */
+const CONTINUES: Record<StreakKind, (day: ScoredDay) => boolean> = {
+  insideRules: (day) => day.score >= PARTIAL,
+  noCostlyExit: (day) => !day.contributors.some((c) => c.tone === "clay"),
+  steadyExposure: (day) => day.components.exposure >= EXPOSED,
+};
+
+/**
+ * The longest run of each kind ever recorded, live or not.
+ *
+ * `activeStreaks` deliberately reports only what is at stake today, which is
+ * the right reading for a hero — a broken streak is not at stake. A trophy is
+ * the opposite fact: it is a thing that happened and cannot un-happen, so it
+ * reads the whole history and keeps the best.
+ *
+ * Zero where nothing qualifies, never null: a run of no days is a number the
+ * caller can compare, and every caller here is comparing against a threshold.
+ */
+export function bestStreaks(days: ScoredDay[]): Record<StreakKind, number> {
+  const asc = [...days].sort((a, b) => a.date.localeCompare(b.date));
+  const best: Record<StreakKind, number> = {
+    insideRules: 0,
+    noCostlyExit: 0,
+    steadyExposure: 0,
+  };
+
+  for (const kind of Object.keys(CONTINUES) as StreakKind[]) {
+    let run = 0;
+    for (const day of asc) {
+      run = CONTINUES[kind](day) ? run + 1 : 0;
+      if (run > best[kind]) best[kind] = run;
+    }
+  }
+
+  return best;
+}

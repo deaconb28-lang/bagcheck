@@ -323,6 +323,14 @@ export interface PrefsDoc {
    * act, and the only safe default for one is no.
    */
   publicLedger?: boolean;
+  /**
+   * When this reader last opened their Wrapped.
+   *
+   * Absent until they open it once, which is exactly what the dashboard's
+   * "your year is ready" notice keys off — a banner that keeps announcing
+   * something you have already seen is an advert, not a notification.
+   */
+  wrappedOpenedAt?: Date;
   updatedAt: Date;
 }
 

@@ -3,6 +3,7 @@ import { getUserId, isAuthConfigured } from "@/auth";
 import { isDbConfigured } from "@/lib/db";
 import { brokerageLink, isSnapTradeConfigured } from "@/lib/snaptrade";
 import { appLocked } from "@/lib/launch";
+import { TRIAL_DAYS } from "@/lib/tiers";
 import { SupercruiseMark } from "@/components/brand/SupercruiseMark";
 import { GoogleSignIn } from "@/components/app/GoogleSignIn";
 import { DancingCards } from "./DancingCards";
@@ -200,6 +201,23 @@ export default async function StartPage({
               <Tick />
               <span>
                 <b>Unlink any time.</b> That stops the sync and clears the history.
+              </span>
+            </li>
+            {/*
+              * The offer, stated where the decision is made.
+              *
+              * It was on the landing and on `/pricing` and nowhere on the one
+              * screen that asks somebody to hand over a brokerage — so the
+              * reader most likely to hesitate was the one reader never told
+              * what it costs. The anchor is the honest part: the month runs
+              * from the connection rather than from the sign-up, so nobody
+              * spends their window on an empty screen.
+              */}
+            <li>
+              <Tick />
+              <span>
+                <b>{TRIAL_DAYS} days free, no card.</b> The month starts when your
+                broker connects, not when you signed up.
               </span>
             </li>
           </ul>

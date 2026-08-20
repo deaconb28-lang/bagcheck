@@ -2,7 +2,7 @@ export { dbName, getMongoClient, isDbConfigured } from "./client";
 export { ensureIndexes, getCollections, getDb } from "./collections";
 export { cardBySlug, cardsFor, mintCard } from "./cards";
 export { factsFrom, getDailyInsight } from "./insights";
-export { cashFrom, holdingsFrom, linkedBrokerage, loadActivity, loadAppData, loadShellConnection } from "./queries";
+export { cashFrom, holdingsFrom, linkedBrokerage, loadActivity, loadAppData, loadShellConnection, markWrappedOpened, wrappedOpenedAt} from "./queries";
 export type { ActivityPage, ActivityRow, AppData, HoldingRow } from "./queries";
 export { BACKFILL_DAYS, backfillScores, backfillSpan, scoreUser } from "./scoring";
 export {

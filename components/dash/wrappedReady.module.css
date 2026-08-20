@@ -1,0 +1,101 @@
+/*
+ * The one notification the dashboard has.
+ *
+ * It is the strongest object on the screen while it is there, and it is only
+ * ever there once — so it takes the inversion this palette reserves for a
+ * single primary action, rather than another near-black plate that would sit
+ * in the same visual class as the eight panels under it. A notice that looks
+ * like the page it is on is not a notice.
+ */
+.note {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 34px;
+  padding: 20px 22px;
+  border-radius: var(--r-panel);
+  background: var(--ink-field);
+  color: var(--on-ink);
+}
+
+.spark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--on-ink) 10%, transparent);
+  color: var(--on-ink);
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 16.5px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--on-ink);
+}
+
+.line {
+  margin: 3px 0 0;
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: var(--on-ink-body);
+}
+
+.count {
+  font-weight: 700;
+}
+
+/*
+ * The action inverts back out of the inverted plate, which is the only way a
+ * button on this ground reads as a button rather than as more of the notice.
+ */
+.open {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  padding: 12px 18px;
+  border-radius: var(--r-pill);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.open:hover {
+  color: var(--ink);
+  opacity: 0.88;
+  transform: translateX(2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .open {
+    transition: none;
+  }
+
+  .open:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .note {
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .open {
+    width: 100%;
+    justify-content: center;
+  }
+}

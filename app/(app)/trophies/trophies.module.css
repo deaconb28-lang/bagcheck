@@ -1,0 +1,98 @@
+/*
+ * The case's own head and its one door.
+ *
+ * The tally is this screen's single poster figure: Anton, display only, well
+ * over its 32px floor, and the words beside it set in the product's voice
+ * rather than in the poster face — a condensed display face reads a size
+ * smaller than its px value and is never a sentence.
+ */
+.tally {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.won {
+  font-size: 96px;
+  line-height: 0.86;
+  color: var(--ink);
+}
+
+.of {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink3);
+}
+
+/*
+ * The door to the year. A row rather than a panel: it is a link to another
+ * screen, not a reading, and giving it a plate would put a fifth band on a
+ * page of four.
+ */
+.door {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 6px 20px;
+  margin-top: 34px;
+  padding: 24px 32px;
+  border-radius: var(--r-panel);
+  background: var(--s1);
+  color: var(--ink3);
+  transition: background 0.16s ease;
+}
+
+.door:hover {
+  background: var(--tile);
+  color: var(--ink);
+}
+
+.door svg {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  transition: transform 0.16s ease;
+}
+
+.door:hover svg {
+  transform: translateX(3px);
+}
+
+.doorEyebrow {
+  grid-column: 1;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.doorLine {
+  grid-column: 1;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .door,
+  .door svg {
+    transition: none;
+  }
+
+  .door:hover svg {
+    transform: none;
+  }
+}
+
+@media (max-width: 780px) {
+  .won {
+    font-size: 68px;
+  }
+
+  .door {
+    padding: 20px;
+  }
+}

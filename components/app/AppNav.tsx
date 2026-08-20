@@ -4,12 +4,13 @@ import { SyncNow } from "./SyncNow";
 import type { ShellUser } from "./AppRail";
 import styles from "./AppNav.module.css";
 
-export type AppTab = "dash" | "holdings" | "insights" | "wrapped" | "ledger";
+export type AppTab = "dash" | "holdings" | "insights" | "trophies" | "wrapped" | "ledger";
 
 const TABS: Array<{ key: AppTab; label: string; href: string }> = [
   { key: "dash", label: "Dashboard", href: "/you" },
   { key: "holdings", label: "Holdings", href: "/holdings" },
   { key: "insights", label: "Insights", href: "/insights" },
+  { key: "trophies", label: "Trophies", href: "/trophies" },
   { key: "wrapped", label: "Wrapped", href: "/wrapped" },
   /* The public ledger. A tab leads to a place, not to a settings anchor. */
   { key: "ledger", label: "Public", href: "/public" },

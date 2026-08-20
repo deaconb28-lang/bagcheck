@@ -57,6 +57,7 @@ const SCREENS = [
   { key: "you", path: "/you", modes: ["dark"] },
   { key: "holdings", path: "/holdings", modes: ["dark"] },
   { key: "insights", path: "/insights", modes: ["dark"] },
+  { key: "trophies", path: "/trophies", modes: ["dark"] },
   { key: "wrapped", path: "/wrapped", modes: ["dark"] },
   { key: "profile", path: "/profile", modes: ["dark"] },
   /*
@@ -108,6 +109,13 @@ const SECTIONS = [
   { key: "loading-wrapped", path: "/debug/loading", selector: "section:nth-of-type(2)", mode: "dark" },
   { key: "page-holdings", path: "/holdings", selector: '[class*="chrome_page"]', mode: "dark" },
   { key: "page-insights", path: "/insights", selector: '[class*="chrome_page"]', mode: "dark" },
+  /*
+   * The case runs to four bands and about three thousand pixels; a viewport
+   * shot of it shows one. The locked tiles and their progress meters live at
+   * the bottom of every band and are the half of the design that has to be
+   * looked at — an earned tile is the easy case.
+   */
+  { key: "page-trophies", path: "/trophies", selector: '[class*="chrome_page"]', mode: "dark" },
 ];
 
 /* ── Probes ──────────────────────────────────────────────────────────────── */

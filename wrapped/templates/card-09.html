@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>supercruise · Your mix</title>
+<title>supercruise · You and the index</title>
 <link rel="stylesheet" href="card.css">
 </head>
 <body>
 <!--
-  Card 09 — mix
+  Card 09 — vsIndex
 
   A 1080x1920 stage. The art is a background and nothing else; every figure on
   this card is set in type, because a number a model drew is a number nobody
@@ -20,7 +20,7 @@
   Every one of the five has a default stated on .card itself, which is what
   lets a card minted before this table existed keep drawing the way it drew.
 -->
-<div class="card" style="width:1080px;height:1920px" data-card="09" data-key="mix" data-face="voice" data-place="foot" data-align="left" data-case="none" data-order="title-under">
+<div class="card" style="width:1080px;height:1920px" data-card="09" data-key="vsIndex" data-face="machine" data-place="split" data-align="right" data-case="none" data-order="title-over">
   <!--
     The PNG is the committed source of truth; the WebP is what a reader
     actually downloads. Twelve photographic gradients at 1080x1920 are 38MB as
@@ -36,20 +36,9 @@
 
   <div class="layer">
     <p class="eyebrow">supercruise &middot; <span data-token="YEAR">{{YEAR}}</span></p>
-    <p class="heroLabel">Share of book</p>
-    <p class="hero" data-kind="figure" data-token="TOP_SECTOR_PCT">{{TOP_SECTOR_PCT}}</p>
-    <h1 class="title">Your mix</h1>
-
-    <div class="support">
-        <div class="fact">
-          <span class="factLabel">Largest sector</span>
-          <span class="factValue" data-kind="word" data-token="TOP_SECTOR">{{TOP_SECTOR}}</span>
-        </div>
-        <div class="fact">
-          <span class="factLabel">Holdings</span>
-          <span class="factValue" data-kind="figure" data-token="HOLDINGS_COUNT">{{HOLDINGS_COUNT}}</span>
-        </div>
-    </div>
+    <p class="heroLabel">Against the index</p>
+    <p class="hero" data-kind="figure" data-token="VS_SPY_PCT">{{VS_SPY_PCT}}</p>
+    <h1 class="title">You and the index</h1>
 
     <p class="caption" data-caption="">{{CAPTION}}</p>
   </div>

@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>supercruise · What you put in</title>
+<title>supercruise · The longest hold</title>
 <link rel="stylesheet" href="card.css">
 </head>
 <body>
 <!--
-  Card 03 — contributions
+  Card 03 — longestHold
 
   A 1080x1920 stage. The art is a background and nothing else; every figure on
   this card is set in type, because a number a model drew is a number nobody
@@ -20,7 +20,7 @@
   Every one of the five has a default stated on .card itself, which is what
   lets a card minted before this table existed keep drawing the way it drew.
 -->
-<div class="card" style="width:1080px;height:1920px" data-card="03" data-key="contributions" data-face="geometric" data-place="head" data-align="left" data-case="none" data-order="title-under">
+<div class="card" style="width:1080px;height:1920px" data-card="03" data-key="longestHold" data-face="serif" data-place="split" data-align="left" data-case="none" data-order="title-over">
   <!--
     The PNG is the committed source of truth; the WebP is what a reader
     actually downloads. Twelve photographic gradients at 1080x1920 are 38MB as
@@ -36,14 +36,17 @@
 
   <div class="layer">
     <p class="eyebrow">supercruise &middot; <span data-token="YEAR">{{YEAR}}</span></p>
-    <p class="heroLabel">Deposits this year</p>
-    <p class="hero" data-kind="figure" data-token="CONTRIBUTION_COUNT">{{CONTRIBUTION_COUNT}}</p>
-    <h1 class="title">What you put in</h1>
+    <p class="heroLabel">Days held</p>
+    <p class="hero" data-kind="figure" data-token="LONGEST_HOLD_DAYS">{{LONGEST_HOLD_DAYS}}</p>
+    <h1 class="title">The longest hold</h1>
 
     <div class="support">
         <div class="fact">
-          <span class="factLabel">Longest streak</span>
-          <span class="factValue" data-kind="figure" data-token="CONTRIBUTION_STREAK_WEEKS">{{CONTRIBUTION_STREAK_WEEKS}}</span>
+          <span class="factLabel">Instrument</span>
+          <span class="instrument">
+            <span class="logo" aria-hidden="true"><img class="logoImg" data-logo="LONGEST_HOLD_TICKER" alt=""></span>
+            <span class="factValue" data-kind="word" data-token="LONGEST_HOLD_TICKER">{{LONGEST_HOLD_TICKER}}</span>
+          </span>
         </div>
     </div>
 

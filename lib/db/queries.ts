@@ -279,3 +279,33 @@ export function cashFrom(snapshots: PositionSnapshotDoc[]): number | null {
   }
   return total;
 }
+
+/**
+ * Whether this reader has opened their Wrapped, and the note that says so.
+ *
+ * The dashboard's "your year is ready" notice is the product's one shot at an
+ * a-ha in the first five minutes, and the thing that makes it a notification
+ * rather than an advert is that it stops. One indexed read on a screen that is
+ * already reading this collection.
+ */
+export async function wrappedOpenedAt(userId: string): Promise<Date | null> {
+  const { prefs } = await getCollections();
+  const doc = await prefs.findOne(
+    { userId },
+    { projection: { _id: 0, wrappedOpenedAt: 1 } },
+  );
+  return doc?.wrappedOpenedAt ?? null;
+}
+
+/**
+ * Mark the year as seen. Upserts, because prefs is created lazily and a reader
+ * can reach Wrapped without ever having touched a setting.
+ */
+export async function markWrappedOpened(userId: string, at: Date = new Date()): Promise<void> {
+  const { prefs } = await getCollections();
+  await prefs.updateOne(
+    { userId },
+    { $set: { wrappedOpenedAt: at, updatedAt: at }, $setOnInsert: { userId } },
+    { upsert: true },
+  );
+}

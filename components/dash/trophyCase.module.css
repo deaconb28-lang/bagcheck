@@ -1,0 +1,324 @@
+/*
+ * The trophy case.
+ *
+ * Deliberately the same grammar as `collection.module.css` — a near-black
+ * plate with no outline, a grid of tiles, light as the only difference between
+ * a thing you have and a thing you do not. A trophy and a minted card are the
+ * same kind of object and two vocabularies for them on one product would be
+ * two products.
+ *
+ * What is new is the band tone. Sixteen near-identical tiles are only
+ * scannable if the eye can tell which section it is in without reading the
+ * heading, so each band sets `--tone` once and every lit part of every tile
+ * inside it reads that one variable. The hue reaches a drawing, a numeral and
+ * a 3px meter, and stops — it never fills a plate.
+ */
+.band {
+  position: relative;
+  isolation: isolate;
+  margin-top: 34px;
+  padding: 30px 32px;
+  border-radius: var(--r-panel);
+  background: var(--s1);
+}
+
+.band[data-tone="ember"] {
+  --tone: var(--ember);
+}
+
+.band[data-tone="accent"] {
+  --tone: var(--accent);
+}
+
+.band[data-tone="signal"] {
+  --tone: var(--signal);
+}
+
+/* The band's ground, same mechanism as `.panel[data-art]`. */
+.band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: url("/dash/grid.webp") center / cover;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.band[data-tone="ember"]::before {
+  background-image: url("/dash/race.webp");
+}
+
+.band[data-tone="signal"]::before {
+  background-image: url("/dash/findings.webp");
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--tone);
+}
+
+.note {
+  margin: 10px 0 0;
+  max-width: 60ch;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink3);
+}
+
+.tally {
+  margin: 0;
+  flex: none;
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--meta);
+}
+
+.tally .num {
+  font-size: 20px;
+  color: var(--ink);
+}
+
+.grid {
+  list-style: none;
+  margin: 26px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+/*
+ * A tile is a grid with the condition pushed to the foot, so the meter and the
+ * earned word land on one line across the whole row however long a name runs.
+ */
+.frame {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 9px;
+  min-width: 0;
+  padding: 16px;
+  border-radius: var(--r-tile);
+  background: var(--tile);
+  animation: frameIn 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes frameIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+}
+
+/*
+ * The one difference between an earned tile and a locked one is light — no
+ * blur, no lock glyph, no second treatment. The plate warms by the faintest
+ * amount its own tone allows, which reads as *lit* rather than as coloured.
+ */
+.frame[data-earned] {
+  background: color-mix(in srgb, var(--tone) 7%, var(--tile));
+}
+
+.art {
+  --teaser-accent: var(--meta);
+  --teaser-radius: 10px;
+  display: block;
+  color: var(--meta);
+}
+
+.frame[data-earned] .art {
+  --teaser-accent: var(--tone);
+  color: var(--ink3);
+}
+
+.name {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink2);
+}
+
+.frame[data-earned] .name {
+  color: var(--ink);
+}
+
+.need {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+  color: var(--meta);
+}
+
+/*
+ * The meter is a real count on both sides. It draws left to right on arrival
+ * and its finished state is the correct width, so a reader whose animation
+ * never runs sees the right bar rather than an empty one.
+ */
+.meter {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.meter::before {
+  content: "";
+  grid-column: 1;
+  grid-row: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--track);
+}
+
+.fill {
+  grid-column: 1;
+  grid-row: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--tone);
+  transform-origin: left center;
+  animation: meterIn 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes meterIn {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.count {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--meta);
+}
+
+.won,
+.waiting {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.won {
+  color: var(--tone);
+}
+
+.waiting {
+  color: var(--meta);
+}
+
+/* ── The sixteen ───────────────────────────────────────────────────────── */
+
+.faces {
+  list-style: none;
+  margin: 26px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  gap: 14px;
+}
+
+.face {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 18px 12px;
+  border-radius: var(--r-tile);
+  background: var(--tile);
+  text-align: center;
+  animation: frameIn 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/*
+ * A character that has never been inhabited keeps its shape and loses its
+ * light. Removing the drawing would make sixteen tiles read as however many
+ * are lit, which is the opposite of what a set is for.
+ *
+ * **The dimming is on the drawing only, never on the tile.** An opacity on the
+ * whole tile takes the two lines of type down with it, and a colour a probe
+ * measures at the token while the browser composites it at 42% is exactly the
+ * class of contrast failure the sweep was written to catch and cannot see.
+ * The type states its own quieter colours instead.
+ */
+.face:not([data-lit]) .portrait {
+  opacity: 0.4;
+  filter: saturate(0.12);
+}
+
+.face:not([data-lit]) .faceName {
+  color: var(--ink3);
+}
+
+.portrait {
+  display: grid;
+  place-items: center;
+}
+
+.face[data-lit] {
+  background: color-mix(in srgb, var(--tone) 7%, var(--tile));
+}
+
+.faceName {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink2);
+}
+
+.face[data-lit] .faceName {
+  color: var(--ink);
+}
+
+.faceMeta {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  line-height: 1.4;
+  color: var(--meta);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame,
+  .face,
+  .fill {
+    animation: none;
+  }
+}
+
+@media (max-width: 780px) {
+  .band {
+    padding: 24px 20px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+    gap: 10px;
+  }
+
+  .faces {
+    --face-size: 58px;
+    grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+    gap: 10px;
+  }
+}

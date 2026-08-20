@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>supercruise · Best performer</title>
+<title>supercruise · Most active month</title>
 <link rel="stylesheet" href="card.css">
 </head>
 <body>
 <!--
-  Card 05 — best
+  Card 05 — busiest
 
   A 1080x1920 stage. The art is a background and nothing else; every figure on
   this card is set in type, because a number a model drew is a number nobody
@@ -20,7 +20,7 @@
   Every one of the five has a default stated on .card itself, which is what
   lets a card minted before this table existed keep drawing the way it drew.
 -->
-<div class="card" style="width:1080px;height:1920px" data-card="05" data-key="best" data-face="poster" data-place="foot" data-align="right" data-case="upper" data-order="caption-lead">
+<div class="card" style="width:1080px;height:1920px" data-card="05" data-key="busiest" data-face="lede" data-place="head" data-align="right" data-case="none" data-order="title-over">
   <!--
     The PNG is the committed source of truth; the WebP is what a reader
     actually downloads. Twelve photographic gradients at 1080x1920 are 38MB as
@@ -36,17 +36,14 @@
 
   <div class="layer">
     <p class="eyebrow">supercruise &middot; <span data-token="YEAR">{{YEAR}}</span></p>
-    <p class="heroLabel">Return on the trade</p>
-    <p class="hero" data-kind="figure" data-token="BEST_RETURN_PCT">{{BEST_RETURN_PCT}}</p>
-    <h1 class="title">Best performer</h1>
+    <p class="heroLabel">Trades this year</p>
+    <p class="hero" data-kind="figure" data-token="TRADE_COUNT_YEAR">{{TRADE_COUNT_YEAR}}</p>
+    <h1 class="title">Most active month</h1>
 
     <div class="support">
         <div class="fact">
-          <span class="factLabel">Instrument</span>
-          <span class="instrument">
-            <span class="logo" aria-hidden="true"><img class="logoImg" data-logo="BEST_TICKER" alt=""></span>
-            <span class="factValue" data-kind="word" data-token="BEST_TICKER">{{BEST_TICKER}}</span>
-          </span>
+          <span class="factLabel">Month</span>
+          <span class="factValue" data-kind="word" data-token="BUSIEST_MONTH">{{BUSIEST_MONTH}}</span>
         </div>
     </div>
 

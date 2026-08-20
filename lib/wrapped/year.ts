@@ -80,8 +80,17 @@ async function template(no: string): Promise<string> {
  * invalidate the cards, and the ledger moves far more often than the year's
  * headline figures do.
  */
+/**
+ * Bumped when the *deck* changes rather than the reader's figures — an order,
+ * a card's identity, a token list. Without it a cached document keeps serving
+ * the numbering it was built under: the stats have not moved, so the
+ * fingerprint has not moved, so nothing rebuilds and card 08 stays whatever it
+ * used to be. One constant, and every deck rebuilds once.
+ */
+const DECK_VERSION = "2";
+
 export function fingerprintOf(stats: WrappedStats): string {
-  return Object.entries(stats)
+  return `v${DECK_VERSION}|` + Object.entries(stats)
     .filter(([, v]) => typeof v === "string" && v)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([k, v]) => `${k}=${v}`)

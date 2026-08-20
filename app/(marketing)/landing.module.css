@@ -11,7 +11,14 @@
   background: var(--mk-bg);
   color: var(--mk-ink);
   font-family: var(--font-voice), var(--font-body), system-ui, sans-serif;
-  overflow-x: hidden;
+  /*
+   * `clip`, not `hidden`. `overflow-x: hidden` with a visible y computes the y
+   * axis to `auto`, which makes this element a scroll container — and a
+   * sticky child positions against the nearest scrollport, so the nav pill
+   * would anchor to a box that never scrolls and simply never stick. `clip`
+   * trims the same overflow without creating one.
+   */
+  overflow-x: clip;
 }
 
 /* Zero specificity so a class on the anchor (.navCta, .ctaDark) always wins. */
@@ -20,15 +27,90 @@
 }
 
 /* ── Nav ── */
+/*
+ * ── The bar is a pill, and it floats ─────────────────────────────────────
+ *
+ * It was a full-bleed row of links sitting at the top of the document and
+ * scrolling away with it, which put the one door into the product out of
+ * reach for the whole of a very long page. It is a capsule now: sticky, dark,
+ * riding above the white hero and above the dark field below it alike.
+ *
+ * **It is solid at every scroll position, deliberately.** The obvious version
+ * of this fades a transparent bar into a solid one as you leave the hero,
+ * which means the ink has to invert mid-scroll — and the static state of that,
+ * the one a reader without scroll timelines gets, is a bar in whichever half
+ * of the flip it was authored in. One ground and one ink is the finished
+ * design at every offset, and it needs nothing to be true.
+ *
+ * The hairline is what keeps it an object over the dark field, where the
+ * capsule and the ground are within a few points of each other.
+ */
 .nav {
+  position: sticky;
+  top: 14px;
+  z-index: 40;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 32px;
-  padding: 22px 40px 0;
-  max-width: 1900px;
-  margin-inline: auto;
-  width: 100%;
+  gap: 28px;
+  width: min(100% - 28px, 1240px);
+  margin: 14px auto 0;
+  padding: 9px 9px 9px 20px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mk-ink) 94%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mk-bg) 15%, transparent);
+  box-shadow: 0 20px 50px -26px color-mix(in srgb, var(--mk-ink) 85%, transparent);
+  backdrop-filter: blur(16px);
+  color: var(--mk-bg);
+}
+
+/* Inside the pill the ground is dark, so every part of it reads white. */
+.nav .brand {
+  color: var(--mk-bg);
+}
+
+.nav .wordmark {
+  font-size: 21px;
+}
+
+.nav .navLinks {
+  gap: 26px;
+  font-size: 15px;
+  color: color-mix(in srgb, var(--mk-bg) 78%, transparent);
+}
+
+.nav .navLinks a:hover {
+  color: var(--mk-bg);
+}
+
+.nav .navCta {
+  background: var(--mk-bg);
+  color: var(--mk-ink);
+  padding: 11px 20px;
+  font-size: 15px;
+}
+
+.nav .navGhost {
+  background: transparent;
+  color: var(--mk-bg);
+  border-color: color-mix(in srgb, var(--mk-bg) 26%, transparent);
+  padding: 10px 18px;
+  font-size: 15px;
+}
+
+.nav .navGhost:hover {
+  border-color: var(--mk-bg);
+}
+
+@media (max-width: 900px) {
+  .nav {
+    gap: 14px;
+    padding: 8px 8px 8px 16px;
+  }
+
+  .nav .navLinks {
+    display: none;
+  }
 }
 
 .brand {
@@ -457,6 +539,111 @@
   background: var(--mk-green);
 }
 
+/*
+ * ── The read strip ───────────────────────────────────────────────────────
+ *
+ * The dial, who it says you are, and the four components — the dashboard's
+ * own opening lockup at handset scale. It sits above the money because that
+ * is the order the product puts them in; a landing that led with the balance
+ * was selling the screen this one replaced.
+ */
+.readStrip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 14px 0;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: var(--mk-bg);
+}
+
+.readDial {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 46px;
+  height: 46px;
+}
+
+.readDial svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.readDial b {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--mk-ink);
+}
+
+.readWho {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+
+.readWho i {
+  font-size: 9px;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0.16em;
+  color: var(--mk-violet);
+}
+
+.readWho b {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--mk-ink);
+}
+
+.readWho em {
+  font-size: 11px;
+  font-style: normal;
+  color: var(--mk-meta);
+}
+
+/*
+ * Four components as pips: height is the figure and the one under the bar is
+ * the only one that changes colour, which is the same pairing the app uses —
+ * a reading stated twice, once in form and once in hue.
+ */
+.readPips {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  flex: none;
+  height: 30px;
+}
+
+.readPips > span {
+  display: flex;
+  align-items: flex-end;
+  width: 5px;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--mk-line2);
+}
+
+.readPips > span > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--mk-amber);
+  transform-origin: bottom center;
+}
+
+.readPips > span[data-under] > span {
+  background: var(--mk-meta2);
+}
+
 .bigMoney {
   padding: 10px 18px 0;
   font-size: 34px;
@@ -496,8 +683,8 @@
 .spark {
   display: block;
   width: 100%;
-  height: 88px;
-  margin-top: 6px;
+  height: 66px;
+  margin-top: 4px;
 }
 
 .holdings {
@@ -1053,28 +1240,28 @@
 }
 
 .card[data-card="return"] {
-  --deck-art: url("/wrapped/2026/art/stratosphere-01/bg-02.webp");
+  --deck-art: url("/wrapped/2026/art/stratosphere-01/bg-08.webp");
   --deck-ink: #16130e;
   --deck-scrim: #efe7d8;
   --deck-base: #efe7d8;
 }
 
 .card[data-card="topbag"] {
-  --deck-art: url("/wrapped/2026/art/stratosphere-01/bg-09.webp");
+  --deck-art: url("/wrapped/2026/art/stratosphere-01/bg-04.webp");
   --deck-ink: #141414;
   --deck-scrim: #f2efe6;
   --deck-base: #f2efe6;
 }
 
 .card[data-card="trade"] {
-  --deck-art: url("/wrapped/2026/art/stratosphere-01/bg-05.webp");
+  --deck-art: url("/wrapped/2026/art/stratosphere-01/bg-02.webp");
   --deck-ink: #14120a;
   --deck-scrim: #f5e04a;
   --deck-base: #f5e04a;
 }
 
 .card[data-card="hands"] {
-  --deck-art: url("/wrapped/2026/art/stratosphere-01/bg-04.webp");
+  --deck-art: url("/wrapped/2026/art/stratosphere-01/bg-03.webp");
   --deck-ink: #f4f2ef;
   --deck-scrim: #0a0d16;
   --deck-base: #0a0d16;

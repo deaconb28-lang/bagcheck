@@ -291,6 +291,39 @@ button {
       animation-range: entry 2% cover 24% !important;
       animation-delay: 0s !important;
     }
+
+    /*
+     * ── Expanding sections ───────────────────────────────────────────────
+     *
+     * A band opens as you reach it: it arrives inset with its corners rounded
+     * and grows out to the full bleed, tied to the scroll position rather than
+     * to a timer. Marketing only, and declared **entirely inside this block**
+     * rather than as a base rule that gets retargeted — an expand has no
+     * sensible timed fallback, so a browser without scroll timelines and a
+     * reader who has asked for less motion both get the finished band with
+     * nothing to wait for.
+     *
+     * `clip-path` rather than `scale`, because a band that scales up scales
+     * its own type with it and every line inside is soft for the length of
+     * the tween. An inset is a window opening over type that never moves.
+     */
+    [data-expand] {
+      animation: expand linear both;
+      animation-timeline: view();
+      animation-range: entry 4% cover 30%;
+    }
+  }
+}
+
+/* Both ends are `inset()` with a `round`, so the two shapes interpolate. */
+@keyframes expand {
+  from {
+    clip-path: inset(2.5% 6% 2.5% 6% round 40px);
+    opacity: 0.6;
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 0);
+    opacity: 1;
   }
 }
 

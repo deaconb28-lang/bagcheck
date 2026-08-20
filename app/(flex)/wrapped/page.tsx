@@ -1,6 +1,7 @@
+import { after } from "next/server";
 import Link from "next/link";
 import { auth, getUserId, isAuthConfigured } from "@/auth";
-import { accessFor, getCollections, isDbConfigured, syncClock } from "@/lib/db";
+import { accessFor, getCollections, isDbConfigured, markWrappedOpened, syncClock } from "@/lib/db";
 import { appLocked } from "@/lib/launch";
 import { wrappedDeck } from "@/lib/wrapped/year";
 import { windowFor, windowsFor } from "@/lib/wrapped/window";
@@ -68,6 +69,20 @@ export default async function WrappedPage({
   if (userId && isDbConfigured()) {
     const access = await accessFor(userId);
     if (!access.allowed) return <Paywall trial={access.trial} />;
+
+    /*
+     * Opening the year is what retires the dashboard's notice about it, and
+     * it is recorded *after* the response rather than in front of it — a
+     * write that gates a render is a write that can fail the page. Swallowed
+     * for the same reason: the worst case is a notice that shows once more.
+     */
+    after(async () => {
+      try {
+        await markWrappedOpened(userId);
+      } catch (err) {
+        console.error("[wrapped] could not mark opened", err);
+      }
+    });
   }
 
   const asDemo = demo === "1" || !isDbConfigured();

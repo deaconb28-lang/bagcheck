@@ -211,7 +211,16 @@ console.log(`  ${fromModel} captions from the model, ${fromFallback} from the ba
 console.log("\nforced failure");
 {
   const stats = fixture(0);
-  const card = CARDS.find((c) => c.no === "05");
+  /*
+   * The card is found by **key**, never by number. The gate this block proves
+   * is the value check, so it has to run against a card that actually carries
+   * a figure and a ticker — and the deck's order is not fixed: reordering it
+   * once already pointed this at `busiest`, whose template holds neither
+   * token, so every corruption was a no-op and three open gates reported as
+   * three passes. A harness that silently stops testing the thing it names is
+   * worse than one that fails.
+   */
+  const card = CARDS.find((c) => c.key === "best");
   const template = await templateFor(card.no);
   const good = fill(template, stats, "Your strongest name of the year.");
 

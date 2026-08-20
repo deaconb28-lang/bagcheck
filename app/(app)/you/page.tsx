@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getUserId, isAuthConfigured } from "@/auth";
-import { accessFor, factsFrom, getDailyInsight, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
+import { accessFor, factsFrom, getDailyInsight, isDbConfigured, loadScreen, syncClock, wrappedOpenedAt } from "@/lib/db";
 import { dashboardFor, fieldLine, rangeOf } from "@/lib/portfolio/load";
 import type { Pattern, RangeKey } from "@/lib/portfolio/types";
 import { EmptyState } from "@/components/app/EmptyState";
@@ -11,7 +11,7 @@ import { Paywall } from "@/components/app/Paywall";
 import { shellUser } from "@/components/app/shellUser";
 import { SignInCta } from "@/components/app/SignInCta";
 import { SyncDialog } from "@/components/app/SyncDialog";
-import { trialLine, trialState } from "@/lib/tiers";
+import { TRIAL_DAYS, trialLine, trialState } from "@/lib/tiers";
 import {
   Chip,
   Chips,
@@ -41,6 +41,7 @@ import {
   WeekdayBars,
 } from "@/components/dash/Charts";
 import { InsightCard, WrappedPromo } from "@/components/dash/Cards";
+import { WrappedReady } from "@/components/dash/WrappedReady";
 import { ScoreHero } from "@/components/dash/ScoreHero";
 import { Collection } from "@/components/dash/Collection";
 import { CountUp, EquityCurve, HeatGrid } from "@/components/idioms";
@@ -114,7 +115,7 @@ export default async function DashboardPage({
             userId
               ? "Set MONGODB_URI on this deployment to store synced history and scores."
               : isAuthConfigured()
-                ? "Your P&L, your holdings, your year."
+                ? `Your P&L, your holdings, your year. ${TRIAL_DAYS} days free, no card.`
                 : "Sign-in is not configured here."
           }
           actions={[{ label: "Connect a brokerage", href: "/start", ghost: true }]}
@@ -149,7 +150,7 @@ export default async function DashboardPage({
           body={
             data.connection
               ? `${data.transactionCount.toLocaleString("en-US")} transactions on file. Scoring builds the dashboard from them.`
-              : "One tap via SnapTrade, read-only."
+              : `One tap via SnapTrade, read-only. ${TRIAL_DAYS} days free after it connects, no card.`
           }
           actions={
             data.connection
@@ -180,7 +181,7 @@ export default async function DashboardPage({
    * model call, which is exactly what this group's `loading.tsx` exists for.
    * Swallowed on failure, because a dashboard must not fail on a sentence.
    */
-  const [{ view }, user, note] = await Promise.all([
+  const [{ view }, user, note, openedWrapped] = await Promise.all([
     dashboardFor(userId, range, data),
     shellUser(),
     latest
@@ -195,6 +196,12 @@ export default async function DashboardPage({
           ),
         ).catch(() => null)
       : Promise.resolve(null),
+    /*
+     * Whether the year has ever been opened. One indexed read, in the same
+     * round trip as everything else — the notice above the fold has to be
+     * decided before the page renders, not after.
+     */
+    wrappedOpenedAt(userId).catch(() => null),
   ]);
   const { book, performance: perf, window } = view;
 
@@ -234,6 +241,24 @@ export default async function DashboardPage({
           * straight through to the dashboard. On that path the money leads,
           * exactly as it used to.
           */}
+        {/*
+          * The one notice this screen has, and the first thing on it.
+          *
+          * A reader who has just connected has a deck waiting — the sync
+          * builds it now rather than leaving it for whoever opens `/wrapped`
+          * first — and nothing here said so. It is above the read because the
+          * read is what the product concluded and this is what the reader came
+          * for; the ordering is only wrong for somebody who has already seen
+          * it, and for them it is not rendered at all.
+          */}
+        {view.wrapped.earned > 0 && !openedWrapped ? (
+          <WrappedReady
+            year={view.wrapped.year}
+            earned={view.wrapped.earned}
+            total={view.wrapped.total}
+          />
+        ) : null}
+
         {view.read ? (
           <div data-reveal>
             <ScoreHero
