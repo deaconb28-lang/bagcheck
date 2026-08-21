@@ -216,8 +216,8 @@ test("an account that never connected is not locked out", () => {
 });
 
 test("the price is written once and printed the same everywhere", () => {
-  assert.equal(priceLine(), "$14.99/month");
-  assert.equal(TIER_PRICE.pro.monthly, 14.99);
+  assert.equal(priceLine(), "$9/month");
+  assert.equal(TIER_PRICE.pro.monthly, 9);
   /* No annual plan — a second price is a second thing to keep in step. */
   assert.equal(TIER_PRICE.pro.yearly, null);
 });

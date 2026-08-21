@@ -96,21 +96,41 @@
   margin-inline: auto;
 }
 
+/*
+ * One card, full measure. This was `repeat(2, 1fr)` for the FREE column that
+ * no longer exists, so the single remaining plan sat in half a row with the
+ * other half empty — and a half-width card forces a portrait lockup on
+ * landscape content.
+ */
 .cards {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 24px;
-  align-items: stretch;
 }
 
 .card {
   position: relative;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  align-items: start;
+  column-gap: 56px;
   background: color-mix(in srgb, var(--mk-bg) 4%, transparent);
   border: 1px solid color-mix(in srgb, var(--mk-bg) 10%, transparent);
   border-radius: 30px;
-  padding: 40px;
+  padding: 46px 44px;
+}
+
+/* The price and the door: the two things a reader came to the page to find. */
+.cardSide {
+  display: flex;
+  flex-direction: column;
+}
+
+.cardFine {
+  margin: 14px 0 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--mk-bg) 62%, transparent);
 }
 
 .card[data-paid] {
@@ -192,26 +212,33 @@
   color: color-mix(in srgb, var(--mk-bg) 52%, transparent);
 }
 
+/*
+ * Two columns, and a rule down the left rather than across the top — the
+ * divide between "what it costs" and "what you get" is now vertical, because
+ * that is the direction the card reads in.
+ */
 .list {
   list-style: none;
-  margin: 32px 0 0;
-  padding: 28px 0 0;
-  border-top: 1px solid color-mix(in srgb, var(--mk-bg) 10%, transparent);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  flex: 1;
+  margin: 0;
+  padding: 4px 0 0 56px;
+  border-left: 1px solid color-mix(in srgb, var(--mk-bg) 10%, transparent);
+  columns: 2;
+  column-gap: 40px;
+  min-height: 100%;
 }
 
 .card[data-paid] .list {
-  border-top-color: color-mix(in srgb, var(--mk-bg) 22%, transparent);
+  border-left-color: color-mix(in srgb, var(--mk-bg) 22%, transparent);
 }
 
 .list li {
   display: flex;
   gap: 11px;
   align-items: flex-start;
-  font-size: 17px;
+  /* A multi-line item split across the column break is unreadable. */
+  break-inside: avoid;
+  margin-bottom: 15px;
+  font-size: 16px;
   line-height: 1.4;
   color: color-mix(in srgb, var(--mk-bg) 62%, transparent);
 }
@@ -226,7 +253,7 @@
 }
 
 .cta {
-  margin-top: 34px;
+  margin-top: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -379,5 +406,32 @@
   .qa > div {
     grid-template-columns: minmax(0, 1fr);
     gap: 10px;
+  }
+}
+
+/*
+ * Under a laptop there is no room for two columns beside a price, so the card
+ * stands back up: side over list, and the list drops to one column. The rule
+ * goes back to being horizontal, because the reading direction changed with
+ * it.
+ */
+@media (max-width: 940px) {
+  .card {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 30px;
+    padding: 38px 28px;
+  }
+
+  .list {
+    padding: 28px 0 0;
+    border-left: none;
+    border-top: 1px solid color-mix(in srgb, var(--mk-bg) 10%, transparent);
+    columns: 1;
+    min-height: 0;
+  }
+
+  .card[data-paid] .list {
+    border-left-color: transparent;
+    border-top-color: color-mix(in srgb, var(--mk-bg) 22%, transparent);
   }
 }

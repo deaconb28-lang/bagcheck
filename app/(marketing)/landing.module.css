@@ -487,8 +487,7 @@
   animation: rise 0.7s 0.18s cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }
 
-.ctaDark,
-.ctaGhost {
+.ctaDark {
   display: inline-flex;
   align-items: center;
   gap: 12px;
@@ -507,17 +506,6 @@
 
 .ctaDark:hover {
   opacity: 0.85;
-}
-
-.ctaGhost {
-  background: var(--mk-bg);
-  color: var(--mk-ink);
-  border: 2px solid var(--mk-line2);
-  padding: 20px 36px;
-}
-
-.ctaGhost:hover {
-  border-color: var(--mk-ink);
 }
 
 /* ── The hero phones ── */
@@ -3460,8 +3448,7 @@
     gap: 12px;
   }
 
-  .ctaDark,
-  .ctaGhost {
+  .ctaDark {
     font-size: 19px;
     padding: 18px 26px;
   }

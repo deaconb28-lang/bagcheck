@@ -9,7 +9,11 @@ import styles from "./chrome.module.css";
  */
 
 export function Page({ children }: { children: React.ReactNode }) {
-  return <div className={styles.page}>{children}</div>;
+  return (
+    <div className={styles.page} data-wash>
+      {children}
+    </div>
+  );
 }
 
 /**
@@ -49,7 +53,7 @@ export function Act({
   lead?: boolean;
 }) {
   return (
-    <div className={styles.act} data-lead={lead || undefined}>
+    <div className={styles.act} data-lead={lead || undefined} data-rule>
       <span className={styles.actLabel}>{label}</span>
       {note ? <span className={styles.actNote}>{note}</span> : null}
     </div>
@@ -187,6 +191,7 @@ export function Panel({
       data-span={span || undefined}
       data-art={art}
       data-reveal
+      data-settle
     >
       {children}
     </section>

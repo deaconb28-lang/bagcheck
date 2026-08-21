@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CAPABILITY_LABEL, PLAN_INCLUDES, TIER_PRICE, TRIAL_DAYS, priceLine } from "@/lib/tiers";
+import { CAPABILITY_LABEL, PLAN_INCLUDES, TRIAL_DAYS, priceLine, priceAmount } from "@/lib/tiers";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 import { MarketingFooter, MarketingNav } from "./Chrome";
 import { GoToApp, isSignedIn } from "./GoToApp";
@@ -132,9 +132,6 @@ export default async function LandingPage() {
               <StartFree />
             )}
             {signedIn ? null : <GoToApp />}
-            <Link href="/pricing" className={styles.ctaGhost}>
-              See the plan
-            </Link>
           </div>
         </div>
 
@@ -581,7 +578,7 @@ export default async function LandingPage() {
                 {TRIAL_DAYS} DAYS FREE
               </span>
               <div className={styles.planFigure}>
-                <b>${TIER_PRICE.pro.monthly}</b>
+                <b>${priceAmount()}</b>
                 <span>/mo</span>
               </div>
               <p className={styles.planNote}>

@@ -32,10 +32,48 @@
  * on the page.
  */
 .page {
+  position: relative;
+  isolation: isolate;
   width: 100%;
   max-width: 1560px;
   margin: 0 auto;
   padding: 38px 44px 56px;
+}
+
+/*
+ * ── The wash ──────────────────────────────────────────────────────────────
+ *
+ * A wide, very soft band of light lying diagonally across the page. It is the
+ * same idea as the marketing pill's sheen at the scale of a screen: light on
+ * a ground, tied to the scroll rather than to a timer, so it only moves while
+ * the reader is already moving. `[data-wash]` in globals.css slides it.
+ *
+ * It sits behind everything (`z-index: -1` inside the page's own stacking
+ * context) and tops out at four percent white, which is under the threshold
+ * where it could affect any reading — it is felt rather than seen, which is
+ * the only kind of decoration this screen is allowed.
+ */
+.page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: linear-gradient(
+    108deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.04) 46%,
+    rgba(255, 255, 255, 0.012) 56%,
+    transparent 70%
+  );
+  background-size: 260% 100%;
+  background-position: 8% 0;
+  background-repeat: no-repeat;
+}
+
+/* The wash is light on black. On white it is a smudge, exactly like the field. */
+:global(html:not([data-mode="dark"])) .page::after {
+  display: none;
 }
 
 /*
@@ -53,7 +91,26 @@
   gap: 16px;
   margin: 78px 0 26px;
   padding-top: 22px;
-  border-top: 1px solid var(--edge);
+}
+
+/*
+ * The rule is drawn rather than bordered, so it can run out from the left as
+ * the act is reached (`[data-rule]` in globals.css). A `border-top` that
+ * animated its own width would move the label sitting under it; a
+ * pseudo-element scales in its own layer and moves nothing.
+ *
+ * Un-animated — no scroll timelines, or a reader who asked for less motion —
+ * this is exactly the 1px rule it replaces.
+ */
+.act::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--edge);
+  transform-origin: left center;
 }
 
 .act:first-child,

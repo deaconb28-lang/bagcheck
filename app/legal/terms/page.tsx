@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { TIER_PRICE, TRIAL_DAYS } from "@/lib/tiers";
+import { TRIAL_DAYS, priceAmount } from "@/lib/tiers";
 import { POLICY_UPDATED, contactEmail } from "../contact";
 import styles from "../legal.module.css";
 
@@ -105,7 +105,7 @@ export default function TermsPage() {
             Supercruise is a subscription. Connecting a brokerage opens{" "}
             {TRIAL_DAYS} days of the whole product with no card required; when
             that window closes, reading your ledger here needs an active plan
-            at ${TIER_PRICE.pro.monthly} a month, billed by Stripe. Two things
+            at ${priceAmount()} a month, billed by Stripe. Two things
             do not depend on the plan and never will: a card you minted stays
             live at the URL it was minted at, and exporting or deleting
             everything we hold about you stays available from your profile

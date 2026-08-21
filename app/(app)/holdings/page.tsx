@@ -62,6 +62,8 @@ export default async function HoldingsPage({
   /* The book is the view's; this page only chooses an order to read it in. */
   const { book } = view;
   const holdings = [...facts.holdings].sort(compare(sort));
+  /* Two of the three sorts are a standing; "by name" is an index. */
+  const isStanding = sort === "weight" || sort === "pnl";
   const byValue = [...holdings].sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
   const topTwo = byValue.slice(0, 2).reduce((sum, row) => sum + (row.value ?? 0), 0);
   const accounts = view.accounts;
@@ -194,6 +196,22 @@ export default async function HoldingsPage({
                 style={{ animationDelay: `${i * 50}ms` }}
               >
                 <div className={styles.position}>
+                  {/*
+                    * ── The standing ──
+                    *
+                    * The same device the map above and the race use, for the
+                    * same reason: rank is a fact, and a fact set in type
+                    * survives a reader who cannot separate two greens.
+                    *
+                    * Only on the two sorts that *are* a ranking. Sorted by
+                    * name there is no first place, and a numeral there would
+                    * be a drawn figure claiming something the order does not
+                    * mean — so the chips simply are not there, which is also
+                    * what makes the sort chips visibly do something.
+                    */}
+                  {isStanding && i < 3 ? (
+                    <span className={`num ${styles.rank}`} aria-hidden="true">{i + 1}</span>
+                  ) : null}
                   <Logo symbol={row.symbol} size={44} />
                   <div className={styles.name}>
                     <span className={styles.symbol}>{row.symbol}</span>
@@ -241,7 +259,17 @@ export default async function HoldingsPage({
                   </span>
                 </div>
 
-                <div className={styles.unrealised}>
+                {/*
+                  * Direction was stated here in colour and nothing else,
+                  * which is the one thing this palette's own rules forbid: a
+                  * gained bar is solid and a lost one is hatched behind a
+                  * hairline, everywhere else in the product. This column now
+                  * carries the same 3px mark, so the reader who cannot
+                  * separate moss from loss reads the direction off the fill
+                  * exactly as they do in the map, the columns and the race.
+                  */}
+                <div className={styles.unrealised} data-dir={up ? "up" : "down"}>
+                  <span className={styles.dirMark} aria-hidden="true" />
                   <span className={`num ${styles.unrealisedMoney}`} data-tone={up ? "moss" : "loss"}>
                     {signedMoney(row.pnl)}
                   </span>

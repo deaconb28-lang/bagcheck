@@ -90,7 +90,19 @@
   animation: drift 62s ease-in-out infinite;
   will-change: transform;
   background-image:
-    /* The contrail, on the mark's own axis. */
+    /*
+     * ── The formation ────────────────────────────────────────────────────
+     *
+     * One contrail became three, flown in echelon on the mark's own 124°
+     * axis. Three rather than one because a single line across a sky is a
+     * scratch; three at different lengths, offsets and strengths is a
+     * formation climbing out, which is the one thing in this product's
+     * vocabulary that means *growth* without a figure attached to it. They
+     * are grounds — the field sits behind the canvas at half opacity — so
+     * this reaches the aesthetic and touches no reading.
+     *
+     * The leader, brightest and longest.
+     */
     linear-gradient(
       124deg,
       rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 43%,
@@ -104,6 +116,21 @@
       rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 47%,
       rgba(255, 255, 255, 0.05) 49%,
       rgba(0, 0, 0, 0) 58%
+    ),
+    /* Second in the echelon, stepped back and down. */
+    linear-gradient(
+      124deg,
+      rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 61%,
+      rgba(255, 255, 255, 0.17) 61.5%,
+      rgba(255, 255, 255, 0.05) 62.4%,
+      rgba(0, 0, 0, 0) 65%
+    ),
+    /* Third, barely there — the one that makes it read as depth. */
+    linear-gradient(
+      124deg,
+      rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 71%,
+      rgba(255, 255, 255, 0.1) 71.4%,
+      rgba(0, 0, 0, 0) 74%
     ),
     /* The band of atmosphere sitting on the limb. */
     radial-gradient(
@@ -128,6 +155,8 @@
     100% 100%,
     100% 100%,
     100% 100%,
+    100% 100%,
+    100% 100%,
     137px 119px,
     89px 173px;
   background-position:
@@ -135,7 +164,47 @@
     0 0,
     0 0,
     0 0,
+    0 0,
+    0 0,
     43px 31px;
+}
+
+/*
+ * ── The climb ─────────────────────────────────────────────────────────────
+ *
+ * The field is `position: fixed`, so scrolling the page past it is the one
+ * moment the sky can move without anything on the page moving. Tied to
+ * `scroll()`, descending the document lifts the whole field — the formation
+ * climbs as the reader goes down, which is the only way this product is
+ * willing to draw "growth": in the ground, behind everything, attached to no
+ * figure.
+ *
+ * It composes with `drift`, which keeps running on its own slow loop, because
+ * two animations on one element need two properties: `drift` owns `transform`
+ * and this owns `translate`. Writing both to `transform` would let the later
+ * one win and the field would stop drifting entirely.
+ *
+ * The static state is the resting sky. A browser without scroll timelines, or
+ * a reader who asked for less motion, gets exactly the field as designed.
+ */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .fieldRidge {
+      animation:
+        drift 62s ease-in-out infinite,
+        climb linear both;
+      animation-timeline: auto, scroll();
+    }
+  }
+}
+
+@keyframes climb {
+  from {
+    translate: 0 3.5%;
+  }
+  to {
+    translate: 0 -6%;
+  }
 }
 
 .fieldFade {

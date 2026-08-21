@@ -108,13 +108,27 @@ export const TIER_LABEL: Record<Tier, string> = {
  */
 export const TIER_PRICE: Record<Tier, { monthly: number; yearly: number | null }> = {
   free: { monthly: 0, yearly: null },
-  pro: { monthly: 14.99, yearly: null },
+  pro: { monthly: 9, yearly: null },
 };
 
-/** The price as it is written down. `14.99` must never print as `$14.99/mo`
- *  in one place and `$15/mo` in another. */
+/**
+ * The price as it is written down, and the only place it is written.
+ *
+ * Nine, not 14.99 — it is the number `docs/supercruise-unit-economics.md`
+ * actually models break-even against, and a round nine reads as a decision
+ * where a charm price reads as a test.
+ *
+ * A whole number prints whole: `9` is `$9`, never `$9.00`. Two pennies of
+ * precision on a price that has none is the kind of drift that ends with one
+ * surface saying `$9.00/month` and another saying `$9/mo`.
+ */
+export function priceAmount(): string {
+  const { monthly } = TIER_PRICE.pro;
+  return Number.isInteger(monthly) ? `${monthly}` : monthly.toFixed(2);
+}
+
 export function priceLine(): string {
-  return `$${TIER_PRICE.pro.monthly.toFixed(2)}/month`;
+  return `$${priceAmount()}/month`;
 }
 
 /** What the plan actually contains, for the pricing table and the plan card. */

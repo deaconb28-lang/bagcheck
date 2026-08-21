@@ -7,9 +7,9 @@ import {
   CAPABILITY_LABEL,
   PLAN_INCLUDES,
   priceLine,
-  TIER_PRICE,
   TRIAL_DAYS,
   type Tier,
+  priceAmount,
 } from "@/lib/tiers";
 import { MarketingFooter, MarketingNav } from "../Chrome";
 import { PricingCta } from "./PricingCta";
@@ -19,7 +19,7 @@ import styles from "../pricing.module.css";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Thirty days free, no card. Then $14.99 a month.",
+    `Thirty days free, no card. Then ${priceLine()}.`,
 };
 
 /*
@@ -92,7 +92,7 @@ export default async function PricingPage() {
       <section className={styles.head}>
         <div className={styles.headCopy}>
           <span className={styles.eyebrow}>PRICING</span>
-          <h1 className={styles.h1}>Thirty days free. Then fifteen a month.</h1>
+          <h1 className={styles.h1}>Thirty days free. Then nine a month.</h1>
         </div>
         <p className={styles.lede}>
           The first {TRIAL_DAYS} days are free and take no card. After that it
@@ -104,19 +104,52 @@ export default async function PricingPage() {
         <div className={styles.glow} aria-hidden="true" />
         <div className={styles.inner}>
           <div className={styles.cards}>
+            {/*
+              * ── The card lies down ──
+              *
+              * One plan is a landscape amount of information: a price, a
+              * door, and a list of what is behind it. Stood up in a portrait
+              * card it made a column of type a thousand pixels tall in a grid
+              * still cut for the two plans this product no longer has, so
+              * half the row was empty and the list ran off the fold.
+              *
+              * On its side the price and the door sit together on the left —
+              * the two things a reader came to find — and everything they
+              * buy reads across in two columns beside them, all of it at
+              * once. It is the same lockup the landing's plan card uses, so
+              * the two surfaces state one offer in one shape.
+              */}
             <div className={styles.card} data-paid="">
               <span className={styles.flag}>
                 <i />
                 {TRIAL_DAYS} DAYS FREE
               </span>
-              <span className={styles.label}>SUPERCRUISE</span>
-              <div className={styles.price}>
-                <b>${TIER_PRICE.pro.monthly}</b>
-                <span>/mo</span>
+
+              <div className={styles.cardSide}>
+                <span className={styles.label}>SUPERCRUISE</span>
+                <div className={styles.price}>
+                  <b>${priceAmount()}</b>
+                  <span>/mo</span>
+                </div>
+                <p className={styles.note}>
+                  {TRIAL_DAYS} days free, no card. Then {priceLine()}.
+                </p>
+                {tier !== "free" ? (
+                  <Link href="/profile" className={styles.cta} data-solid="">
+                    You are subscribed — manage it
+                  </Link>
+                ) : canCheckout ? (
+                  <PricingCta label="Subscribe" />
+                ) : (
+                  <Link href="/start" className={styles.cta} data-solid="">
+                    Start your {TRIAL_DAYS} days
+                  </Link>
+                )}
+                <p className={styles.cardFine}>
+                  Cancel in a click. Every card you have earned stays yours.
+                </p>
               </div>
-              <p className={styles.note}>
-                {TRIAL_DAYS} days free, no card. Then {priceLine()}.
-              </p>
+
               {/*
                 * One list, because there is one plan. This was two cards —
                 * FREE at $0 forever beside PRO — and both halves of that are
@@ -140,17 +173,6 @@ export default async function PricingPage() {
                   </li>
                 ))}
               </ul>
-              {tier !== "free" ? (
-                <Link href="/profile" className={styles.cta} data-solid="">
-                  You are subscribed — manage it
-                </Link>
-              ) : canCheckout ? (
-                <PricingCta label="Subscribe" />
-              ) : (
-                <Link href={userId ? "/start" : "/start"} className={styles.cta} data-solid="">
-                  Start your {TRIAL_DAYS} days
-                </Link>
-              )}
             </div>
           </div>
         </div>

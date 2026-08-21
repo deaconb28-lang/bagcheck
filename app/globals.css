@@ -312,6 +312,87 @@ button {
       animation-timeline: view();
       animation-range: entry 4% cover 30%;
     }
+
+    /*
+     * ── The act rule draws itself ────────────────────────────────────────
+     *
+     * Each act on the dashboard is separated by a 1px rule. Reached, the rule
+     * runs out from the left rather than being there already, which is the
+     * same directional idea the four stat columns use: the page assembles in
+     * the order it is read.
+     *
+     * On the pseudo-element rather than the element's own `border-top`, so
+     * nothing about the act's box changes — a border that animates its width
+     * would move the label under it.
+     */
+    [data-rule]::before {
+      animation: ruleOut linear both;
+      animation-timeline: view();
+      animation-range: entry 6% cover 22%;
+    }
+
+    /*
+     * ── The settle ───────────────────────────────────────────────────────
+     *
+     * A plate arrives fractionally small and settles to its size. Two percent
+     * and no more: the point is that the page has weight, not that anything
+     * is performing. Declared only here — a plate that never animates is
+     * simply a plate, which is the finished design.
+     *
+     * `scale` rather than `transform`, so a surface that already carries a
+     * transform keeps it.
+     */
+    [data-settle] {
+      animation: settle linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 18%;
+    }
+
+    /*
+     * ── The wash ─────────────────────────────────────────────────────────
+     *
+     * A band of light lying across the top of the page that slides as the
+     * document scrolls — the same device the marketing pill wears, at the
+     * scale of a screen. It is light on a ground and it is tied to the
+     * scroll, so it never moves while the reader is still.
+     */
+    [data-wash]::after {
+      animation: washPass linear both;
+      animation-timeline: scroll();
+    }
+  }
+}
+
+@keyframes ruleOut {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/*
+ * `scale` only, never `opacity` or `transform`. A panel already carries
+ * `rise` from `data-reveal`, which owns both of those — two animations
+ * writing one property means the later declaration wins and the other simply
+ * stops happening. Separate properties compose; the same property does not.
+ */
+@keyframes settle {
+  from {
+    scale: 0.985;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+@keyframes washPass {
+  from {
+    background-position: 8% 0;
+  }
+  to {
+    background-position: 92% 0;
   }
 }
 

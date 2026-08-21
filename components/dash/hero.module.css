@@ -60,12 +60,14 @@
 .ringWrap {
   --ring-stroke: var(--gold);
   /*
-   * The character sits *inside* the ring rather than filling it. At 132px in
-   * a 228px dial it crowded the arc — the reading is the ring and the numeral,
-   * and a mascot pressed against the stroke makes the gauge look like a frame
-   * around a portrait. 96px leaves the arc its own air.
+   * The character sits *inside* the ring rather than filling it, and it keeps
+   * getting smaller for the same reason each time: the reading is the arc and
+   * the numeral, and a mascot pressed against the stroke makes the gauge read
+   * as a frame around a portrait. 132px crowded the arc, 96px still competed
+   * with it. At 72px in a 228px dial the character is what it should be — the
+   * thing *inside* the instrument, not the instrument.
    */
-  --hero-avatar: 96px;
+  --hero-avatar: 72px;
   flex: none;
 }
 
@@ -309,7 +311,7 @@
 
   .ringWrap {
     --ring-size: 132px;
-    --hero-avatar: 58px;
+    --hero-avatar: 46px;
   }
 
   .figure {
