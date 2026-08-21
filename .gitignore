@@ -21,3 +21,4 @@ public/archetypes/_sheet.png
 # Rendered Wrapped cards from `npm run wrapped:check -- --render`. A local
 # proof, not an artefact — the twelve backgrounds are what ships.
 .wrapped-check/
+.shots-email/

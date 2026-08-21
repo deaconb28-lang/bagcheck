@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { SEND_CADENCE } from "@/lib/email/schedule";
 import styles from "./profile.module.css";
 
 type Kind = "brief" | "recap";
@@ -9,7 +10,7 @@ type Kind = "brief" | "recap";
  * The only two switches that cause Supercruise to contact anyone.
  *
  * Both start off. The copy states what arrives and when, and says the thing
- * that matters most about it — one message a day, and never a price. There is
+ * that matters most about it — two messages a week, and never a price. There is
  * no third option here on purpose: if a fourth kind of message is ever worth
  * sending, it has to displace one of these rather than be added beside them.
  */
@@ -47,16 +48,21 @@ export function EmailPrefs({
     }
   }
 
+  /*
+   * The cadence in each label comes from `SEND_CADENCE`, which the cron reads
+   * too — a settings screen that names a day the scheduler does not agree
+   * with is a promise the product breaks every week.
+   */
   const rows: Array<{ kind: Kind; label: string; note: string }> = [
     {
       kind: "brief",
-      label: "Daily brief",
-      note: "Your score, what moved it, and anything still untagged. One message a day, never a price.",
+      label: `${SEND_CADENCE.brief} brief`,
+      note: "Where you stand going into the week: your score, what moved it, your streak, and anything still untagged. Never a price.",
     },
     {
       kind: "recap",
-      label: "Weekly recap",
-      note: "Monday morning: the week's scored days, sessions and realised P&L. Replaces that day's brief.",
+      label: `${SEND_CADENCE.recap} recap`,
+      note: "The week once the market has closed it: scored days, green and red sessions, and what you actually realised.",
     },
   ];
 

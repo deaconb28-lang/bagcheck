@@ -18,6 +18,16 @@ const INK = "#FDFCFA";
 const DIM = "rgba(253,252,250,.52)";
 const LINE = "rgba(253,252,250,.09)";
 const MOSS = "#4FB287";
+/*
+ * A figure in an email obeys the same rule as a figure on a screen: moss is
+ * money up and nothing else. Every block here was moss — a score, a streak, a
+ * count of untagged entries, a sessions ratio — which told a reader that five
+ * different measurements were all gains. `--gold` is the score and only the
+ * score; a count is neither, so it is set in ink and carried by its label.
+ * Keep these in step with `--gold`, `--moss` and `--loss` in tokens.css.
+ */
+const GOLD = "#FFC857";
+const LOSS = "#FF5A70";
 
 const MONO = "ui-monospace, SFMono-Regular, Menlo, monospace";
 const SANS = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif";
@@ -30,6 +40,12 @@ export interface EmailBlock {
   value: string;
   /** One line under it, carrying a specific comparison. */
   tail: string;
+  /**
+   * What kind of measurement the figure is, which is what decides its colour.
+   * Absent means `count`, so a block that does not think about it is set in
+   * ink rather than accidentally claiming to be money.
+   */
+  tone?: "score" | "count" | "moss" | "loss";
 }
 
 export interface EmailContent {
@@ -43,6 +59,13 @@ export interface EmailContent {
   cta: { label: string; href: string };
 }
 
+const FIGURE: Record<NonNullable<EmailBlock["tone"]>, string> = {
+  score: GOLD,
+  count: INK,
+  moss: MOSS,
+  loss: LOSS,
+};
+
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
@@ -52,7 +75,7 @@ export function renderHtml(content: EmailContent, unsubscribeUrl: string): strin
       (b) => `
       <tr><td style="padding:0 0 26px">
         <div style="font-family:${MONO};font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:${DIM};padding-bottom:6px">${esc(b.eyebrow)}</div>
-        <div style="font-family:${SERIF};font-size:44px;line-height:1;font-weight:700;color:${MOSS};padding-bottom:8px">${esc(b.value)}</div>
+        <div style="font-family:${SERIF};font-size:44px;line-height:1;font-weight:700;color:${FIGURE[b.tone ?? "count"]};padding-bottom:8px">${esc(b.value)}</div>
         <div style="font-family:${SANS};font-size:14px;line-height:1.6;color:${DIM}">${esc(b.tail)}</div>
       </td></tr>`,
     )

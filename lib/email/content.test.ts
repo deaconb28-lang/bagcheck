@@ -7,6 +7,7 @@ const brief = {
   date: "2026-08-08",
   score: 82,
   previousScore: 79,
+    previousDate: "2026-08-21",
   sentence: "You held through three straight down weeks.",
   tail: "Patience carried the reading, not exposure.",
   untagged: 4,
@@ -29,7 +30,46 @@ test("the brief leads with the written insight, not a template line", () => {
   const content = dailyBrief(brief);
   assert.equal(content.lede, brief.sentence);
   assert.equal(content.blocks[0].value, "82");
-  assert.equal(content.blocks[0].tail, "+3 against yesterday's 79.");
+  assert.equal(content.blocks[0].tail, "+3 against Friday's 79.");
+});
+
+test("the comparison names the day it is comparing to", () => {
+  /*
+   * The brief goes out on Mondays, so the reading it is measured against is
+   * Friday's. It used to say "yesterday", which was true on a daily cadence
+   * and became a figure nobody could check the moment the cadence changed.
+   */
+  assert.equal(
+    dailyBrief({ ...brief, previousDate: "2026-08-21" }).blocks[0].tail,
+    "+3 against Friday's 79.",
+  );
+  assert.equal(
+    dailyBrief({ ...brief, previousDate: "2026-08-19" }).blocks[0].tail,
+    "+3 against Wednesday's 79.",
+  );
+});
+
+test("a comparison with no date on file names no day", () => {
+  assert.equal(
+    dailyBrief({ ...brief, previousDate: null }).blocks[0].tail,
+    "+3 against your last 79.",
+  );
+});
+
+test("a figure is coloured by what it measures, never by default", () => {
+  /*
+   * Moss is money up and nothing else. Every block used to render moss — a
+   * score, a streak, a count of untagged entries — which told a reader that
+   * three different measurements were all gains.
+   */
+  const content = dailyBrief(brief);
+  assert.equal(content.blocks[0].tone, "score", "the score is the score's colour");
+  for (const block of content.blocks.slice(1)) {
+    assert.equal(block.tone, "count", `${block.eyebrow} is a tally, not money`);
+  }
+  for (const block of weeklyRecap(recap).blocks) {
+    assert.notEqual(block.tone, "moss", `${block.eyebrow} is not money up`);
+  }
 });
 
 test("a first reading does not claim a comparison it does not have", () => {

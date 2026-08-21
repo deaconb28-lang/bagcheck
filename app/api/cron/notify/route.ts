@@ -10,6 +10,7 @@ import {
   sweep,
 } from "@/lib/db";
 import { notify, wantsEmail } from "@/lib/db/notify";
+import { scheduledSend } from "@/lib/email/schedule";
 import { dailyBrief, weeklyRecap } from "@/lib/email/content";
 import { isEmailConfigured } from "@/lib/email/send";
 import { unsubscribeUrl } from "@/lib/email/token";
@@ -44,8 +45,29 @@ export async function GET(req: NextRequest) {
   }
 
   const now = new Date();
+
+  /*
+   * Two sends a week, not seven. `scheduledSend` owns which — Monday morning
+   * is the brief, Friday evening is the recap, and every other tick of a
+   * fifteen-minute cron falls outside both and does nothing.
+   *
+   * Returning before the sweep matters: the sweep advances a stored cursor,
+   * and walking every user ninety-six times a day to decide there is nothing
+   * to send would move that cursor for no reason.
+   */
+  const window = scheduledSend(now);
+  if (!window) {
+    return NextResponse.json({
+      job: JOB,
+      sent: 0,
+      skipped: 0,
+      window: null,
+      detail: "outside the Monday-morning and Friday-evening windows",
+    });
+  }
+
+  const { kind } = window;
   const date = now.toISOString().slice(0, 10);
-  const kind = now.getUTCDay() === 1 ? "recap" : "brief";
   const base = process.env.APP_URL || req.nextUrl.origin;
 
   const { insights, tags, transactions } = await getCollections();
@@ -78,6 +100,7 @@ export async function GET(req: NextRequest) {
             date: latest.date,
             score: latest.score,
             previousScore: scores[1]?.score ?? null,
+            previousDate: scores[1]?.date ?? null,
             ...(await writtenInsight(insights, userId, latest.date)),
             untagged: await untaggedCount(transactions, tags, userId),
             streak: streakOf(scores.map((s) => s.score)),
@@ -92,6 +115,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     ...result,
     kind,
+    window: window.window,
     sent,
     skipped,
     connected: await connectedCount(),

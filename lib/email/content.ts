@@ -1,4 +1,4 @@
-import type { EmailContent } from "./render";
+import type { EmailBlock, EmailContent } from "./render";
 
 /**
  * What the two emails say — pure, so the copy rules can be tested rather than
@@ -14,6 +14,15 @@ export interface BriefInput {
   date: string;
   score: number;
   previousScore: number | null;
+  /**
+   * The date the previous score was read on.
+   *
+   * The tail used to say "against yesterday's 71", which was true while this
+   * went out every morning and became false the moment it went out on
+   * Mondays only — the reading it is compared against is Friday's. A brief
+   * that misnames the day it is comparing to is a figure nobody can check.
+   */
+  previousDate: string | null;
   /** The written insight, if one was generated for the day. */
   sentence: string;
   tail: string;
@@ -40,6 +49,13 @@ export interface RecapInput {
 const BASE = process.env.APP_URL || "https://supercruise.app";
 
 const signed = (n: number) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n)}`;
+
+/** "Friday", from an ISO date, in UTC — the clock everything else here uses. */
+const weekdayOf = (iso: string) =>
+  new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", {
+    weekday: "long",
+    timeZone: "UTC",
+  });
 const money = (n: number) =>
   `${n >= 0 ? "+" : "−"}$${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
 
@@ -48,14 +64,17 @@ const money = (n: number) =>
  * structural rather than a habit.
  */
 export function dailyBrief(input: BriefInput): EmailContent {
-  const blocks = [
+  const blocks: EmailBlock[] = [
     {
       eyebrow: "Health today",
       value: String(input.score),
+      tone: "score",
       tail:
         input.previousScore == null
           ? "Your first reading."
-          : `${signed(input.score - input.previousScore)} against yesterday's ${input.previousScore}.`,
+          : `${signed(input.score - input.previousScore)} against ${
+              input.previousDate ? `${weekdayOf(input.previousDate)}'s` : "your last"
+            } ${input.previousScore}.`,
     },
   ];
 
@@ -63,6 +82,7 @@ export function dailyBrief(input: BriefInput): EmailContent {
     blocks.push({
       eyebrow: "Sessions inside your rules",
       value: String(input.streak),
+      tone: "count",
       tail: "Consecutive scored days without a rule break.",
     });
   }
@@ -71,6 +91,7 @@ export function dailyBrief(input: BriefInput): EmailContent {
     blocks.push({
       eyebrow: "Entries without a reason",
       value: String(input.untagged),
+      tone: "count",
       tail: "Two taps each. Every correlation the engine finds is downstream of these.",
     });
   }
@@ -86,10 +107,11 @@ export function dailyBrief(input: BriefInput): EmailContent {
 
 /** The weekly recap. Behaviour across seven days, never a market summary. */
 export function weeklyRecap(input: RecapInput): EmailContent {
-  const blocks = [
+  const blocks: EmailBlock[] = [
     {
       eyebrow: "Health, end of week",
       value: String(input.score),
+      tone: "score",
       tail:
         input.weekDelta == null
           ? `${input.scoredDays} scored ${input.scoredDays === 1 ? "day" : "days"} this week.`
@@ -98,6 +120,7 @@ export function weeklyRecap(input: RecapInput): EmailContent {
     {
       eyebrow: "Sessions",
       value: `${input.greenSessions} / ${input.redSessions}`,
+      tone: "count",
       tail:
         input.realised == null
           ? "Green and red sessions. Nothing closed this week."
@@ -109,6 +132,7 @@ export function weeklyRecap(input: RecapInput): EmailContent {
     blocks.push({
       eyebrow: "Longest hold still open",
       value: String(input.longestHoldDays),
+      tone: "count",
       tail: input.archetype
         ? `Days. You are reading as ${input.archetype} on this week's components.`
         : "Days scored this week.",

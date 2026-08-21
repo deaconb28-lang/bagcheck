@@ -27,7 +27,8 @@
     "wrapped:check": "node --import tsx scripts/personalize-wrapped.mjs",
     "wrapped:metrics": "node scripts/measure-hero-metrics.mjs",
     "db:indexes": "node --import tsx scripts/db-indexes.mjs",
-    "timings": "node --import tsx scripts/timings.mjs"
+    "timings": "node --import tsx scripts/timings.mjs",
+    "email:shots": "node --import tsx scripts/email-shots.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
