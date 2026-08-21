@@ -56,6 +56,16 @@ test("a comparison with no date on file names no day", () => {
   );
 });
 
+test("the recap counts the week rather than calling it seven days", () => {
+  /*
+   * It goes out on a Friday evening over a week the market has just closed —
+   * five trading days, fewer on a quiet ledger. "Seven days" was wrong on
+   * most weeks and contradicted the block three lines below it.
+   */
+  assert.match(weeklyRecap(recap).lede, /^5 scored days as /);
+  assert.match(weeklyRecap({ ...recap, scoredDays: 1 }).lede, /^1 scored day as /);
+});
+
 test("a figure is coloured by what it measures, never by default", () => {
   /*
    * Moss is money up and nothing else. Every block used to render moss — a

@@ -50,6 +50,8 @@ const BASE = process.env.APP_URL || "https://supercruise.app";
 
 const signed = (n: number) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n)}`;
 
+const days = (n: number) => `${n} scored ${n === 1 ? "day" : "days"}`;
+
 /** "Friday", from an ISO date, in UTC — the clock everything else here uses. */
 const weekdayOf = (iso: string) =>
   new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", {
@@ -141,9 +143,15 @@ export function weeklyRecap(input: RecapInput): EmailContent {
 
   return {
     subject: `Supercruise — your week of ${input.weekOf}`,
+    /*
+     * The count, not "seven days". This lands on a Friday evening over a week
+     * the market has just closed — five trading days, and fewer if the ledger
+     * was quiet — so a hardcoded seven was wrong on most weeks and plainly
+     * wrong beside a block that says "5 scored days" three lines below it.
+     */
     lede: input.archetype
-      ? `Seven days as ${input.archetype}, read from your own ledger.`
-      : "Seven days, read from your own ledger.",
+      ? `${days(input.scoredDays)} as ${input.archetype}, read from your own ledger.`
+      : `${days(input.scoredDays)}, read from your own ledger.`,
     blocks,
     provenance: `Week of ${input.weekOf} · read from your brokerage`,
     cta: { label: "Open Wrapped", href: `${BASE}/wrapped` },
