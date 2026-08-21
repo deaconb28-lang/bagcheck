@@ -3,6 +3,7 @@ import { COMPONENT_KEYS } from "@/lib/score/types";
 import { Avatar } from "@/components/primitives";
 import { CountUp, ScoreRing } from "@/components/idioms";
 import { Heatmap } from "./Heatmap";
+import { ShareButton } from "@/components/app/ShareButton";
 import type { Read } from "@/lib/portfolio/types";
 import styles from "./hero.module.css";
 
@@ -84,6 +85,8 @@ export function ScoreHero({
   year,
   allocation = [],
   note,
+  next = null,
+  shareable = false,
 }: {
   read: Read;
   year: number;
@@ -101,6 +104,24 @@ export function ScoreHero({
    * is a sentence rather than a gap.
    */
   note?: { sentence: string; tail: string } | null;
+  /**
+   * The closest thing this account has not earned yet, and how far off it is.
+   *
+   * The reason to open the screen again tomorrow. It is a real subtraction of
+   * two things on file — nights recorded against a bar, positions held against
+   * a bar — and never a date or a projection. Absent when there is nothing
+   * close, which on a finished account is the honest answer.
+   */
+  next?: { name: string; requires: string; have: number; need: number } | null;
+  /**
+   * Whether the read may be minted as a card.
+   *
+   * A locked card must never render a share button: the rule is that the
+   * affordance is absent rather than disabled, and the caller is what enforces
+   * it. Sharing is never paywalled — this is about whether the card has been
+   * *earned*, which is a fact about the ledger.
+   */
+  shareable?: boolean;
 }) {
   const { archetype, components } = read;
   const measured = COMPONENT_KEYS.filter((k) => components[k] != null).length;
@@ -266,6 +287,51 @@ export function ScoreHero({
               : `${above} of 4 above ${STRONG}. The character fills in as the rest clear the bar.`}
         </p>
       </div>
+
+      {/*
+        * ── The foot: one thing to do, one thing to come back for ──
+        *
+        * The dashboard had neither. Every figure on it was something to look
+        * at and nothing on it was something to *act* on, and the only
+        * shareable object in the product sat seven thousand pixels further
+        * down — so the screen the reader opens every day had no way to leave
+        * it with anything.
+        *
+        * The share mints through the server, which recomputes the card from
+        * the ledger: the client names a kind and never supplies contents. It
+        * is absent rather than disabled when the card has not been earned,
+        * which is the caller's job and the reason `shareable` is a prop.
+        *
+        * `next` is the return: the closest unearned trophy, stated as a real
+        * subtraction of two counts on file. Never a date, never a projection,
+        * and absent when nothing is close.
+        */}
+      {shareable || next ? (
+        <div className={styles.foot}>
+          {shareable ? (
+            <div className={styles.share}>
+              <ShareButton type="health" label={`Tonight's read · ${read.score}`} size={36} />
+              <span className={styles.shareLabel}>Share tonight&rsquo;s read</span>
+            </div>
+          ) : null}
+
+          {next ? (
+            <a className={styles.next} href="/trophies">
+              <span className={styles.nextLabel}>Closest to earning</span>
+              <span className={styles.nextName}>{next.name}</span>
+              <span className={styles.nextMeter} aria-hidden="true">
+                <span
+                  className={styles.nextFill}
+                  style={{ transform: `scaleX(${Math.min(1, next.have / next.need)})` }}
+                />
+              </span>
+              <span className={`num ${styles.nextCount}`}>
+                {next.have} / {next.need}
+              </span>
+            </a>
+          ) : null}
+        </div>
+      ) : null}
     </section>
   );
 }

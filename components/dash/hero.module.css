@@ -352,3 +352,127 @@
     text-align: left;
   }
 }
+
+/*
+ * ── The foot of the read ────────────────────────────────────────────────
+ *
+ * One thing to do and one thing to come back for, on a rule under the four
+ * components. Every other block on this page is something to look at; this is
+ * the only place on the dashboard that asks for anything, which is why it gets
+ * the page's only outbound row and nothing else does.
+ */
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin-top: 26px;
+  padding-top: 24px;
+  border-top: 1px solid var(--edge);
+}
+
+.share {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.shareLabel {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink2);
+}
+
+/*
+ * The hook. A link rather than a panel: it is a sentence about somewhere else,
+ * and giving it a plate would make a twelfth block out of a line of type.
+ */
+.next {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 14px;
+  row-gap: 4px;
+  min-width: 300px;
+  flex: 0 1 460px;
+  padding: 12px 18px;
+  border-radius: var(--r-pill);
+  background: var(--tile);
+  transition: background 0.16s ease;
+}
+
+.next:hover {
+  background: var(--inset);
+}
+
+.nextLabel {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+
+.nextName {
+  grid-column: 1;
+  grid-row: 2;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.nextMeter {
+  grid-column: 2;
+  grid-row: 2;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.nextFill {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--ember);
+  transform-origin: left center;
+  animation: nextFill 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes nextFill {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.nextCount {
+  grid-column: 3;
+  grid-row: 2;
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  color: var(--meta);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nextFill {
+    animation: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .foot {
+    gap: 18px;
+  }
+
+  .next {
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+}

@@ -12,6 +12,50 @@ export function Page({ children }: { children: React.ReactNode }) {
   return <div className={styles.page}>{children}</div>;
 }
 
+/**
+ * ── An act break ──
+ *
+ * The dashboard is eleven plates deep and every one of them is the same
+ * near-black rectangle at the same radius with the same padding. Read end to
+ * end that is eight thousand pixels of undifferentiated evidence: nothing
+ * crests, nothing rests, and the eye has nowhere to land.
+ *
+ * The page has always had three acts and never said so — what the instrument
+ * concluded, what the money did, what the year looks like — so this is a
+ * hairline with a mono label sitting on it, three times down the page. It
+ * costs one rule and one line of type and it is the difference between a
+ * document and a list.
+ *
+ * Deliberately not numbered. A numbered marker is honest only where the
+ * content is a sequence a reader has to keep their place in, and this is an
+ * order of importance rather than a set of steps.
+ */
+export function Act({
+  label,
+  note,
+  lead = false,
+}: {
+  label: string;
+  note?: string;
+  /**
+   * The first act on the page.
+   *
+   * `:first-child` cannot be relied on for this: the Wrapped notice renders
+   * above the first act when there is one, so the rule's full 78px of top
+   * margin landed on top of the notice's own 34px and opened a hundred and
+   * twelve pixels of nothing at the very top of the screen — the worst place
+   * on the page to put a gap.
+   */
+  lead?: boolean;
+}) {
+  return (
+    <div className={styles.act} data-lead={lead || undefined}>
+      <span className={styles.actLabel}>{label}</span>
+      {note ? <span className={styles.actNote}>{note}</span> : null}
+    </div>
+  );
+}
+
 export function PageHead({
   eyebrow,
   title,

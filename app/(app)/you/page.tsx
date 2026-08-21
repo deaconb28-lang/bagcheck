@@ -14,6 +14,7 @@ import { SignInCta } from "@/components/app/SignInCta";
 import { SyncDialog } from "@/components/app/SyncDialog";
 import { TRIAL_DAYS, trialLine, trialState } from "@/lib/tiers";
 import {
+  Act,
   Page,
   PageHead,
   Panel,
@@ -40,10 +41,11 @@ import {
 } from "@/components/dash/Charts";
 import { InsightCard, WrappedPromo } from "@/components/dash/Cards";
 import { Heatmap } from "@/components/dash/Heatmap";
+import { nextUp, trophiesFrom } from "@/lib/trophies";
 import { WrappedReady } from "@/components/dash/WrappedReady";
 import { ScoreHero } from "@/components/dash/ScoreHero";
 import { Collection } from "@/components/dash/Collection";
-import { CountUp, EquityCurve, HeatGrid } from "@/components/idioms";
+import { EquityCurve, HeatGrid } from "@/components/idioms";
 
 /**
  * One window, and it is the year.
@@ -216,6 +218,41 @@ export default async function DashboardPage({
    * and on the Wrapped promo — and a reading restated three ways reads as a
    * product with one thing to say.
    */
+  /*
+   * The closest unearned trophy, for the read's foot.
+   *
+   * `trophiesFrom` is pure and reads the screen this page already loaded, so
+   * this costs nothing — no extra query, no second assembly. Only the ones
+   * with a real count on both sides can be "closest" at all; a single-event
+   * trophy is done or it is not, and it is filtered out rather than shown at
+   * zero, which would push a genuinely close one off a one-line hook.
+   */
+  const nextTrophy = view.read
+    ? (() => {
+        const open = nextUp(
+          trophiesFrom({
+            days: data.scores.map((score) => ({
+              date: score.date,
+              score: score.score,
+              components: score.components,
+              contributors: score.contributors,
+            })),
+            roundTrips: data.derived?.roundTrips ?? [],
+            holdings: data.holdings.length,
+          }),
+          4,
+        ).find((t) => t.progress);
+        return open && open.progress
+          ? {
+              name: open.name,
+              requires: open.requires,
+              have: open.progress.have,
+              need: open.progress.need,
+            }
+          : null;
+      })()
+    : null;
+
   const insights = view.read
     ? view.patterns.filter((pattern) => pattern.chart.type !== "profile")
     : view.patterns;
@@ -264,16 +301,40 @@ export default async function DashboardPage({
           />
         ) : null}
 
+        {/*
+          * ── Three acts ──
+          *
+          * The page is eleven plates deep and every one of them is the same
+          * near-black rectangle. Read end to end that is eight thousand pixels
+          * of undifferentiated evidence, and the eye has nowhere to land.
+          *
+          * It has always had three acts and never said so: what the instrument
+          * concluded, what the money did, and what the year looks like — which
+          * is the order this file's own note says the screen is in. Three rules
+          * with a label on each is what makes that order visible.
+          */}
         {view.read ? (
-          <div data-reveal>
-            <ScoreHero
-              read={view.read}
-              year={view.wrapped.year}
-              allocation={view.allocation}
-              note={note}
-            />
-          </div>
+          <>
+            <Act label="The read" note="What the instrument concluded tonight." lead />
+            <div data-reveal>
+              <ScoreHero
+                read={view.read}
+                year={view.wrapped.year}
+                allocation={view.allocation}
+                note={note}
+                next={nextTrophy}
+                /*
+                 * The health card is earned once there is a score to put on
+                 * it, which is exactly the condition `view.read` already
+                 * carries. A locked card renders no button at all.
+                 */
+                shareable
+              />
+            </div>
+          </>
         ) : null}
+
+        <Act label="The money" note="Straight off your brokerage, year to date." />
 
         <div data-reveal>
           <PageHead
@@ -496,26 +557,15 @@ export default async function DashboardPage({
             >
               {perf.sessions.length ? <Legend up={perf.up} down={perf.down} /> : null}
             </PanelHead>
-            <div className="dashFigureRow">
-              <span className={"num dashFigure"}>
-                {perf.sessions.length ? (
-                  <CountUp value={perf.realised} kind="signedMoney" />
-                ) : book.priced ? (
-                  <CountUp value={book.unrealised} kind="signedMoney" />
-                ) : (
-                  "—"
-                )}
-              </span>
-              {perf.sessions.length && perf.ret != null ? (
-                <span className="dashFigurePct" data-tone={perf.ret >= 0 ? "moss" : "loss"}>
-                  {signedPct(perf.ret * 100)}
-                </span>
-              ) : !perf.sessions.length && book.unrealisedPct != null ? (
-                <span className="dashFigurePct" data-tone={book.unrealisedPct >= 0 ? "moss" : "loss"}>
-                  {signedPct(book.unrealisedPct)}
-                </span>
-              ) : null}
-            </div>
+            {/*
+              * No hero figure, and no percentage either.
+              *
+              * Both are already on the stat row directly above this panel —
+              * "YTD P&L" is the same realised total and "Return" is the same
+              * percentage — so the screen was setting one number at 40px twice
+              * inside a single scroll, and the return five times in total. The
+              * columns are what this panel is for.
+              */}
             {perf.sessions.length ? (
               <>
                 <PnlColumns sessions={perf.sessions} peak={perf.peak} />
@@ -605,30 +655,25 @@ export default async function DashboardPage({
             <Panel>
               {view.cumulative.length ? (
                 <>
+                  {/*
+                    * No hero figure here. The running total ends on exactly
+                    * the number the P&L stat states four blocks up, and this
+                    * screen printed it twice at 40px — the same measurement,
+                    * in the same window, on the same page. The curve is what
+                    * this panel is for; the figure is already said.
+                    */}
                   <PanelHead eyebrow={`Cumulative P&L · ${window.label}`}>
                     <PanelNote>Running total, session by session</PanelNote>
                   </PanelHead>
-                  <div className="dashFigureRow">
-                    <span className="num dashFigure">
-                      <CountUp
-                        value={view.cumulative[view.cumulative.length - 1].total}
-                        kind="signedMoney"
-                      />
-                    </span>
-                  </div>
                   <PnlWave points={view.cumulative} />
                   <p className="dashProv">Realised only · moves when a position closes</p>
                 </>
               ) : (
                 <>
+                  {/* Same reason: this ends on the total value at the head of the act. */}
                   <PanelHead eyebrow="Account value">
                     <PanelNote>Every day your brokerage reported one</PanelNote>
                   </PanelHead>
-                  <div className="dashFigureRow">
-                    <span className="num dashFigure">
-                      <CountUp value={view.curve[view.curve.length - 1].value} kind="money" />
-                    </span>
-                  </div>
                   <EquityCurve series={view.curve} />
                   <p className="dashProv">
                     Value, not profit — a deposit lifts it like a gain does
@@ -646,6 +691,8 @@ export default async function DashboardPage({
             </Panel>
           </Row>
         ) : null}
+
+        <Act label="The year" note="What your own history has proved so far." />
 
         {/*
           * The one place the score has a *history* rather than a value, and

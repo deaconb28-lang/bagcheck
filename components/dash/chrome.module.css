@@ -38,6 +38,52 @@
   padding: 38px 44px 56px;
 }
 
+/*
+ * The act break: a rule with a label on it.
+ *
+ * The label sits *on* the rule rather than above it, so the device is one
+ * object rather than a heading and a line that happen to be near each other.
+ * The rule runs the full measure; the label has the ground's own colour behind
+ * it, which is what cuts the gap for it.
+ */
+.act {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin: 78px 0 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--edge);
+}
+
+.act:first-child,
+.act[data-lead] {
+  margin-top: 6px;
+}
+
+.actLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+
+.actNote {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--meta);
+}
+
+@media (max-width: 780px) {
+  .act {
+    margin: 54px 0 20px;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+  }
+}
+
 /* ── The page head: eyebrow, headline, and whatever sits opposite ── */
 .head {
   display: flex;

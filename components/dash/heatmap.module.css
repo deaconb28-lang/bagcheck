@@ -150,8 +150,14 @@
   display: none;
 }
 
-.map[data-compact] .tile[data-room="none"] .symbol {
-  font-size: 8.5px;
+/*
+ * At 210px a 10% sliver is about twenty pixels across, and no ticker fits in
+ * twenty pixels. A clipped "SHO" reads as a broken chart; a clean coloured
+ * tile reads as a small position — and the `aria-label` states every name and
+ * share in full regardless, which is the accessible chart either way.
+ */
+.map[data-compact] .tile[data-room="none"] .inner {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
