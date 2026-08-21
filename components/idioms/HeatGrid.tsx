@@ -30,12 +30,29 @@ export type HeatDay = {
  * tiles and the panel reads as one saturated block — a density grid is a
  * texture, not a fill.
  */
-export function HeatGrid({ days, legend = true }: { days: HeatDay[]; legend?: boolean }) {
+export function HeatGrid({
+  days,
+  legend = true,
+  ramp = "score",
+}: {
+  days: HeatDay[];
+  legend?: boolean;
+  /**
+   * Which neutral ramp the cells take when no day carries a tone.
+   *
+   * `score` is `--h1`–`--h4`, which is gold — and gold in this product means
+   * the score and nothing else. A grid counting *trades* painted in it tells
+   * a reader their nights were scored, on an account that has not been scored
+   * once. `count` is the same five steps down `--signal`, which is what this
+   * palette gives a tally.
+   */
+  ramp?: "score" | "count";
+}) {
   /* Money if any day says which way it went. Inferred, so no caller can set
    * a legend that disagrees with the cells above it. */
   const money = days.some((day) => day.tone);
   return (
-    <div className={styles.wrap}>
+    <div className={styles.wrap} data-ramp={ramp}>
       <div className={styles.grid}>
         {days.map((day, i) => (
           <i

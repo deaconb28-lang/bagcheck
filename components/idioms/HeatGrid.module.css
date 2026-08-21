@@ -62,6 +62,33 @@
   background: var(--h4);
 }
 
+/*
+ * The count ramp. Same five steps, `--signal` instead of gold, for a grid
+ * whose cells are a tally rather than a score — see the `ramp` prop.
+ */
+.wrap[data-ramp="count"] .cell[data-level="1"],
+.wrap[data-ramp="count"] .key[data-level="1"] {
+  background: var(--c1);
+}
+.wrap[data-ramp="count"] .cell[data-level="2"],
+.wrap[data-ramp="count"] .key[data-level="2"] {
+  background: var(--c2);
+}
+.wrap[data-ramp="count"] .cell[data-level="3"],
+.wrap[data-ramp="count"] .key[data-level="3"] {
+  background: var(--c3);
+}
+.wrap[data-ramp="count"] .cell[data-level="4"],
+.wrap[data-ramp="count"] .key[data-level="4"] {
+  background: var(--c4);
+}
+
+/*
+ * The money rules sit below these in the file, so a day that went one way or
+ * the other still wins at equal specificity: money is money whatever ramp the
+ * neutral cells are on.
+ */
+
 .legend {
   display: flex;
   align-items: center;

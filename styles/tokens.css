@@ -163,6 +163,17 @@
   --h4: #6d3fd4;
 
   /*
+   * The count ramp: steps down `--signal`, for a grid whose cells are a
+   * tally rather than a score. `--h1`–`--h4` are the score's ramp and only
+   * the score's — a grid of trade counts painted in it says "these nights
+   * were scored" on an account that has not been scored once.
+   */
+  --c1: #e7eaee;
+  --c2: #cbd2da;
+  --c3: #9aa6b4;
+  --c4: #5d6b7b;
+
+  /*
    * ── The weight ramp: how much, never whether ──
    *
    * A pie needs a colour per slice, which is the one thing five-hues-with-one-
@@ -502,6 +513,12 @@ html[data-mode="dark"] {
   --h2: #6b5322;
   --h3: #b58a30;
   --h4: #ffc857;
+
+  /* The count ramp on black: steps up to `--signal`. */
+  --c1: #1b1f24;
+  --c2: #333c46;
+  --c3: #64717f;
+  --c4: #a4b0bd;
 
   /*
    * The ramp again, retuned. Dark-mode `--signal` is a mid grey, so the same

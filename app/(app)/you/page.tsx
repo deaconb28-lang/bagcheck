@@ -720,7 +720,7 @@ export default async function DashboardPage({
               <PanelHead eyebrow="What you have put in">
                 <PanelNote>Cumulative, from your own transactions</PanelNote>
               </PanelHead>
-              <EquityCurve series={invested} />
+              <EquityCurve series={invested} tone="signal" />
               <p className="dashProv">
                 Money in, not value — this moves when you buy or sell, never when the
                 market does. Your value curve starts once there are two days of marks.
@@ -828,7 +828,7 @@ export default async function DashboardPage({
                     : "Straight off your ledger"}
                 </PanelNote>
               </PanelHead>
-              <HeatGrid days={activity} />
+              <HeatGrid days={activity} ramp="count" />
               <p className="dashProv">
                 Trades per day, off your own transactions · the scored grid replaces this
                 once there are {MIN_SCORED_DAYS} nights on file

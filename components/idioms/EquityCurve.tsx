@@ -27,8 +27,21 @@ function smoothPath(points: Array<[number, number]>): string {
 /**
  * The full equity curve. DNA only — four identical sparklines across four
  * screens is what this rule exists to prevent, so no other screen renders one.
+ *
+ * `tone` is which family the curve is drawn in, and it is not decoration.
+ * `moss` is money up, which is what an *equity* curve rising means. The
+ * cumulative-invested curve a day-one account gets instead is not money up —
+ * it rises because the reader paid money in — so drawing it green tells them
+ * they are in profit on a screen whose whole claim is that its figures are
+ * checkable. That one is `signal`, which is what this palette gives exposure.
  */
-export function EquityCurve({ series }: { series: CurvePoint[] }) {
+export function EquityCurve({
+  series,
+  tone = "moss",
+}: {
+  series: CurvePoint[];
+  tone?: "moss" | "signal";
+}) {
   if (series.length < 2) return null;
 
   const values = series.map((p) => p.value);
@@ -46,13 +59,16 @@ export function EquityCurve({ series }: { series: CurvePoint[] }) {
   const end = points[points.length - 1];
   const gridlines = [0.25, 0.5, 0.75].map((f) => PAD + f * (H - PAD * 2));
 
+  const stroke = tone === "signal" ? "var(--signal)" : "var(--moss)";
+  const tint = tone === "signal" ? "var(--signal-tint)" : "var(--moss-tint)";
+
   return (
     <figure className={styles.figure}>
       <svg viewBox={`0 0 ${W} ${H}`} className={styles.svg} preserveAspectRatio="none" aria-hidden="true">
         {gridlines.map((y) => (
           <line key={y} x1={0} x2={W} y1={y} y2={y} stroke="var(--line-light)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
         ))}
-        <path className={styles.area} d={fill} fill="var(--moss-tint)" />
+        <path className={styles.area} d={fill} fill={tint} />
         {/*
           * `pathLength` normalises the run to 1, so one dash unit is the whole
           * curve and the offset is a share of it. The finished state is a zero
@@ -63,13 +79,13 @@ export function EquityCurve({ series }: { series: CurvePoint[] }) {
           d={line}
           fill="none"
           pathLength={1}
-          stroke="var(--moss)"
+          stroke={stroke}
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
           vectorEffect="non-scaling-stroke"
         />
-        <circle cx={end[0]} cy={end[1]} r="4" fill="var(--moss)" />
+        <circle cx={end[0]} cy={end[1]} r="4" fill={stroke} />
       </svg>
       <figcaption className={styles.axis}>
         <span>{series[0].date}</span>
