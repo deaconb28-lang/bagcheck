@@ -11,14 +11,24 @@
   overflow: hidden;
 }
 
+/*
+ * ── Four zones, not eight columns ──
+ *
+ * The table was position, qty, avg cost, price, value, weight, unrealised and
+ * shape: eight headings, eight tab stops, and a reader scanning right-aligned
+ * figures under uppercase labels to find the two they wanted. Units, average
+ * cost and price are detail about a position rather than columns of their own,
+ * so they moved into a mono line under the ticker and the row now has four
+ * things across it — what it is, what it is worth, how much of the book it is,
+ * and what it has done.
+ */
 .headRow,
 .row {
   display: grid;
-  grid-template-columns:
-    minmax(0, 250px) 110px 120px 120px 140px 110px 150px 90px;
+  grid-template-columns: minmax(0, 1fr) 150px 130px 170px 96px;
   align-items: center;
-  gap: 18px;
-  padding: 20px 26px;
+  gap: 20px;
+  padding: 18px 26px;
 }
 
 .headRow {
@@ -70,11 +80,6 @@
   white-space: nowrap;
 }
 
-.cell {
-  font-size: 16px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.72);
-}
 
 .value {
   font-size: 17px;
@@ -207,10 +212,6 @@
     text-align: right;
   }
 
-  .cell {
-    display: none;
-  }
-
   .weight {
     grid-column: 1;
   }
@@ -238,4 +239,91 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--meta);
+}
+
+/* ── The map, and the two ends of the book ──────────────────────────────── */
+
+.map {
+  margin-bottom: 20px;
+  padding: 22px;
+  border-radius: var(--r-panel);
+  background: var(--s1);
+}
+
+.ends {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.endCard {
+  padding: 22px 24px;
+  border-radius: var(--r-panel);
+  background: var(--s1);
+}
+
+.endCard[data-tone="moss"] {
+  --end-lit: var(--moss);
+}
+
+.endCard[data-tone="loss"] {
+  --end-lit: var(--loss);
+}
+
+.endLabel {
+  display: block;
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.endRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.endName {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.endSymbol {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.endDesc {
+  font-size: 13px;
+  color: var(--meta);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.endFigure {
+  flex: none;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--end-lit);
+}
+
+/* The spreadsheet columns, now one quiet line under the name. */
+.detail {
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--meta);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

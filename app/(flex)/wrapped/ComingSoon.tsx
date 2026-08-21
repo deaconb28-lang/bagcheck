@@ -198,8 +198,8 @@ export function ComingSoon() {
             that move it, and the patterns your own history is hiding.{" "}
             {building} of {total} are being built right now. None is finished.
           </p>
-          <Link className={styles.cta} href="/#waitlist">
-            Join the waitlist for the score
+          <Link className={styles.cta} href="/start">
+            Start with your Wrapped
             <Arrow />
           </Link>
         </div>

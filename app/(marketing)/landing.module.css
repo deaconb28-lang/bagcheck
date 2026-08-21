@@ -153,16 +153,10 @@
 }
 
 /*
- * Three actions fit a wide window and not a laptop. The waitlist is the one
- * that goes: it is for the score, which is the second act, and it has its own
- * section and its own nav link two items to the left. "Go to app" and "Get
- * started free" are the two doors into the product that exists.
+ * Two actions and no third. The nav carried a waitlist button for a feature
+ * with no date; "Go to app" and "Get started free" are the two doors into the
+ * product that exists, and both fit a laptop.
  */
-@media (max-width: 1180px) {
-  .navActions [data-hide-narrow] {
-    display: none;
-  }
-}
 
 .navCta,
 .navGhost {
@@ -391,6 +385,23 @@
     0 40px 80px -30px color-mix(in srgb, var(--mk-violet-mid) 40%, transparent),
     0 0 0 2px var(--mk-bezel-line) inset;
   animation: floaty 9s -4s ease-in-out infinite;
+}
+
+/*
+ * A captured screen fills the handset exactly.
+ *
+ * `object-fit: cover` rather than `contain`: the capture is 390 × 844 and the
+ * frame's aspect ratio is close but not identical, and a letterboxed
+ * screenshot inside a phone bezel reads as a broken image rather than as a
+ * phone. The top is what matters on both screens, so the crop is anchored
+ * there.
+ */
+.phoneShot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
 }
 
 .phoneScreen {
@@ -1054,9 +1065,15 @@
   letter-spacing: -0.02em;
 }
 
+/*
+ * Further left and higher than it was. The bubbles used to float over a drawn
+ * screen we controlled every pixel of; they now sit over a real screenshot,
+ * and this one landed square on the Wrapped deck's own "Play your year"
+ * button — an annotation covering the product's own control.
+ */
 .bestDayBubble {
-  left: -92px;
-  top: 118px;
+  left: -150px;
+  top: 58px;
   transform: rotate(-3deg);
   animation: floaty 7s ease-in-out infinite;
 }
@@ -1079,7 +1096,7 @@
 .deckSection,
 .soon,
 .fw,
-.waitlist,
+.plans,
 .foot {
   background: var(--mk-field);
   color: var(--mk-bg);
@@ -2741,11 +2758,155 @@
   animation: grow 5s linear both;
 }
 
-/* ── The waitlist ── */
-.waitlist {
+/* ── The plan ── */
+.plans {
   position: relative;
   padding: 40px 40px 130px;
   overflow: hidden;
+}
+
+/*
+ * ── The plan, lying down ─────────────────────────────────────────────────
+ *
+ * One price does not want a portrait card. A tier card is a column because it
+ * is meant to sit beside two other columns and be compared with them; with
+ * nothing to compare it to, the same shape is a narrow strip of text in the
+ * middle of a very wide screen. So the card is landscape: the money and the
+ * door on the left, what you get in two columns beside it.
+ */
+.planHead {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.planCard {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+  gap: 56px;
+  align-items: start;
+  margin-top: 56px;
+  padding: 44px;
+  border-radius: 34px;
+  background: color-mix(in srgb, var(--mk-bg) 4%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mk-bg) 10%, transparent);
+}
+
+.planSide {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.planFigure {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.planFigure b {
+  font-size: 76px;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.planFigure span {
+  font-size: 20px;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--mk-bg) 58%, transparent);
+}
+
+.planNote {
+  margin-top: 14px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--mk-bg) 62%, transparent);
+}
+
+.planCta {
+  margin-top: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 58px;
+  border-radius: 999px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  background: var(--mk-bg);
+  color: var(--mk-violet-abyss);
+  transition: opacity 0.16s ease;
+}
+
+.planCta:hover {
+  color: var(--mk-violet-abyss);
+  opacity: 0.88;
+}
+
+.planFine {
+  margin-top: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--mk-bg) 58%, transparent);
+}
+
+/* Two columns of features, because one column of eight is a scroll. */
+.planList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 40px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.planList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 17px;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--mk-bg) 84%, transparent);
+}
+
+.planList svg {
+  flex: none;
+  margin-top: 4px;
+}
+
+/* The score section's own door, where its form used to be. */
+.soonActions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1020px) {
+  .planCard {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+    padding: 32px;
+  }
+
+  .planList {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .plans {
+    padding: 32px 20px 96px;
+  }
+
+  .planFigure b {
+    font-size: 58px;
+  }
 }
 
 .waitGlow {
@@ -2765,52 +2926,7 @@
   margin-inline: auto;
 }
 
-.waitHead {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 40px;
-  flex-wrap: wrap;
-}
-
-.waitCount {
-  font-size: 17px;
-  color: color-mix(in srgb, var(--mk-bg) 52%, transparent);
-  padding-bottom: 10px;
-}
-
-.tiers {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-  margin-top: 64px;
-  align-items: stretch;
-}
-
-.tier {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  background: color-mix(in srgb, var(--mk-bg) 4%, transparent);
-  border: 1px solid color-mix(in srgb, var(--mk-bg) 10%, transparent);
-  border-radius: 30px;
-  padding: 34px;
-  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.tier:hover {
-  transform: translateY(-8px);
-}
-
-.tier[data-popular] {
-  background: linear-gradient(160deg, var(--mk-violet-deep) 0%, var(--mk-violet-mid) 55%, var(--mk-amber-deep) 140%);
-  border-color: color-mix(in srgb, var(--mk-bg) 22%, transparent);
-}
-
 .popular {
-  position: absolute;
-  top: -14px;
-  left: 34px;
   display: flex;
   align-items: center;
   gap: 7px;
@@ -2830,112 +2946,11 @@
   background: var(--mk-amber-abyss);
 }
 
-.tierLabel {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  color: color-mix(in srgb, var(--mk-bg) 52%, transparent);
-}
-
-.tier[data-popular] .tierLabel {
-  color: color-mix(in srgb, var(--mk-bg) 75%, transparent);
-}
-
-.tierPrice {
-  margin-top: 20px;
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-}
-
-.tierPrice b {
-  font-size: 56px;
-  font-weight: 700;
-  letter-spacing: -0.045em;
-}
-
-.tierPrice span {
-  font-size: 17px;
-  font-weight: 500;
-  color: color-mix(in srgb, var(--mk-bg) 60%, transparent);
-}
-
-.tier[data-popular] .tierPrice span {
-  color: color-mix(in srgb, var(--mk-bg) 75%, transparent);
-}
-
-.tierNote {
-  margin-top: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  color: color-mix(in srgb, var(--mk-bg) 75%, transparent);
-}
-
-.tierNote[data-mute] {
-  color: color-mix(in srgb, var(--mk-bg) 52%, transparent);
-}
-
-.tierList {
-  list-style: none;
-  margin: 30px 0 0;
-  padding: 28px 0 0;
-  border-top: 1px solid color-mix(in srgb, var(--mk-bg) 10%, transparent);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  flex: 1;
-}
-
-.tier[data-popular] .tierList {
-  border-top-color: color-mix(in srgb, var(--mk-bg) 22%, transparent);
-}
-
-.tierList li {
-  display: flex;
-  gap: 11px;
-  align-items: flex-start;
-  font-size: 17px;
-  line-height: 1.4;
-  color: color-mix(in srgb, var(--mk-bg) 60%, transparent);
-}
-
-.tier[data-popular] .tierList li {
-  color: color-mix(in srgb, var(--mk-bg) 92%, transparent);
-}
-
-.tierList svg {
-  flex: none;
-  margin-top: 2px;
-}
-
 /* ── Waitlist form ── */
-.waitForm {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  width: 100%;
-  margin-top: 34px;
-}
 
 .soonCopy .waitForm {
   margin-top: 44px;
   max-width: 560px;
-}
-
-.waitInput {
-  flex: 1 1 180px;
-  min-width: 0;
-  min-height: 56px;
-  font-family: inherit;
-  font-size: 17px;
-  font-weight: 500;
-  color: var(--mk-bg);
-  background: color-mix(in srgb, var(--mk-bg) 7%, transparent);
-  border: 1px solid color-mix(in srgb, var(--mk-bg) 16%, transparent);
-  border-radius: 14px;
-  padding: 0 20px;
-  outline: none;
-  transition: border-color 0.16s ease;
 }
 
 .soonCopy .waitInput {
@@ -2944,43 +2959,10 @@
   padding: 0 22px;
 }
 
-.waitInput::placeholder {
-  color: color-mix(in srgb, var(--mk-bg) 52%, transparent);
-}
-
-.waitInput:focus-visible {
-  border-color: var(--mk-violet-soft);
-}
-
-.waitButton {
-  flex: none;
-  font-family: inherit;
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--mk-field);
-  background: var(--mk-bg);
-  border: none;
-  border-radius: 14px;
-  padding: 0 26px;
-  min-height: 56px;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-
 .soonCopy .waitButton {
   min-height: 62px;
   font-size: 18px;
   padding: 0 30px;
-}
-
-.waitButton:hover {
-  opacity: 0.85;
-}
-
-.waitButton:disabled {
-  opacity: 0.7;
-  cursor: default;
 }
 
 .waitProblem {
@@ -2995,26 +2977,10 @@
  * did, so the section does not jump, and it stays put — a confirmation that
  * fades out is one the reader may never have looked at.
  */
-.waitDone {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  width: 100%;
-  margin-top: 34px;
-  padding: 20px 22px;
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--mk-green-soft) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--mk-green-soft) 32%, transparent);
-  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) both;
-}
 
 .soonCopy .waitDone {
   margin-top: 44px;
   max-width: 560px;
-}
-
-.tier .waitDone {
-  margin-top: auto;
 }
 
 .waitTick {
@@ -3056,74 +3022,6 @@
 }
 
 /* Inside a tier the form stacks and the button runs full width, as a pill. */
-.tier .waitForm {
-  flex-direction: column;
-  gap: 10px;
-}
-
-.tier .waitInput {
-  flex: none;
-  width: 100%;
-  border-radius: 999px;
-  padding: 0 22px;
-}
-
-.tier .waitButton {
-  width: 100%;
-  border-radius: 999px;
-  padding: 17px;
-  min-height: 0;
-  background: transparent;
-  color: var(--mk-bg);
-  border: 1px solid color-mix(in srgb, var(--mk-bg) 25%, transparent);
-}
-
-.tier[data-popular] .waitButton {
-  background: var(--mk-bg);
-  color: var(--mk-violet-abyss);
-  border: none;
-}
-
-.tier .waitButton[data-done] {
-  background: var(--mk-green-soft);
-  color: var(--mk-ink);
-  border-color: transparent;
-}
-
-/*
- * A plan card ends in a link rather than a form. Same shape as the waitlist
- * button so the three cards end on one line — only the fill differs, and it
- * differs on the card that is actually being sold.
- */
-.tierCta {
-  margin-top: 34px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 56px;
-  border-radius: 999px;
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--mk-bg);
-  border: 1px solid color-mix(in srgb, var(--mk-bg) 25%, transparent);
-  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
-}
-
-.tierCta:hover {
-  border-color: var(--mk-bg);
-}
-
-.tierCta[data-solid] {
-  background: var(--mk-bg);
-  color: var(--mk-violet-abyss);
-  border-color: transparent;
-}
-
-.tierCta[data-solid]:hover {
-  opacity: 0.88;
-}
 
 /* ── Footer ── */
 .foot {
@@ -3340,9 +3238,8 @@
     display: none;
   }
 
-  .insightRow,
-  .tiers {
-    grid-template-columns: 1fr;
+  .insightRow {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -3358,21 +3255,12 @@
   .deckSection,
   .soon,
   .fw,
-  .waitlist {
-    padding-inline: 20px;
-  }
-
-  .soon,
-  .fw {
+  .plans {
     padding-block: 80px 88px;
   }
 
   .deckSection {
     padding-block: 72px 64px;
-  }
-
-  .waitlist {
-    padding-block: 24px 88px;
   }
 
   .foot {

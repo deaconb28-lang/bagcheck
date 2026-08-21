@@ -207,13 +207,19 @@
 }
 
 /*
- * The allocation ring, pushed to the far edge of the lockup. It is the last
- * thing in the row and the first thing to go: below a laptop the hero is
- * already two stacked blocks, and a third would push the money off the fold.
+ * The book's map, pushed to the far edge of the lockup. It is the last thing
+ * in the row and the first thing to go: below a laptop the hero is already two
+ * stacked blocks, and a third would push the money off the fold.
+ *
+ * `flex: none` with no width was right for a 150px ring, which
+ * carries its own dimensions in an `<svg>`; a heatmap is percentage-positioned
+ * tiles inside a box, so with an auto-width parent it lays out at zero and the
+ * hero's right half is simply empty. It needs a size to draw into.
  */
 .book {
   margin-left: auto;
   flex: none;
+  width: 210px;
 }
 
 @media (max-width: 1180px) {

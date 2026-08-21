@@ -35,7 +35,7 @@ const DAY = 86_400_000;
 const RANGE_LABEL: Record<RangeKey, string> = { "45d": "45D", ytd: "YTD", all: "ALL" };
 
 /** The floor under which a percentage is a coincidence with a decimal point. */
-const RATE_FLOOR = 10;
+export const RATE_FLOOR = 10;
 /** A ratio off three weeks of marks is noise wearing two decimal places. */
 const SHARPE_FLOOR = 60;
 
@@ -282,8 +282,13 @@ export function patternsFrom(facts: Facts, window: Window): Pattern[] {
   }
 
   /* ── Who the ledger says you are ── */
-  if (facts.components) {
-    const archetype = archetypeFor(facts.components as unknown as ScoreComponents);
+  /*
+   * Only when all four are measured. An incomplete profile has no corner of
+   * the cube, so it has no name and no line — and a card headed with a
+   * confident archetype is the loudest claim on the screen.
+   */
+  const archetype = archetypeFor((facts.components ?? null) as unknown as ScoreComponents | null);
+  if (archetype) {
     out.push({
       key: "profile",
       kind: "profile",
@@ -295,7 +300,7 @@ export function patternsFrom(facts: Facts, window: Window): Pattern[] {
       chart: {
         type: "profile",
         archetype: archetype.key,
-        components: facts.components,
+        components: facts.components ?? {},
         age: facts.investorAge,
       },
     });
@@ -559,18 +564,22 @@ export function dashboardView({
     ),
   );
   /*
-   * The field is built from the funds whether or not the reader can join it.
+   * The reader is always in their own field.
    *
-   * It used to be `sameWindow ? raceField(...) : null`, so an account whose
-   * ledger did not reach January produced no field at all and the block
-   * vanished — which on a new account is *every* account, all year. The
-   * refusal was only ever about the reader's own row: a six-month figure set
-   * beside a fund's twelve is two measurements rather than a comparison. So
-   * the reader's figure is what gets withheld, not the race. `raceField`
-   * already returns a field with `place: null` when handed nothing, and the
-   * screen says who is missing and why.
+   * Two earlier passes got this wrong in opposite directions: the first drew
+   * no field at all unless the ledger reached January, so a new account never
+   * saw the block; the second drew the field and withheld the reader, so a new
+   * account watched five funds race without them. Both were trying to avoid
+   * setting a part-year figure beside a full-year one without saying so.
+   *
+   * Saying so is the answer. The reader's row carries the day their curve
+   * starts whenever it starts late, the panel repeats it underneath, and the
+   * figure is the reader's real return over the window they actually have.
    */
-  const field = raceField(sameWindow ? ytd : null, peers);
+  const field = raceField(
+    ytd == null ? null : { value: ytd, since: sameWindow ? null : opened },
+    peers,
+  );
   /*
    * One reason, in the order a reader can act on: no provider key is a
    * deployment fact, too few quotes is a provider fact, and a short year is
@@ -588,9 +597,8 @@ export function dashboardView({
       ? `${ranked[0].symbol} and ${ranked[1].symbol} carry ${Math.round(book.topTwo * 100)}% of your book.`
       : null;
 
-  const archetype = facts.components
-    ? archetypeFor(facts.components as unknown as ScoreComponents).name
-    : null;
+  const archetype =
+    archetypeFor((facts.components ?? null) as unknown as ScoreComponents | null)?.name ?? null;
 
   return {
     window,
@@ -618,6 +626,7 @@ export function dashboardView({
       key: holding.symbol,
       label: holding.symbol,
       value: holding.value ?? 0,
+      pnlPct: holding.pnlPct ?? null,
     })),
     positions: [...facts.holdings]
       .filter((holding) => (holding.value ?? 0) > 0)

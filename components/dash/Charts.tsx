@@ -105,163 +105,6 @@ export function Legend({ up, down }: { up: number; down: number }) {
 
 /* ── Allocation, as a donut ─────────────────────────────────────────────── */
 
-export interface Slice {
-  key: string;
-  label: string;
-  value: number;
-}
-
-/**
- * A hue per holding, and this is the one chart allowed them.
- *
- * Everywhere else in the product a hue means one thing and never variety. A
- * part-to-whole chart is the exception the rule has to make: with no colour
- * per slice there is nothing to tie an arc to its row, and a ramp of one hue
- * across seven names is a chart nobody can read at a glance. The palette is
- * fixed and ordered by weight, so the biggest name is always violet and the
- * remainder is always the neutral — the colours identify, they never grade.
- *
- * Segments are dashed strokes on one circle with `pathLength="100"`, so a dash
- * unit is a percentage point and there is no arc arithmetic to get wrong.
- */
-const WEDGES = ["--wedge-1", "--wedge-2", "--wedge-3", "--wedge-4", "--wedge-5"];
-const NAMED = 5;
-/** Under this a slice is a hairline that reads as a rendering artefact. */
-const FLOOR = 0.03;
-
-export function AllocationDonut({
-  slices,
-  size = 184,
-  compact = false,
-}: {
-  slices: Slice[];
-  size?: number;
-  /**
-   * The ring alone, for the hero.
-   *
-   * The legend is normally *the accessible chart* — the SVG is `aria-hidden`
-   * and every share is in type — so dropping it cannot simply mean dropping
-   * the information. A compact ring states the same shares in an `aria-label`
-   * instead, which is the right trade at this size and the wrong one at full
-   * size, where a reader can actually use the rows.
-   */
-  compact?: boolean;
-}) {
-  const priced = slices
-    .filter((slice) => Number.isFinite(slice.value) && slice.value > 0)
-    .sort((a, b) => b.value - a.value);
-  const total = priced.reduce((sum, slice) => sum + slice.value, 0);
-  if (priced.length < 2 || total <= 0) return null;
-
-  const big = priced.filter((slice) => slice.value / total >= FLOOR);
-  let head = big.slice(0, NAMED);
-  let tail = priced.filter((slice) => !head.includes(slice));
-  /* "Rest · 1 position" is a mislabel, so the last one comes back out. */
-  if (tail.length === 1) {
-    head = [...head, tail[0]];
-    tail = [];
-  }
-  const rest = tail.reduce((sum, slice) => sum + slice.value, 0);
-
-  const rows = [
-    ...head.map((slice, i) => ({
-      key: slice.key,
-      label: slice.label,
-      share: slice.value / total,
-      paint: `var(${WEDGES[Math.min(i, WEDGES.length - 1)]})`,
-    })),
-    ...(rest > 0
-      ? [{ key: "__rest", label: `${tail.length} more`, share: rest / total, paint: "var(--wedge-rest)" }]
-      : []),
-  ];
-
-  /* A uniform notch between arcs, baked into the offsets rather than the dash. */
-  const GAP = 0.85;
-  let start = 0;
-
-  return (
-    <div className={styles.donutWrap}>
-      <div className={styles.donut} style={{ "--size": `${size}px` } as React.CSSProperties}>
-        <svg
-          viewBox="0 0 100 100"
-          className={styles.donutSvg}
-          {...(compact
-            ? {
-                role: "img",
-                "aria-label": `Allocation: ${rows
-                  .map((r) => `${r.label} ${Math.round(r.share * 100)}%`)
-                  .join(", ")}`,
-              }
-            : { "aria-hidden": true as const })}
-        >
-          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--track)" strokeWidth="14" />
-          {rows.map((row, i) => {
-            const pct = row.share * 100;
-            const dash = Math.max(pct - GAP, Math.min(0.4, pct));
-            const offset = -(start + GAP / 2);
-            start += pct;
-            return (
-              <circle
-                key={row.key}
-                className={styles.wedge}
-                cx="50"
-                cy="50"
-                r="40"
-                fill="none"
-                pathLength={100}
-                stroke={row.paint}
-                strokeWidth="14"
-                strokeLinecap="butt"
-                strokeDasharray={`${dash.toFixed(3)} ${(100 - dash).toFixed(3)}`}
-                strokeDashoffset={offset.toFixed(3)}
-                style={{ animationDelay: `${100 + i * 140}ms` }}
-              />
-            );
-          })}
-        </svg>
-        <div className={styles.donutCentre}>
-          <span className={styles.donutCount}>
-            {priced.length} {priced.length === 1 ? "holding" : "holdings"}
-          </span>
-          <span className={styles.donutTail} data-tone={rows[0].share >= 0.4 ? "loss" : undefined}>
-            {rows[0].share >= 0.4 ? "Concentrated" : "Spread"}
-          </span>
-        </div>
-      </div>
-
-      {compact ? null : (
-      <dl className={styles.donutLegend}>
-        {rows.map((row) => (
-          <div key={row.key} className={styles.donutRow}>
-            <span className={styles.wedgeSwatch} style={{ background: row.paint }} aria-hidden="true" />
-            {/*
-              * The company's mark, on the one screen that names holdings and
-              * had none.
-              *
-              * Always a slot, never a conditional child: this legend is a grid
-              * with a column per part, and a row that skipped the mark would
-              * slide its name and its share one column left. `__rest` is an
-              * aggregate of several companies rather than one, so it holds an
-              * empty slot — a mark there would be one arbitrary member of the
-              * group standing for all of them — and `Logo` itself renders
-              * nothing for a symbol it cannot normalise.
-              */}
-            <span className={styles.wedgeMark} aria-hidden="true">
-              {row.key === "__rest" ? null : <Logo symbol={row.key} size={22} />}
-            </span>
-            <dt className={styles.wedgeName}>{row.label}</dt>
-            <dd className={`num ${styles.wedgeShare}`}>
-              {row.share * 100 < 1 ? "<1" : (row.share * 100).toFixed(0)}%
-            </dd>
-          </div>
-        ))}
-      </dl>
-      )}
-    </div>
-  );
-}
-
-/* ── The small thumbnails an insight row carries ────────────────────────── */
 
 /** Realised P&L by weekday. The worst day is the only red column. */
 export function WeekdayBars({
@@ -453,6 +296,17 @@ export function HoldingBars({ rows, money }: { rows: PositionRow[]; money: (n: n
  * is left out entirely — "Other 38%" would be a statement about our data
  * coverage wearing the costume of a statement about the reader's portfolio.
  */
+/*
+ * The weight ramp, kept for the sector bar.
+ *
+ * It came in with the allocation ring and outlived it: `SectorMix` is a
+ * part-to-whole bar and has the same problem a pie had — it must colour by
+ * *which* — so it takes the same ordered steps down `--signal`. Rank sets the
+ * step, so the bar's order is the book's order and no hue means anything on
+ * its own.
+ */
+const WEDGES = ["--w1", "--w2", "--w3", "--w4", "--w5", "--w-rest"] as const;
+
 export function SectorMix({
   sectors,
   cover,

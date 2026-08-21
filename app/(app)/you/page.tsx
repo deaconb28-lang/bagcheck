@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { getUserId, isAuthConfigured } from "@/auth";
 import { accessFor, factsFrom, getDailyInsight, isDbConfigured, loadScreen, syncClock, wrappedOpenedAt } from "@/lib/db";
-import { dashboardFor, fieldLine, rangeOf } from "@/lib/portfolio/load";
+import { dashboardFor, fieldLine } from "@/lib/portfolio/load";
+import { RATE_FLOOR } from "@/lib/portfolio/view";
 import type { Pattern, RangeKey } from "@/lib/portfolio/types";
 import { EmptyState } from "@/components/app/EmptyState";
 import { FirstScore } from "@/components/app/FirstScore";
@@ -13,8 +14,6 @@ import { SignInCta } from "@/components/app/SignInCta";
 import { SyncDialog } from "@/components/app/SyncDialog";
 import { TRIAL_DAYS, trialLine, trialState } from "@/lib/tiers";
 import {
-  Chip,
-  Chips,
   Page,
   PageHead,
   Panel,
@@ -30,7 +29,6 @@ import {
 } from "@/components/dash/Chrome";
 import { RaceBars } from "@/components/dash/RaceBars";
 import {
-  AllocationDonut,
   ChartAxis,
   HoldingBars,
   HoldMeters,
@@ -41,16 +39,24 @@ import {
   WeekdayBars,
 } from "@/components/dash/Charts";
 import { InsightCard, WrappedPromo } from "@/components/dash/Cards";
+import { Heatmap } from "@/components/dash/Heatmap";
 import { WrappedReady } from "@/components/dash/WrappedReady";
 import { ScoreHero } from "@/components/dash/ScoreHero";
 import { Collection } from "@/components/dash/Collection";
 import { CountUp, EquityCurve, HeatGrid } from "@/components/idioms";
 
-const RANGES: Array<{ key: RangeKey; label: string }> = [
-  { key: "45d", label: "45D" },
-  { key: "ytd", label: "YTD" },
-  { key: "all", label: "ALL" },
-];
+/**
+ * One window, and it is the year.
+ *
+ * There were three chips — 45D, YTD, ALL — and they were a control asking to
+ * be operated on a screen whose job is to say one thing. Two of the three
+ * changed the headline figure and nothing else on the page, because the race
+ * is always year to date, the score is always tonight's, and the set is always
+ * this year's. A control that moves one number out of eight is furniture.
+ *
+ * Year to date is the window everything else on the screen already agrees on.
+ */
+const RANGE: RangeKey = "ytd";
 
 /**
  * Below this the grid is one lit cell in a field of empties, which reads as a
@@ -90,11 +96,10 @@ export const dynamic = "force-dynamic";
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ connected?: string; range?: string }>;
+  searchParams: Promise<{ connected?: string }>;
 }) {
   const userId = await getUserId();
-  const { connected, range: rangeParam } = await searchParams;
-  const range: RangeKey = rangeOf(rangeParam);
+  const { connected } = await searchParams;
 
   const syncDialog =
     connected === "1" && userId ? (
@@ -182,7 +187,7 @@ export default async function DashboardPage({
    * Swallowed on failure, because a dashboard must not fail on a sentence.
    */
   const [{ view }, user, note, openedWrapped] = await Promise.all([
-    dashboardFor(userId, range, data),
+    dashboardFor(userId, RANGE, data),
     shellUser(),
     latest
       ? getDailyInsight(
@@ -271,15 +276,10 @@ export default async function DashboardPage({
         ) : null}
 
         <div data-reveal>
-          <PageHead eyebrow="Total value" title={<TotalValue value={book.value} delta={perf.gain} deltaPct={perf.ret} />}>
-            <Chips>
-              {RANGES.map((option) => (
-                <Chip key={option.key} href={`/you?range=${option.key}`} active={option.key === range}>
-                  {option.label}
-                </Chip>
-              ))}
-            </Chips>
-          </PageHead>
+          <PageHead
+            eyebrow="Total value · year to date"
+            title={<TotalValue value={book.value} delta={perf.gain} deltaPct={perf.ret} />}
+          />
         </div>
 
         {/*
@@ -336,6 +336,19 @@ export default async function DashboardPage({
                   : "No cost basis reported"
             }
           />
+          {/*
+            * ── Win rate ──
+            *
+            * Profitable round trips over all of them, off the FIFO matches —
+            * arithmetic, not a model. It stays null under ten closed trips,
+            * because a rate over three is a coin landing heads twice.
+            *
+            * Below the floor it now says so rather than quietly becoming a
+            * different statistic: the reader gets "In profit" as the figure,
+            * and the tail names the win rate and how many trips are left
+            * before it can be one. A metric that silently swaps for another
+            * under the same heading is worse than a dash.
+            */}
           <Stat
             label={perf.winRate.pct == null ? "In profit" : "Win rate"}
             value={
@@ -345,12 +358,11 @@ export default async function DashboardPage({
                   ? `${book.winners}/${book.priced}`
                   : "—"
             }
+            tone={perf.winRate.pct != null ? (perf.winRate.pct >= 50 ? "moss" : undefined) : undefined}
             tail={
               perf.winRate.pct != null
                 ? `${perf.winRate.wins} of ${perf.winRate.trades} round trips`
-                : book.priced
-                  ? `positions up right now${book.priced < book.positions ? `, of ${book.priced} priced` : ""}`
-                  : "No P&L reported yet"
+                : `Win rate needs ${RATE_FLOOR} closed trips · ${perf.winRate.trades} on file`
             }
           />
           <Stat
@@ -421,10 +433,16 @@ export default async function DashboardPage({
                 <PanelNote>Year to date · price return</PanelNote>
               </PanelHead>
               <RaceBars field={view.field} />
-              {view.field.place == null ? (
+              {/*
+                * The reader is always in the field now. Where their curve
+                * starts after the year does, the mismatch is stated rather
+                * than used as a reason to remove them: their row carries the
+                * date and this line says what it means.
+                */}
+              {view.field.rows.find((row) => row.you)?.since ? (
                 <p className="dashEmpty">
-                  Your row joins once your ledger reaches January. A part-year
-                  against a full one is not a comparison.
+                  Your figure runs from the day your ledger starts; the funds run from
+                  1 January. Two windows, drawn together so you are in your own field.
                 </p>
               ) : null}
               <p className="dashProv">
@@ -453,9 +471,7 @@ export default async function DashboardPage({
               <p className="dashEmpty">
                 {view.fieldAbsence === "market-key"
                   ? "No market key on this deployment. Nothing is estimated in the meantime."
-                  : view.fieldAbsence === "year-too-short"
-                    ? "Your ledger does not reach January yet. A part-year against a full one is not a comparison."
-                    : "Under two funds could be quoted. A fund nobody will quote is dropped, never drawn at zero."}
+                  : "Under two funds could be quoted. A fund nobody will quote is dropped, never drawn at zero."}
               </p>
               <p className="dashProv">DBMF · QAI · MNA · BTAL · SPY</p>
             </Panel>
@@ -520,16 +536,30 @@ export default async function DashboardPage({
           </Panel>
 
           <Panel art="charts">
-            <PanelHead eyebrow="Allocation" />
-            <AllocationDonut
-              slices={view.allocation}
+            {/*
+              * ── The map replaced the ring ──
+              *
+              * A pie can only answer "how much", and to answer even that it
+              * needed a ramp of `--signal` and a written exemption from the
+              * one-hue-one-meaning rule, because a pie has to colour by
+              * *which*. A treemap carries "which" in area and order, so the
+              * fill goes back to money: green is up, red is down, and the
+              * biggest tile is the name the account is most exposed to.
+              */}
+            <PanelHead eyebrow="The book" title="Every name, sized and lit" />
+            <Heatmap
+              items={data.holdings.map((h) => ({
+                symbol: h.symbol,
+                value: h.value ?? 0,
+                pnlPct: h.pnlPct,
+              }))}
             />
             {view.concentration ? <p className="dashSentence">{view.concentration}</p> : null}
             {/*
-              * The same money at the grain that carries the risk. The ring
+              * The same money at the grain that carries the risk. The map
               * answers "which names"; this answers "which kind of thing", and
               * a book of five evenly-weighted semiconductor names is
-              * concentrated in a way no ring of five equal arcs can show.
+              * concentrated in a way no arrangement of five names can show.
               */}
             <SectorMix sectors={view.sectors} cover={view.sectorsCover} />
             {/*

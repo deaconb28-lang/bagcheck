@@ -4,6 +4,7 @@ import { getUserId } from "@/auth";
 import { accessFor, getCollections, isDbConfigured, syncClock } from "@/lib/db";
 import { dashboardFor } from "@/lib/portfolio/load";
 import { INSIGHTS_MARKET_DAYS, insightsGate } from "@/lib/market/days";
+import { firstReads } from "@/lib/insights/first";
 import type { Pattern } from "@/lib/portfolio/types";
 import { AppNav } from "@/components/app/AppNav";
 import { EmptyState } from "@/components/app/EmptyState";
@@ -81,34 +82,21 @@ export default async function InsightsPage() {
     { projection: { _id: 0, createdAt: 1, accounts: 1 } },
   );
   const gate = insightsGate(connection?.createdAt ?? null, new Date());
-  if (!gate.unlocked) {
+  /*
+   * With no brokerage there is no clock and nothing to read. Everything below
+   * this point needs a ledger; this is the only state that does not.
+   */
+  if (!connection) {
     return (
       <>
-        <AppNav
-          active="insights"
-          accounts={connection?.accounts?.length ?? 0}
-          syncedAt={null}
-          user={await shellUser()}
-        />
+        <AppNav active="insights" accounts={0} syncedAt={null} user={await shellUser()} />
         <PageGrid>
           <EmptyState
             eyebrow="Insights"
-            icon={connection ? "waiting" : "connect"}
-            title={
-              connection
-                ? "Reading your first fortnight"
-                : "Connect a brokerage to find your patterns"
-            }
-            body={
-              connection
-                ? `${gate.have} of ${INSIGHTS_MARKET_DAYS} market days. A pattern read off a few days would be a coincidence with a headline.`
-                : "One tap via SnapTrade, read-only. The clock starts when you link."
-            }
-            actions={
-              connection
-                ? [{ label: "Back to the dashboard", href: "/you" }]
-                : [{ label: "Connect a brokerage", href: "/start" }]
-            }
+            icon="connect"
+            title="Connect a brokerage to find your patterns"
+            body="One tap via SnapTrade, read-only. Your book is readable the moment it lands; the behaviour reads start after ten market days."
+            actions={[{ label: "Connect a brokerage", href: "/start" }]}
           />
         </PageGrid>
       </>
@@ -118,6 +106,52 @@ export default async function InsightsPage() {
   const { data, view, facts } = await dashboardFor(userId, "all");
   const months = facts.curve.length ? Math.max(1, Math.round(facts.curve.length / 30)) : 0;
   const n = view.patterns.length;
+
+  /*
+   * ── What the first sync already knows ──
+   *
+   * The page used to answer with a waiting screen for the whole of the first
+   * ten market days: "a pattern read off a few days would be a coincidence
+   * with a headline". True of *patterns*, and it made the screen say nothing
+   * at all on the one day a reader is most curious — the day they connect.
+   *
+   * A positions snapshot is a complete present-tense fact the moment it
+   * arrives. Concentration, industry mix, cash, the longest thing still held,
+   * how often buys land and on which day: none of those predicts anything and
+   * none needs a history. The wait now applies only to the readings that
+   * genuinely require one, and the page says which those are and when.
+   */
+  /*
+   * Buys only, and only the four fields the reads use. The dashboard assembly
+   * does not carry raw transactions — it carries what it derived from them —
+   * so this is one indexed read rather than a second full ledger scan.
+   */
+  const { transactions } = await getCollections();
+  const buys = await transactions
+    .find({ userId, type: { $regex: /buy/i } })
+    .project<{ date: string | null; type: string | null; symbol: string | null }>({
+      _id: 0,
+      date: 1,
+      type: 1,
+      symbol: 1,
+    })
+    .toArray();
+
+  const first = firstReads({
+    holdings: data.holdings,
+    transactions: buys.map((t) => ({
+      date: t.date ?? null,
+      type: t.type ?? null,
+      symbol: t.symbol ?? null,
+      units: null,
+      price: null,
+      amount: null,
+    })),
+    sectors: view.sectors,
+    sectorCover: view.sectorsCover,
+    cashShare: view.book.cashShare,
+    today: new Date().toISOString().slice(0, 10),
+  });
 
   return (
     <>
@@ -140,6 +174,59 @@ export default async function InsightsPage() {
             meta={`${facts.trips.length.toLocaleString("en-US")} round trips${months ? ` · ${months} months` : ""}`}
           />
         </div>
+
+        {/*
+          * The book's own reads come first and are always here. They are
+          * descriptions of what is on file rather than inferences about
+          * behaviour, which is exactly why they need no waiting period.
+          */}
+        {first.length ? (
+          <section className={styles.firstBand} aria-labelledby="first" data-reveal>
+            <div className={styles.firstHead}>
+              <h2 className={styles.firstTitle} id="first">
+                Straight off your book
+              </h2>
+              <p className={styles.firstNote}>
+                True the moment your brokerage answered. No history required.
+              </p>
+            </div>
+            <div className={styles.firstGrid}>
+              {first.map((read) => (
+                <article key={read.key} className={styles.firstCard} data-tone={read.tone}>
+                  <span className={styles.firstEyebrow}>{read.kind}</span>
+                  {read.figure ? (
+                    <span className={`num ${styles.firstFigure}`}>{read.figure}</span>
+                  ) : null}
+                  <h3 className={styles.firstCardHead}>{read.headline}</h3>
+                  <p className={styles.firstBody}>{read.body}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {/*
+          * And the behaviour reads, which do need a history. Before the gate
+          * opens this states what is coming and how far off it is — a real
+          * subtraction of two things on file, never a date.
+          */}
+        {!gate.unlocked ? (
+          <section className={styles.waiting} data-reveal>
+            <span className={styles.firstEyebrow}>The behaviour reads</span>
+            <h2 className={styles.waitingTitle}>
+              {gate.left} more market {gate.left === 1 ? "day" : "days"}
+            </h2>
+            <p className={styles.firstBody}>
+              {gate.have} of {INSIGHTS_MARKET_DAYS} on the clock. Weekday patterns, how long you
+              hold winners against losers, what you do inside a drawdown and where the money
+              actually went all need a history — read off a few days they would be
+              coincidences with headlines.
+            </p>
+            <span className={styles.waitingTrack} aria-hidden="true">
+              <i style={{ transform: `scaleX(${gate.have / INSIGHTS_MARKET_DAYS})` }} />
+            </span>
+          </section>
+        ) : null}
 
         <div className={styles.grid}>
           {view.patterns.map((pattern) => (

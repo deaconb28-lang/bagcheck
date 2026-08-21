@@ -77,7 +77,14 @@ export function AppNav({
       </div>
 
       <div className={styles.right}>
-        <SyncNow syncedAt={syncedAt} accounts={accounts} />
+        {/*
+          * The sync pill is a status line, and a status line is the first
+          * thing to go on a phone: it is reachable on the dashboard itself
+          * and it is the widest object in this bar.
+          */}
+        <span className={styles.sync}>
+          <SyncNow syncedAt={syncedAt} accounts={accounts} />
+        </span>
         <Link
           href="/profile"
           className={styles.avatar}

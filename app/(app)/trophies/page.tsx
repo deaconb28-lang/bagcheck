@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getUserId } from "@/auth";
 import { accessFor, isDbConfigured, loadScreen, syncClock } from "@/lib/db";
-import { archetypeStandings, trophiesFrom, TROPHY_GROUPS } from "@/lib/trophies";
+import { archetypeStandings, nextUp, trophiesFrom, TROPHY_GROUPS } from "@/lib/trophies";
 import { AppNav } from "@/components/app/AppNav";
 import { EmptyState } from "@/components/app/EmptyState";
 import { PageGrid } from "@/components/app/PageGrid";
@@ -86,6 +86,8 @@ export default async function TrophiesPage() {
   });
   const standings = archetypeStandings(days);
   const earned = trophies.filter((t) => t.earned).length;
+  /* What the account is closest to, so the case has a front as well as a back. */
+  const next = nextUp(trophies);
 
   return (
     <>
@@ -109,6 +111,52 @@ export default async function TrophiesPage() {
             meta="None of it is behind a plan. Every one is something your ledger actually did."
           />
         </div>
+
+        {/*
+          * ── What is next ──
+          *
+          * A case with nothing but a tally at the top is a list of things you
+          * have and a list of things you do not, and no reason to come back.
+          * These three are the closest to earning, ranked by a real
+          * subtraction — days on file against the bar, positions held against
+          * the bar — never by what would read best.
+          */}
+        {next.length ? (
+          <section className={styles.next} data-reveal>
+            <p className={styles.nextHead}>Closest to earning</p>
+            <ul className={styles.nextList}>
+              {next.map((trophy) => (
+                <li key={trophy.key} className={styles.nextRow}>
+                  <span className={styles.nextName}>{trophy.name}</span>
+                  <span className={styles.nextNeed}>{trophy.requires}</span>
+                  {trophy.progress ? (
+                    <span className={styles.nextMeter}>
+                      <span
+                        className={styles.nextFill}
+                        style={{
+                          transform: `scaleX(${trophy.progress.have / trophy.progress.need})`,
+                        }}
+                      />
+                      <span className={`num ${styles.nextCount}`}>
+                        {trophy.progress.have} / {trophy.progress.need}
+                      </span>
+                    </span>
+                  ) : (
+                    /*
+                      * A single-event trophy has no pair, and it does not get
+                      * the meter column's class either — `.nextCount` is
+                      * placed at `grid-column: 2` *inside* the meter's own
+                      * grid, so used directly on the row it landed in the
+                      * row's second column and pushed the condition into the
+                      * third.
+                      */
+                    <span className={styles.nextSingle}>Not yet</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
         {TROPHY_GROUPS.map((group) => (
           <TrophyBand

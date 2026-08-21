@@ -97,7 +97,8 @@ export interface CardSpec {
 export interface CardInput {
   year: number;
   score: number | null;
-  archetype: Archetype;
+  /** Null until all four components are measured; the archetype card is then unearned. */
+  archetype: Archetype | null;
   /** Component scores, for the archetype card's decomposition. */
   components: Record<string, number> | null;
   trips: RoundTrip[];
@@ -234,7 +235,7 @@ function correlationCard(i: CardInput): CardSpec | null {
 
 /** Who the ledger says you are, decomposed into the components that said it. */
 function archetypeCard(i: CardInput): CardSpec | null {
-  if (!i.components) return null;
+  if (!i.components || !i.archetype) return null;
   const order = ["adherence", "consistency", "patience", "exposure"] as const;
   return {
     kind: "archetype",
@@ -596,7 +597,7 @@ function wrappedCard(i: CardInput): CardSpec | null {
         : [
             { label: "Transactions read", detail: `${NUM.format(i.transactionCount)}, none of them typed` },
             { label: "Round trips closed", detail: String(i.trips.length) },
-            { label: "Reading as", detail: i.archetype.name },
+            ...(i.archetype ? [{ label: "Reading as", detail: i.archetype.name }] : []),
           ],
     },
     art: {

@@ -1,56 +1,339 @@
 /*
- * One column, centred, and deliberately almost empty — the page is a promise,
- * and a promise padded out with paragraphs reads as an apology for not
- * shipping yet.
+ * The Public tab.
+ *
+ * One column, centred, and led by an object rather than a heading — the card
+ * carrying the name is the page, and the form under it is how you change what
+ * the card says. The page is on the app's black field, but the card itself
+ * takes an artefact's palette, which is the same exemption a share card has:
+ * it is a thing you are meant to want, not an instrument.
  */
 .page {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 56px 44px 140px;
+}
+
+.stage {
+  position: relative;
+  display: grid;
+  /*
+   * A definite track, not `place-items: center` on an auto one. The card is
+   * `width: min(100%, 620px)`, and a percentage against an auto track sized to
+   * its own content is circular — the browser resolved it at 620px inside a
+   * 390px viewport and the page scrolled sideways.
+   */
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  padding: 22px 0 46px;
+}
+
+/*
+ * A faint grid behind the card, the way a proof sheet sits on one. It is
+ * drawn rather than loaded, it never reaches past 4% white, and it is the only
+ * texture on the page.
+ */
+.stage::before {
+  content: "";
+  position: absolute;
+  /*
+   * Vertical bleed only. `-44px` horizontally reached past the page's own
+   * 20px padding at handset width and made the document scroll sideways by
+   * exactly the difference.
+   */
+  inset: -24px 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--ink) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ink) 4%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 78%);
+  pointer-events: none;
+}
+
+/* ── The card ─────────────────────────────────────────────────────────── */
+
+.card {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  overflow: hidden;
+  width: min(100%, 620px);
+  aspect-ratio: 1.62 / 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  padding: 30px 32px;
+  border-radius: 26px;
+  background: linear-gradient(
+    142deg,
+    var(--card-violet-deep) 0%,
+    var(--card-violet-mid) 44%,
+    var(--ember) 128%
+  );
+  /*
+   * `--ink`, not `--on-ink`. `--on-ink` is the ink for a plate that has been
+   * inverted to white, so in dark mode it resolves to near-black — which put
+   * black stamps on a violet card and read 1.05:1. The card's ground is dark
+   * and saturated, so its type is the app's own ink.
+   */
+  color: var(--ink);
+  box-shadow: 0 40px 90px -40px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+/*
+ * The one texture inside it: a soft diagonal sheen on the mark's own flight
+ * axis, so the card reads as a surface rather than as a flat swatch.
+ */
+.cardGrain {
+  position: absolute;
+  inset: -30%;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse at 24% 18%, color-mix(in srgb, var(--ink) 22%, transparent), transparent 58%),
+    linear-gradient(124deg, transparent 38%, color-mix(in srgb, var(--ink) 14%, transparent) 50%, transparent 62%);
+  pointer-events: none;
+}
+
+/* A card with no name yet says so by being quieter, never by being empty. */
+.card[data-unclaimed] .cardName {
+  opacity: 0.6;
+}
+
+.cardTop,
+.cardFoot {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.cardBrand {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0;
-  min-height: 62vh;
-  padding: 80px 24px 120px;
-  text-align: center;
-}
-
-.eyebrow {
-  margin: 0;
-  font-family: var(--font-mono), monospace;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--meta);
-}
-
-.title {
-  margin: 14px 0 0;
-  font-family: var(--font-poster), var(--font-display), system-ui, sans-serif;
-  font-weight: 400;
-  font-size: clamp(44px, 8vw, 76px);
-  line-height: 0.94;
-  letter-spacing: 0.005em;
-  text-transform: uppercase;
+  gap: 9px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
   color: var(--ink);
 }
 
-.tail {
-  margin: 18px 0 0;
-  max-width: 40ch;
-  font-size: 16px;
+.cardStamp {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
   line-height: 1.5;
+  letter-spacing: 0.16em;
+  color: color-mix(in srgb, var(--ink) 82%, transparent);
+}
+
+.cardStamp[data-right] {
+  text-align: right;
+}
+
+.cardName {
+  margin: 0;
+  font-size: clamp(38px, 9vw, 74px);
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  line-height: 1;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+/* ── The lede and the form ────────────────────────────────────────────── */
+
+.lede {
+  max-width: 620px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(34px, 5.4vw, 54px);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1.04;
+  color: var(--ink);
+}
+
+.sub {
+  margin: 16px auto 0;
+  max-width: 46ch;
+  font-size: 17px;
+  line-height: 1.55;
   color: var(--ink3);
 }
 
-.cta {
-  display: inline-flex;
+.form {
+  display: flex;
   align-items: center;
-  min-height: 48px;
-  margin-top: 30px;
-  padding: 0 24px;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 26px;
+  flex-wrap: wrap;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1 260px;
+  max-width: 340px;
+  padding: 0 18px;
+  height: 56px;
+  border-radius: var(--r-pill);
+  background: var(--inset);
+  border: 1px solid var(--line2);
+  transition: border-color 0.16s ease;
+}
+
+.field:focus-within {
+  border-color: var(--ink3);
+}
+
+.at {
+  font-size: 17px;
+  color: var(--meta);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 17px;
+  color: var(--ink);
+}
+
+.input::placeholder {
+  color: var(--meta);
+}
+
+.claim {
+  height: 56px;
+  padding: 0 26px;
+  border: none;
   border-radius: var(--r-pill);
   background: var(--ink-field);
   color: var(--on-ink);
-  font-size: 15px;
+  font-family: inherit;
+  font-size: 16px;
   font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.16s ease;
+}
+
+.claim:hover {
+  opacity: 0.88;
+}
+
+.claim:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.message {
+  flex-basis: 100%;
+  margin: 4px 0 0;
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--moss);
+}
+
+.message[data-failed] {
+  color: var(--loss);
+}
+
+.fine {
+  margin: 18px auto 0;
+  max-width: 48ch;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--meta);
+}
+
+/* ── The contract ─────────────────────────────────────────────────────── */
+
+.contract {
+  margin-top: 104px;
+}
+
+.contractHead {
+  margin: 0 0 26px;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--meta);
+  text-align: center;
+}
+
+.panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+}
+
+.panel {
+  padding: 28px 26px 26px;
+  border-radius: var(--r-panel);
+  background: var(--s1);
+}
+
+.panel[data-tone="moss"] {
+  --panel-lit: var(--moss);
+}
+
+.panel[data-tone="loss"] {
+  --panel-lit: var(--loss);
+}
+
+.panel[data-tone="signal"] {
+  --panel-lit: var(--signal);
+}
+
+.art {
+  display: block;
+  width: 64px;
+  color: var(--panel-lit);
+}
+
+.art svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.panelHead {
+  margin: 18px 0 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.panelBody {
+  margin: 8px 0 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink3);
+}
+
+@media (max-width: 780px) {
+  .page {
+    padding: 32px 20px 108px;
+  }
+
+  .card {
+    padding: 22px 22px;
+    border-radius: 22px;
+  }
+
+  .contract {
+    margin-top: 72px;
+  }
 }

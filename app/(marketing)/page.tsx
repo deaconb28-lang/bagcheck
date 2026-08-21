@@ -7,7 +7,6 @@ import { GoToApp, isSignedIn } from "./GoToApp";
 import { StartFree } from "./StartFree";
 import { FirstWeek } from "./FirstWeek";
 import { PnlChart } from "./PnlChart";
-import { WaitlistForm } from "./WaitlistForm";
 import { WrappedDeck } from "./WrappedDeck";
 import styles from "./landing.module.css";
 
@@ -53,23 +52,6 @@ function Check({ tone }: { tone: "green" | "violet" | "white" }) {
   );
 }
 
-function StatusIcons() {
-  return (
-    <span className={styles.statusIcons}>
-      <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor">
-        <rect x="0" y="8" width="3" height="4" rx="1" />
-        <rect x="4.5" y="5.5" width="3" height="6.5" rx="1" />
-        <rect x="9" y="3" width="3" height="9" rx="1" />
-        <rect x="13.5" y="0" width="3" height="12" rx="1" />
-      </svg>
-      <svg width="26" height="12" viewBox="0 0 26 12" fill="none">
-        <rect x="0.6" y="0.6" width="21" height="10.8" rx="3.2" stroke="currentColor" strokeOpacity="0.6" />
-        <rect x="2.4" y="2.4" width="16" height="7.2" rx="2" fill="currentColor" />
-      </svg>
-    </span>
-  );
-}
-
 function ShareIcon({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -80,27 +62,14 @@ function ShareIcon({ size = 16 }: { size?: number }) {
   );
 }
 
-const HOLDINGS = [
-  { tile: "NV", tone: "nvda", sym: "NVDA", qty: "61.4 shares", val: "$61,204", ret: "+214.6%", dir: "up" },
-  { tile: "AA", tone: "aapl", sym: "AAPL", qty: "88 shares", val: "$24,780", ret: "+18.2%", dir: "up" },
-  { tile: "₿", tone: "btc", sym: "BTC", qty: "0.41 BTC", val: "$38,140", ret: "+41.0%", dir: "up" },
-  { tile: "TS", tone: "tsla", sym: "TSLA", qty: "42 shares", val: "$9,842", ret: "−22.4%", dir: "down" },
-] as const;
-
-const WRAP_TILES = [
-  { label: "TOP BAG", value: "NVDA", tail: "41% of book", tone: "green" },
-  { label: "BEST TRADE", value: "+$18,402", tail: "Mar 14 · NVDA", tone: "green" },
-  { label: "DIAMOND HANDS", value: "411 days", tail: "Longest hold", tone: "mute" },
-  { label: "ONE THAT GOT AWAY", value: "TSLA", tail: "Sold 9 days early", tone: "red" },
-] as const;
-
 export default async function LandingPage() {
   /* Whether to say "Get started free" or "Go to app" at the top of the page. */
   const signedIn = await isSignedIn();
   /*
-   * Wrapped is open; the score is not. So the primary CTA hands off to the
-   * connect flow and the waitlist keeps its own button for the second act —
-   * two doors, each labelled with what is actually behind it.
+   * Two doors and no form. The primary hands off to the connect flow; the
+   * ghost goes to the price, which is the other thing a stranger wants to
+   * know. There is no third: a waitlist for a feature with no date collects
+   * addresses against a promise this repository cannot keep.
    */
   return (
     <main className={styles.page}>
@@ -133,7 +102,7 @@ export default async function LandingPage() {
           </div>
           <h1 className={styles.h1}>
             <span className={styles.h1Strong}>Meet supercruise</span>
-            <span>A flight recorder</span>
+            <span>A fitness tracker</span>
             <span>for your portfolio</span>
           </h1>
           <p className={styles.lede}>
@@ -163,151 +132,38 @@ export default async function LandingPage() {
               <StartFree />
             )}
             {signedIn ? null : <GoToApp />}
-            <a href="#waitlist" className={styles.ctaGhost}>
-              Join the waitlist
-            </a>
+            <Link href="/pricing" className={styles.ctaGhost}>
+              See the plan
+            </Link>
           </div>
         </div>
 
         <div className={styles.heroArt} aria-hidden="true">
           {/* Portfolio phone — a dark handset holding a light account card */}
+          {/*
+            * ── The handsets are photographs of the product ──
+            *
+            * They were drawn in JSX, which meant they were an illustration of
+            * the dashboard kept in step with it by hand — and nobody does
+            * that. The app led with the score for months while the phone here
+            * still showed an account balance and a holdings list, so the page
+            * was advertising a screen the product had stopped being.
+            *
+            * `npm run marketing:shots` captures them from the real app against
+            * the same seeded example ledger `/wrapped?demo=1` serves, so
+            * nothing here is a real person's positions on a public page.
+            * Committed rather than fetched: a landing page must not depend on
+            * a screenshot service to render.
+            */}
           <div className={styles.phoneShell} data-phone="portfolio">
             <div className={styles.phoneScreen}>
-              <div className={styles.screenField} />
-              <div className={styles.acctCard}>
-                <div className={styles.acctHead}>
-                  <span>Portfolio</span>
-                  <span className={styles.connected}>
-                    <i />
-                    Connected
-                  </span>
-                </div>
-                {/*
-                  * ── The read, where the dashboard puts it ──
-                  *
-                  * The dashboard leads with what the conduct looked like and
-                  * puts the money second; this hero led with the money and
-                  * had nothing of the read on it at all, which advertised the
-                  * screen the product used to be. Same order here now: the
-                  * dial, the archetype, the four components, then the value.
-                  *
-                  * Illustrative like everything else in the handset — the
-                  * section's own tail says so — and drawn rather than
-                  * screenshotted, so it scales and needs no request.
-                  */}
-                <div className={styles.readStrip}>
-                  <span className={styles.readDial}>
-                    <svg viewBox="0 0 64 64" fill="none">
-                      <circle cx="32" cy="32" r="26" stroke="var(--mk-line2)" strokeWidth="6" />
-                      {/*
-                        * `pathLength` normalises the circumference to 100, so
-                        * the dash pair is percentage points and 73 is the
-                        * score. Two values, never one — an odd dash list is
-                        * repeated by SVG and lays a second mark on the ring.
-                        */}
-                      <circle
-                        cx="32"
-                        cy="32"
-                        r="26"
-                        pathLength="100"
-                        stroke="var(--mk-amber)"
-                        strokeWidth="6"
-                        strokeLinecap="round"
-                        strokeDasharray="73 27"
-                        transform="rotate(-90 32 32)"
-                      />
-                    </svg>
-                    <b>73</b>
-                  </span>
-                  <span className={styles.readWho}>
-                    <i>TONIGHT&rsquo;S READ</i>
-                    <b>The Steward</b>
-                    <em>3 of 4 above the bar</em>
-                  </span>
-                  <span className={styles.readPips}>
-                    {[70, 83, 78, 55].map((v, i) => (
-                      <span key={i} data-under={v < 60 || undefined}>
-                        <span style={{ transform: `scaleY(${v / 100})` }} />
-                      </span>
-                    ))}
-                  </span>
-                </div>
-                <div className={styles.bigMoney}>
-                  $148,392<span>.11</span>
-                </div>
-                <div className={styles.deltaLine}>
-                  <b>▲ $12,204.86</b>
-                  <span>+8.96%</span>
-                  <i>1Y</i>
-                </div>
-                <svg className={styles.spark} viewBox="0 0 280 96" preserveAspectRatio="none">
-                  <path
-                    d="M0 74 L18 68 L34 78 L52 60 L70 66 L88 48 L104 56 L122 40 L140 52 L158 34 L176 42 L194 26 L212 33 L230 18 L248 24 L266 10 L280 14 L280 96 L0 96 Z"
-                    fill="color-mix(in srgb, var(--mk-green) 10%, transparent)"
-                  />
-                  <path
-                    d="M0 74 L18 68 L34 78 L52 60 L70 66 L88 48 L104 56 L122 40 L140 52 L158 34 L176 42 L194 26 L212 33 L230 18 L248 24 L266 10 L280 14"
-                    fill="none"
-                    stroke="var(--mk-green)"
-                    strokeWidth="2.4"
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <div className={styles.holdings}>
-                  {HOLDINGS.map((h) => (
-                    <div key={h.sym} className={styles.holding}>
-                      <span className={styles.holdTile} data-tone={h.tone}>
-                        {h.tile}
-                      </span>
-                      <span className={styles.holdName}>
-                        <b>{h.sym}</b>
-                        <i>{h.qty}</i>
-                      </span>
-                      <span className={styles.holdVal}>
-                        <b>{h.val}</b>
-                        <i data-dir={h.dir}>{h.ret}</i>
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className={styles.statusBar}>
-                <span>9:41</span>
-                <StatusIcons />
-              </div>
-              <div className={styles.screenNav}>
-                <span className={styles.navBubble}>
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M15 5l-7 7 7 7" />
-                  </svg>
-                </span>
-                <b>Accounts</b>
-                <span className={styles.navBubble} data-dots="">
-                  <i />
-                  <i />
-                  <i />
-                </span>
-              </div>
-              <div className={styles.screenFoot}>
-                <div className={styles.acctChips}>
-                  <span data-acct="rh">RH</span>
-                  <span data-acct="fid">FID</span>
-                  <span data-acct="sch">SCH</span>
-                  <span data-acct="add">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
-                      <path d="M12 5v14M5 12h14" />
-                    </svg>
-                  </span>
-                </div>
-                <div className={styles.secured}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="4" y="10" width="16" height="11" rx="3" />
-                    <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-                  </svg>
-                  Read-only, secured by SnapTrade
-                </div>
-              </div>
+              <img
+                className={styles.phoneShot}
+                src="/marketing/app-dash.png"
+                alt=""
+                width={390}
+                height={844}
+              />
             </div>
           </div>
 
@@ -346,65 +202,13 @@ export default async function LandingPage() {
           {/* Wrapped phone */}
           <div className={styles.phoneShell} data-phone="wrapped">
             <div className={styles.phoneScreen} data-violet="">
-              <div className={styles.wrapTop}>
-                <div className={styles.statusBar} data-inline="">
-                  <span>9:41</span>
-                  <StatusIcons />
-                </div>
-                <div className={styles.screenNav} data-inline="">
-                  <span className={styles.navBubble}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M15 5l-7 7 7 7" />
-                    </svg>
-                  </span>
-                  <b>Your Wrapped</b>
-                  <span className={styles.navBubble} data-dots="">
-                    <i />
-                    <i />
-                    <i />
-                  </span>
-                </div>
-              </div>
-              <div className={styles.wrapBody}>
-                <div className={styles.wrapCard}>
-                  <span className={styles.wrapBlob} />
-                  <div className={styles.wrapCardInner}>
-                    <div className={styles.wrapCardHead}>
-                      <span>2026 WRAPPED</span>
-                      <span>@jordan</span>
-                    </div>
-                    <div className={styles.wrapReturn}>+38.4%</div>
-                    <div className={styles.wrapSub}>Return this year · deposits taken out</div>
-                    <div className={styles.wrapChips}>
-                      <span className={styles.typeChip}>The Conviction Buyer</span>
-                      <span className={styles.tradesChip}>142 trades</span>
-                    </div>
-                  </div>
-                </div>
-                <div className={styles.wrapTiles}>
-                  {WRAP_TILES.map((t) => (
-                    <div key={t.label} className={styles.wrapTile}>
-                      <i>{t.label}</i>
-                      <b>{t.value}</b>
-                      <em data-tone={t.tone}>{t.tail}</em>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className={styles.wrapActions}>
-                <span>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 11a8 8 0 1 0-2.3 5.7" />
-                    <path d="M20 4v7h-7" />
-                  </svg>
-                  Remix
-                </span>
-                <span data-primary="">
-                  <ShareIcon size={15} />
-                  Share Wrapped
-                </span>
-              </div>
-              <span className={styles.phoneHandle} />
+              <img
+                className={styles.phoneShot}
+                src="/marketing/app-wrapped.png"
+                alt=""
+                width={390}
+                height={844}
+              />
             </div>
 
             <div className={`${styles.bubble} ${styles.bestDayBubble}`}>
@@ -587,7 +391,15 @@ export default async function LandingPage() {
               Four things a ledger can actually see: your rules, your rhythm,
               your patience, your exposure. No spreadsheet, no journalling.
             </p>
-            <WaitlistForm tier="waitlist" cta="Join the waitlist" />
+            <div className={styles.soonActions}>
+              <Link href="/start" className={styles.ctaDark}>
+                Start free
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5 12h14" />
+                  <path d="M13 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
             <p className={styles.fine}>Read-only, via SnapTrade. Cancel any time.</p>
           </div>
 
@@ -744,88 +556,59 @@ export default async function LandingPage() {
       <FirstWeek />
 
       {/*
-       * ── The plans ──
+       * ── The plan ──
        *
-       * This was three waitlist tiers with prices nobody could pay, then two
-       * plans of which one was free. Supercruise is a subscription now — one
-       * price, a free month in front of it — so there is one plan card here
-       * and the score's waitlist beside it, which is the only thing on this
-       * section that is genuinely still coming.
+       * Three waitlist tiers nobody could buy, then two plans of which one was
+       * free, then one plan beside a waitlist card for the score. The waitlist
+       * is gone entirely — a form collecting addresses for a thing with no date
+       * is a promise the repository cannot keep — so what is left is one price,
+       * and one card is a portrait shape holding a landscape amount of
+       * information. It lies down: the price and the door on the left, what you
+       * get in two columns beside it.
        */}
-      <section id="waitlist" className={styles.waitlist} data-expand>
+      <section id="plans" className={styles.plans} data-expand>
         <div className={styles.waitGlow} aria-hidden="true" />
         <div className={styles.waitInner}>
-          <div className={styles.waitHead}>
-            <div>
-              {/* Not the pricing page's own headline — a reader who clicks
-                  through should not meet the same sentence twice. */}
-              <span className={styles.eyebrow}>THE PLANS</span>
-              <h2 className={styles.h2}>One plan. First month on us.</h2>
-            </div>
-            <p className={styles.waitCount}>No card. Every card you earn is yours to keep, plan or no plan</p>
+          <div className={styles.planHead}>
+            <span className={styles.eyebrow}>THE PLAN</span>
+            <h2 className={styles.h2}>One plan. First month on us.</h2>
           </div>
 
-          <div className={styles.tiers}>
-            {/*
-              * One plan, one card. This was FREE at $0 forever beside PRO —
-              * a two-column table for a product that now has a single price,
-              * and the free column would be advertising a tier the gates no
-              * longer hand out.
-              */}
-            <div className={styles.tier} data-popular="">
+          <div className={styles.planCard}>
+            <div className={styles.planSide}>
               <span className={styles.popular}>
                 <i />
                 {TRIAL_DAYS} DAYS FREE
               </span>
-              <span className={styles.tierLabel}>SUPERCRUISE</span>
-              <div className={styles.tierPrice}>
+              <div className={styles.planFigure}>
                 <b>${TIER_PRICE.pro.monthly}</b>
                 <span>/mo</span>
               </div>
-              <p className={styles.tierNote}>
+              <p className={styles.planNote}>
                 {TRIAL_DAYS} days free, no card. Then {priceLine()}.
               </p>
-              <ul className={styles.tierList}>
-                {PLAN_INCLUDES.map((f: string) => (
-                  <li key={f}>
-                    <Check tone="green" />
-                    <span>{f}</span>
-                  </li>
-                ))}
-                {Object.values(CAPABILITY_LABEL).map((f) => (
-                  <li key={f}>
-                    <Check tone="white" />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link href="/pricing" className={styles.tierCta} data-solid="">
+              <Link href="/pricing" className={styles.planCta}>
                 See the plan
               </Link>
+              <p className={styles.planFine}>
+                Every card you earn is yours to keep, plan or no plan.
+              </p>
             </div>
 
-            <div className={styles.tier}>
-              <span className={styles.tierLabel}>THE SCORE</span>
-              <div className={styles.tierPrice}>
-                <b>Soon</b>
-              </div>
-              <p className={styles.tierNote} data-mute="">
-                Wrapped works today. The score is next.
-              </p>
-              <ul className={styles.tierList}>
-                {[
-                  "A read on the account, every night",
-                  "Four components, each one measured",
-                  "One email the day it opens",
-                ].map((f) => (
-                  <li key={f}>
-                    <Check tone="violet" />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <WaitlistForm tier="waitlist" cta="Join the waitlist" />
-            </div>
+            <ul className={styles.planList}>
+              {PLAN_INCLUDES.map((f: string) => (
+                <li key={f}>
+                  <Check tone="green" />
+                  <span>{f}</span>
+                </li>
+              ))}
+              {Object.values(CAPABILITY_LABEL).map((f) => (
+                <li key={f}>
+                  <Check tone="white" />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>

@@ -41,7 +41,7 @@ test("every possible profile lands somewhere, and only somewhere", () => {
     for (const c of [0, 100]) {
       for (const p of [0, 100]) {
         for (const e of [0, 100]) {
-          seen.add(archetypeFor(at(a, c, p, e)).key);
+          seen.add(archetypeFor(at(a, c, p, e))!.key);
         }
       }
     }
@@ -50,21 +50,33 @@ test("every possible profile lands somewhere, and only somewhere", () => {
 });
 
 test("the bar is exact — at STRONG a component counts, one below it does not", () => {
-  assert.equal(archetypeFor(at(STRONG, 0, 0, 0)).key, "measured");
-  assert.equal(archetypeFor(at(STRONG - 1, 0, 0, 0)).key, "improviser");
+  assert.equal(archetypeFor(at(STRONG, 0, 0, 0))?.key, "measured");
+  assert.equal(archetypeFor(at(STRONG - 1, 0, 0, 0))?.key, "improviser");
 });
 
 test("the bar is fixed, not relative to the reader's own mean", () => {
   // Both profiles have adherence as their strongest component. Only the one
   // that actually clears the bar is The Measured — a relative bar would put
   // both here, and the badge would stop meaning anything.
-  assert.equal(archetypeFor(at(72, 30, 30, 30)).key, "measured");
-  assert.equal(archetypeFor(at(40, 20, 20, 20)).key, "improviser");
+  assert.equal(archetypeFor(at(72, 30, 30, 30))?.key, "measured");
+  assert.equal(archetypeFor(at(40, 20, 20, 20))?.key, "improviser");
 });
 
-test("a missing profile is The Improviser rather than a crash", () => {
-  assert.equal(archetypeFor(null).key, "improviser");
-  assert.equal(archetypeIndex(null), 0);
+test("no profile is no archetype — never The Improviser by default", () => {
+  /*
+   * This used to answer "improviser" for a missing profile, which reads as a
+   * finding rather than as a gap: The Improviser means the ledger measured
+   * four components and none cleared the bar. An account that has measured
+   * nothing has not earned that sentence about itself.
+   */
+  assert.equal(archetypeFor(null), null);
+  assert.equal(archetypeIndex(null), null);
+});
+
+test("an incomplete profile has no corner of the cube", () => {
+  const partial = { adherence: 80, consistency: 80, patience: null, exposure: null };
+  assert.equal(archetypeFor(partial), null);
+  assert.equal(archetypeIndex(partial), null);
 });
 
 test("lookup by key round-trips, and an unknown key is null not a guess", () => {
@@ -75,8 +87,8 @@ test("lookup by key round-trips, and an unknown key is null not a guess", () => 
 });
 
 test("the strong line names the components, never a benchmark", () => {
-  assert.equal(strongLine(archetypeFor(at(80, 80, 20, 20))), "adherence · consistency above 60");
-  assert.equal(strongLine(archetypeFor(at(10, 10, 10, 10))), "Nothing above 60 yet");
+  assert.equal(strongLine(archetypeFor(at(80, 80, 20, 20))!), "adherence · consistency above 60");
+  assert.equal(strongLine(archetypeFor(at(10, 10, 10, 10))!), "Nothing above 60 yet");
 });
 
 test("no archetype line coaches, grades or exclaims", () => {

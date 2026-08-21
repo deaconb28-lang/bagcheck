@@ -88,6 +88,11 @@ export function buildUserPrompt(facts: InsightFacts): string {
 
 /** Every number the copy is allowed to cite. */
 export function allowedNumbers(facts: InsightFacts): number[] {
+  /*
+   * An unmeasured component is not a number the copy may cite, because there
+   * is no number: `null` here would let a model write "your patience sits at
+   * null" and pass the check on a coincidence.
+   */
   const values = [
     facts.score,
     facts.components.adherence,
@@ -97,7 +102,7 @@ export function allowedNumbers(facts: InsightFacts): number[] {
     facts.transactionCount,
     facts.accountCount,
     ...facts.contributors.map((c) => c.value),
-  ];
+  ].filter((n): n is number => n != null);
   if (facts.previousScore != null) values.push(facts.previousScore);
   if (facts.weekDelta != null) values.push(facts.weekDelta);
   return values;

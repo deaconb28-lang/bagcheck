@@ -66,6 +66,13 @@ export interface ScoreDoc {
   score: number;
   components: ScoreComponents;
   contributors: Contributor[];
+  /**
+   * How many of the four the score stands on. Absent on rows written before
+   * components could be null, which is the honest reading of them: nobody
+   * recorded it, so nobody knows — and the screen counts the non-null
+   * components rather than trusting a number that is not there.
+   */
+  measured?: number;
   computedAt: Date;
 }
 

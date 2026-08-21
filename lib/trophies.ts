@@ -1,5 +1,6 @@
-import { ARCHETYPES, archetypeFor } from "@/lib/archetypes";
+import { ARCHETYPES, STRONG, archetypeFor } from "@/lib/archetypes";
 import { bestStreaks, scoreBand, type ScoredDay } from "@/lib/score/shape";
+import { COMPONENT_KEYS } from "@/lib/score/types";
 import type { RoundTrip } from "@/lib/score/types";
 
 /**
@@ -216,6 +217,69 @@ const ENTRIES: Entry[] = [
     need: 200,
     have: (f) => f.days.length,
   },
+  /*
+   * A night where the ledger could measure all four components at once.
+   *
+   * This one only became possible to earn — or to fail — when a component
+   * with no evidence started returning null instead of a neutral figure. It
+   * is the honest version of "a complete reading", and on a quiet account it
+   * is genuinely hard.
+   */
+  {
+    key: "full-reading",
+    group: "record",
+    name: "A complete reading",
+    requires: "One night with all four components measured",
+    teaser: "components",
+    need: 1,
+    have: (f) => f.days.filter((d) => COMPONENT_KEYS.every((k) => d.components[k] != null)).length,
+  },
+  {
+    key: "all-above",
+    group: "record",
+    name: "All four above the bar",
+    requires: `One night with all four components over ${STRONG}`,
+    teaser: "ring",
+    need: 1,
+    have: (f) =>
+      f.days.filter((d) => COMPONENT_KEYS.every((k) => (d.components[k] ?? -1) >= STRONG)).length,
+  },
+  {
+    key: "five-names",
+    group: "ledger",
+    name: "Five names at once",
+    requires: "Five positions in a single snapshot",
+    teaser: "cardFan",
+    need: 5,
+    have: (f) => f.holdings,
+  },
+  {
+    key: "twenty-names",
+    group: "ledger",
+    name: "Twenty names at once",
+    requires: "Twenty positions in a single snapshot",
+    teaser: "hours",
+    need: 20,
+    have: (f) => f.holdings,
+  },
+  {
+    key: "held-six-months",
+    group: "ledger",
+    name: "Held a name half a year",
+    requires: "One position held a hundred and eighty days",
+    teaser: "cadence",
+    need: 1,
+    have: (f) => f.roundTrips.filter((t) => t.holdDays >= 180).length,
+  },
+  {
+    key: "streak-exit-25",
+    group: "streak",
+    name: "Twenty-five days, no costly exit",
+    requires: "Twenty-five nights in a row with nothing sold against you",
+    teaser: "records",
+    need: 25,
+    have: (_f, best) => best.noCostlyExit,
+  },
 ];
 
 export function trophiesFrom(facts: TrophyFacts): Trophy[] {
@@ -268,7 +332,10 @@ export interface ArchetypeStanding {
 export function archetypeStandings(days: ScoredDay[]): ArchetypeStanding[] {
   const seen = new Map<string, { days: number; firstOn: string }>();
   for (const day of days) {
-    const key = archetypeFor(day.components).key;
+    /* A night with an incomplete profile has no corner and is not counted. */
+    const archetype = archetypeFor(day.components);
+    if (!archetype) continue;
+    const key = archetype.key;
     const found = seen.get(key);
     if (!found) seen.set(key, { days: 1, firstOn: day.date });
     else {
@@ -287,4 +354,22 @@ export function archetypeStandings(days: ScoredDay[]): ArchetypeStanding[] {
       firstOn: found?.firstOn ?? null,
     };
   });
+}
+
+/**
+ * The three the account is closest to, so a reader can see what is next.
+ *
+ * Ranked by how far along a trophy actually is, which is only knowable for the
+ * ones with a real count on both sides — a single-event trophy is either done
+ * or it is not, and slotting it at "0%" would push genuinely close things off
+ * a list whose whole point is closeness. Those come last, in roster order,
+ * only if there is room.
+ */
+export function nextUp(trophies: Trophy[], count = 3): Trophy[] {
+  const open = trophies.filter((t) => !t.earned);
+  const measurable = open
+    .filter((t) => t.progress)
+    .sort((a, b) => b.progress!.have / b.progress!.need - a.progress!.have / a.progress!.need);
+  const single = open.filter((t) => !t.progress);
+  return [...measurable, ...single].slice(0, count);
 }

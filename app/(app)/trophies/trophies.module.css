@@ -96,3 +96,135 @@
     padding: 20px;
   }
 }
+
+/*
+ * ── Closest to earning ──
+ *
+ * A row per trophy: the name, the condition, and a real meter. It is the
+ * front of the case — the reason to come back — and it states counts on both
+ * sides rather than a percentage, because a percentage of a trophy is a
+ * projection wearing a figure.
+ */
+.next {
+  margin-top: 34px;
+  padding: 26px 30px 22px;
+  border-radius: var(--r-panel);
+  background: var(--s1);
+}
+
+.nextHead {
+  margin: 0 0 6px;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+
+.nextList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nextRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) 190px;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.nextRow:last-child {
+  border-bottom: none;
+}
+
+.nextName {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.nextNeed {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  line-height: 1.45;
+  color: var(--meta);
+}
+
+.nextMeter {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.nextMeter::before {
+  content: "";
+  grid-column: 1;
+  grid-row: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--track);
+}
+
+.nextFill {
+  grid-column: 1;
+  grid-row: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ember);
+  transform-origin: left center;
+  animation: meterIn 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.nextSingle {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.nextCount {
+  grid-column: 2;
+  grid-row: 1;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--meta);
+  white-space: nowrap;
+}
+
+@media (max-width: 860px) {
+  .nextRow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .nextMeter,
+  .nextSingle {
+    grid-column: 1;
+  }
+}
+
+/*
+ * Its own copy of the keyframe. CSS modules scope `@keyframes` per file, so a
+ * name defined in `trophyCase.module.css` does not resolve here — the
+ * animation silently does nothing and the meter renders at its finished width,
+ * which is correct but not what was written.
+ */
+@keyframes meterIn {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nextFill {
+    animation: none;
+  }
+}

@@ -195,6 +195,23 @@ export interface RaceEntry {
   value: number;
   /** The reader's own row. Exactly one, when their return is known. */
   you?: boolean;
+  /**
+   * Set on the reader's row when their curve starts after the year does, so
+   * every surface drawing the field can say which window the figure covers.
+   */
+  since?: string | null;
+}
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/**
+ * `YYYY-MM-DD` as "3 May", sliced rather than parsed — `new Date("2026-05-03")`
+ * is UTC midnight and prints as the second west of Greenwich.
+ */
+function shortDay(iso: string): string {
+  const [, month, day] = iso.split("-");
+  const name = MONTHS[Number(month) - 1];
+  return name ? `${Number(day)} ${name}` : iso;
 }
 
 export interface RaceField {
@@ -215,11 +232,38 @@ export interface RaceField {
  * missing from the chart is honest, and a fund flat on the line is a claim
  * nobody made.
  */
-export function raceField(you: number | null, peers: RaceEntry[]): RaceField | null {
+/**
+ * The field, with the reader in it.
+ *
+ * The reader used to be withheld whenever their ledger did not reach the first
+ * fortnight of January, on the reasoning that a six-month figure beside a
+ * fund's twelve is two measurements rather than a comparison. That reasoning
+ * is sound and the remedy was wrong: on a new account it removed the reader
+ * from their own chart for the whole of their first year, which is the one
+ * year they most want to see themselves in.
+ *
+ * So they are always drawn, and the mismatch is **stated on their own row**
+ * rather than hidden by removing it. `since` is the day their curve starts
+ * when it starts late; the row says so in the same line that says what it is,
+ * and the panel's provenance line says it again underneath.
+ */
+export function raceField(
+  you: { value: number; since?: string | null } | null,
+  peers: RaceEntry[],
+): RaceField | null {
   const field = [
     ...peers.filter((p) => Number.isFinite(p.value)),
-    ...(you != null && Number.isFinite(you)
-      ? [{ key: "you", label: "You", note: "Your own book.", value: you, you: true }]
+    ...(you != null && Number.isFinite(you.value)
+      ? [
+          {
+            key: "you",
+            label: "You",
+            note: you.since ? `Your own book, from ${shortDay(you.since)}.` : "Your own book.",
+            value: you.value,
+            you: true,
+            since: you.since ?? null,
+          },
+        ]
       : []),
   ].sort((a, b) => b.value - a.value);
 

@@ -21,6 +21,28 @@ const sell = (date: string, symbol = "AAA", units = 10, price = 120): TxnLite =>
   amount: units * price,
 });
 
+/*
+ * A dense enough ledger that every day in the range is actually scoreable.
+ *
+ * These tests are about ordering and slicing, not about the score — but a
+ * component with no evidence now returns null and a day with fewer than two
+ * measured components is not scored at all, so a fixture of one buy and one
+ * sell produces an empty array and every ordering assertion vanishes with it.
+ * Two trades a week from November gives consistency and exposure something to
+ * read on every day of January.
+ */
+function history(): TxnLite[] {
+  const out: TxnLite[] = [];
+  const start = Date.UTC(2025, 10, 3);
+  for (let i = 0; i < 100; i += 1) {
+    const d = new Date(start + i * 86_400_000);
+    if (d.getUTCDay() === 0 || d.getUTCDay() === 6) continue;
+    const iso = d.toISOString().slice(0, 10);
+    out.push(buy(iso, `S${i % 5}`), sell(iso, `S${i % 5}`));
+  }
+  return out;
+}
+
 test("dateRange is inclusive at both ends", () => {
   assert.deepEqual(dateRange("2026-01-01", "2026-01-04"), [
     "2026-01-01",
@@ -58,7 +80,7 @@ test("earliestDate is null when nothing carries a date", () => {
 
 test("scoreRange returns one score per day, in order", () => {
   const scores = scoreRange({
-    transactions: [buy("2026-01-01"), sell("2026-01-05")],
+    transactions: [...history(), buy("2026-01-01"), sell("2026-01-05")],
     baseline: "swing",
     from: "2026-01-01",
     to: "2026-01-07",
@@ -72,7 +94,7 @@ test("scoreRange returns one score per day, in order", () => {
 
 test("every score is in range and carries its four components", () => {
   const scores = scoreRange({
-    transactions: [buy("2026-01-01"), sell("2026-02-01"), buy("2026-02-03")],
+    transactions: [...history(), buy("2026-01-01"), sell("2026-02-01"), buy("2026-02-03")],
     baseline: "swing",
     from: "2026-01-01",
     to: "2026-02-10",
@@ -81,7 +103,8 @@ test("every score is in range and carries its four components", () => {
     assert.ok(s.score >= 0 && s.score <= 100, `${s.date} scored ${s.score}`);
     for (const key of ["adherence", "consistency", "patience", "exposure"] as const) {
       const v = s.components[key];
-      assert.ok(v >= 0 && v <= 100, `${s.date} ${key} = ${v}`);
+      /* Null is a legal value: it means that component had no evidence. */
+      assert.ok(v === null || (v >= 0 && v <= 100), `${s.date} ${key} = ${v}`);
     }
   }
 });
@@ -93,7 +116,7 @@ test("every score is in range and carries its four components", () => {
  * closing today and changes a score for a day it had not happened on.
  */
 test("a day's score ignores transactions that had not happened yet", () => {
-  const past = [buy("2026-01-02")];
+  const past = [...history(), buy("2026-01-02")];
   const future = [
     ...past,
     sell("2026-06-01"),
@@ -121,7 +144,7 @@ test("a day's score ignores transactions that had not happened yet", () => {
 
 test("days already stored are skipped", () => {
   const scores = scoreRange({
-    transactions: [buy("2026-01-01")],
+    transactions: [...history(), buy("2026-01-01")],
     baseline: "swing",
     from: "2026-01-01",
     to: "2026-01-05",
@@ -135,7 +158,7 @@ test("days already stored are skipped", () => {
 
 test("the last day is recomputed even when already stored", () => {
   const scores = scoreRange({
-    transactions: [buy("2026-01-01")],
+    transactions: [...history(), buy("2026-01-01")],
     baseline: "swing",
     from: "2026-01-01",
     to: "2026-01-03",
@@ -147,19 +170,28 @@ test("the last day is recomputed even when already stored", () => {
   );
 });
 
-test("an empty ledger still scores the range rather than throwing", () => {
+test("an empty ledger scores nothing rather than throwing", () => {
+  /*
+   * It used to return three neutral scores for three days on which nothing
+   * had ever happened. Not throwing was the point of the test and still is;
+   * inventing a score was never the point.
+   */
   const scores = scoreRange({
     transactions: [],
     baseline: "long-term",
     from: "2026-01-01",
     to: "2026-01-03",
   });
-  assert.equal(scores.length, 3);
+  assert.deepEqual(scores, []);
 });
 
 test("undated transactions never reach the scorer", () => {
   const scores = scoreRange({
-    transactions: [{ ...buy("2026-01-01"), date: null } as TxnLite, buy("2026-01-02")],
+    transactions: [
+      ...history(),
+      { ...buy("2026-01-01"), date: null } as TxnLite,
+      buy("2026-01-02"),
+    ],
     baseline: "swing",
     from: "2026-01-01",
     to: "2026-01-02",

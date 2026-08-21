@@ -82,7 +82,7 @@ export function longestStreak(scores: ScoreDoc[], floor = 64): number {
  * here, and because the cast is the awkward part: score components arrive
  * from Mongo as a loose record.
  */
-export function archetypeOf(components: Record<string, number> | null): Archetype {
+export function archetypeOf(components: Record<string, number | null> | null): Archetype | null {
   return archetypeFor((components ?? null) as ScoreComponents | null);
 }
 

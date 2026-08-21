@@ -1,0 +1,168 @@
+/*
+ * The map is a box with absolutely-positioned tiles in percentages, so one
+ * drawing works at 150px in the hero and at 520px in its own panel with no
+ * second layout to keep in step.
+ */
+.map {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--r-tile);
+  overflow: hidden;
+  background: var(--tile);
+}
+
+.map[data-compact] {
+  aspect-ratio: 1 / 1;
+}
+
+/*
+ * A tile's fill is its direction and its strength is its return.
+ *
+ * `--lit` runs 0–1 and the mix runs 10% → 62%, so a flat name is a plate that
+ * is barely tinted and a big winner is unmistakable from across a room. The
+ * 1px gap is drawn as an inset ring rather than a margin, because a margin on
+ * a percentage-positioned tile changes its area and the area is the figure.
+ */
+.tile {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1.5px var(--bg);
+  background: color-mix(in srgb, var(--heat) calc(10% + var(--lit, 0) * 52%), var(--tile));
+  animation: tileIn 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: filter 0.16s ease;
+}
+
+.tile[data-dir="up"] {
+  --heat: var(--moss);
+}
+
+.tile[data-dir="down"] {
+  --heat: var(--loss);
+}
+
+/* No cost basis on file is neutral, never a green. */
+.tile[data-dir="flat"] {
+  --heat: var(--signal);
+}
+
+.tile:hover {
+  filter: brightness(1.18);
+}
+
+@keyframes tileIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}
+
+.inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  padding: 6px;
+  text-align: center;
+}
+
+.symbol {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--ink);
+}
+
+/*
+ * Type on a tile is white, and the ramp it may use stops at `--ink2`.
+ *
+ * A lit tile is a saturated fill, not a plate: `--meta` at 58% over a green at
+ * 62% mix reads 3.6:1, which the sweep caught on every width at once. The
+ * dim end of this ramp is for type on the *ground*, and a tile is not the
+ * ground — so the figures take full ink and the share takes the step below it.
+ */
+.pct {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.weight {
+  font-size: 10.5px;
+  line-height: 1;
+  color: var(--ink2);
+}
+
+/*
+ * What a tile has room to say is a property of the tile.
+ *
+ * A 2% holding in a 16:10 box is about forty pixels tall; three lines of type
+ * in it is a smudge, and a ticker sliced in half reads as a broken chart. So a
+ * small tile drops its figures, and a very small one keeps only its colour and
+ * its place in the aria-label — which is the accessible chart and states every
+ * name and share in full whatever the tiles do.
+ */
+.tile[data-room="tight"] .symbol {
+  font-size: 12px;
+}
+
+.tile[data-room="tight"] .pct {
+  font-size: 10.5px;
+}
+
+.tile[data-room="tight"] .weight,
+.tile[data-room="none"] .pct,
+.tile[data-room="none"] .weight {
+  display: none;
+}
+
+.tile[data-room="none"] .symbol {
+  font-size: 9.5px;
+  letter-spacing: -0.03em;
+}
+
+.map[data-compact] .symbol {
+  font-size: 12.5px;
+}
+
+.map[data-compact] .pct {
+  font-size: 10.5px;
+}
+
+.map[data-compact] .weight {
+  display: none;
+}
+
+/*
+ * The compact map is about 210px across, so a percentage point of width is two
+ * pixels. A tile that is roomy in the panel is a sliver here, and the second
+ * line is the first thing to go.
+ */
+.map[data-compact] .tile:not([data-room="full"]) .pct {
+  display: none;
+}
+
+.map[data-compact] .tile[data-room="none"] .symbol {
+  font-size: 8.5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile {
+    animation: none;
+    transition: none;
+  }
+}
+
+@media (max-width: 780px) {
+  .map {
+    aspect-ratio: 4 / 3;
+  }
+}

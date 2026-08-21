@@ -165,6 +165,6 @@ async function recapInput(
     redSessions: week.filter((d) => d.realised < 0).length,
     longestHoldDays:
       (derived?.roundTrips ?? []).reduce((m, t) => Math.max(m, t.holdDays), 0) || null,
-    archetype: archetypeFor(latest.components).name,
+    archetype: archetypeFor(latest.components)?.name ?? null,
   };
 }

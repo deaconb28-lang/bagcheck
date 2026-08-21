@@ -90,13 +90,18 @@ export function scoreRange(input: BackfillInput): ScoreResult[] {
     /* The day the sync just touched is always recomputed. */
     if (input.have?.has(date) && date !== last) continue;
 
-    out.push(
-      computeScore({
-        date,
-        baseline: input.baseline,
-        transactions: dated.slice(0, cursor),
-      }),
-    );
+    /*
+     * A day the ledger cannot support two components on is not scored, and a
+     * backfill skips it rather than inventing one. Early in a history that is
+     * most days — which is the honest shape of an account that had not done
+     * anything yet.
+     */
+    const scored = computeScore({
+      date,
+      baseline: input.baseline,
+      transactions: dated.slice(0, cursor),
+    });
+    if (scored) out.push(scored);
   }
 
   return out;

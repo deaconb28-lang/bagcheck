@@ -103,30 +103,47 @@
 }
 
 /*
- * Below the wide breakpoint the tabs keep their row and the bar scrolls with
- * the page rather than sticking — a sticky bar that wraps to two lines eats a
- * third of a phone screen and never gives it back.
+ * ── The bar stays one row, at every width ───────────────────────────────
+ *
+ * It used to wrap: the brand and tabs took a full-width row, the sync pill and
+ * avatar took another, and on a 390px handset that is three stacked rows and
+ * about two hundred pixels of chrome before the product says anything. The
+ * comment above the old rule even said a wrapping bar eats a third of a phone
+ * screen — and then wrapped it, and unstuck it to compensate.
+ *
+ * One row instead, still sticky, about 60px tall. What gives way as the window
+ * narrows is the furniture, in the order it can be spared: the tabs start
+ * scrolling, then the sync pill goes, then the wordmark. The mark, the tabs
+ * and the avatar are what survive, because those are the three things a reader
+ * navigates with.
  */
 @media (max-width: 1080px) {
   .head {
-    position: static;
-    flex-wrap: wrap;
-    gap: 18px;
-    padding: 18px 20px;
+    gap: 16px;
+    padding: 14px 20px;
   }
 
   .left {
-    gap: 22px;
-    width: 100%;
-    flex-wrap: wrap;
+    gap: 20px;
+    flex: 1;
+    min-width: 0;
   }
 
   .tabs {
-    gap: 22px;
+    gap: 20px;
     font-size: 15px;
+    min-width: 0;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
     scrollbar-width: none;
     padding-bottom: 2px;
+    /*
+     * The row fades out at its trailing edge rather than ending on a hard cut,
+     * which is the only affordance a scrollable row of words gets: a label
+     * sliced mid-glyph reads as a layout bug, a label fading reads as more.
+     */
+    /* A mask stop is an alpha channel, not a palette value. */
+    mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
   }
 
   .tabs::-webkit-scrollbar {
@@ -134,7 +151,24 @@
   }
 
   .right {
-    width: 100%;
-    justify-content: space-between;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 860px) {
+  .sync {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .head {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  /* The mark alone is the brand at this width; it is the same brand. */
+  .brand span {
+    display: none;
   }
 }

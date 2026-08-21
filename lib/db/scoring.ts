@@ -23,7 +23,7 @@ export const BACKFILL_DAYS = 730;
  * as one doc per user per day. The stored styleBaseline on the
  * connection wins; otherwise the baseline is inferred from cadence.
  */
-export async function scoreUser(userId: string, date = todayISO()): Promise<ScoreResult> {
+export async function scoreUser(userId: string, date = todayISO()): Promise<ScoreResult | null> {
   // The unique {userId, date} index must exist before the upsert below,
   // which may run before any sync has created it.
   await ensureIndexes();
@@ -47,6 +47,16 @@ export async function scoreUser(userId: string, date = todayISO()): Promise<Scor
 
   const baseline = conn?.styleBaseline ?? inferBaseline(txns, date);
   const result = computeScore({ date, baseline, transactions: txns });
+  /*
+   * No score is a real outcome, and it does not get written.
+   *
+   * A night the ledger cannot support at least two of the four components is
+   * a night with nothing to say, and storing a row for it would put a figure
+   * in the history that nobody measured — which every screen downstream would
+   * then band, streak, rank and draw. The dashboard already handles an account
+   * with no scores: `view.read` is null and the money leads.
+   */
+  if (!result) return null;
 
   await scores.updateOne(
     { userId, date },
@@ -58,6 +68,7 @@ export async function scoreUser(userId: string, date = todayISO()): Promise<Scor
         score: result.score,
         components: result.components,
         contributors: result.contributors,
+        measured: result.measured,
         computedAt: new Date(),
       },
     },

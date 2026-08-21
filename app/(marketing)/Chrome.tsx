@@ -38,9 +38,6 @@ export async function MarketingNav({ current }: { current?: "pricing" }) {
         <Link href="/start" className={styles.navGhost}>
           Get started free
         </Link>
-        <Link href="/#waitlist" className={styles.navGhost} data-hide-narrow="">
-          Join the waitlist
-        </Link>
       </div>
     </header>
   );

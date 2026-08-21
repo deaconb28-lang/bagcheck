@@ -530,21 +530,20 @@ html[data-mode="dark"] {
    * palette value does: so a component never states a hex.
    */
   /*
-   * ── The wedge palette: the one place a value may mean "which" ──
+   * ── There is no wedge palette any more ──
    *
-   * A part-to-whole chart is the exception every other rule here has to make:
-   * with nothing per slice, nothing ties an arc to its legend row. On a black
-   * and white screen the distinguishing device is lightness, so this is six
-   * fixed steps from full ink down to the ground, ordered by weight — the
-   * largest holding is always white and the remainder always the darkest step.
-   * They identify by rank, which is the one thing rank is honest about here.
+   * Six fixed hues — violet, amber, green, red, blue and a neutral — existed
+   * so a pie could identify its slices, which is the one thing a palette of
+   * five families with one meaning each cannot do. They were the single
+   * written exemption from that rule in this file.
+   *
+   * The allocation ring is gone and a treemap replaced it: area says how much,
+   * order says which, and the fill goes back to meaning money. Nothing needs
+   * the exemption, so it is withdrawn rather than left lying about for the
+   * next chart to reach for. `--w1`–`--w5` above are ordered steps down
+   * `--signal` and are what a part-to-whole *bar* takes — exposure, in the
+   * family that means exposure.
    */
-  --wedge-1: #a855f7;
-  --wedge-2: #f59e0b;
-  --wedge-3: #35e07f;
-  --wedge-4: #ff5a70;
-  --wedge-5: #60a5fa;
-  --wedge-rest: rgba(255, 255, 255, 0.3);
 
   --chrome: rgba(0, 0, 0, 0.92);
   --nav-dim: rgba(255, 255, 255, 0.62);

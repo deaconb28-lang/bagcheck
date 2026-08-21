@@ -4,7 +4,7 @@ import styles from "./app.module.css";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   // Locked until launch: the app group exists but the doors are shut. The
-  // landing carries the waitlist. Open by default; APP_LOCKED=1 shuts it.
+  // landing carries the story. Open by default; APP_LOCKED=1 shuts it.
   if (appLocked()) redirect("/");
 
   return (

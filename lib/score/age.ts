@@ -47,6 +47,13 @@ export interface AgeInput {
 export function investorAge(input: AgeInput): number | null {
   const c = input.components;
   if (!c) return null;
+  /*
+   * Age is read off three of the four components, so it needs all three. It
+   * used to take whatever number was there, which after the neutral defaults
+   * meant it was reading three constants and reporting a confident age for an
+   * account that had proved nothing.
+   */
+  if (c.patience == null || c.adherence == null || c.consistency == null) return null;
 
   const unit = (n: number) => Math.max(0, Math.min(1, n));
   const years =

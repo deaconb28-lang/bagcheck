@@ -33,7 +33,8 @@ export interface RecapInput {
   greenSessions: number;
   redSessions: number;
   longestHoldDays: number | null;
-  archetype: string;
+  /** Null when the four components are not all measured yet. */
+  archetype: string | null;
 }
 
 const BASE = process.env.APP_URL || "https://supercruise.app";
@@ -108,13 +109,17 @@ export function weeklyRecap(input: RecapInput): EmailContent {
     blocks.push({
       eyebrow: "Longest hold still open",
       value: String(input.longestHoldDays),
-      tail: `Days. You are reading as ${input.archetype} on this week's components.`,
+      tail: input.archetype
+        ? `Days. You are reading as ${input.archetype} on this week's components.`
+        : "Days scored this week.",
     });
   }
 
   return {
     subject: `Supercruise — your week of ${input.weekOf}`,
-    lede: `Seven days as ${input.archetype}, read from your own ledger.`,
+    lede: input.archetype
+      ? `Seven days as ${input.archetype}, read from your own ledger.`
+      : "Seven days, read from your own ledger.",
     blocks,
     provenance: `Week of ${input.weekOf} · read from your brokerage`,
     cta: { label: "Open Wrapped", href: `${BASE}/wrapped` },

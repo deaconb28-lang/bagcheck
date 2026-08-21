@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { archetypeStandings, trophiesFrom, TROPHY_GROUPS } from "./trophies";
+import { archetypeStandings, nextUp, trophiesFrom, TROPHY_GROUPS } from "./trophies";
 import type { TrophyFacts } from "./trophies";
 import type { ScoredDay } from "./score/shape";
 import type { RoundTrip } from "./score/types";
@@ -112,4 +112,27 @@ test("an inhabited archetype counts its nights and keeps the earliest", () => {
   assert.equal(lit.length, 2, "two distinct profiles, two archetypes");
   const strong = standings.find((s) => s.days === 2);
   assert.equal(strong?.firstOn, "2026-01-09", "the earliest night, whatever order they arrived in");
+});
+
+test("next up ranks by how close a trophy actually is", () => {
+  const trophies = trophiesFrom({ ...empty, days: run(9), roundTrips: [trip()], holdings: 4 });
+  const next = nextUp(trophies, 3);
+  assert.equal(next.length, 3);
+  assert.ok(next.every((t) => !t.earned), "nothing already earned is 'next'");
+  /* Nine of ten nights is closer than four of twenty names. */
+  assert.equal(next[0].key, "nights-10");
+});
+
+test("a complete reading needs all four components measured", () => {
+  const partial = [
+    day({ date: "2026-01-01", components: { adherence: 80, consistency: 80, patience: null, exposure: null } }),
+  ];
+  assert.equal(
+    trophiesFrom({ ...empty, days: partial }).find((t) => t.key === "full-reading")?.earned,
+    false,
+  );
+  assert.equal(
+    trophiesFrom({ ...empty, days: run(1) }).find((t) => t.key === "full-reading")?.earned,
+    true,
+  );
 });

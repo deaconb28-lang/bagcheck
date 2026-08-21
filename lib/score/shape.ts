@@ -48,7 +48,11 @@ export function scoreBand(score: number): 1 | 2 | 3 | 4 {
 function shapeOf(day: ScoredDay): DayShape {
   // Exposure running under its floor is the more interesting reading, so it
   // wins over the headline score.
-  if (day.components.exposure < EXPOSED) return "exposed";
+  /*
+   * A null exposure is not a low one. With nothing measured there is no
+   * shape to report beyond what the headline score says.
+   */
+  if (day.components.exposure != null && day.components.exposure < EXPOSED) return "exposed";
   if (day.score >= KEPT) return "kept";
   if (day.score >= PARTIAL) return "partial";
   return "empty";
@@ -99,7 +103,7 @@ export function activeStreaks(days: ScoredDay[]): Streak[] {
 
   let steadyExposure = 0;
   for (const day of desc) {
-    if (day.components.exposure < EXPOSED) break;
+    if (day.components.exposure == null || day.components.exposure < EXPOSED) break;
     steadyExposure += 1;
   }
   if (steadyExposure >= 3) {
@@ -133,7 +137,8 @@ export type StreakKind = "insideRules" | "noCostlyExit" | "steadyExposure";
 const CONTINUES: Record<StreakKind, (day: ScoredDay) => boolean> = {
   insideRules: (day) => day.score >= PARTIAL,
   noCostlyExit: (day) => !day.contributors.some((c) => c.tone === "clay"),
-  steadyExposure: (day) => day.components.exposure >= EXPOSED,
+  /* Unmeasured breaks the run: a night nobody read is not a night inside the band. */
+  steadyExposure: (day) => day.components.exposure != null && day.components.exposure >= EXPOSED,
 };
 
 /**

@@ -1,7 +1,8 @@
 import { STRONG } from "@/lib/archetypes";
+import { COMPONENT_KEYS } from "@/lib/score/types";
 import { Avatar } from "@/components/primitives";
 import { CountUp, ScoreRing } from "@/components/idioms";
-import { AllocationDonut } from "./Charts";
+import { Heatmap } from "./Heatmap";
 import type { Read } from "@/lib/portfolio/types";
 import styles from "./hero.module.css";
 
@@ -36,31 +37,43 @@ const LABEL: Record<string, string> = {
 };
 
 /** A component as a small dial. Under the bar it draws grey and says so. */
-function Arc({ name, value }: { name: string; value: number }) {
+/**
+ * One component.
+ *
+ * **A null value is drawn, not skipped.** The four are a fixed set and the
+ * reader should be able to see which of them the ledger has not been able to
+ * read yet — an empty track with an em dash says "not measured", where three
+ * arcs and a gap says "something failed to render". It carries no arc, because
+ * a partial arc under a dash would be a figure drawn for a number that does
+ * not exist.
+ */
+function Arc({ name, value }: { name: string; value: number | null }) {
   const size = 66;
   const stroke = 6;
   const r = size / 2 - stroke / 2 - 1;
   const c = 2 * Math.PI * r;
-  const strong = value >= STRONG;
+  const strong = value != null && value >= STRONG;
 
   return (
-    <div className={styles.arc} data-strong={strong || undefined}>
+    <div className={styles.arc} data-strong={strong || undefined} data-empty={value == null || undefined}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--track)" strokeWidth={stroke} />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={stroke}
-          strokeLinecap="round"
-          strokeDasharray={c.toFixed(1)}
-          strokeDashoffset={(c * (1 - Math.max(0, Math.min(100, value)) / 100)).toFixed(1)}
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
-        />
+        {value != null ? (
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={r}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={stroke}
+            strokeLinecap="round"
+            strokeDasharray={c.toFixed(1)}
+            strokeDashoffset={(c * (1 - Math.max(0, Math.min(100, value)) / 100)).toFixed(1)}
+            transform={`rotate(-90 ${size / 2} ${size / 2})`}
+          />
+        ) : null}
       </svg>
-      <span className={`num ${styles.arcValue}`}>{Math.round(value)}</span>
+      <span className={`num ${styles.arcValue}`}>{value == null ? "—" : Math.round(value)}</span>
       <span className={styles.arcLabel}>{LABEL[name] ?? name}</span>
     </div>
   );
@@ -75,7 +88,7 @@ export function ScoreHero({
   read: Read;
   year: number;
   /** The book, for the small ring beside the read. Empty hides it. */
-  allocation?: Array<{ key: string; label: string; value: number }>;
+  allocation?: Array<{ key: string; label: string; value: number; pnlPct?: number | null }>;
   /**
    * The night's written reading, and the one thing on this screen a model
    * wrote.
@@ -90,7 +103,8 @@ export function ScoreHero({
   note?: { sentence: string; tail: string } | null;
 }) {
   const { archetype, components } = read;
-  const above = archetype.strong.length;
+  const measured = COMPONENT_KEYS.filter((k) => components[k] != null).length;
+  const above = COMPONENT_KEYS.filter((k) => (components[k] ?? 0) >= STRONG).length;
 
   return (
     <section className={styles.hero} aria-labelledby="hero-score">
@@ -105,7 +119,9 @@ export function ScoreHero({
           */}
         <div className={styles.ringWrap}>
           <ScoreRing score={read.score} size={228} bare pitch={read.delta}>
-            <Avatar archetype={archetype.key} size="var(--hero-avatar, 132px)" shape="circle" />
+            {archetype ? (
+              <Avatar archetype={archetype.key} size="var(--hero-avatar, 132px)" shape="circle" />
+            ) : null}
           </ScoreRing>
         </div>
 
@@ -122,8 +138,28 @@ export function ScoreHero({
               </span>
             ) : null}
           </div>
-          <h1 className={`poster ${styles.name}`}>{archetype.name}</h1>
-          <p className={styles.line}>{archetype.line}</p>
+          {/*
+            * The character and its name only appear once all four components
+            * are measured. An archetype is a corner of a four-bit cube; with
+            * an axis missing there is no corner, and a confident name beside
+            * somebody's own ledger is the loudest claim this product makes.
+            */}
+          {archetype ? (
+            <>
+              <h1 className={`poster ${styles.name}`}>{archetype.name}</h1>
+              <p className={styles.line}>{archetype.line}</p>
+            </>
+          ) : (
+            <>
+              <h1 className={`poster ${styles.name}`} data-pending="">
+                {measured} of 4 read
+              </h1>
+              <p className={styles.line}>
+                Your type lands once the ledger can measure all four. Until then the score
+                is built from the ones it can.
+              </p>
+            </>
+          )}
 
           {/*
             * The instrument speaking, rather than the archetype naming itself.
@@ -201,7 +237,14 @@ export function ScoreHero({
           */}
         {allocation.length ? (
           <div className={styles.book}>
-            <AllocationDonut slices={allocation} size={150} compact />
+            <Heatmap
+              items={allocation.map((slice) => ({
+                symbol: slice.label,
+                value: slice.value,
+                pnlPct: slice.pnlPct ?? null,
+              }))}
+              compact
+            />
           </div>
         ) : null}
       </div>
@@ -210,10 +253,17 @@ export function ScoreHero({
         {(["adherence", "consistency", "patience", "exposure"] as const).map((key) => (
           <Arc key={key} name={key} value={components[key]} />
         ))}
+        {/*
+          * The note says what the score was built from before it says how the
+          * components landed. A reader looking at an em dash needs to know it
+          * is an unread component rather than a zero.
+          */}
         <p className={styles.arcsNote}>
-          {above === 4
-            ? `All 4 above ${STRONG}.`
-            : `${above} of 4 above ${STRONG}. The character fills in as the rest clear the bar.`}
+          {measured < 4
+            ? `Scored on ${measured} of 4. A dash is a component your ledger has not shown yet.`
+            : above === 4
+              ? `All 4 above ${STRONG}.`
+              : `${above} of 4 above ${STRONG}. The character fills in as the rest clear the bar.`}
         </p>
       </div>
     </section>

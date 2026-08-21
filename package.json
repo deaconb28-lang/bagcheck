@@ -23,6 +23,7 @@
     "dash:art": "node scripts/generate-dash-art.mjs",
     "wrapped:backgrounds": "node --import tsx scripts/generate-backgrounds.mjs",
     "wrapped:templates": "node scripts/build-wrapped-templates.mjs",
+    "marketing:shots": "node --import tsx scripts/marketing-shots.mjs",
     "wrapped:check": "node --import tsx scripts/personalize-wrapped.mjs",
     "wrapped:metrics": "node scripts/measure-hero-metrics.mjs",
     "db:indexes": "node --import tsx scripts/db-indexes.mjs",

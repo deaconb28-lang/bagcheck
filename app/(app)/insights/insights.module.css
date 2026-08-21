@@ -192,3 +192,153 @@
     font-size: 24px;
   }
 }
+
+/*
+ * ── Straight off the book ──────────────────────────────────────────────
+ *
+ * The reads a first sync already supports. They sit above the behaviour
+ * findings and read differently on purpose: a finding is a card with a chart
+ * across the top, because it is evidence; these are statements of fact about
+ * what is on file, so they are a figure and a sentence and nothing else.
+ */
+.firstBand {
+  margin-bottom: 34px;
+}
+
+.firstHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.firstTitle {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.firstNote {
+  margin: 0;
+  font-size: 14px;
+  color: var(--meta);
+}
+
+.firstGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.firstCard {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 26px 26px;
+  border-radius: var(--r-panel);
+  background: var(--s1);
+}
+
+.firstCard[data-tone="signal"] {
+  --read-lit: var(--signal);
+}
+
+.firstCard[data-tone="moss"] {
+  --read-lit: var(--moss);
+}
+
+.firstCard[data-tone="loss"] {
+  --read-lit: var(--loss);
+}
+
+.firstCard[data-tone="accent"] {
+  --read-lit: var(--accent);
+}
+
+.firstEyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--read-lit, var(--meta));
+}
+
+.firstFigure {
+  margin-top: 14px;
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.firstCardHead {
+  margin: 14px 0 0;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.firstBody {
+  margin: 8px 0 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink3);
+}
+
+/*
+ * ── The clock on the behaviour reads ──
+ *
+ * A real subtraction of two things on file — market days elapsed against the
+ * floor — and never a date. The meter's finished state is its true width, so a
+ * reader whose animation never runs still sees where they are.
+ */
+.waiting {
+  margin-bottom: 34px;
+  padding: 28px 30px 30px;
+  border-radius: var(--r-panel);
+  background: var(--s1);
+}
+
+.waitingTitle {
+  margin: 12px 0 0;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+}
+
+.waitingTrack {
+  display: block;
+  height: 3px;
+  margin-top: 20px;
+  border-radius: 2px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.waitingTrack i {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+  transform-origin: left center;
+  animation: waitFill 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes waitFill {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .waitingTrack i {
+    animation: none;
+  }
+}

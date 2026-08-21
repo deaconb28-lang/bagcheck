@@ -156,17 +156,25 @@ export default async function ProfilePage() {
         subtitle={`${baseline} baseline · ${connection ? `${connection.accounts.length} linked` : "no brokerage"}`}
       />
 
-      <Card hero>
-        <div className={styles.archBlock}>
-          <Avatar archetype={archetype.key} size={72} />
-          <div className={styles.block}>
-            <Eyebrow>Your archetype</Eyebrow>
-            <h2 className={`disp ${styles.archetype}`}>{archetype.name}</h2>
-            <p className={styles.body}>{archetype.line}</p>
-            <span className={styles.archStrong}>{strongLine(archetype)}</span>
+      {/*
+        * The archetype is absent until all four components are measured, so
+        * this block is too. A card headed "Your archetype" over a default
+        * would be the product naming somebody off a ledger that proved
+        * nothing about them.
+        */}
+      {archetype ? (
+        <Card hero>
+          <div className={styles.archBlock}>
+            <Avatar archetype={archetype.key} size={72} />
+            <div className={styles.block}>
+              <Eyebrow>Your archetype</Eyebrow>
+              <h2 className={`disp ${styles.archetype}`}>{archetype.name}</h2>
+              <p className={styles.body}>{archetype.line}</p>
+              <span className={styles.archStrong}>{strongLine(archetype)}</span>
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      ) : null}
 
       {percentile != null && latest ? (
         <Card>

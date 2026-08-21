@@ -220,7 +220,14 @@ export interface Read {
   /** Against the oldest of the last seven scored days. Null under two. */
   delta: number | null;
   components: ScoreComponents;
-  archetype: Archetype;
+  /**
+   * Null until all four components are measured.
+   *
+   * An archetype is a corner of a four-bit cube and a corner needs a value on
+   * every axis. It is also the one thing in this product that goes beside a
+   * person's name, so it is the last claim that may be made from a default.
+   */
+  archetype: Archetype | null;
   /** Top movers behind today's number, already ranked. */
   contributors: Contributor[];
   /** Only runs that are live today. Empty below their own floors. */
@@ -259,7 +266,12 @@ export interface DashboardView {
   fieldAbsence: "market-key" | "too-few-funds" | "year-too-short" | null;
   /** SPY's own year, for the return card's comparison line. */
   index: number | null;
-  allocation: Array<{ key: string; label: string; value: number }>;
+  /**
+   * The book as the heatmap draws it: value is the tile's area, `pnlPct` is
+   * how it is lit. The return travels with the weight because the map states
+   * both, where the ring it replaced could only state one.
+   */
+  allocation: Array<{ key: string; label: string; value: number; pnlPct: number | null }>;
   /**
    * The book, position by position, with what each is up or down.
    *

@@ -178,21 +178,36 @@ export const ARCHETYPES: Archetype[] = [
   },
 ];
 
-/** Index of a component profile in the table above. */
-export function archetypeIndex(components: ScoreComponents | null): number {
-  if (!components) return 0;
+/**
+ * Index of a component profile in the table above, or `null` when the profile
+ * is not complete.
+ *
+ * **All four have to be measured.** The cube has four axes and a corner needs
+ * a value on each; a missing component used to read as "below the bar", which
+ * silently sorted every thin account into The Improviser and every account
+ * with a lucky default into The Composed. Neither was a reading.
+ */
+export function archetypeIndex(components: ScoreComponents | null): number | null {
+  if (!components) return null;
+  if (ORDER.some((key) => components[key] == null)) return null;
   return ORDER.reduce(
-    (bits, key, i) => bits | ((components[key] >= STRONG ? 1 : 0) << (3 - i)),
+    (bits, key, i) => bits | ((components[key]! >= STRONG ? 1 : 0) << (3 - i)),
     0,
   );
 }
 
 /**
- * The archetype a profile lands in. Never null — sixteen corners cover every
- * possible profile, including the one where nothing is above the bar.
+ * The archetype a profile lands in, or `null` when the ledger has not measured
+ * all four.
+ *
+ * It used to be "never null — sixteen corners cover every possible profile",
+ * which was true of a complete profile and quietly false of an incomplete one.
+ * An archetype is the one thing in this product that goes beside a person's
+ * name; it is the last claim that should be made from a default.
  */
-export function archetypeFor(components: ScoreComponents | null): Archetype {
-  return ARCHETYPES[archetypeIndex(components)];
+export function archetypeFor(components: ScoreComponents | null): Archetype | null {
+  const i = archetypeIndex(components);
+  return i == null ? null : ARCHETYPES[i];
 }
 
 export function archetypeByKey(key: string): Archetype | null {

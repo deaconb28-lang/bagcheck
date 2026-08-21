@@ -58,6 +58,7 @@ const SCREENS = [
   { key: "holdings", path: "/holdings", modes: ["dark"] },
   { key: "insights", path: "/insights", modes: ["dark"] },
   { key: "trophies", path: "/trophies", modes: ["dark"] },
+  { key: "public", path: "/public", modes: ["dark"] },
   { key: "wrapped", path: "/wrapped", modes: ["dark"] },
   { key: "profile", path: "/profile", modes: ["dark"] },
   /*
@@ -91,7 +92,7 @@ const SECTIONS = [
   { key: "landing-deck", path: "/", selector: "#deck" },
   { key: "landing-soon", path: "/", selector: "#soon" },
   { key: "landing-first-week", path: "/", selector: "#demo" },
-  { key: "landing-plans", path: "/", selector: "#waitlist" },
+  { key: "landing-plans", path: "/", selector: "#plans" },
   { key: "pricing-plans", path: "/pricing", selector: "section:nth-of-type(2)" },
   /*
    * The four app pages, whole. Every other shot here is a viewport, which is
@@ -116,6 +117,8 @@ const SECTIONS = [
    * looked at — an earned tile is the easy case.
    */
   { key: "page-trophies", path: "/trophies", selector: '[class*="chrome_page"]', mode: "dark" },
+  /* The handle card, the reservation and the contract, whole. */
+  { key: "page-public", path: "/public", selector: "main", mode: "dark" },
 ];
 
 /* ── Probes ──────────────────────────────────────────────────────────────── */

@@ -486,7 +486,7 @@ test("no quotes at all reads as a missing market key, not a short year", () => {
  * Before this the whole block vanished, which on a new account meant no race
  * all year — and a new account is every account at some point.
  */
-test("a short year withholds the reader's row, not the field", () => {
+test("a short year draws the reader anyway, with the window stated on the row", () => {
   const view = dash({
     peers: [
       { key: "SPY", label: "S&P 500", note: "", value: 0.117 },
@@ -500,8 +500,17 @@ test("a short year withholds the reader's row, not the field", () => {
     }),
   });
   assert.ok(view.field, "the funds still race");
-  assert.equal(view.field?.place, null, "the reader is not placed in it");
-  assert.equal(view.field?.of, 2);
+  /*
+   * Two earlier passes withheld something here: first the whole field, then
+   * the reader's row. Both were avoiding a part-year figure beside a full-year
+   * one — which is a real problem with a better answer than deleting the row.
+   * The reader is drawn, placed, and their row says the window it covers.
+   */
+  const you = view.field?.rows.find((r) => r.you);
+  assert.ok(you, "the reader is in their own field");
+  assert.match(you.note, /1 Jun/, "the row states where the reader's curve starts");
+  assert.equal(view.field?.of, 3);
+  assert.ok(view.field?.place != null, "and they are placed in it");
   assert.equal(view.fieldAbsence, null);
 });
 

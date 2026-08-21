@@ -20,6 +20,7 @@ import {
   signedPct,
 } from "@/components/dash/Chrome";
 import { Sparkline } from "@/components/dash/Charts";
+import { Heatmap } from "@/components/dash/Heatmap";
 import styles from "./holdings.module.css";
 
 export const metadata: Metadata = { title: "Holdings" };
@@ -65,6 +66,22 @@ export default async function HoldingsPage({
   const topTwo = byValue.slice(0, 2).reduce((sum, row) => sum + (row.value ?? 0), 0);
   const accounts = view.accounts;
 
+  /*
+   * The best and worst name on file, by return rather than by dollars — a
+   * hundred dollars on a small position is a better story than a hundred on a
+   * large one, and this strip is about the story. Absent under two priced
+   * rows: with one name there are no ends, there is a name.
+   */
+  const withReturn = holdings.filter((row) => row.pnlPct != null);
+  const ranked = [...withReturn].sort((a, b) => (b.pnlPct ?? 0) - (a.pnlPct ?? 0));
+  const ends =
+    ranked.length >= 2
+      ? ([
+          { label: "Best on file", row: ranked[0], tone: "moss" },
+          { label: "Worst on file", row: ranked[ranked.length - 1], tone: "loss" },
+        ] as const)
+      : null;
+
   return (
     <>
       <AppNav
@@ -109,12 +126,58 @@ export default async function HoldingsPage({
           />
         </Stats>
 
+        {/*
+          * ── The map leads ──
+          *
+          * This page was a spreadsheet: eight columns of right-aligned figures
+          * under eight uppercase labels, which is a correct rendering of the
+          * data and an unreadable one at a glance. Nobody screenshots a
+          * spreadsheet.
+          *
+          * The heatmap answers the two questions a glance is actually asking —
+          * what is this account mostly *in*, and what is it doing — in one
+          * object, before a single row of the table is read. The table is
+          * still here and still has every figure in it; it is just no longer
+          * the first thing.
+          */}
+        <div className={styles.map} data-reveal>
+          <Heatmap
+            items={holdings.map((row) => ({
+              symbol: row.symbol,
+              value: row.value ?? 0,
+              pnlPct: row.pnlPct,
+            }))}
+          />
+        </div>
+
+        {/*
+          * The two ends of the book. Both are real rows off the ledger, and
+          * both are absent rather than invented — an account where nothing is
+          * priced has no ends to name.
+          */}
+        {ends ? (
+          <div className={styles.ends} data-reveal>
+            {ends.map((end) => (
+              <div key={end.label} className={styles.endCard} data-tone={end.tone}>
+                <span className={styles.endLabel}>{end.label}</span>
+                <div className={styles.endRow}>
+                  <Logo symbol={end.row.symbol} size={44} />
+                  <div className={styles.endName}>
+                    <span className={styles.endSymbol}>{end.row.symbol}</span>
+                    {end.row.description ? (
+                      <span className={styles.endDesc}>{end.row.description}</span>
+                    ) : null}
+                  </div>
+                  <span className={`num ${styles.endFigure}`}>{signedPct(end.row.pnlPct)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
         <div className={styles.table} data-reveal>
           <div className={styles.headRow}>
             <span>Position</span>
-            <span>Qty</span>
-            <span>Avg cost</span>
-            <span>Price</span>
             <span>Value</span>
             <span>Weight</span>
             <span>Unrealised</span>
@@ -131,22 +194,28 @@ export default async function HoldingsPage({
                 style={{ animationDelay: `${i * 50}ms` }}
               >
                 <div className={styles.position}>
-                  <Logo symbol={row.symbol} size={38} />
+                  <Logo symbol={row.symbol} size={44} />
                   <div className={styles.name}>
                     <span className={styles.symbol}>{row.symbol}</span>
                     {row.description ? (
                       <span className={styles.desc}>{row.description}</span>
                     ) : null}
+                    {/*
+                      * Units, average cost and price were three columns of
+                      * their own, which is three headings and three tab stops
+                      * for a sentence: how many, what you paid, what it is
+                      * now. Nothing is lost — it is one mono line under the
+                      * name, where the eye reads it as detail rather than
+                      * scanning it as a column.
+                      */}
+                    <span className={`num ${styles.detail}`}>
+                      {row.units.toLocaleString("en-US", { maximumFractionDigits: 2 })}
+                      {row.cost != null && row.units ? ` @ ${money(row.cost / row.units, 2)}` : ""}
+                      {row.price != null ? ` · now ${money(row.price, 2)}` : ""}
+                    </span>
                   </div>
                 </div>
 
-                <span className={`num ${styles.cell}`}>
-                  {row.units.toLocaleString("en-US", { maximumFractionDigits: 2 })}
-                </span>
-                <span className={`num ${styles.cell}`}>
-                  {row.cost != null && row.units ? money(row.cost / row.units, 2) : "—"}
-                </span>
-                <span className={`num ${styles.cell}`}>{money(row.price, 2)}</span>
                 <span className={`num ${styles.value}`}>{money(row.value)}</span>
 
                 <div className={styles.weight}>
@@ -156,7 +225,16 @@ export default async function HoldingsPage({
                       className={styles.weightFill}
                       style={{
                         width: `${weight.toFixed(1)}%`,
-                        background: `var(--wedge-${Math.min(i + 1, 5)})`,
+                        /*
+                         * The exposure ramp, not the ring's old wedge hues.
+                         * Those were a colour per slice — the one exemption
+                         * the allocation ring had — and with the ring gone
+                         * they were five decorative hues with no meaning,
+                         * putting a red bar under a name that is up. Rank
+                         * sets the step down `--signal`, so the bar means
+                         * weight and only weight.
+                         */
+                        background: `var(--w${Math.min(i + 1, 5)})`,
                         animationDelay: `${100 + i * 50}ms`,
                       }}
                     />

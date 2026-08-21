@@ -168,7 +168,7 @@ const peer = (key: string, value: number): import("./returns").RaceEntry => ({
 });
 
 test("the field is ordered from the front and the reader is placed in it", () => {
-  const field = raceField(0.12, [peer("A", 0.2), peer("B", 0.05), peer("C", -0.03)]);
+  const field = raceField({ value: 0.12 }, [peer("A", 0.2), peer("B", 0.05), peer("C", -0.03)]);
   assert.ok(field);
   assert.deepEqual(field.rows.map((r) => r.key), ["A", "you", "B", "C"]);
   assert.equal(field.place, 2);
@@ -179,7 +179,7 @@ test("the field is ordered from the front and the reader is placed in it", () =>
 });
 
 test("a reader in front is behind nobody", () => {
-  const field = raceField(0.4, [peer("A", 0.2), peer("B", 0.05)]);
+  const field = raceField({ value: 0.4 }, [peer("A", 0.2), peer("B", 0.05)]);
   assert.ok(field);
   assert.equal(field.place, 1);
   assert.equal(field.behind, null);
@@ -194,12 +194,33 @@ test("a reader with no figure still gets a field, unplaced", () => {
 });
 
 test("a field of one is not a race", () => {
-  assert.equal(raceField(0.1, []), null);
+  assert.equal(raceField({ value: 0.1 }, []), null);
   assert.equal(raceField(null, [peer("A", 0.2)]), null);
 });
 
 test("a peer the provider would not quote is dropped, never drawn at zero", () => {
-  const field = raceField(0.1, [peer("A", 0.2), peer("B", Number.NaN), peer("C", 0.02)]);
+  const field = raceField({ value: 0.1 }, [peer("A", 0.2), peer("B", Number.NaN), peer("C", 0.02)]);
   assert.ok(field);
   assert.deepEqual(field.rows.map((r) => r.key), ["A", "you", "C"]);
+});
+
+test("a part-year reader is drawn, and their row says which window it covers", () => {
+  /*
+   * The reader used to be removed from the field whenever their ledger started
+   * after January — which on a new account is every account, all year. They are
+   * drawn now, and the mismatch is stated on the row rather than hidden by
+   * deleting it.
+   */
+  const field = raceField({ value: 0.12, since: "2026-05-03" }, [peer("A", 0.2), peer("B", 0.05)]);
+  assert.ok(field);
+  const you = field.rows.find((r) => r.you);
+  assert.ok(you, "the reader is in their own field");
+  assert.match(you.note, /3 May/);
+  assert.equal(field.place, 2);
+});
+
+test("a full-year reader's row makes no claim about a window", () => {
+  const field = raceField({ value: 0.12, since: null }, [peer("A", 0.2), peer("B", 0.05)]);
+  const you = field?.rows.find((r) => r.you);
+  assert.equal(you?.note, "Your own book.");
 });
