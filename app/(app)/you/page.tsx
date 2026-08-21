@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getUserId, isAuthConfigured } from "@/auth";
 import { accessFor, factsFrom, getDailyInsight, isDbConfigured, loadScreen, syncClock, wrappedOpenedAt } from "@/lib/db";
 import { dashboardFor, fieldLine } from "@/lib/portfolio/load";
@@ -31,7 +32,6 @@ import {
 import { RaceBars } from "@/components/dash/RaceBars";
 import {
   ChartAxis,
-  HoldingBars,
   HoldMeters,
   Legend,
   PnlColumns,
@@ -42,6 +42,7 @@ import {
 import { InsightCard, WrappedPromo } from "@/components/dash/Cards";
 import { Heatmap } from "@/components/dash/Heatmap";
 import { nextUp, trophiesFrom } from "@/lib/trophies";
+import { activityCalendar, investedCurve, positionColumns } from "@/lib/dayone";
 import { WrappedReady } from "@/components/dash/WrappedReady";
 import { ScoreHero } from "@/components/dash/ScoreHero";
 import { Collection } from "@/components/dash/Collection";
@@ -188,7 +189,7 @@ export default async function DashboardPage({
    * model call, which is exactly what this group's `loading.tsx` exists for.
    * Swallowed on failure, because a dashboard must not fail on a sentence.
    */
-  const [{ view }, user, note, openedWrapped] = await Promise.all([
+  const [{ view, facts }, user, note, openedWrapped] = await Promise.all([
     dashboardFor(userId, RANGE, data),
     shellUser(),
     latest
@@ -218,6 +219,20 @@ export default async function DashboardPage({
    * and on the Wrapped promo — and a reading restated three ways reads as a
    * product with one thing to say.
    */
+  /*
+   * ── What the first sync can already draw ──
+   *
+   * The blocks below used to gate on *our* history — a closed round trip, two
+   * days of equity marks, eight scored nights — and a freshly connected
+   * account has none of it, so five panels in a row arrived empty. But a first
+   * sync hands over the whole transaction record and a priced snapshot, which
+   * is enough for a real curve, a real calendar and a real set of columns.
+   * Every one of these is computed from those two and nothing else.
+   */
+  const invested = investedCurve(facts.ledger);
+  const activity = activityCalendar(facts.ledger);
+  const unrealisedColumns = positionColumns(data.holdings);
+
   /*
    * The closest unearned trophy, for the read's foot.
    *
@@ -507,11 +522,17 @@ export default async function DashboardPage({
                 * that connected this week is genuinely unquotable rather than
                 * being withheld. That is a sentence, not a silence.
                 */}
-              {view.field.place == null ? (
+              {view.field.rows.find((row) => row.you)?.basis === "cost" ? (
                 <p className="dashEmpty">
-                  Your own row needs two days of marks before there is a return to
-                  quote. The funds race in the meantime; you join as soon as your
-                  curve has a second day on it.
+                  Your figure is your book against what you paid for it — real, and with
+                  no time in it. The funds are quoted year to date. Two different
+                  measurements, drawn together so you are in your own field; yours
+                  switches to a year once your curve has two days of marks.
+                </p>
+              ) : view.field.place == null ? (
+                <p className="dashEmpty">
+                  Your own row needs either two days of marks or a cost basis your broker
+                  reported. The funds race in the meantime.
                 </p>
               ) : view.field.rows.find((row) => row.you)?.since ? (
                 <p className="dashEmpty">
@@ -584,11 +605,27 @@ export default async function DashboardPage({
                 <PnlColumns sessions={perf.sessions} peak={perf.peak} />
                 <ChartAxis labels={perf.axis} />
               </>
-            ) : view.positions.length ? (
+            ) : unrealisedColumns.length ? (
+              /*
+                * The same idiom, a different measurement.
+                *
+                * It drew horizontal bars — honest, and visibly not the chart
+                * beside it, so the screen read as though the P&L chart had
+                * failed to load. Columns off a zero line are what this panel
+                * is: green above, hatched below, largest first. The heading
+                * and the tail carry the difference, which is the part that
+                * matters — realised is what closing did, this is what holding
+                * has done so far.
+                */
               <>
-                <HoldingBars rows={view.positions} money={signedMoney} />
+                <PnlColumns
+                  sessions={unrealisedColumns}
+                  peak={Math.max(...unrealisedColumns.map((c) => Math.abs(c.amount)), 1)}
+                />
+                <ChartAxis labels={unrealisedColumns.slice(0, 6).map((c) => c.date)} />
                 <p className="dashProv">
-                  Unrealised, off your latest snapshot
+                  Unrealised, position by position, off your latest snapshot · realised
+                  columns draw once you sell
                 </p>
               </>
             ) : (
@@ -664,20 +701,46 @@ export default async function DashboardPage({
           * what it is costs nothing.
           */}
         {/*
-          * ── And when neither exists, the panel says so ──
+          * ── The day-one line: what you have put in ──
           *
-          * A curve needs two days. An account that connected today has one
-          * mark, so both branches above are genuinely unavailable — and the
-          * row simply vanished, which on a screen already missing the daily
-          * columns and the calendars reads as half a product rather than as a
-          * young account. The block stays and states the condition.
+          * An equity curve needs two days of *our* marks, which an account
+          * that connected today does not have. What it does have is every
+          * transaction the brokerage remembers, and cumulative net invested is
+          * a real line off exactly that — one that moves when the reader acts
+          * rather than when the market does.
+          *
+          * It is labelled as what it is. Calling money-in an equity curve
+          * would be the single most misleading thing this screen could do, so
+          * the head says "What you have put in" and the tail says it does not
+          * move with the market.
           */}
-        {!view.cumulative.length && view.curve.length < 2 ? (
+        {!view.cumulative.length && view.curve.length < 2 && invested.length >= 2 ? (
+          <Row kind="full">
+            <Panel>
+              <PanelHead eyebrow="What you have put in">
+                <PanelNote>Cumulative, from your own transactions</PanelNote>
+              </PanelHead>
+              <EquityCurve series={invested} />
+              <p className="dashProv">
+                Money in, not value — this moves when you buy or sell, never when the
+                market does. Your value curve starts once there are two days of marks.
+              </p>
+            </Panel>
+
+          </Row>
+        ) : null}
+
+        {/*
+          * And when even that is not there — a brokerage that handed over one
+          * day of transactions — the block still says which condition it is
+          * waiting on rather than vanishing.
+          */}
+        {!view.cumulative.length && view.curve.length < 2 && invested.length < 2 ? (
           <Row kind="full">
             <Panel>
               <PanelHead eyebrow="Your curve" title="One day on the clock" />
               <p className="dashEmpty">
-                A line needs two days of marks. Your brokerage has handed over its first;
+                A line needs two days. Your brokerage has handed over one so far;
                 tomorrow&rsquo;s sync draws the second, and the curve starts from there.
               </p>
             </Panel>
@@ -742,13 +805,33 @@ export default async function DashboardPage({
           * headed "The year" with nothing under it says less than a sentence
           * naming the count would.
           */}
-        {view.read && view.read.scoredDays < MIN_SCORED_DAYS ? (
+        {/*
+          * ── The year the brokerage remembers, until we have one of our own ──
+          *
+          * The scored grid waits for eight nights, because one lit cell in a
+          * field of empties reads as a broken chart. But the *ledger* has a
+          * year in it on day one — often several — so the act is not empty
+          * while it waits: every day the reader traded, off the transaction
+          * record, banded on counts.
+          *
+          * It carries no direction. A busy day is not an up day, and handing
+          * this grid a `dir` would be the chart claiming something the count
+          * cannot know.
+          */}
+        {(!view.read || view.read.scoredDays < MIN_SCORED_DAYS) && activity.length ? (
           <Row kind="full">
             <Panel art="grid">
-              <PanelHead eyebrow="Every scored day" title="Filling in" />
-              <p className="dashEmpty">
-                {view.read.scoredDays} of {MIN_SCORED_DAYS} nights scored. The grid draws
-                once there are enough of them to be a texture rather than one lit square.
+              <PanelHead eyebrow="Every day you traded">
+                <PanelNote>
+                  {view.read
+                    ? `${view.read.scoredDays} of ${MIN_SCORED_DAYS} nights scored`
+                    : "Straight off your ledger"}
+                </PanelNote>
+              </PanelHead>
+              <HeatGrid days={activity} />
+              <p className="dashProv">
+                Trades per day, off your own transactions · the scored grid replaces this
+                once there are {MIN_SCORED_DAYS} nights on file
               </p>
             </Panel>
           </Row>
@@ -815,7 +898,23 @@ export default async function DashboardPage({
           <Row kind="full">
             <Panel art="findings">
               <PanelHead eyebrow="Insights this week" />
-              <p className="dashEmpty">Nothing has cleared a sample floor yet.</p>
+              {/*
+                * A refusal with a door, rather than a refusal.
+                *
+                * "Nothing has cleared a sample floor yet" is true and it is
+                * the end of the conversation. The behaviour findings do need a
+                * history — but the book itself is readable now, and
+                * `/insights` says so on its own first band, so this points at
+                * it instead of stopping.
+                */}
+              <p className="dashEmpty">
+                No behaviour pattern has cleared its sample floor yet — those need a
+                history to be anything but a coincidence. What your book already says is
+                on the insights screen.
+              </p>
+              <p className="dashProv">
+                <Link href="/insights">Read what your book says →</Link>
+              </p>
             </Panel>
           </Row>
         )}

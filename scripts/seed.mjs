@@ -29,7 +29,7 @@ import { MongoClient } from "mongodb";
  * the URI exists because `lib/db/client.ts` reads the environment lazily —
  * nothing connects until the first query.
  */
-import { ensureIndexes } from "../lib/db/collections.ts";
+import { ensureIndexes, getCollections } from "../lib/db/collections.ts";
 import { rebuildDerived } from "../lib/db/derived.ts";
 import { backfillScores } from "../lib/db/scoring.ts";
 import { mintCard } from "../lib/db/cards.ts";
@@ -90,7 +90,20 @@ function paths(from) {
   return out;
 }
 
-export async function seed({ quiet = false } = {}) {
+/**
+ * @param {{ quiet?: boolean, fresh?: boolean }} opts
+ *
+ * `fresh` seeds the **day-one account**: the same generated ledger, trimmed to
+ * what a brokerage hands over on the first sync and derived through the same
+ * code as everything else. No scored history, no closed round trips, one
+ * snapshot — which is the state most of this dashboard's hardest branches are
+ * written for and the one the seeded account could never reach.
+ *
+ * Nothing is faked to make it. The transactions are the real generated ones
+ * and the derivation is the app's own; what changes is how much of the ledger
+ * the account is allowed to have seen.
+ */
+export async function seed({ quiet = false, fresh = false } = {}) {
   const mongod = await MongoMemoryServer.create({ instance: { dbName: DB } });
   const uri = mongod.getUri();
   const client = new MongoClient(uri);
@@ -290,6 +303,18 @@ export async function seed({ quiet = false } = {}) {
     }),
   ]);
 
+  /*
+   * The day-one trim, before the seed's own client closes.
+   *
+   * Only the newest snapshot survives: a brokerage's first sync gives one
+   * priced picture of the book, not a year of them, and it is the year of them
+   * that lets an equity curve exist at all.
+   */
+  if (fresh) {
+    const newest = snapshots.reduce((max, s) => (s.date > max ? s.date : max), snapshots[0].date);
+    await db.collection("positionSnapshots").deleteMany({ date: { $ne: newest } });
+  }
+
   await client.close();
 
   /*
@@ -303,8 +328,34 @@ export async function seed({ quiet = false } = {}) {
   process.env.MONGODB_DB = DB;
 
   await ensureIndexes();
-  const scored = await backfillScores(USER_ID);
+
+  /*
+   * The day-one account: keep the transaction record, which a brokerage hands
+   * over in full on the first sync, and throw away everything that could only
+   * come from *us* having watched — the scores, the round trips, all but the
+   * newest snapshot. Deriving afterwards means the result is whatever the app
+   * would actually compute for somebody who connected today.
+   */
+  const scored = fresh ? { written: 0, from: "", to: "" } : await backfillScores(USER_ID);
   await rebuildDerived(USER_ID);
+
+  if (fresh) {
+    /*
+     * The derived document is rebuilt from the full ledger above, which would
+     * hand a day-one account a year of round trips and daily P&L it has no
+     * business having. It gets the empty one a first sync produces instead.
+     *
+     * Through the app's own collections, because the seed's client is closed
+     * by this point — `rebuildDerived` above runs on the app's connection and
+     * so does this.
+     */
+    const { derived, scores } = await getCollections();
+    await derived.updateOne(
+      { userId: USER_ID },
+      { $set: { roundTrips: [], dailyPnl: [], equitySeries: [], findings: [] } },
+    );
+    await scores.deleteMany({ userId: USER_ID });
+  }
 
   /*
    * A few cards in the case.
@@ -316,7 +367,7 @@ export async function seed({ quiet = false } = {}) {
    * `assembleWrapped`, so the figures on them are the ledger's, not the
    * seed's.
    */
-  const assembly = await assembleWrapped(USER_ID);
+  const assembly = fresh ? null : await assembleWrapped(USER_ID);
   const mintable = (assembly?.cards ?? []).slice(0, 4);
   for (const card of mintable) {
     await mintCard(USER_ID, storedFrom(card), isoDay(today));

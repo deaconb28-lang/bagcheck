@@ -1,4 +1,5 @@
 import { periodReturn, raceField } from "@/lib/returns";
+import { returnOnCost } from "@/lib/dayone";
 import type { RaceEntry } from "@/lib/returns";
 import { archetypeFor } from "@/lib/archetypes";
 import { activeStreaks, scoreBand, selfPercentile } from "@/lib/score";
@@ -576,8 +577,28 @@ export function dashboardView({
    * starts whenever it starts late, the panel repeats it underneath, and the
    * figure is the reader's real return over the window they actually have.
    */
+  /*
+   * And when there is no year to quote, the reader is still in their own
+   * field — on the one basis a first sync can support.
+   *
+   * A return over a window needs two marks on the curve, which an account
+   * that connected today does not have. Return on cost does not: both halves
+   * come off the same priced snapshot, so it is real, checkable and available
+   * immediately. It is **not the same measurement** as a fund's year — it has
+   * no time in it — and the row, the note under the chart and the provenance
+   * line all say which basis is on the screen.
+   *
+   * The alternative was leaving the reader off their own chart for their whole
+   * first fortnight, which two earlier passes tried and which is how a page
+   * about somebody's account comes to be about five funds instead.
+   */
+  const onCost = returnOnCost(facts.holdings);
   const field = raceField(
-    ytd == null ? null : { value: ytd, since: sameWindow ? null : opened },
+    ytd != null
+      ? { value: ytd, since: sameWindow ? null : opened, basis: "ytd" }
+      : onCost != null
+        ? { value: onCost, basis: "cost" }
+        : null,
     peers,
   );
   /*

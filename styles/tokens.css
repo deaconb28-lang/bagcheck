@@ -545,6 +545,34 @@ html[data-mode="dark"] {
    * family that means exposure.
    */
 
+  /*
+   * ── Glass ────────────────────────────────────────────────────────────
+   *
+   * Stated once, and rationed the way every other material here is.
+   *
+   * **Glass is for things that float; a fill is for the ground.** The nav, a
+   * chip, a pill, a tile you can press — those sit *above* the page and glass
+   * is what says so. The eleven panels are the page, and putting glass on them
+   * would be the same failure as putting a hue on them: a material that means
+   * "this is on top" means nothing when everything wears it.
+   *
+   * Three parts, because two is frosting rather than glass. The plate is
+   * translucent and blurs what is behind it; `--glass-lit` is the specular
+   * edge along the top, where a light source would catch a real bevel; and
+   * `--glass-rim` is the hairline that keeps the object an object over a
+   * ground within a few points of its own value. Without the specular the
+   * whole thing reads as a grey box at 60% opacity.
+   *
+   * `saturate()` in the blur is what stops a translucent dark plate turning
+   * everything behind it to mud — it is the part that reads as *liquid* rather
+   * than as fog.
+   */
+  --glass: color-mix(in srgb, var(--s1) 58%, transparent);
+  --glass-deep: color-mix(in srgb, var(--bg) 62%, transparent);
+  --glass-lit: rgba(255, 255, 255, 0.2);
+  --glass-rim: rgba(255, 255, 255, 0.09);
+  --glass-blur: blur(20px) saturate(170%);
+
   --chrome: rgba(0, 0, 0, 0.92);
   --nav-dim: rgba(255, 255, 255, 0.62);
   /*

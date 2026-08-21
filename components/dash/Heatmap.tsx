@@ -26,7 +26,8 @@ export function Heatmap({
   compact = false,
 }: {
   items: HeatItem[];
-  /** The hero's version: tiles, no figures under about 9% of the box. */
+  /** The hero's version: a square instead of 16:10. What each tile says is
+   *  decided by the tile's own pixels, so there is nothing else to pass down. */
   compact?: boolean;
 }) {
   const tiles = heatTiles(items);
@@ -51,19 +52,18 @@ export function Heatmap({
       {tiles.map((tile, i) => {
         const dir = tile.pnlPct == null ? "flat" : tile.pnlPct >= 0 ? "up" : "down";
         /*
-         * How much a tile can say is decided by its **narrowest** side, not by
-         * its area. A tall sliver and a square can hold the same area and only
-         * one of them fits "TSLA" and a percentage on two lines — gating on
-         * area alone put a clipped ticker in every narrow tile on the hero's
-         * 210px map.
+         * How much a tile can say is not decided here. It used to be — a
+         * threshold on the tile's share of the box — and that reading is
+         * wrong at the root, because a point of width and a point of height
+         * are different lengths on any map that is not square. The tile is a
+         * container query container and asks itself, in pixels; see the table
+         * in `heatmap.module.css`.
          */
-        const narrow = Math.min(tile.w, tile.h);
         return (
           <div
             key={tile.symbol}
             className={styles.tile}
             data-dir={dir}
-            data-room={narrow >= 22 && tile.w >= 26 ? "full" : narrow >= 13 && tile.w >= 17 ? "tight" : "none"}
             style={{
               left: `${tile.x}%`,
               top: `${tile.y}%`,
@@ -79,6 +79,24 @@ export function Heatmap({
               animationDelay: `${Math.min(i * 26, 300)}ms`,
             } as React.CSSProperties}
           >
+            {/*
+              * ── The podium ──
+              *
+              * The top three by weight wear their standing as a numeral, which
+              * is the same device the race uses and the same reason: rank is a
+              * fact, and a fact stated in type survives a reader who cannot
+              * separate two greens. It also turns "here is my book" into
+              * "here is my leaderboard", which is the whole of the
+              * gamification and costs no invented figure to do.
+              *
+              * Three, not all of them. A numeral on every tile is a table.
+              */}
+            {i < 3 ? (
+              <span className={`num ${styles.rank}`} aria-hidden="true">
+                {i + 1}
+              </span>
+            ) : null}
+
             <span className={styles.inner}>
               <span className={styles.symbol}>{tile.symbol}</span>
               <span className={`num ${styles.pct}`}>

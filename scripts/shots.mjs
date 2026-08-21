@@ -29,6 +29,15 @@ const BASE = `http://localhost:${PORT}`;
 const CHROME = "/opt/pw-browsers/chromium";
 
 const only = process.argv.find((a) => a.startsWith("--only="))?.slice(7)?.split(",");
+/*
+ * `--fresh` shoots the **day-one account**: the same generated ledger with
+ * everything that could only come from us having watched taken away. Most of
+ * this dashboard's hardest branches — the invested curve, the activity
+ * calendar, unrealised columns, the reader's row on a cost basis — only exist
+ * in that state, and the ordinary seeded account can never reach it, so they
+ * were shipping unrendered.
+ */
+const fresh = process.argv.includes("--fresh");
 
 /* ── What gets shot ──────────────────────────────────────────────────────── */
 
@@ -316,8 +325,8 @@ await mkdir(OUT, { recursive: true });
 
 await freePort();
 
-console.log("seeding…");
-const { mongod, uri, userId } = await seed({ quiet: true });
+console.log(fresh ? "seeding a day-one account…" : "seeding…");
+const { mongod, uri, userId } = await seed({ quiet: true, fresh });
 
 console.log("starting the app…");
 const server = serve(uri, userId);

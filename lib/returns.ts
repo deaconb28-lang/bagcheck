@@ -200,6 +200,15 @@ export interface RaceEntry {
    * every surface drawing the field can say which window the figure covers.
    */
   since?: string | null;
+  /**
+   * Which measurement the reader's own figure is.
+   *
+   * `ytd` is a return over the year, on the same terms as the funds. `cost` is
+   * value against what was paid — real, checkable, and carrying **no time in
+   * it at all**, which is why every surface that draws it says so rather than
+   * letting the panel's own heading imply a year.
+   */
+  basis?: "ytd" | "cost";
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -248,7 +257,7 @@ export interface RaceField {
  * and the panel's provenance line says it again underneath.
  */
 export function raceField(
-  you: { value: number; since?: string | null } | null,
+  you: { value: number; since?: string | null; basis?: "ytd" | "cost" } | null,
   peers: RaceEntry[],
 ): RaceField | null {
   const field = [
@@ -258,10 +267,22 @@ export function raceField(
           {
             key: "you",
             label: "You",
-            note: you.since ? `Your own book, from ${shortDay(you.since)}.` : "Your own book.",
+            /*
+             * The row says which measurement it is, every time. On a
+             * cost basis it is not a year-to-date return at all — it has no
+             * time in it — so the one thing the row must not do is stay
+             * silent and let the column heading speak for it.
+             */
+            note:
+              you.basis === "cost"
+                ? "Your own book, against what you paid."
+                : you.since
+                  ? `Your own book, from ${shortDay(you.since)}.`
+                  : "Your own book.",
             value: you.value,
             you: true,
             since: you.since ?? null,
+            basis: you.basis ?? "ytd",
           },
         ]
       : []),

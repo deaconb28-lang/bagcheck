@@ -40,6 +40,7 @@ const trip = (closeDate: string, pnl: number) => ({
 const facts = (over: Partial<Facts> = {}): Facts => ({
   trips: [],
   scored: [],
+  ledger: [],
   sessions: [],
   curve: [],
   flows: { trades: [], transfers: [] },

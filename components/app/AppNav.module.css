@@ -15,9 +15,19 @@
   gap: 40px;
   padding: 26px 44px;
   border-bottom: 1px solid var(--line-light);
-  background: var(--chrome);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  /*
+   * The bar is glass, not a fill.
+   *
+   * It frosted already — `--chrome` at 92% with a 14px blur, which is opaque
+   * enough that nothing ever moved under it. At 62% with saturation the page
+   * genuinely passes beneath, and the specular line along the bottom edge is
+   * what stops the whole thing reading as a grey smear: a hairline is a rule,
+   * a lit hairline is an edge.
+   */
+  background: var(--glass-deep);
+  box-shadow: inset 0 -1px 0 var(--glass-rim);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
 .left {

@@ -178,7 +178,15 @@
   font-weight: 600;
   border-radius: var(--r-pill);
   padding: 10px 20px;
-  background: transparent;
+  /*
+   * A chip is a thing you press, so it floats, so it is glass. The lit top
+   * edge is the whole of the treatment — a chip is 40px tall and anything
+   * more than one highlight on it is jewellery.
+   */
+  background: var(--glass);
+  box-shadow: inset 0 1px 0 var(--glass-lit);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   color: var(--ink3);
   /*
    * The border is on both states and only changes colour. Authored without one

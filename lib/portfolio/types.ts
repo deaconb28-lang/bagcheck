@@ -86,6 +86,14 @@ export interface Facts {
    * no extra I/O.
    */
   scored: ScoredDay[];
+  /**
+   * The transaction rows themselves, as the flow query already fetched them.
+   *
+   * What separates "we have not watched you yet" from "your broker has told
+   * us nothing yet" — the screen used to treat those as one condition and go
+   * blank on a connected account with years of history behind it.
+   */
+  ledger: Array<{ date: string; type: string; symbol: string | null; amount: number | null }>;
   /** Realised P&L per session — matched gain plus cash dividends. */
   sessions: Session[];
   /** Daily portfolio value, forward-filled. */

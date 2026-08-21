@@ -58,10 +58,17 @@ export async function factsFor(userId: string, data: ScreenData): Promise<Facts>
      */
     transactions
       .find({ userId, type: { $regex: /buy|sell|contribution|deposit|withdrawal|transfer/i } })
-      .project<{ date: string; type: string; amount: number | null }>({
+      /*
+       * `symbol` costs nothing here and is what lets the day-one reads exist:
+       * the same rows carry the flows this query was written for *and* the
+       * activity calendar and the invested curve, which are the only charts a
+       * freshly connected account can honestly draw.
+       */
+      .project<{ date: string; type: string; symbol: string | null; amount: number | null }>({
         _id: 0,
         date: 1,
         type: 1,
+        symbol: 1,
         amount: 1,
       })
       .toArray(),
@@ -80,6 +87,13 @@ export async function factsFor(userId: string, data: ScreenData): Promise<Facts>
       withCash: point.withCash,
     })),
     flows: { trades: investmentFlows(flowRows), transfers: transferFlows(flowRows) },
+    /*
+     * The ledger itself, for the reads that need what the *brokerage*
+     * remembers rather than what we have watched. A first sync hands over
+     * years of this; the screen had been gating on our own history and
+     * arriving empty.
+     */
+    ledger: flowRows,
     holdTime: data.derived?.holdTime ?? {
       winnersMean: null,
       losersMean: null,
