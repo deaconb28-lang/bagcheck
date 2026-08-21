@@ -73,6 +73,21 @@ export interface ScoreDoc {
    * components rather than trusting a number that is not there.
    */
   measured?: number;
+  /**
+   * Which generation of the scorer wrote this row.
+   *
+   * Absent means "before components could be null", and a row like that is not
+   * a stale reading — it is a **manufactured** one. Every component used to
+   * fall back to a neutral figure with no evidence behind it, so an account
+   * that had traded nothing was stored at 78/72/72/88 and rendered a confident
+   * 76 with an archetype attached. Fixing the scorer does not fix those rows:
+   * `backfillScores` skips any date it already has, so they would render the
+   * old numbers forever.
+   *
+   * The version is what makes the fix reach the history. A row below the
+   * current version is treated as absent and recomputed.
+   */
+  scoreVersion?: number;
   computedAt: Date;
 }
 

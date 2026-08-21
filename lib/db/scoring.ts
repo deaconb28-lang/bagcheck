@@ -69,6 +69,7 @@ export async function scoreUser(userId: string, date = todayISO()): Promise<Scor
         components: result.components,
         contributors: result.contributors,
         measured: result.measured,
+        scoreVersion: SCORE_VERSION,
         computedAt: new Date(),
       },
     },
@@ -97,6 +98,22 @@ export async function scoreUser(userId: string, date = todayISO()): Promise<Scor
  * window, which is what a baseline change needs — the baseline feeds patience
  * and exposure, so changing it invalidates every score behind it.
  */
+/**
+ * The scorer's generation.
+ *
+ * Bump this when the scorer changes what a stored row *means* — not when it
+ * changes what it computes from the same inputs, which the ledger hash already
+ * covers. Version 2 is the first that can say "this component had no
+ * evidence": before it, every component fell back to a neutral figure, so an
+ * account that had traded nothing was stored at 78/72/72/88 and rendered a
+ * confident 76 with an archetype on it.
+ *
+ * Those rows are not stale, they are manufactured, and fixing the scorer does
+ * not reach them: `backfillScores` skips any date it already has. Treating a
+ * row below this version as absent is what carries the fix into the history.
+ */
+export const SCORE_VERSION = 2;
+
 export async function backfillScores(
   userId: string,
   opts: { days?: number; now?: Date; force?: boolean } = {},
@@ -122,19 +139,51 @@ export async function backfillScores(
 
   const baseline = conn?.styleBaseline ?? inferBaseline(txns, to);
 
+  /*
+   * A row written by an older scorer does not count as "have". It is not a
+   * cheaper version of the same answer — it is a different one, computed under
+   * rules that invented figures, and leaving it in place would keep those
+   * figures on the screen for as long as the account exists.
+   */
   const have = force
     ? new Set<string>()
     : new Set(
         (
           await scores
-            .find({ userId, date: { $gte: from } })
+            .find({ userId, date: { $gte: from }, scoreVersion: SCORE_VERSION })
             .project<{ date: string }>({ _id: 0, date: 1 })
             .toArray()
         ).map((s) => s.date),
       );
 
   const results = scoreRange({ transactions: txns, baseline, from, to, have });
-  if (results.length === 0) return { written: 0, from, to };
+
+  /*
+   * Sweep the manufactured rows this pass could not replace.
+   *
+   * Rewriting is not enough on its own. The scorer now returns nothing for a
+   * day it cannot support two components on, so a date that used to hold an
+   * invented 76 produces no new row — and an upsert-only backfill would leave
+   * the invented one exactly where it was. Anything in the range still below
+   * the current version after the write is a reading no scorer will stand
+   * behind, so it goes.
+   *
+   * Scoped to `[from, to]` on purpose: this deletes scores, and a bug in the
+   * range is a bug that deletes somebody's history. Outside the window nothing
+   * is touched.
+   */
+  const sweep = async () => {
+    await scores.deleteMany({
+      userId,
+      date: { $gte: from, $lte: to },
+      scoreVersion: { $ne: SCORE_VERSION },
+    });
+  };
+
+  if (results.length === 0) {
+    await sweep();
+    return { written: 0, from, to };
+  }
 
   const computedAt = new Date();
   await scores.bulkWrite(
@@ -149,6 +198,8 @@ export async function backfillScores(
             score: r.score,
             components: r.components,
             contributors: r.contributors,
+            measured: r.measured,
+            scoreVersion: SCORE_VERSION,
             computedAt,
           },
         },
@@ -157,6 +208,8 @@ export async function backfillScores(
     })),
     { ordered: false },
   );
+
+  await sweep();
 
   return { written: results.length, from, to };
 }

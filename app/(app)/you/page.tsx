@@ -495,12 +495,25 @@ export default async function DashboardPage({
               </PanelHead>
               <RaceBars field={view.field} />
               {/*
-                * The reader is always in the field now. Where their curve
-                * starts after the year does, the mismatch is stated rather
-                * than used as a reason to remove them: their row carries the
-                * date and this line says what it means.
+                * ── Why the reader is not on the chart, when they are not ──
+                *
+                * Drawing five funds under the heading "The field, this year"
+                * and saying nothing about the missing row is the failure this
+                * whole screen is built to avoid: a reader cannot tell an
+                * honest absence from a broken chart, and assumes the second.
+                *
+                * A return needs two marks on the equity curve to exist at all
+                * — a single day has no span to measure over — so an account
+                * that connected this week is genuinely unquotable rather than
+                * being withheld. That is a sentence, not a silence.
                 */}
-              {view.field.rows.find((row) => row.you)?.since ? (
+              {view.field.place == null ? (
+                <p className="dashEmpty">
+                  Your own row needs two days of marks before there is a return to
+                  quote. The funds race in the meantime; you join as soon as your
+                  curve has a second day on it.
+                </p>
+              ) : view.field.rows.find((row) => row.you)?.since ? (
                 <p className="dashEmpty">
                   Your figure runs from the day your ledger starts; the funds run from
                   1 January. Two windows, drawn together so you are in your own field.
@@ -650,6 +663,27 @@ export default async function DashboardPage({
           * it P&L would be the one thing this screen must not do; calling it
           * what it is costs nothing.
           */}
+        {/*
+          * ── And when neither exists, the panel says so ──
+          *
+          * A curve needs two days. An account that connected today has one
+          * mark, so both branches above are genuinely unavailable — and the
+          * row simply vanished, which on a screen already missing the daily
+          * columns and the calendars reads as half a product rather than as a
+          * young account. The block stays and states the condition.
+          */}
+        {!view.cumulative.length && view.curve.length < 2 ? (
+          <Row kind="full">
+            <Panel>
+              <PanelHead eyebrow="Your curve" title="One day on the clock" />
+              <p className="dashEmpty">
+                A line needs two days of marks. Your brokerage has handed over its first;
+                tomorrow&rsquo;s sync draws the second, and the curve starts from there.
+              </p>
+            </Panel>
+          </Row>
+        ) : null}
+
         {view.cumulative.length || view.curve.length >= 2 ? (
           <Row kind="wide">
             <Panel>
@@ -701,6 +735,25 @@ export default async function DashboardPage({
           * Tuesday could be "inside your rules" in the ring and a pale cell
           * in the grid beside it.
           */}
+        {/*
+          * The grid waits for eight scored nights, because one lit cell in a
+          * field of empties reads as a broken chart rather than as a young
+          * account. What it does not do any more is wait *silently* — an act
+          * headed "The year" with nothing under it says less than a sentence
+          * naming the count would.
+          */}
+        {view.read && view.read.scoredDays < MIN_SCORED_DAYS ? (
+          <Row kind="full">
+            <Panel art="grid">
+              <PanelHead eyebrow="Every scored day" title="Filling in" />
+              <p className="dashEmpty">
+                {view.read.scoredDays} of {MIN_SCORED_DAYS} nights scored. The grid draws
+                once there are enough of them to be a texture rather than one lit square.
+              </p>
+            </Panel>
+          </Row>
+        ) : null}
+
         {view.read && view.read.scoredDays >= MIN_SCORED_DAYS ? (
           <Row kind="full">
             <Panel art="grid">
@@ -774,10 +827,25 @@ export default async function DashboardPage({
             * can — printing "9 of 12" in both places is one screen making the
             * same statement twice, in the weaker form.
             */}
+          {/*
+            * The hero is the year when there is no return to put there.
+            *
+            * It was an em dash — a 56px placeholder on a saturated gradient,
+            * which renders as a blank space and reads as a figure that failed
+            * to load. An account with one day of marks has no return, and the
+            * year is the thing this card is actually about: unambiguously
+            * true, and it needs no ledger to say.
+            */}
           <WrappedPromo
             year={String(view.wrapped.year)}
-            headline={perf.ret == null ? "—" : signedPct(perf.ret * 100)}
-            sub="Your year, read straight off your brokerage"
+            headline={
+              perf.ret == null ? String(view.wrapped.year) : signedPct(perf.ret * 100)
+            }
+            sub={
+              perf.ret == null
+                ? `${view.wrapped.earned} of ${view.wrapped.total} cards so far, built from what your brokerage has handed over`
+                : "Your year, read straight off your brokerage"
+            }
             pills={view.wrapped.archetype ? [view.wrapped.archetype] : []}
             ready={view.wrapped.earned > 0}
           />
