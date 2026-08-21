@@ -62,8 +62,15 @@ export async function GoToApp({
     );
   }
 
+  /*
+   * `mark={false}`, for the reason `GoogleSignIn` states itself: the mark
+   * belongs on a button whose label names Google. This one says "Go to app",
+   * which names a destination — so a second brand's four-colour logo inside it
+   * was the loudest thing on a page whose whole palette is rationed, and it
+   * appeared twice, in the nav pill and again in the hero.
+   */
   return (
-    <GoogleSignIn redirectTo="/app" className={className}>
+    <GoogleSignIn redirectTo="/app" className={className} mark={false}>
       {label}
     </GoogleSignIn>
   );

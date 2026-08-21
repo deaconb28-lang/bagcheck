@@ -359,7 +359,7 @@ async function Bar({
           Dashboard
         </Link>
       ) : isAuthConfigured() ? (
-        <GoogleSignIn redirectTo="/you" className={styles.barCta}>Sign in</GoogleSignIn>
+        <GoogleSignIn redirectTo="/you" className={styles.barCta} mark={false}>Sign in</GoogleSignIn>
       ) : null}
     </header>
   );
