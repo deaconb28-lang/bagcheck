@@ -17,8 +17,15 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/you",
     display: "standalone",
     orientation: "portrait",
-    background_color: "#f4f4f6",
-    theme_color: "#f4f4f6",
+    /*
+     * Black, like the app and like `themeColor` in `app/layout.tsx`. These
+     * were `#f4f4f6` — a light grey left over from the light-first build —
+     * so a phone launching the saved app flashed pale and then painted
+     * itself black. The comment above has always said keep the three in
+     * step; this is the commit where they are.
+     */
+    background_color: "#000000",
+    theme_color: "#000000",
     icons: [
       { src: "/icon.svg", sizes: "any", type: "image/svg+xml" },
       { src: "/apple-icon.png", sizes: "180x180", type: "image/png" },

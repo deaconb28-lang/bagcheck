@@ -29,7 +29,8 @@
     "db:indexes": "node --import tsx scripts/db-indexes.mjs",
     "timings": "node --import tsx scripts/timings.mjs",
     "email:shots": "node --import tsx scripts/email-shots.mjs",
-    "email:concepts": "node --import tsx scripts/email-concepts.mjs"
+    "email:concepts": "node --import tsx scripts/email-concepts.mjs",
+    "icons": "node --import tsx scripts/icons.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",

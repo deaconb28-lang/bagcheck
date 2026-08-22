@@ -12,6 +12,7 @@ const brief = {
   tail: "Patience carried the reading, not exposure.",
   untagged: 4,
   streak: 11,
+  archetype: "The Sentinel",
 };
 
 const recap = {
@@ -29,8 +30,7 @@ const recap = {
 test("the brief leads with the written insight, not a template line", () => {
   const content = dailyBrief(brief);
   assert.equal(content.lede, brief.sentence);
-  assert.equal(content.blocks[0].value, "82");
-  assert.equal(content.blocks[0].tail, "+3 against Friday's 79.");
+  assert.equal(content.hero?.value, "82");
 });
 
 test("the comparison names the day it is comparing to", () => {
@@ -39,21 +39,14 @@ test("the comparison names the day it is comparing to", () => {
    * Friday's. It used to say "yesterday", which was true on a daily cadence
    * and became a figure nobody could check the moment the cadence changed.
    */
-  assert.equal(
-    dailyBrief({ ...brief, previousDate: "2026-08-21" }).blocks[0].tail,
-    "+3 against Friday's 79.",
-  );
-  assert.equal(
-    dailyBrief({ ...brief, previousDate: "2026-08-19" }).blocks[0].tail,
-    "+3 against Wednesday's 79.",
-  );
+  assert.equal(dailyBrief({ ...brief, previousDate: "2026-08-21" }).hero?.tail, "against Friday's 79");
+  assert.equal(dailyBrief({ ...brief, previousDate: "2026-08-19" }).hero?.tail, "against Wednesday's 79");
+  /* And the prose does not say it a second time under the figure. */
+  assert.ok(!(dailyBrief(brief).paragraphs ?? []).some((p) => p.includes("79")));
 });
 
 test("a comparison with no date on file names no day", () => {
-  assert.equal(
-    dailyBrief({ ...brief, previousDate: null }).blocks[0].tail,
-    "+3 against your last 79.",
-  );
+  assert.equal(dailyBrief({ ...brief, previousDate: null }).hero?.tail, "against your last 79");
 });
 
 test("the recap counts the week rather than calling it seven days", () => {
@@ -62,8 +55,28 @@ test("the recap counts the week rather than calling it seven days", () => {
    * five trading days, fewer on a quiet ledger. "Seven days" was wrong on
    * most weeks and contradicted the block three lines below it.
    */
-  assert.match(weeklyRecap(recap).lede, /^5 scored days as /);
-  assert.match(weeklyRecap({ ...recap, scoredDays: 1 }).lede, /^1 scored day as /);
+  assert.equal(weeklyRecap(recap).hero?.tail, "across 5 scored days");
+  assert.equal(weeklyRecap({ ...recap, scoredDays: 1 }).hero?.tail, "across 1 scored day");
+  /* And the count is stated once: the lede names the character, not the days. */
+  assert.ok(!weeklyRecap(recap).lede.includes("5"));
+});
+
+test("the row never repeats a figure the prose has already stated", () => {
+  /*
+   * The letter says the score, its delta and the untagged count in words.
+   * Printing any of them again in the row underneath is the same measurement
+   * pretending to be two — the rule the dashboard already lives by.
+   */
+  const content = dailyBrief(brief);
+  const prose = [content.headline, content.lede, ...(content.paragraphs ?? [])].join(" ");
+  for (const block of content.blocks) {
+    assert.ok(!prose.includes(block.value), `${block.eyebrow} is already said in the prose`);
+  }
+  const week = weeklyRecap(recap);
+  const weekProse = [week.headline, week.lede, ...(week.paragraphs ?? [])].join(" ");
+  for (const block of week.blocks) {
+    assert.ok(!weekProse.includes(block.value), `${block.eyebrow} is already said in the prose`);
+  }
 });
 
 test("a figure is coloured by what it measures, never by default", () => {
@@ -72,42 +85,64 @@ test("a figure is coloured by what it measures, never by default", () => {
    * score, a streak, a count of untagged entries — which told a reader that
    * three different measurements were all gains.
    */
-  const content = dailyBrief(brief);
-  assert.equal(content.blocks[0].tone, "score", "the score is the score's colour");
-  for (const block of content.blocks.slice(1)) {
+  for (const block of dailyBrief(brief).blocks) {
     assert.equal(block.tone, "count", `${block.eyebrow} is a tally, not money`);
   }
   for (const block of weeklyRecap(recap).blocks) {
-    assert.notEqual(block.tone, "moss", `${block.eyebrow} is not money up`);
+    if (block.eyebrow !== "Realised") {
+      assert.notEqual(block.tone, "moss", `${block.eyebrow} is not money up`);
+    }
   }
+  assert.equal(
+    weeklyRecap(recap).blocks.find((b) => b.eyebrow === "Realised")?.tone,
+    "moss",
+    "realised P&L is the one figure here that is money",
+  );
 });
 
 test("a first reading does not claim a comparison it does not have", () => {
   const content = dailyBrief({ ...brief, previousScore: null });
-  assert.equal(content.blocks[0].tail, "Your first reading.");
+  assert.equal(content.hero?.delta, undefined);
+  assert.equal(content.hero?.tail, undefined);
+  assert.match(content.paragraphs?.[0] ?? "", /first reading/);
 });
 
 test("the brief falls back to a factual lede when nothing was written", () => {
   const content = dailyBrief({ ...brief, sentence: "" });
-  assert.equal(content.lede, "Your Health score read 82 today.");
+  assert.equal(content.lede, "Your score read 82 today.");
 });
 
-test("blocks appear only when there is something behind them", () => {
-  const quiet = dailyBrief({ ...brief, streak: 1, untagged: 0 });
-  assert.equal(quiet.blocks.length, 1);
-  assert.equal(dailyBrief(brief).blocks.length, 3);
+test("a character is absent rather than blank until it is earned", () => {
+  /*
+   * `archetypeFor` returns null until all four components are measured, and
+   * a confident character beside somebody's name is the loudest claim this
+   * product makes.
+   */
+  const content = dailyBrief({ ...brief, archetype: null });
+  assert.ok(!content.blocks.some((b) => b.eyebrow === "Reading as"));
+  assert.equal(weeklyRecap({ ...recap, archetype: null }).lede, "Read from your own ledger.");
+});
+
+test("a streak is stated once, in the headline, or not at all", () => {
+  assert.equal(dailyBrief(brief).headline, "11 sessions inside your rules.");
+  assert.equal(dailyBrief({ ...brief, streak: 1 }).headline, "Where you stand going in.");
+  assert.ok(
+    !dailyBrief(brief).blocks.some((b) => b.eyebrow === "Streak"),
+    "the row does not say it a second time",
+  );
 });
 
 test("the recap describes behaviour across the week, never the market", () => {
   const content = weeklyRecap(recap);
   assert.ok(content.lede.includes("The Sentinel"));
-  assert.equal(content.blocks[1].value, "3 / 2");
-  assert.ok(content.blocks[1].tail.includes("+$1,240"));
+  assert.equal(content.headline, "3 green sessions to 2 red.");
 });
 
-test("a week that closed nothing says so rather than printing zero dollars", () => {
+test("a week that closed nothing prints no dollar figure at all", () => {
   const content = weeklyRecap({ ...recap, realised: null });
-  assert.ok(content.blocks[1].tail.includes("Nothing closed"));
+  assert.ok(!content.blocks.some((b) => b.eyebrow === "Realised"));
+  const all = JSON.stringify(content);
+  assert.ok(!all.includes("$"), "no dollar sign survives a week that closed nothing");
 });
 
 test("both templates pass the copy rules", () => {

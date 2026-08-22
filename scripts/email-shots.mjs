@@ -35,6 +35,7 @@ const CASES = [
       score: 74,
       previousScore: 71,
       previousDate: "2026-08-21",
+      archetype: "The Steward",
       sentence: "Trade count above your baseline. Your score moved down 2.",
       tail: "That accounts for 4 of today's reading.",
       untagged: 6,
@@ -59,18 +60,28 @@ const CASES = [
 ];
 
 const browser = await chromium.launch({ executablePath: CHROME });
-const page = await browser.newPage({
-  viewport: { width: 760, height: 1200 },
-  deviceScaleFactor: 2,
-});
 
-for (const c of CASES) {
-  const html = renderHtml(c.content, UNSUB);
-  const file = `${OUT}/${c.key}.html`;
-  writeFileSync(file, html);
-  await page.goto(`file://${process.cwd()}/${file}`);
-  await page.screenshot({ path: `${OUT}/${c.key}.png`, fullPage: true });
-  console.log(`${c.key.padEnd(16)} ${c.content.subject}`);
+/*
+ * Both widths, every time. Most mail is read on a phone, and the one thing a
+ * `<style>` media query cannot be trusted to do is survive every client — so
+ * the narrow render is the one that has to be checked by eye.
+ */
+const WIDTHS = [
+  ["desktop", 760],
+  ["phone", 390],
+];
+
+for (const [label, width] of WIDTHS) {
+  const page = await browser.newPage({ viewport: { width, height: 1200 }, deviceScaleFactor: 2 });
+  for (const c of CASES) {
+    const html = renderHtml(c.content, UNSUB);
+    const file = `${OUT}/${c.key}.html`;
+    writeFileSync(file, html);
+    await page.goto(`file://${process.cwd()}/${file}`);
+    await page.screenshot({ path: `${OUT}/${c.key}-${label}.png`, fullPage: true });
+  }
+  await page.close();
+  console.log(`${label.padEnd(9)} ${width}px`);
 }
 
 await browser.close();

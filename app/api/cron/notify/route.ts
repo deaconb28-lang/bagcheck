@@ -101,6 +101,7 @@ export async function GET(req: NextRequest) {
             score: latest.score,
             previousScore: scores[1]?.score ?? null,
             previousDate: scores[1]?.date ?? null,
+            archetype: archetypeFor(latest.components)?.name ?? null,
             ...(await writtenInsight(insights, userId, latest.date)),
             untagged: await untaggedCount(transactions, tags, userId),
             streak: streakOf(scores.map((s) => s.score)),

@@ -29,6 +29,14 @@ export interface BriefInput {
   /** Untagged entries waiting — the one thing a brokerage cannot supply. */
   untagged: number;
   streak: number;
+  /**
+   * Named in the foot row, and null until every component is measured.
+   *
+   * `archetypeFor` returns null on an account that has not been scored on all
+   * four, and a confident character beside somebody's name is the loudest
+   * claim this product makes — so it is absent rather than blank.
+   */
+  archetype: string | null;
 }
 
 export interface RecapInput {
@@ -66,95 +74,104 @@ const money = (n: number) =>
  * structural rather than a habit.
  */
 export function dailyBrief(input: BriefInput): EmailContent {
-  const blocks: EmailBlock[] = [
-    {
-      eyebrow: "Health today",
-      value: String(input.score),
-      tone: "score",
-      tail:
-        input.previousScore == null
-          ? "Your first reading."
-          : `${signed(input.score - input.previousScore)} against ${
-              input.previousDate ? `${weekdayOf(input.previousDate)}'s` : "your last"
-            } ${input.previousScore}.`,
-    },
-  ];
-
-  if (input.streak > 1) {
-    blocks.push({
-      eyebrow: "Sessions inside your rules",
-      value: String(input.streak),
-      tone: "count",
-      tail: "Consecutive scored days without a rule break.",
-    });
+  /*
+   * The row at the foot states only what the prose has not.
+   *
+   * The score, its delta and the untagged count are all said in words above
+   * it — printing any of them again is the same measurement pretending to be
+   * two, which is the rule the dashboard already lives by.
+   */
+  const blocks: EmailBlock[] = [];
+  /*
+   * No streak here: the headline already says it, in words, which is the
+   * better place for it. Two of the same figure in one message is the thing
+   * this row exists to avoid.
+   */
+  if (input.archetype) {
+    blocks.push({ eyebrow: "Reading as", value: input.archetype, tone: "count" });
   }
 
+  /*
+   * No score line. The hero already states the figure and its comparison, and
+   * a paragraph that says "your score read 74, three above Friday's 71" under
+   * a 118px 74 is the same sentence twice at two sizes. The exception is a
+   * first reading, where there is no comparison to show and the fact that it
+   * is the first is worth saying.
+   */
+  const paragraphs =
+    input.previousScore == null ? [`This is your first reading.`] : [];
+  /* The insight's second line: what the sentence above it accounts for. */
+  if (input.tail) paragraphs.push(input.tail);
   if (input.untagged > 0) {
-    blocks.push({
-      eyebrow: "Entries without a reason",
-      value: String(input.untagged),
-      tone: "count",
-      tail: "Two taps each. Every correlation the engine finds is downstream of these.",
-    });
+    paragraphs.push(
+      `${input.untagged} ${input.untagged === 1 ? "entry is" : "entries are"} still without a reason. Two taps each, and every pattern the engine finds is downstream of them.`,
+    );
   }
 
   return {
-    subject: `Supercruise — ${input.score} on ${input.date}`,
-    lede: input.sentence || `Your Health score read ${input.score} today.`,
+    subject: `Supercruise — ${input.score} to start the week`,
+    eyebrow: "Monday brief",
+    hero: {
+      value: String(input.score),
+      delta: input.previousScore == null ? undefined : signed(input.score - input.previousScore),
+      deltaUp: input.previousScore == null || input.score >= input.previousScore,
+      tail:
+        input.previousScore == null
+          ? undefined
+          : `against ${input.previousDate ? `${weekdayOf(input.previousDate)}'s` : "your last"} ${input.previousScore}`,
+    },
+    headline:
+      input.streak > 1
+        ? `${input.streak} sessions inside your rules.`
+        : "Where you stand going in.",
+    lede: input.sentence || `Your score read ${input.score} today.`,
+    paragraphs,
     blocks,
-    provenance: `Read from your brokerage · ${input.date}`,
-    cta: { label: "Open your score", href: `${BASE}/you` },
+    provenance: input.date,
+    cta: { label: "Open your week", href: `${BASE}/you` },
   };
 }
 
-/** The weekly recap. Behaviour across seven days, never a market summary. */
+/** The weekly recap. Behaviour across the week, never a market summary. */
 export function weeklyRecap(input: RecapInput): EmailContent {
-  const blocks: EmailBlock[] = [
-    {
-      eyebrow: "Health, end of week",
-      value: String(input.score),
-      tone: "score",
-      tail:
-        input.weekDelta == null
-          ? `${input.scoredDays} scored ${input.scoredDays === 1 ? "day" : "days"} this week.`
-          : `${signed(input.weekDelta)} across ${input.scoredDays} scored ${input.scoredDays === 1 ? "day" : "days"}.`,
-    },
-    {
-      eyebrow: "Sessions",
-      value: `${input.greenSessions} / ${input.redSessions}`,
-      tone: "count",
-      tail:
-        input.realised == null
-          ? "Green and red sessions. Nothing closed this week."
-          : `Green and red, ${money(input.realised)} realised.`,
-    },
-  ];
+  /* Again: only what the prose has not already said. */
+  const blocks: EmailBlock[] = [];
+  if (input.realised != null) {
+    blocks.push({ eyebrow: "Realised", value: money(input.realised), tone: input.realised >= 0 ? "moss" : "loss" });
+  }
+  /*
+   * Realised P&L is the only figure this week has that the prose does not
+   * already say — the score, the delta, the scored days, the sessions and the
+   * longest hold are all in words above. A row that restated one of them
+   * would be padding.
+   */
 
+  /* Same rule: the hero carries the close and the delta, so the prose does not. */
+  const paragraphs: string[] = [];
   if (input.longestHoldDays != null) {
-    blocks.push({
-      eyebrow: "Longest hold still open",
-      value: String(input.longestHoldDays),
-      tone: "count",
-      tail: input.archetype
-        ? `Days. You are reading as ${input.archetype} on this week's components.`
-        : "Days scored this week.",
-    });
+    paragraphs.push(
+      `The longest position still open has been held ${input.longestHoldDays} ${input.longestHoldDays === 1 ? "day" : "days"}.`,
+    );
   }
 
   return {
     subject: `Supercruise — your week of ${input.weekOf}`,
-    /*
-     * The count, not "seven days". This lands on a Friday evening over a week
-     * the market has just closed — five trading days, and fewer if the ledger
-     * was quiet — so a hardcoded seven was wrong on most weeks and plainly
-     * wrong beside a block that says "5 scored days" three lines below it.
-     */
+    eyebrow: "Friday recap",
+    hero: {
+      value: String(input.score),
+      delta: input.weekDelta == null ? undefined : signed(input.weekDelta),
+      deltaUp: input.weekDelta == null || input.weekDelta >= 0,
+      tail: input.weekDelta == null ? undefined : `across ${days(input.scoredDays)}`,
+    },
+    headline: `${input.greenSessions} green ${input.greenSessions === 1 ? "session" : "sessions"} to ${input.redSessions} red.`,
+    /* The hero's tail already counts the days; this names who they read as. */
     lede: input.archetype
-      ? `${days(input.scoredDays)} as ${input.archetype}, read from your own ledger.`
-      : `${days(input.scoredDays)}, read from your own ledger.`,
+      ? `As ${input.archetype}, read from your own ledger.`
+      : "Read from your own ledger.",
+    paragraphs,
     blocks,
-    provenance: `Week of ${input.weekOf} · read from your brokerage`,
-    cta: { label: "Open Wrapped", href: `${BASE}/wrapped` },
+    provenance: `Week of ${input.weekOf}`,
+    cta: { label: "Open your week", href: `${BASE}/wrapped` },
   };
 }
 
