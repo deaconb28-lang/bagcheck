@@ -177,10 +177,20 @@
   color: var(--ink);
 }
 
+/*
+ * Full ink, not `--ink2`.
+ *
+ * The note above says a tile is a saturated fill rather than a plate, so its
+ * type takes full ink — and then the share was left one step down it, which
+ * reads 4.19:1 on a well-lit green. The sweep only catches it when the seed
+ * happens to produce a bright enough tile, which is exactly the kind of
+ * failure that survives a review: correct most runs, wrong on the good weeks.
+ */
 .weight {
   font-size: 10.5px;
   line-height: 1;
-  color: var(--ink2);
+  color: var(--ink);
+  opacity: 0.82;
 }
 
 /*
