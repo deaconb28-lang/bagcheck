@@ -16,11 +16,18 @@ export const runtime = "nodejs";
  *   curl -X POST https://…/api/email/test \
  *     -H "Authorization: Bearer $EMAIL_TEST_TOKEN"
  *
- * **It takes no recipient.** The address is `EMAIL_TEST_TO`, read from the
- * deployment, so the route cannot be pointed at a stranger — the worst a
- * leaked token buys is another copy of this message in the one inbox that
- * already configured it. An ops endpoint that accepted an address in its body
- * would be an open mail relay wearing a bearer token.
+ * **It takes no recipient, and that is the whole security model.** The
+ * addresses are `EMAIL_TEST_TO` — one, or several separated by commas — read
+ * from the deployment, so the route cannot be pointed at a stranger. An ops
+ * endpoint that accepted an address in its body would be an open mail relay
+ * wearing a bearer token, and the from-address is a domain people are meant
+ * to trust.
+ *
+ * A request *may* carry a `subject`, a `lede` and up to a handful of
+ * `paragraphs`, because the other thing this route is good for is the note a
+ * founder sends once. That widens what can be said, never who it reaches: the
+ * worst a leaked token buys is arbitrary prose in the inboxes that already
+ * configured themselves as the target.
  *
  * Without either variable the route does not exist: an admin action with no
  * secret configured is an open one, and a send target nobody chose is worse
@@ -32,6 +39,10 @@ export const runtime = "nodejs";
  * also makes it useful: what needs proving is the key, the domain, the
  * from-address and the template, none of which need a number.
  */
+/** Prose from a request is capped: a body is a note, never a payload. */
+const MAX_PARAGRAPHS = 8;
+const MAX_CHARS = 1200;
+
 export async function POST(req: NextRequest) {
   const secret = process.env.EMAIL_TEST_TOKEN;
   const to = process.env.EMAIL_TEST_TO;
@@ -47,10 +58,28 @@ export async function POST(req: NextRequest) {
   }
 
   const base = process.env.APP_URL || req.nextUrl.origin;
+
+  const body = (await req.json().catch(() => ({}))) as {
+    subject?: unknown;
+    lede?: unknown;
+    paragraphs?: unknown;
+  };
+  const str = (v: unknown, fallback: string) =>
+    typeof v === "string" && v.trim() ? v.trim().slice(0, MAX_CHARS) : fallback;
+  const paragraphs = Array.isArray(body.paragraphs)
+    ? body.paragraphs
+        .filter((p): p is string => typeof p === "string" && Boolean(p.trim()))
+        .slice(0, MAX_PARAGRAPHS)
+        .map((p) => p.trim().slice(0, MAX_CHARS))
+    : [];
+
   const content: EmailContent = {
-    subject: "Supercruise — delivery check",
-    lede:
+    subject: str(body.subject, "Supercruise — delivery check"),
+    lede: str(
+      body.lede,
       "This is the configuration check, sent by hand. If it reached you, the key, the domain and the from-address are all good.",
+    ),
+    paragraphs,
     blocks: [
       {
         eyebrow: "What arrives from here",
@@ -59,13 +88,26 @@ export async function POST(req: NextRequest) {
           "Monday morning, where you stand going in. Friday evening, the week once the market has closed it. Nothing else, and never a price.",
       },
     ],
-    provenance: `Delivery check · ${new Date().toISOString().slice(0, 10)} · no ledger was read`,
+    provenance: `Sent by hand · ${new Date().toISOString().slice(0, 10)} · no ledger was read`,
     cta: { label: "Open Supercruise", href: `${base}/you` },
   };
 
-  const result = await sendEmail(to, content, `${base}/profile`);
+  /*
+   * One send per address rather than one send with several in `To:`. Each
+   * reader gets their own copy, nobody sees anyone else's address, and one
+   * rejected recipient does not take the others down with it.
+   */
+  const addresses = to
+    .split(",")
+    .map((a) => a.trim())
+    .filter(Boolean);
+  const results = [];
+  for (const address of addresses) {
+    results.push({ to: address, ...(await sendEmail(address, content, `${base}/profile`)) });
+  }
+
   return NextResponse.json(
-    { to, from: process.env.EMAIL_FROM, ...result },
-    { status: result.sent ? 200 : 502 },
+    { from: process.env.EMAIL_FROM, results },
+    { status: results.every((r) => r.sent) ? 200 : 502 },
   );
 }

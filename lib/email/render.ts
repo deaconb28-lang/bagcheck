@@ -52,6 +52,16 @@ export interface EmailContent {
   subject: string;
   /** The one sentence at the top. Never a question, never a prompt to act. */
   lede: string;
+  /**
+   * Body copy under the lede, one string per paragraph.
+   *
+   * The two product emails do not use it — a brief is a lede and three
+   * figures, and prose in the middle of a readout is what turns an instrument
+   * into a newsletter. It exists because a message written by a person rather
+   * than by a template has paragraphs, and a newline inside the lede renders
+   * as a space.
+   */
+  paragraphs?: string[];
   blocks: EmailBlock[];
   /** Mono line at the foot — where the numbers came from. */
   provenance: string;
@@ -88,9 +98,16 @@ export function renderHtml(content: EmailContent, unsubscribeUrl: string): strin
       <tr><td style="padding:32px 30px 0">
         <div style="font-family:${MONO};font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:${DIM}">Supercruise</div>
       </td></tr>
-      <tr><td style="padding:18px 30px 26px">
+      <tr><td style="padding:18px 30px ${content.paragraphs?.length ? "6px" : "26px"}">
         <div style="font-family:${SANS};font-size:16px;line-height:1.65;color:${INK}">${esc(content.lede)}</div>
       </td></tr>
+      ${(content.paragraphs ?? [])
+        .map(
+          (para) => `<tr><td style="padding:0 30px 16px">
+        <div style="font-family:${SANS};font-size:15px;line-height:1.7;color:${DIM}">${esc(para)}</div>
+      </td></tr>`,
+        )
+        .join("")}
       <tr><td style="padding:0 30px">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${blocks}</table>
       </td></tr>
@@ -113,6 +130,7 @@ export function renderText(content: EmailContent, unsubscribeUrl: string): strin
     .join("\n\n");
   return [
     content.lede,
+    ...(content.paragraphs?.length ? ["", content.paragraphs.join("\n\n")] : []),
     "",
     blocks,
     "",
