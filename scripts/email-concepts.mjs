@@ -74,6 +74,10 @@ const MON = {
     ["Personal best", "88", "ink"],
   ],
   week: [68, 71, 70, 74, 71],
+  lead: "Twelve sessions inside your rules.",
+  body: "Your score read 74 this morning, three above Friday's 71. Six entries are still without a reason — two taps each, and every pattern the engine finds is downstream of them.",
+  /* Prose already names 74, 71 and 6, so the row repeats none of them. */
+  letterFields: [["Personal best", "88", "ink"], ["Reading as", "The Steward", "ink"]],
 };
 const FRI = {
   kind: "friday",
@@ -82,7 +86,7 @@ const FRI = {
   score: 74,
   delta: +3,
   against: "across 5 scored days",
-  insight: "Three green sessions to two red, and nothing held past your usual.",
+  insight: "You held winners about a fifth longer than losers this week.",
   archetype: "The Steward",
   fields: [
     ["Realised", "+$1,284", "moss"],
@@ -90,6 +94,10 @@ const FRI = {
     ["Longest hold", "61d", "ink"],
   ],
   week: [70, 72, 69, 76, 74],
+  lead: "Three green sessions to two red.",
+  body: "You closed the week at 74, three up across five scored days. The longest position still open is sixty-one days.",
+  /* The letter names 74 and 61 in prose, so its row states neither. */
+  letterFields: [["Realised", "+$1,284", "moss"], ["Scored days", "5", "ink"]],
 };
 
 const signed = (n) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n)}`;
@@ -290,10 +298,112 @@ function poster(d) {
   </td></tr>`);
 }
 
+
+/* ── The light world ─────────────────────────────────────────────────────
+ *
+ * White, near-black ink, and the marketing field's contrast-safe green and
+ * violet. These are the `--mk-*` tokens the landing already speaks — not a
+ * new cream invented for email. An inbox is a light room, and a black
+ * message sitting in a white thread reads as an advert; the product's own
+ * white editorial world is the honest place for a letter to come from.
+ */
+const L = {
+  bg: "#ffffff",
+  ink: "#0b0b0c",
+  ink2: "#4b4b52",
+  ink3: "#6b7280",
+  line: "#e6e6ea",
+  green: "#0c6f37", // --mk-green-ink: the green that clears 4.5:1 on white
+  red: "#b3132f",
+  violet: "#7c3aed",
+  field: "#0b0b12", // the dark foot
+};
+
+/** The dart, from the mark's own geometry, in currentColor. */
+const MARK = (size, opacity = 1) => `
+<svg width="${size}" height="${size}" viewBox="0 0 34 34" fill="none" style="opacity:${opacity}">
+  <circle cx="17" cy="17" r="13" pathLength="100" stroke="currentColor" stroke-width="2"
+    stroke-dasharray="37 13 37 13" stroke-dashoffset="6" stroke-linecap="butt"/>
+  <path d="M28 5.6 L9.6 16.8 L16.7 19.2 L17.3 26.4 Z" fill="currentColor"/>
+  <path d="M13.4 22.8 L7.2 29" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M8.4 18.8 L3 24.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" opacity=".7"/>
+</svg>`;
+
+/* == D / E · LETTER =====================================================
+ *
+ * The lead is a *sentence*, not a figure. What Supercruise knows that a
+ * brokerage app does not is what the conduct looked like, and conduct is
+ * something you say in words — "twelve sessions inside your rules" lands
+ * where "12" needs a label before it means anything.
+ *
+ * The reference this came from sells a referral off a streak and asks
+ * whether your friends can beat it. That half is deliberately left behind:
+ * this product has no population to compare anyone against, its copy is
+ * descriptive rather than prescriptive, and its lede never asks a question.
+ * What is taken is the *form* — a light room, type big enough to read at
+ * arm's length, one outlined action, and a dark foot to close it.
+ *
+ * `big` decides whether the figure shouts. It is the real tension in this
+ * direction: a letter reads slower than a poster, and the numeral is what
+ * buys the speed back.
+ */
+function letter(d, big) {
+  const fact = ([label, value, t]) => `
+    <td style="padding:0 22px 0 0;white-space:nowrap">
+      <div style="font-family:${MONO};font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:${L.ink3};padding-bottom:6px">${label}</div>
+      <div style="font-family:${NUM};font-size:19px;font-weight:700;letter-spacing:-.02em;color:${t === "moss" ? L.green : L.ink}">${value}</div>
+    </td>`;
+  return shell(`
+  <tr><td style="background:${L.ink};padding:15px 30px">
+    <table role="presentation" width="100%"><tr>
+      <td style="color:${L.bg};font-family:${MONO};font-size:10px;letter-spacing:.22em;text-transform:uppercase">SUPERCRUISE</td>
+      <td align="right" style="font-family:${MONO};font-size:10px;letter-spacing:.16em;color:rgba(255,255,255,.55)">${d.stamp}</td>
+    </tr></table>
+  </td></tr>
+
+  <tr><td style="background:${L.bg};padding:38px 30px 34px">
+    <div style="font-family:${MONO};font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:${L.violet};padding-bottom:${big ? 14 : 20}px">${d.eyebrow}</div>
+
+    ${
+      big
+        ? `<div style="font-family:${POSTER};font-size:132px;line-height:.94;letter-spacing:-.02em;color:${L.ink}">${d.score}</div>
+    <div style="padding:12px 0 28px">
+      <span style="font-family:${MONO};font-size:12px;letter-spacing:.06em;color:${d.delta >= 0 ? L.green : L.red}">${signed(d.delta)}</span>
+      <span style="font-family:${VOICE};font-size:13px;color:${L.ink3}">&nbsp;${d.against}</span>
+    </div>`
+        : ""
+    }
+
+    <div style="font-family:${BOLD};font-size:${big ? 24 : 30}px;line-height:1.24;letter-spacing:-.02em;color:${L.ink};max-width:${big ? 26 : 19}ch">${d.lead}</div>
+
+    <div style="font-family:${VOICE};font-size:17px;line-height:1.62;color:${L.ink2};padding:20px 0 0;max-width:44ch">${d.body}</div>
+
+    <div style="font-family:${VOICE};font-size:17px;line-height:1.62;color:${L.violet};padding:16px 0 0;max-width:44ch">${d.insight}</div>
+
+    <table role="presentation" style="padding:30px 0 0"><tr>${(d.letterFields ?? d.fields).map(fact).join("")}</tr></table>
+
+    <div style="padding:32px 0 4px">
+      <a href="#" style="display:inline-block;font-family:${BOLD};font-size:15px;letter-spacing:.01em;color:${L.ink};border:1.5px solid ${L.ink};text-decoration:none;padding:16px 34px;border-radius:999px">Open your week</a>
+    </div>
+  </td></tr>
+
+  <tr><td style="background:${L.field};padding:34px 30px 30px">
+    <div style="color:rgba(255,255,255,.24)">${MARK(52)}</div>
+    <div style="font-family:${BOLD};font-size:14px;color:${L.bg};padding:18px 0 8px">Supercruise</div>
+    <div style="font-family:${MONO};font-size:10px;line-height:1.9;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.46)">
+      Read from your brokerage · nothing is ever traded<br>
+      Two a week: Monday morning and Friday evening<br>
+      <a href="#" style="color:rgba(255,255,255,.46)">Stop these emails</a>
+    </div>
+  </td></tr>`, L.bg);
+}
+
 const ANGLES = [
   ["a-pass", "Boarding pass", pass],
   ["b-strip", "Instrument strip", strip],
   ["c-poster", "Poster", poster],
+  ["d-letter", "Letter", (d) => letter(d, false)],
+  ["e-letter-figure", "Letter, with the figure", (d) => letter(d, true)],
 ];
 
 const browser = await chromium.launch({ executablePath: CHROME });
