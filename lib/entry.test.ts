@@ -17,6 +17,7 @@ import test from "node:test";
  */
 
 const manifest = readFileSync("app/manifest.ts", "utf8");
+const favicon = readFileSync("app/icon.svg", "utf8");
 const appLayout = readFileSync("app/(app)/layout.tsx", "utf8");
 
 test("the installed app launches on the landing, never inside the app shell", () => {
@@ -36,4 +37,27 @@ test("the manifest's colours stay in step with the black ground", () => {
 test("a visitor with no session is sent to the landing rather than an empty state", () => {
   assert.match(appLayout, /getUserId/);
   assert.match(appLayout, /redirect\("\/"\)/);
+});
+
+test("the manifest carries raster icons, because Android will not take an SVG", () => {
+  assert.match(manifest, /icon-192\.png/);
+  assert.match(manifest, /icon-512\.png/);
+});
+
+test("the maskable icon is its own file, not the same drawing relabelled", () => {
+  assert.match(manifest, /icon-maskable-512\.png[^}]*purpose: "maskable"/);
+  assert.doesNotMatch(manifest, /"\/icon-512\.png"[^}]*purpose: "maskable"/);
+});
+
+test("the favicon drops the wake, which is mud at the size a favicon is drawn", () => {
+  /* The two wake strokes go sub-pixel below about 48px. The dart and the
+     broken ring are the whole mark at 16. */
+  assert.match(favicon, /M28 5\.6 L9\.6 16\.8/);
+  assert.doesNotMatch(favicon, /M13\.4 22\.8/);
+  assert.doesNotMatch(favicon, /M8\.4 18\.8/);
+});
+
+test("the favicon's ground follows the reader's scheme, so it is not a hole in a dark tab bar", () => {
+  assert.match(favicon, /prefers-color-scheme:\s*dark/);
+  assert.match(favicon, /\.ground\s*\{\s*fill:\s*none\s*\}/);
 });

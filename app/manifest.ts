@@ -47,9 +47,25 @@ export default function manifest(): MetadataRoute.Manifest {
      */
     background_color: "#000000",
     theme_color: "#000000",
+    /*
+     * Raster, and not only the SVG.
+     *
+     * This offered `/icon.svg` at `sizes: "any"` and the 180px apple icon, and
+     * Chrome on Android will not take an SVG for a home-screen icon — so an
+     * Android reader who installed the app got a generated letter where the
+     * dart should have been. 192 and 512 are the two sizes it asks for.
+     *
+     * The maskable entry is a *different drawing*, not the same file relabelled:
+     * a launcher crops to whatever shape it likes and guarantees only the
+     * central 80%, and the corners of artwork filling 70% of the frame fall
+     * outside that circle. `npm run icons` draws it at a harder inset.
+     */
     icons: [
       { src: "/icon.svg", sizes: "any", type: "image/svg+xml" },
       { src: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+      { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
   };
 }
