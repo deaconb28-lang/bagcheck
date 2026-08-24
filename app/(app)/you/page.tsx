@@ -234,7 +234,16 @@ export default async function DashboardPage({
    */
   const invested = investedCurve(facts.ledger);
   const activity = activityCalendar(facts.ledger);
-  const unrealisedColumns = positionColumns(data.holdings);
+  /*
+   * Off the *refreshed* positions, like every other chart here.
+   *
+   * This read `data.holdings` — the rows as Mongo stored them, before the
+   * market layer corrects a mark the last sync left stale. So the wheel and
+   * the map could draw a name that this panel had already dropped, and the
+   * largest chart on the screen would say the book has nothing to show while
+   * the two above it drew it in full.
+   */
+  const unrealisedColumns = positionColumns(view.positions);
 
   /*
    * ── The wheel's input ──
@@ -728,8 +737,21 @@ export default async function DashboardPage({
                 </p>
               </>
             ) : (
+              /*
+                * Name the condition that is actually true.
+                *
+                * This said "nothing closed in this window" whatever the
+                * reason, and that is only one of three. A reader holding
+                * eight names whose broker reported no cost basis was told to
+                * sell something — advice that would not have drawn the chart
+                * either, on a screen that had just drawn those eight names
+                * twice above. An empty state that explains the wrong absence
+                * is worse than one that says nothing.
+                */
               <p className="dashEmpty">
-                Nothing closed in this window. The chart draws when you sell.
+                {!view.positions.length
+                  ? "No priced positions on the last sync. The chart draws once your brokerage reports one."
+                  : "Your brokerage reported no cost basis for these positions, so there is no return to draw. Realised columns arrive when you sell."}
               </p>
             )}
           </Panel>

@@ -514,6 +514,19 @@
   grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
 }
 
+/*
+ * A two-column row can also carry one panel across both.
+ *
+ * The map earned it once it started nesting by theme: in the narrow column it
+ * had about four hundred pixels for four group frames, each of which has to
+ * hold its own chip, and a theme with one small name had room for neither.
+ * The rule was written against `.rowHalves` first, which this row is not — so
+ * the `span` it was given did nothing at all.
+ */
+.rowWide > [data-span] {
+  grid-column: 1 / -1;
+}
+
 .rowThirds {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -526,15 +539,6 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-/*
- * A halves row can also carry one full-width panel. The map earned it once it
- * started nesting by theme: at half width the group frames had to share about
- * four hundred pixels with their own chips, and a theme holding one small name
- * had no room to say either.
- */
-.rowHalves > [data-span] {
-  grid-column: span 2;
-}
 
 /* One panel, the full measure — the race is the page's set piece. */
 .rowFull {

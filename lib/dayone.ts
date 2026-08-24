@@ -131,7 +131,18 @@ export function activityCalendar(
  * and a name with no cost basis on file is dropped rather than drawn at zero.
  */
 export function positionColumns(
-  holdings: HoldingRow[],
+  /*
+   * Anything carrying a symbol and a P&L — deliberately not `HoldingRow`.
+   *
+   * The caller was handing it `data.holdings`, the raw rows straight out of
+   * Mongo, while every other chart on the screen reads `facts.holdings`,
+   * which is those rows *after* the market layer has corrected any mark the
+   * last sync left stale. Two charts of one book off two different versions
+   * of it is a disagreement waiting to happen, and the one that loses is
+   * whichever is fed the staler list. Widening the parameter is what lets the
+   * page pass the same positions everything else draws.
+   */
+  holdings: Array<{ symbol: string; pnl: number | null }>,
 ): Array<{ date: string; amount: number }> {
   return holdings
     .filter((h) => h.pnl != null && Number.isFinite(h.pnl))
