@@ -22,11 +22,20 @@
  */
 .grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 380px;
+  /*
+   * Both tracks are stated, and the pair is centred — not a fraction of
+   * whatever the page happens to be.
+   *
+   * `minmax(0, 1fr)` with a cap on the container kept giving the chart a
+   * column far wider than the drawing, so the wheel sat marooned in black
+   * with a gulf between it and the list. Explicit tracks plus
+   * `justify-content: center` put the two objects next to each other and let
+   * the leftover width fall outside them, which is where empty space belongs.
+   */
+  grid-template-columns: minmax(0, 720px) 360px;
+  justify-content: center;
   align-items: center;
-  gap: 40px;
-  max-width: 1200px;
-  margin: 0 auto;
+  gap: 48px;
 }
 
 .figure {
@@ -53,9 +62,8 @@
  */
 @media (max-width: 1080px) {
   .grid {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 620px);
     gap: 48px;
-    max-width: 640px;
   }
 
   .figure {
