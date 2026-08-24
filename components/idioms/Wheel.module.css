@@ -29,12 +29,17 @@
   position: absolute;
   inset: -6% 12% 14%;
   border-radius: 50%;
+  /*
+   * Neutral, deliberately. A moss-tinted wash behind a book that is *down*
+   * would be the ground contradicting the figure — and the halo's job here is
+   * to give the drawing weight on the field, not to say anything.
+   */
   background: radial-gradient(
     circle at 50% 46%,
-    color-mix(in srgb, var(--moss) 9%, transparent),
-    transparent 62%
+    color-mix(in srgb, var(--ink) 11%, transparent),
+    transparent 64%
   );
-  filter: blur(38px);
+  filter: blur(46px);
   pointer-events: none;
   z-index: 0;
 }
@@ -43,7 +48,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 760px;
+  max-width: 880px;
   height: auto;
   /*
    * The longest label starts at r=280 and runs outward, which crosses the
@@ -62,7 +67,7 @@
  */
 .ringLabel {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.04em;
   fill: color-mix(in srgb, var(--ink) 40%, transparent);
 }
@@ -149,7 +154,7 @@
 
 .ticker {
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: 14.5px;
   font-weight: 500;
   letter-spacing: 0.04em;
   fill: var(--ink);
@@ -162,7 +167,7 @@
 
 .figure {
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 12px;
   letter-spacing: 0.03em;
   fill: var(--ink3);
 }

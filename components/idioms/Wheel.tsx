@@ -161,7 +161,7 @@ export function Wheel({ positions, bookReturn, benchmark, value, caption }: Whee
 
     /* Collision resolution earns its keep past eight names or under 14°. */
     const crowded = wedges.length > 8 || wedges.some((w) => w.a1 - w.a0 < 14);
-    const placed = crowded ? declutter(tags, 26, box.vb) : tags;
+    const placed = crowded ? declutter(tags, 34, box.vb) : tags;
 
     const step = gainRamp(clean.map((p) => p.ret));
     return { clean, wedges, rings, scale, tags: placed, warnings, renderable, step, folded };

@@ -19,7 +19,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
   align-items: center;
-  gap: 40px;
+  gap: 32px;
 }
 
 .figure {
@@ -28,9 +28,10 @@
   justify-content: center;
   /*
    * The longest label runs past the viewBox by design — the SVG is
-   * `overflow: visible` and this is the room that makes that safe.
+   * `overflow: visible` and this is the room that makes that safe. It was
+   * 48px, which spent the width the drawing needed on air it did not.
    */
-  padding: 0 48px;
+  padding: 0 26px;
 }
 
 .aside {

@@ -110,6 +110,16 @@ const SECTIONS = [
    */
   { key: "page-dash", path: "/you", selector: '[class*="chrome_page"]', mode: "dark" },
   /*
+   * The dashboard's fold, as a viewport.
+   *
+   * The whole-page shot above is an *element* screenshot, and Playwright
+   * renders a sticky element at its scroll offset inside one — so the nav
+   * lands on top of the first block and every judgement about the top of this
+   * screen made from that image is wrong. The fold of the most important
+   * screen in the product had no true shot at all.
+   */
+  { key: "dash-fold", path: "/you", mode: "dark" },
+  /*
    * Each waiting state whole. The viewport shot above catches the app one's
    * fold and cuts the Wrapped one off entirely, since the preview stacks both
    * on one page — and the fold is the least interesting thing about a screen

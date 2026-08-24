@@ -379,7 +379,7 @@ export default async function DashboardPage({
           */}
         {wheelPositions.length >= 2 ? (
           <>
-            <Act label="The book" note="Every position at once: how much, and how it has done." lead />
+            <Act label="The read" note="Every position, and how far it is from breaking even." lead />
             <div data-reveal>
               <BookLead
                 positions={wheelPositions}
