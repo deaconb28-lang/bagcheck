@@ -1,0 +1,51 @@
+/*
+ * The lead block's layout.
+ *
+ * The wheel takes the larger share because it is the focal point, and the
+ * contribution list sits beside it as the reading it cannot give. There is no
+ * plate under either: a filled surface inside a filled page is the
+ * small-rectangles tell, and 96px of nothing divides these better than a
+ * border would.
+ */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 56px;
+}
+
+.figure {
+  min-width: 0;
+  /*
+   * The longest label runs past the viewBox by design — the SVG is
+   * `overflow: visible` and this is the room that makes that safe.
+   */
+  padding: 0 36px;
+}
+
+.aside {
+  min-width: 0;
+  align-self: center;
+}
+
+/*
+ * Below 1080 the list drops beneath the wheel rather than narrowing with it.
+ * A polar chart in half a laptop is a polar chart nobody can read, and the
+ * labels are the first thing to go.
+ */
+@media (max-width: 1080px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 48px;
+  }
+
+  .figure {
+    padding: 0 24px;
+  }
+}
+
+@media (max-width: 560px) {
+  .figure {
+    padding: 0;
+  }
+}

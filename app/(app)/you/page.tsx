@@ -44,7 +44,7 @@ import { Heatmap } from "@/components/dash/Heatmap";
 import { nextUp, trophiesFrom } from "@/lib/trophies";
 import { activityCalendar, investedCurve, positionColumns } from "@/lib/dayone";
 import { WrappedReady } from "@/components/dash/WrappedReady";
-import { Wheel } from "@/components/idioms";
+import { BookLead } from "@/components/dash/BookLead";
 import heroStyles from "@/components/dash/hero.module.css";
 import type { WheelPosition } from "@/lib/wheel";
 import { Collection } from "@/components/dash/Collection";
@@ -250,27 +250,39 @@ export default async function DashboardPage({
    * is not that statement.
    */
   const wheelPositions: WheelPosition[] = (() => {
+    /*
+     * Weight is a share of the priced book, and cash is **not added on top**.
+     *
+     * It was, and the result was the same money drawn twice: a money-market
+     * fund comes back from the brokerage as a position *and* inside the
+     * reported cash balance — the double-count this repo already documents
+     * for the equity curve — so a book that was a quarter cash rendered as
+     * SPAXX at 26.2% beside a CASH wedge at 26.2%, and every real position
+     * was understated by half. `HoldingRow` carries no cash-equivalent flag
+     * to detect it with, and inventing one would be guessing; the fund is
+     * already in the positions, so the positions are the whole book.
+     *
+     * `pnlPct` is return on cost, which is what the radius means. A holding
+     * the broker priced but gave no cost basis for has no return to draw and
+     * is left out rather than drawn at zero — a wedge on the break-even ring
+     * is a statement, and "we don't know" is not that statement.
+     */
     const priced = view.allocation.filter((slice) => slice.value > 0 && slice.pnlPct != null);
-    const cash = book.cash != null && book.cash > 0 ? book.cash : 0;
-    const total = priced.reduce((sum, slice) => sum + slice.value, 0) + cash;
+    const total = priced.reduce((sum, slice) => sum + slice.value, 0);
     if (total <= 0) return [];
 
-    const rows: WheelPosition[] = priced.map((slice) => ({
-      ticker: slice.label,
-      weight: (slice.value / total) * 100,
-      ret: slice.pnlPct as number,
-    }));
-
-    /*
-     * Cash is a position in the account and is never a colour. It draws as a
-     * band on the break-even ring, because money you have not deployed has
-     * not gained or lost anything.
-     */
-    if (cash > 0) {
-      rows.push({ ticker: "CASH", weight: (cash / total) * 100, ret: 0, isCash: true });
-    }
-    return rows.sort((a, b) => b.weight - a.weight);
+    return priced
+      .map((slice) => ({
+        ticker: slice.label,
+        weight: (slice.value / total) * 100,
+        ret: slice.pnlPct as number,
+      }))
+      .sort((a, b) => b.weight - a.weight);
   })();
+
+  /* The wheel's own count, not the book's — they differ whenever a holding
+     has no cost basis and is left off the chart. */
+  const wheelNames = wheelPositions.length;
 
 
   /*
@@ -372,7 +384,7 @@ export default async function DashboardPage({
           <>
             <Act label="The book" note="Every position at once: how much, and how it has done." lead />
             <div data-reveal>
-              <Wheel
+              <BookLead
                 positions={wheelPositions}
                 bookReturn={book.unrealisedPct ?? 0}
                 benchmark={
@@ -381,10 +393,14 @@ export default async function DashboardPage({
                 centre={{
                   primary:
                     book.unrealisedPct != null ? signedPct(book.unrealisedPct) : "—",
-                  secondary: `${money(book.value)} · ${book.positions} ${
-                    book.positions === 1 ? "NAME" : "NAMES"
+                  secondary: `${money(book.value)} · ${wheelNames} ${
+                    wheelNames === 1 ? "NAME" : "NAMES"
                   }`,
                 }}
+                contributions={view.positions
+                  .filter((position) => position.pnl != null)
+                  .map((position) => ({ symbol: position.symbol, pnl: position.pnl as number }))}
+                money={money}
               />
 
               {/*

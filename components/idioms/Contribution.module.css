@@ -1,0 +1,150 @@
+/*
+ * The contribution list.
+ *
+ * A ruled list, not a card: the wheel beside it is the object on this block,
+ * and a second bordered plate next to it would make two competing surfaces
+ * where there is one reading in two parts.
+ */
+.wrap {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink3);
+}
+
+.note {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line-light);
+  animation: rise 0.42s ease-out both;
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.symbol {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track {
+  height: 10px;
+  min-width: 0;
+}
+
+.bar {
+  display: block;
+  height: 100%;
+  transform-origin: left;
+  border-radius: 2px;
+  animation: grow 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Direction is fill as well as colour: gained solid, lost hatched. */
+.bar[data-dir="up"] {
+  background: var(--moss);
+}
+
+.bar[data-dir="down"] {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--loss) 0 2px,
+    transparent 2px 5px
+  );
+  box-shadow: inset 0 0 0 1px var(--loss);
+}
+
+.value {
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  color: var(--ink2);
+  white-space: nowrap;
+}
+
+.value[data-dir="up"] {
+  color: var(--moss);
+}
+
+.value[data-dir="down"] {
+  color: var(--loss);
+}
+
+.tail {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.6;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/*
+ * The finished state is the design. `grow` only sets a `from`, so a browser
+ * that never runs it paints the bar at its real width — the inline transform
+ * is the truth and the keyframe only delays arriving at it.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .row,
+  .bar {
+    animation: none;
+  }
+}

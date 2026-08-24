@@ -5,6 +5,8 @@ import {
   BOX,
   declutter,
   describe,
+  DUST_WEIGHT,
+  foldDust,
   fmtPct,
   layout,
   gainRamp,
@@ -115,14 +117,22 @@ export function Wheel({ positions, bookReturn, benchmark, centre, caption }: Whe
   const cy = box.vb / 2;
 
   const model = useMemo(() => {
-    const { positions: clean, total, warnings, renderable } = validate(positions);
+    const raw = validate(positions);
+    /*
+     * Dust is folded before anything is laid out. Four positions at a tenth
+     * of a percent were four wedges at the minimum span with four leaders
+     * leaving the same angle and four labels stacked into a pile — none of
+     * them a reading, and together one.
+     */
+    const { positions: clean, folded } = foldDust(raw.positions);
+    const { total, warnings, renderable } = { ...raw, renderable: clean.length >= 2 && clean.length <= 14 };
     const scale = solveScale(
       clean.map((p) => p.ret),
       benchmark?.ret ?? null,
       box,
     );
     const wedges = layout(clean, total, box);
-    const rings = ringValues(scale.vMin, scale.ceil);
+    const rings = ringValues(scale, box);
 
     /*
      * The leader starts clear of the wedge's *outer* edge even for a losing
@@ -147,10 +157,10 @@ export function Wheel({ positions, bookReturn, benchmark, centre, caption }: Whe
     const placed = crowded ? declutter(tags, 26, box.vb) : tags;
 
     const step = gainRamp(clean.map((p) => p.ret));
-    return { clean, wedges, rings, scale, tags: placed, warnings, renderable, step };
+    return { clean, wedges, rings, scale, tags: placed, warnings, renderable, step, folded };
   }, [positions, benchmark, box, cx, cy]);
 
-  const { clean, wedges, rings, scale, tags, renderable, step } = model;
+  const { clean, wedges, rings, scale, tags, renderable, step, folded } = model;
 
   /* Refs so the entrance can rewrite `d` without React re-rendering per frame. */
   const paths = useRef<(SVGPathElement | null)[]>([]);
@@ -260,7 +270,7 @@ export function Wheel({ positions, bookReturn, benchmark, centre, caption }: Whe
   const descId = "wheel-desc";
 
   return (
-    <figure className={styles.wrap}>
+    <figure className={`${styles.wrap} ${styles.stage}`}>
       <svg
         ref={svgRef}
         className={styles.svg}
@@ -289,7 +299,13 @@ export function Wheel({ positions, bookReturn, benchmark, centre, caption }: Whe
 
         <circle cx={cx} cy={cy} r={box.r0} fill="url(#wheel-core)" />
 
-        {/* ── Rings, then the datum ── */}
+        {/*
+          The figure spins into place as one body — rings and wedges together,
+          because they are one drawing and a ring that held still while the
+          wedges turned would read as two charts. The labels are outside this
+          group and never rotate: text on its side is not a reading.
+        */}
+        <g className={styles.spin} style={{ transformOrigin: `${cx}px ${cy}px` }}>
         <g className={styles.rings}>
           {rings.map((v) => {
             const r = radiusFor(v, scale, box);
@@ -405,8 +421,10 @@ export function Wheel({ positions, bookReturn, benchmark, centre, caption }: Whe
           })}
         </g>
 
+        </g>
+
         {/* ── Leaders ── */}
-        <g>
+        <g className={styles.annotations}>
           {wedges.map((w, i) => {
             const tag = tags[i];
             const [x1, y1] = polar(tag.outer, w.mid, cx, cy);
@@ -433,7 +451,7 @@ export function Wheel({ positions, bookReturn, benchmark, centre, caption }: Whe
         </g>
 
         {/* ── Labels ── */}
-        <g>
+        <g className={styles.annotations}>
           {wedges.map((w, i) => {
             const tag = tags[i];
             const anchor = tag.side === "right" ? "start" : "end";
@@ -446,6 +464,25 @@ export function Wheel({ positions, bookReturn, benchmark, centre, caption }: Whe
                 onMouseEnter={() => focus(w.ticker)}
                 onMouseLeave={() => focus(null)}
               >
+                {/*
+                  * The company's mark, on the side the label runs away from.
+                  *
+                  * `/api/logo/[symbol]` always answers with an image — a
+                  * drawn monogram when no provider has the ticker — so there
+                  * is no broken state to handle here. Cash and the folded
+                  * remainder wear none, because neither is a company.
+                  */}
+                {!w.isCash && !w.isRest ? (
+                  <image
+                    className={styles.logo}
+                    href={`/api/logo/${encodeURIComponent(w.ticker)}`}
+                    x={tag.side === "right" ? tag.x - 22 : tag.x + 4}
+                    y={tag.y - 13}
+                    width={16}
+                    height={16}
+                    preserveAspectRatio="xMidYMid slice"
+                  />
+                ) : null}
                 <text className={styles.ticker} x={tag.x} y={tag.y} textAnchor={anchor}>
                   {w.ticker}
                 </text>
@@ -474,12 +511,17 @@ export function Wheel({ positions, bookReturn, benchmark, centre, caption }: Whe
         >
           {centre.primary}
         </text>
-        <text className={styles.centreSecondary} x={cx} y={cy + 16} textAnchor="middle">
+        <text className={styles.centreSecondary} x={cx} y={cy + 18} textAnchor="middle">
           {centre.secondary}
         </text>
       </svg>
 
-      {caption ? <figcaption className={styles.caption}>{caption}</figcaption> : null}
+      {caption || folded ? (
+        <figcaption className={styles.caption}>
+          {caption ??
+            `${folded} positions under ${DUST_WEIGHT}% of the book are drawn together as REST`}
+        </figcaption>
+      ) : null}
 
       {/*
         The accessible chart.

@@ -12,3 +12,5 @@ export type { HeatDay } from "./HeatGrid";
 export { ScoreRing } from "./ScoreRing";
 export { Wheel } from "./Wheel";
 export type { WheelProps } from "./Wheel";
+export { Contribution } from "./Contribution";
+export type { ContributionRow, ContributionProps } from "./Contribution";

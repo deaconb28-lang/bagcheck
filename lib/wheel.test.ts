@@ -7,6 +7,7 @@ import {
   declutter,
   describe as describeWheel,
   fmtPct,
+  foldDust,
   gainRamp,
   layout,
   radii,
@@ -155,7 +156,8 @@ test("a book outside two to fourteen positions is not renderable", () => {
 });
 
 test("the ring steps are nice numbers and always include the datum", () => {
-  const rings = ringValues(-9.86, 40.03);
+  const scale = solveScale([-9.86, 40.03, 16.21], 12.3);
+  const rings = ringValues(scale);
   assert.ok(rings.includes(0), "zero is the datum and is always drawn");
   assert.deepEqual(rings, [-10, 0, 10, 20, 30, 40]);
   assert.ok(rings.length >= 4 && rings.length <= 7);
@@ -273,4 +275,66 @@ test("a loss and cash take no step of the gain ramp", () => {
 test("a single winner is not ranked against itself", () => {
   const step = gainRamp([-4, 6]);
   assert.equal(step(6), 4);
+});
+
+test("dust is folded into one wedge with a value-weighted return", () => {
+  /* Four positions at a tenth of a percent were four wedges at the minimum
+     span with four labels stacked into a pile at the top of the chart. */
+  const book: WheelPosition[] = [
+    { ticker: "SPAXX", weight: 35.5, ret: 0 },
+    { ticker: "PGY", weight: 22.1, ret: 44.33 },
+    { ticker: "GEV", weight: 21.3, ret: -13.99 },
+    { ticker: "KRMN", weight: 20.4, ret: 8.1 },
+    { ticker: "XOM", weight: 0.2, ret: 45.68 },
+    { ticker: "FSPGX", weight: 0.2, ret: 35.54 },
+    { ticker: "OMFS", weight: 0.15, ret: 27.08 },
+    { ticker: "FCAEX", weight: 0.15, ret: 44.13 },
+  ];
+  const { positions, folded } = foldDust(book);
+  assert.equal(folded, 4);
+  const rest = positions.find((p) => p.isRest);
+  assert.ok(rest, "the remainder is drawn");
+  assert.ok(Math.abs(rest.weight - 0.7) < 1e-9);
+  /* Weighted by value, not a mean of percentages. */
+  const expected = (45.68 * 0.2 + 35.54 * 0.2 + 27.08 * 0.15 + 44.13 * 0.15) / 0.7;
+  assert.ok(Math.abs(rest.ret - expected) < 1e-9, `${rest.ret} vs ${expected}`);
+});
+
+test("a remainder of one name is promoted back out", () => {
+  const { positions, folded } = foldDust([
+    { ticker: "BIG", weight: 99, ret: 4 },
+    { ticker: "DUST", weight: 1, ret: 20 },
+  ]);
+  assert.equal(folded, 0);
+  assert.ok(!positions.some((p) => p.isRest));
+  assert.ok(positions.some((p) => p.ticker === "DUST"));
+});
+
+test("a ring whose radius would be clamped is dropped, not drawn in the wrong place", () => {
+  /* The reader's own book: -13.99% worst, +45.68% best. k is set by the
+     winner, so -20% maps below rMin and was drawn at the -17% radius while
+     still labelled -20% — a gridline in the wrong place with a figure on it. */
+  const scale = solveScale([-13.99, 45.68, 44.33, 8.1, 0], 12.29);
+  for (const v of ringValues(scale)) {
+    const r = BOX.r0 + v * scale.k;
+    assert.ok(r >= BOX.rMin - 1e-9 && r <= BOX.rMax + 1e-9, `${v}% lands at ${r}`);
+  }
+  assert.ok(ringValues(scale).includes(0), "the datum is always drawn");
+});
+
+test("a ring a little past the worst loser survives when the winner sets the scale", () => {
+  /* Dropping every ring outside the value domain is too blunt: -10% on a book
+     whose worst is -9.86% lands at radius 124.5, nowhere near clamped. */
+  const scale = solveScale([-9.86, 40.03, 16.21], 12.3);
+  assert.ok(ringValues(scale).includes(-10));
+});
+
+test("both halves of a lopsided book get gridlines", () => {
+  /* -13.99% to +45.68% picks a step of 20 by raw span, whose only negative
+     ring is off the canvas — so the losing half had nothing to read against. */
+  const scale = solveScale([-13.99, 45.68, 44.33, 8.1, 0], 12.29);
+  const rings = ringValues(scale);
+  assert.ok(rings.some((v) => v < 0), `no negative ring in ${rings.join(", ")}`);
+  assert.ok(rings.some((v) => v > 0));
+  assert.ok(rings.length >= 4 && rings.length <= 8, `${rings.length} rings`);
 });

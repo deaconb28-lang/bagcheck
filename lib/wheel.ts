@@ -30,6 +30,8 @@ export interface WheelPosition {
   ret: number;
   /** Cash is structurally different from a stock that happens to be flat. */
   isCash?: boolean;
+  /** The folded remainder. It wears no company mark, because it is not one. */
+  isRest?: boolean;
 }
 
 export interface WheelBenchmark {
@@ -352,18 +354,88 @@ export function layout(
 
 export const NICE_STEPS = [0.5, 1, 2, 2.5, 5, 10, 20, 25, 50, 100];
 
-export function ringValues(vMin: number, vMax: number): number[] {
-  const span = vMax - vMin;
-  const raw = span / 5.5;
-  const step = NICE_STEPS.find((s) => s >= raw) ?? 100;
+export function ringValues(scale: Scale, box: WheelBox = BOX): number[] {
+  const vMin = scale.vMin;
+  const vMax = scale.ceil;
 
-  const rings: number[] = [];
-  for (let v = Math.floor(vMin / step) * step; v <= vMax + 1e-9; v += step) {
-    rings.push(Number(v.toFixed(4)));
-  }
-  /* Zero is the datum and is always drawn, even off-step. */
-  if (!rings.some((v) => Math.abs(v) < 1e-9)) rings.push(0);
-  return rings.sort((a, b) => a - b);
+  /*
+   * A ring is dropped when its radius would be **clamped**, not when its
+   * value falls outside the domain — those are different tests and only the
+   * first one matters.
+   *
+   * `radiusFor` pins anything past the ends to rMin or rMax, so a −20% ring
+   * on a book whose worst position is −14% was drawn at the −17% radius and
+   * still labelled −20%: a gridline in the wrong place with a figure on it.
+   * But whether that happens depends on which end binds the scale — with a
+   * big winner setting `k`, a ring a little past the worst loser still lands
+   * on a real radius and is worth drawing.
+   */
+  const drawable = (v: number) => {
+    const r = box.r0 + v * scale.k;
+    return r >= box.rMin - 1e-9 && r <= box.rMax + 1e-9;
+  };
+
+  const atStep = (step: number) => {
+    const out: number[] = [];
+    for (let v = Math.floor(vMin / step) * step; v <= vMax + 1e-9; v += step) {
+      const rounded = Number(v.toFixed(4));
+      if (Math.abs(rounded) < 1e-9 || drawable(rounded)) out.push(rounded);
+    }
+    if (!out.some((v) => Math.abs(v) < 1e-9)) out.push(0);
+    return [...new Set(out)].sort((a, b) => a - b);
+  };
+
+  /*
+   * The step is chosen by how many rings *survive*, not by the raw span.
+   *
+   * Dividing the span into five and a half is the right first guess and the
+   * wrong answer whenever the two sides are lopsided: a book running from
+   * −14% to +46% picks a step of 20, whose only negative ring is off the
+   * canvas — so the losing half of the chart ended up with no gridline at all
+   * and nothing to read a wedge's depth against. Taking the largest step that
+   * still leaves four rings drawn fixes that without ever crowding the field.
+   */
+  const candidates = NICE_STEPS.map((step) => ({ step, rings: atStep(step) }));
+  const roomy = candidates.filter((c) => c.rings.length >= 4 && c.rings.length <= 8);
+  if (roomy.length) return roomy[roomy.length - 1].rings;
+
+  const raw = (vMax - vMin) / 5.5;
+  return atStep(NICE_STEPS.find((step) => step >= raw) ?? 100);
+}
+
+/* ── Dust ─────────────────────────────────────────────────────────────────*/
+
+/** Under this share of the book a position is dust and joins the remainder. */
+export const DUST_WEIGHT = 1.5;
+
+/**
+ * Fold the dust into one wedge.
+ *
+ * Four positions at a tenth of a percent each are four wedges forced to the
+ * minimum span, four leader lines leaving the same angle and four labels
+ * stacked into an unreadable pile at the top of the chart — which is exactly
+ * how it rendered. None of them is a reading; together they are one.
+ *
+ * The remainder's return is the **value-weighted mean** of its members, which
+ * is a real figure computed the same way the book's own return is, not an
+ * average of percentages. A remainder of one name is promoted back out: a
+ * "rest" that is a single position is a label hiding a ticker for no reason.
+ */
+export function foldDust(
+  positions: WheelPosition[],
+  threshold = DUST_WEIGHT,
+): { positions: WheelPosition[]; folded: number } {
+  const dust = positions.filter((p) => !p.isCash && p.weight < threshold);
+  if (dust.length < 2) return { positions, folded: 0 };
+
+  const kept = positions.filter((p) => p.isCash || p.weight >= threshold);
+  const weight = dust.reduce((sum, p) => sum + p.weight, 0);
+  const ret = weight > 0 ? dust.reduce((sum, p) => sum + p.ret * p.weight, 0) / weight : 0;
+
+  return {
+    positions: [...kept, { ticker: "REST", weight, ret, isRest: true }],
+    folded: dust.length,
+  };
 }
 
 /* ── Labels ───────────────────────────────────────────────────────────────*/
