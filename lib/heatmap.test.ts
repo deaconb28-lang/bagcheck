@@ -109,3 +109,20 @@ test("an unclassified name gets its own theme, always last", () => {
   ]);
   assert.equal(groups[groups.length - 1].label, "UNCLASSIFIED");
 });
+
+test("a grouped tile states its share of the book, not of its theme", () => {
+  /* heatTiles divides by whatever total it is handed, which is right for the
+     whole map and wrong for one group inside it: a name that is two fifths of
+     Technology came back as 40% under a caption saying "share of the book". */
+  const groups = heatGroups([
+    { symbol: "MSFT", value: 400, pnlPct: 3.5, sector: "Technology" },
+    { symbol: "AAPL", value: 300, pnlPct: -0.9, sector: "Technology" },
+    { symbol: "SHOP", value: 300, pnlPct: -12.5, sector: "Technology" },
+    { symbol: "TSLA", value: 1000, pnlPct: -16, sector: "Automobiles" },
+  ]);
+  const msft = groups.flatMap((g) => g.tiles).find((t) => t.symbol === "MSFT");
+  assert.ok(msft);
+  assert.ok(Math.abs(msft.weight - 0.2) < 1e-9, `stated ${msft.weight}`);
+  const summed = groups.flatMap((g) => g.tiles).reduce((sum, t) => sum + t.weight, 0);
+  assert.ok(Math.abs(summed - 1) < 1e-9, `weights summed to ${summed}`);
+});

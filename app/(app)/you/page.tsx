@@ -734,7 +734,7 @@ export default async function DashboardPage({
             )}
           </Panel>
 
-          <Panel art="charts">
+          <Panel art="charts" span>
             {/*
               * ── The map replaced the ring ──
               *

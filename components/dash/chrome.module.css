@@ -526,6 +526,16 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+/*
+ * A halves row can also carry one full-width panel. The map earned it once it
+ * started nesting by theme: at half width the group frames had to share about
+ * four hundred pixels with their own chips, and a theme holding one small name
+ * had no room to say either.
+ */
+.rowHalves > [data-span] {
+  grid-column: span 2;
+}
+
 /* One panel, the full measure — the race is the page's set piece. */
 .rowFull {
   grid-template-columns: minmax(0, 1fr);

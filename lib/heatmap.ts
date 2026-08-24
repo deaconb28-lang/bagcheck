@@ -168,8 +168,14 @@ export interface HeatGroup {
 /** Where a name goes when the provider could not name an industry. */
 export const UNGROUPED = "UNCLASSIFIED";
 
-/** Percent of the map reserved at the top of each group for its label. */
-const LABEL_BAND = 4.2;
+/**
+ * Percent of the map reserved at the top of each group for its chip.
+ *
+ * It was 4.2, which on a map three hundred pixels tall is about thirteen
+ * pixels — the chip is ten of those and sat with its descenders under the
+ * first tile. The band has to clear the label, not merely acknowledge it.
+ */
+const LABEL_BAND = 7;
 
 /**
  * The map, nested one level: themes squarified by their total, then the names
@@ -230,7 +236,21 @@ export function heatGroups(items: HeatGroupItem[], min = 2): HeatGroup[] {
       label: group.label,
       box,
       weight: group.value / total,
-      tiles: heatTiles(group.rows, 1, inner),
+      /*
+       * The weight is restated against the **book**, not against the theme.
+       *
+       * `heatTiles` divides by whatever total it was handed, which is right
+       * when it is laying out the whole map and wrong the moment it is
+       * laying out one group inside it: MSFT came back as 40% because it is
+       * two fifths of Technology, while the panel above it says the figure
+       * is a share of the book — a wrong number on screen, contradicted by
+       * its own caption. The area is already correct; only the printed
+       * figure had to be rebased.
+       */
+      tiles: heatTiles(group.rows, 1, inner).map((tile) => ({
+        ...tile,
+        weight: total > 0 ? tile.value / total : 0,
+      })),
     };
   });
 }
