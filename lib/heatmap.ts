@@ -92,18 +92,23 @@ function place(row: HeatItem[], areas: number[], box: Box, out: HeatTile[], tota
  * holdings there is no map: one tile filling the box says nothing a sentence
  * would not say better.
  */
-export function heatTiles(items: HeatItem[], min = 2): HeatTile[] {
+export function heatTiles(items: HeatItem[], min = 2, into?: Box): HeatTile[] {
   const priced = items
     .filter((i) => Number.isFinite(i.value) && i.value > 0)
     .sort((a, b) => b.value - a.value);
   if (priced.length < min) return [];
 
+  const frame: Box = into ?? { x: 0, y: 0, w: 100, h: 100 };
   const total = priced.reduce((sum, i) => sum + i.value, 0);
-  /* Areas in percentage-squared units, so a full box is 100 × 100. */
-  const scale = (10_000 as number) / total;
+  /*
+   * Areas in the frame's own square units, so the algorithm is identical
+   * whether it is filling the whole map or one theme's box inside it. It was
+   * hard-coded to 100 × 100, which is what stopped it nesting.
+   */
+  const scale = (frame.w * frame.h) / total;
 
   const out: HeatTile[] = [];
-  let box: Box = { x: 0, y: 0, w: 100, h: 100 };
+  let box: Box = { ...frame };
   let row: HeatItem[] = [];
   let areas: number[] = [];
 
@@ -141,4 +146,91 @@ export function heatTiles(items: HeatItem[], min = 2): HeatTile[] {
 export function heatStrength(pnlPct: number | null, cap = 25): number {
   if (pnlPct == null || !Number.isFinite(pnlPct)) return 0;
   return Math.min(1, Math.abs(pnlPct) / cap);
+}
+
+
+/* ── Grouped by theme ─────────────────────────────────────────────────────*/
+
+export interface HeatGroupItem extends HeatItem {
+  /** The provider's industry, or null where it could not name one. */
+  sector: string | null;
+}
+
+export interface HeatGroup {
+  label: string;
+  /** The group's own box, in percent of the map. */
+  box: Box;
+  tiles: HeatTile[];
+  /** Share of the map, 0–1. */
+  weight: number;
+}
+
+/** Where a name goes when the provider could not name an industry. */
+export const UNGROUPED = "UNCLASSIFIED";
+
+/** Percent of the map reserved at the top of each group for its label. */
+const LABEL_BAND = 4.2;
+
+/**
+ * The map, nested one level: themes squarified by their total, then the names
+ * inside each squarified within its own box.
+ *
+ * The reason to nest rather than colour by theme is the reason this map
+ * replaced a pie in the first place — hue here means money, and a second
+ * meaning laid over it is exactly the exemption that was withdrawn. Area
+ * already says how much and now adjacency says which, so nothing has to be
+ * spent on a third channel.
+ *
+ * A group is only drawn as a group when it has room for its own label: below
+ * that the tiles are still placed, they just do not get a frame. An empty
+ * chip on a sliver is a label with nothing under it.
+ */
+export function heatGroups(items: HeatGroupItem[], min = 2): HeatGroup[] {
+  const priced = items.filter((i) => Number.isFinite(i.value) && i.value > 0);
+  if (priced.length < min) return [];
+
+  const byTheme = new Map<string, HeatGroupItem[]>();
+  for (const item of priced) {
+    const label = item.sector ? item.sector.toUpperCase() : UNGROUPED;
+    const rows = byTheme.get(label);
+    if (rows) rows.push(item);
+    else byTheme.set(label, [item]);
+  }
+
+  const total = priced.reduce((sum, i) => sum + i.value, 0);
+  const groups = [...byTheme.entries()]
+    .map(([label, rows]) => ({
+      label,
+      rows,
+      value: rows.reduce((sum, r) => sum + r.value, 0),
+    }))
+    .sort((a, b) => {
+      if (a.label === UNGROUPED) return 1;
+      if (b.label === UNGROUPED) return -1;
+      return b.value - a.value;
+    });
+
+  /*
+   * The outer pass reuses the same squarify by handing it one synthetic item
+   * per theme — one algorithm, one set of edge cases, rather than a second
+   * layout that could disagree with the first about a rounding.
+   */
+  const frames = heatTiles(
+    groups.map((g) => ({ symbol: g.label, value: g.value, pnlPct: null })),
+    1,
+  );
+
+  return groups.map((group, i) => {
+    const frame = frames.find((f) => f.symbol === group.label) ?? frames[i];
+    const box: Box = { x: frame.x, y: frame.y, w: frame.w, h: frame.h };
+    /* Room for the chip, but never more than a third of a shallow box. */
+    const band = Math.min(LABEL_BAND, box.h * 0.34);
+    const inner: Box = { x: box.x, y: box.y + band, w: box.w, h: box.h - band };
+    return {
+      label: group.label,
+      box,
+      weight: group.value / total,
+      tiles: heatTiles(group.rows, 1, inner),
+    };
+  });
 }

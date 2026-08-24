@@ -654,9 +654,27 @@ export function dashboardView({
       .sort((a, b) => Math.abs(b.pnl ?? 0) - Math.abs(a.pnl ?? 0))
       .map((holding) => ({
         symbol: holding.symbol,
+        name: holding.description,
+        /*
+         * The provider's industry, kept per name rather than only summed.
+         *
+         * It was loaded per symbol and immediately aggregated into
+         * `sectors`, so the two charts that group the book by theme had
+         * nothing to group by. A holding the provider cannot name keeps null
+         * and the grouping puts it in its own bucket — never in a guessed one.
+         */
+        sector: sectors.get(holding.symbol) ?? null,
         value: holding.value ?? 0,
         pnl: holding.pnl,
         pnlPct: holding.pnlPct,
+        /*
+         * Per unit, because that is what a reader recognises: `cost` off the
+         * ledger is the whole basis for the lot, and "710.00 → 1,063.25" is a
+         * statement about a share.
+         */
+        basis:
+          holding.cost != null && holding.units ? holding.cost / holding.units : null,
+        price: holding.price,
       })),
     concentration,
     /*

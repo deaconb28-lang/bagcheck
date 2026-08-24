@@ -52,6 +52,7 @@
  */
 .tile {
   position: absolute;
+  z-index: 1;
   /*
    * ── A tile measures itself ────────────────────────────────────────────
    *
@@ -380,4 +381,34 @@
   .map {
     aspect-ratio: 4 / 3;
   }
+}
+
+/*
+ * ── Theme frames ──
+ *
+ * A hairline box and a chip at its head, behind the tiles. A fill per theme
+ * would put a second colour meaning under a map whose fill already means
+ * money, which is the exemption this chart exists to avoid needing.
+ */
+.group {
+  position: absolute;
+  border: 1px solid var(--line2);
+  border-radius: var(--r-control);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.groupLabel {
+  position: absolute;
+  top: 3px;
+  left: 6px;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: calc(100% - 12px);
 }

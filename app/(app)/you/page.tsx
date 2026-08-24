@@ -45,6 +45,7 @@ import { nextUp, trophiesFrom } from "@/lib/trophies";
 import { activityCalendar, investedCurve, positionColumns } from "@/lib/dayone";
 import { WrappedReady } from "@/components/dash/WrappedReady";
 import { BookLead } from "@/components/dash/BookLead";
+import { ReturnBars } from "@/components/idioms";
 import heroStyles from "@/components/dash/hero.module.css";
 import type { WheelPosition } from "@/lib/wheel";
 import { Collection } from "@/components/dash/Collection";
@@ -432,6 +433,21 @@ export default async function DashboardPage({
           </>
         ) : null}
 
+        {view.positions.filter((position) => position.pnlPct != null).length >= 2 ? (
+          <div data-reveal>
+            {/*
+              * The same book the wheel draws, as a table you can read.
+              *
+              * A rate on its own is the least useful true thing about a
+              * position: *from what, to what* is the sentence a reader wants,
+              * and both numbers are already on the ledger. This states them,
+              * groups by the provider's industry, and puts the exposure
+              * inside the bar — none of which a polar chart has room for.
+              */}
+            <ReturnBars positions={view.positions} money={money} />
+          </div>
+        ) : null}
+
         <Act label="The money" note="Straight off your brokerage, year to date." />
 
         <div data-reveal>
@@ -729,12 +745,16 @@ export default async function DashboardPage({
               * fill goes back to money: green is up, red is down, and the
               * biggest tile is the name the account is most exposed to.
               */}
-            <PanelHead eyebrow="The book" title="Every name, sized and lit" />
+            <PanelHead eyebrow="The book" title="Every name, sized and lit">
+              <PanelNote>Area is share of the book · fill is return on cost</PanelNote>
+            </PanelHead>
             <Heatmap
-              items={data.holdings.map((h) => ({
-                symbol: h.symbol,
-                value: h.value ?? 0,
-                pnlPct: h.pnlPct,
+              grouped
+              items={view.positions.map((position) => ({
+                symbol: position.symbol,
+                value: position.value,
+                pnlPct: position.pnlPct,
+                sector: position.sector,
               }))}
             />
             {view.concentration ? <p className="dashSentence">{view.concentration}</p> : null}

@@ -1,5 +1,5 @@
-import { heatStrength, heatTiles } from "@/lib/heatmap";
-import type { HeatItem } from "@/lib/heatmap";
+import { heatGroups, heatStrength, heatTiles } from "@/lib/heatmap";
+import type { HeatGroupItem, HeatItem } from "@/lib/heatmap";
 import styles from "./heatmap.module.css";
 
 /**
@@ -24,13 +24,26 @@ import styles from "./heatmap.module.css";
 export function Heatmap({
   items,
   compact = false,
+  grouped = false,
 }: {
-  items: HeatItem[];
+  items: HeatItem[] | HeatGroupItem[];
+  /**
+   * Nest the map one level, by the provider's industry.
+   *
+   * The reason to nest rather than colour by theme is the reason this map
+   * replaced a pie at all — hue here means money, and a second meaning laid
+   * over it is exactly the exemption that was withdrawn. Area says how much,
+   * adjacency says which, and nothing has to be spent on a third channel.
+   */
+  grouped?: boolean;
   /** The hero's version: a square instead of 16:10. What each tile says is
    *  decided by the tile's own pixels, so there is nothing else to pass down. */
   compact?: boolean;
 }) {
-  const tiles = heatTiles(items);
+  const groups = grouped
+    ? heatGroups(items as HeatGroupItem[]).filter((group) => group.tiles.length)
+    : [];
+  const tiles = grouped ? groups.flatMap((group) => group.tiles) : heatTiles(items);
   if (!tiles.length) return null;
 
   const label = tiles
@@ -49,6 +62,30 @@ export function Heatmap({
       role="img"
       aria-label={`Holdings by share of the book: ${label}`}
     >
+      {/*
+        * The theme frames, behind every tile.
+        *
+        * They are drawn as a frame and a chip rather than a fill: a filled
+        * band per theme would put eight coloured surfaces under a map whose
+        * whole reading is two, and the tiles inside are already carrying the
+        * colour that means something.
+        */}
+      {groups.map((group) => (
+        <div
+          key={group.label}
+          className={styles.group}
+          style={{
+            left: `${group.box.x}%`,
+            top: `${group.box.y}%`,
+            width: `${group.box.w}%`,
+            height: `${group.box.h}%`,
+          }}
+          aria-hidden="true"
+        >
+          <span className={styles.groupLabel}>{group.label}</span>
+        </div>
+      ))}
+
       {tiles.map((tile, i) => {
         const dir = tile.pnlPct == null ? "flat" : tile.pnlPct >= 0 ? "up" : "down";
         /*

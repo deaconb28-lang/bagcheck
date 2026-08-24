@@ -289,7 +289,26 @@ export interface DashboardView {
    * P&L needs no round trips, no equity history and no derivation — one synced
    * snapshot answers it.
    */
-  positions: Array<{ symbol: string; value: number; pnl: number | null; pnlPct: number | null }>;
+  /**
+   * Every priced holding, with what both position charts need.
+   *
+   * `sector` is the provider's industry and is null wherever it could not
+   * name one — the grouping falls back rather than inventing a theme. The two
+   * prices are per unit, so a row can state what it cost against what it is
+   * worth, which is the one thing a percentage does not say.
+   */
+  positions: Array<{
+    symbol: string;
+    name: string | null;
+    sector: string | null;
+    value: number;
+    pnl: number | null;
+    pnlPct: number | null;
+    /** Average cost per unit, or null where the broker reported no basis. */
+    basis: number | null;
+    /** The current mark per unit. */
+    price: number | null;
+  }>;
   concentration: string | null;
   /**
    * The running total of realised P&L, and the year as calendar cells.

@@ -14,3 +14,4 @@ export { Wheel } from "./Wheel";
 export type { WheelProps } from "./Wheel";
 export { Contribution } from "./Contribution";
 export type { ContributionRow, ContributionProps } from "./Contribution";
+export { ReturnBars } from "./ReturnBars";

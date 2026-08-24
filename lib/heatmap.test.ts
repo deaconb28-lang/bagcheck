@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { heatStrength, heatTiles } from "./heatmap";
+import { heatGroups, heatStrength, heatTiles } from "./heatmap";
 import type { HeatItem } from "./heatmap";
 
 const item = (symbol: string, value: number, pnlPct: number | null = 0): HeatItem => ({
@@ -68,4 +68,44 @@ test("light is capped, so a moonshot and a good year are still different colours
 
 test("a name with no cost basis is unlit rather than green", () => {
   assert.equal(heatStrength(null), 0);
+});
+
+test("themes are squarified by their own total, then names inside each", () => {
+  const groups = heatGroups([
+    { symbol: "ALOY", value: 943, pnlPct: 95.7, sector: "Critical materials" },
+    { symbol: "UUUU", value: 923, pnlPct: -6.9, sector: "Critical materials" },
+    { symbol: "GEV", value: 1021, pnlPct: 49.8, sector: "Power" },
+    { symbol: "CEG", value: 362, pnlPct: 14.5, sector: "Power" },
+    { symbol: "CCJ", value: 645, pnlPct: -8.7, sector: "Nuclear" },
+  ]);
+  assert.deepEqual(groups.map((g) => g.label), ["CRITICAL MATERIALS", "POWER", "NUCLEAR"]);
+  /* Every name is placed, and only inside its own theme's box. */
+  for (const group of groups) {
+    assert.ok(group.tiles.length > 0, `${group.label} drew nothing`);
+    for (const tile of group.tiles) {
+      assert.ok(tile.x >= group.box.x - 1e-6, `${tile.symbol} left its box`);
+      assert.ok(tile.y >= group.box.y - 1e-6);
+      assert.ok(tile.x + tile.w <= group.box.x + group.box.w + 1e-6);
+      assert.ok(tile.y + tile.h <= group.box.y + group.box.h + 1e-6);
+    }
+  }
+});
+
+test("the theme boxes tile the map without overlapping", () => {
+  const groups = heatGroups([
+    { symbol: "A", value: 500, pnlPct: 1, sector: "One" },
+    { symbol: "B", value: 300, pnlPct: 1, sector: "Two" },
+    { symbol: "C", value: 200, pnlPct: 1, sector: "Three" },
+  ]);
+  const area = groups.reduce((sum, g) => sum + g.box.w * g.box.h, 0);
+  assert.ok(Math.abs(area - 10_000) < 1, `covered ${area}`);
+  assert.ok(Math.abs(groups[0].weight - 0.5) < 1e-9);
+});
+
+test("an unclassified name gets its own theme, always last", () => {
+  const groups = heatGroups([
+    { symbol: "A", value: 100, pnlPct: 1, sector: "One" },
+    { symbol: "B", value: 900, pnlPct: 1, sector: null },
+  ]);
+  assert.equal(groups[groups.length - 1].label, "UNCLASSIFIED");
 });
