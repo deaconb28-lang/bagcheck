@@ -10,16 +10,23 @@
 /*
  * The wheel is the focal point and the layout has to say so.
  *
- * At 1.55 against 1 with the list running the full column, the two read as a
- * pair of equals — and the list, being bright bars on a dark field, won.
- * The chart takes more of the width now and the list is capped, so it sits
- * beside the wheel as a note rather than competing with it.
+ * It did not. The chart column was a share of a 1470px page, so the drawing
+ * sat in about six hundred pixels of a twelve-hundred-pixel column with the
+ * rest as black — stranded left of centre while the contribution list, which
+ * fills its own column edge to edge, read as the stronger object. A focal
+ * point surrounded by dead space is not a focal point.
+ *
+ * So the block is capped and centred, and the list takes a fixed column
+ * rather than a share. Whatever the window does, the chart gets the width
+ * that is left and fills it.
  */
 .grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 380px;
   align-items: center;
-  gap: 32px;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .figure {
@@ -36,7 +43,6 @@
 
 .aside {
   min-width: 0;
-  max-width: 400px;
   align-self: center;
 }
 
@@ -49,6 +55,7 @@
   .grid {
     grid-template-columns: minmax(0, 1fr);
     gap: 48px;
+    max-width: 640px;
   }
 
   .figure {

@@ -338,3 +338,16 @@ test("both halves of a lopsided book get gridlines", () => {
   assert.ok(rings.some((v) => v > 0));
   assert.ok(rings.length >= 4 && rings.length <= 8, `${rings.length} rings`);
 });
+
+test("gridlines are never drawn closer than their own labels", () => {
+  /* A book running -16% to +16% has its scale set by the inward side, which
+     is only 38px deep — a step of 5 put seven rings 11px apart and they read
+     as a grey smear beside the centre. */
+  const scale = solveScale([-16.03, 16.03, 9.53, 3.51, -0.91], 11.7);
+  const rings = ringValues(scale);
+  for (let i = 1; i < rings.length; i++) {
+    const gap = Math.abs((rings[i] - rings[i - 1]) * scale.k);
+    assert.ok(gap >= 20 - 1e-9, `${rings[i - 1]}% to ${rings[i]}% is ${gap.toFixed(1)}px`);
+  }
+  assert.ok(rings.includes(0));
+});

@@ -354,6 +354,9 @@ export function layout(
 
 export const NICE_STEPS = [0.5, 1, 2, 2.5, 5, 10, 20, 25, 50, 100];
 
+/** Pixels. Two gridlines closer than this stack their own labels together. */
+export const MIN_RING_GAP = 20;
+
 export function ringValues(scale: Scale, box: WheelBox = BOX): number[] {
   const vMin = scale.vMin;
   const vMax = scale.ceil;
@@ -396,8 +399,27 @@ export function ringValues(scale: Scale, box: WheelBox = BOX): number[] {
    * still leaves four rings drawn fixes that without ever crowding the field.
    */
   const candidates = NICE_STEPS.map((step) => ({ step, rings: atStep(step) }));
-  const roomy = candidates.filter((c) => c.rings.length >= 4 && c.rings.length <= 8);
-  if (roomy.length) return roomy[roomy.length - 1].rings;
+
+  /*
+   * Gridlines closer together than their own labels are unreadable, and
+   * seven of them stacked beside the centre is what that looks like: a grey
+   * smear over the busiest part of the drawing. A book running −16% to +16%
+   * has its scale set by the *inward* side, which is only 38px deep, so a
+   * step of 5 put seven rings 11px apart. Three clean gridlines beat seven
+   * illegible ones, so spacing is the first filter and the count is second.
+   */
+  const spaced = candidates.filter((c) => {
+    if (c.rings.length < 2 || c.rings.length > 8) return false;
+    for (let i = 1; i < c.rings.length; i++) {
+      const gap = Math.abs((c.rings[i] - c.rings[i - 1]) * scale.k);
+      if (gap < MIN_RING_GAP) return false;
+    }
+    return true;
+  });
+  if (spaced.length) {
+    /* Among the legible options, the one that says the most. */
+    return spaced.reduce((best, c) => (c.rings.length > best.rings.length ? c : best)).rings;
+  }
 
   const raw = (vMax - vMin) / 5.5;
   return atStep(NICE_STEPS.find((step) => step >= raw) ?? 100);

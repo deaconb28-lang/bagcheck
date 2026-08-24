@@ -48,7 +48,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 880px;
+  max-width: 100%;
   height: auto;
   /*
    * The longest label starts at r=280 and runs outward, which crosses the
