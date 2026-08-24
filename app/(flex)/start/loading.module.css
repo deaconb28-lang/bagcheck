@@ -1,0 +1,124 @@
+/*
+ * Setup's wait, in the marketing field.
+ *
+ * `(flex)` sits outside the launch lock and is reached by signed-out
+ * visitors, so it speaks `--mk-*` like everything else in that world. The
+ * app's tokens never appear here.
+ */
+.wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 44px;
+  min-height: 78vh;
+  padding: 64px 24px 96px;
+  background: var(--mk-field);
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.link {
+  width: 268px;
+  height: 82px;
+}
+
+/* The route, stated faintly. It is not the measurement. */
+.path {
+  stroke: color-mix(in srgb, var(--mk-bg) 22%, transparent);
+  stroke-width: 2;
+  stroke-dasharray: 3 5;
+}
+
+/*
+ * One pulse travelling the path. `pathLength` normalises it to 100 so the
+ * dash is a percentage of the run rather than a pixel length that would have
+ * to change with the viewBox.
+ */
+.pulse {
+  stroke: var(--mk-violet-soft);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 16 84;
+  animation: travel 1.9s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.near {
+  fill: var(--mk-violet-soft);
+}
+
+/*
+ * The far node is hollow and fills only as the pulse arrives. Drawing it
+ * solid from the start would say the connection exists, which is the one
+ * thing this screen does not yet know.
+ */
+.far {
+  fill: none;
+  stroke: color-mix(in srgb, var(--mk-bg) 36%, transparent);
+  stroke-width: 2;
+  animation: arrive 1.9s ease-in-out infinite;
+}
+
+@keyframes travel {
+  from {
+    stroke-dashoffset: 16;
+  }
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+@keyframes arrive {
+  0%,
+  62% {
+    fill: transparent;
+  }
+  82% {
+    fill: color-mix(in srgb, var(--mk-violet-soft) 60%, transparent);
+  }
+  100% {
+    fill: transparent;
+  }
+}
+
+.words {
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--mk-bg);
+}
+
+.note {
+  margin: 8px 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--mk-bg) 66%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse,
+  .far {
+    animation: none;
+  }
+  .pulse {
+    stroke-dasharray: none;
+  }
+  .far {
+    fill: color-mix(in srgb, var(--mk-violet-soft) 60%, transparent);
+  }
+}

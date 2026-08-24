@@ -1,0 +1,88 @@
+/*
+ * The collection's wait.
+ *
+ * Twelve empty frames on the black field, each brightening in turn. The frame
+ * is a 1px edge and nothing else — an empty frame is the honest drawing of a
+ * roster nobody has read yet.
+ */
+.wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 56px;
+  min-height: 78vh;
+  padding: 64px 24px 96px;
+  background: var(--bg);
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 62px);
+  gap: 14px;
+}
+
+.frame {
+  display: block;
+  height: 78px;
+  border: 1px solid var(--line2);
+  border-radius: var(--r-tile);
+  animation: check 2.8s ease-in-out infinite;
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(3, 62px);
+  }
+}
+
+/*
+ * The frame brightens; it never fills. A filled frame would say the reader
+ * earned something, which is not a thing a waiting state can know.
+ */
+@keyframes check {
+  0%,
+  100% {
+    border-color: var(--line2);
+  }
+  40% {
+    border-color: color-mix(in srgb, var(--ink) 62%, var(--bg));
+  }
+}
+
+.words {
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.note {
+  margin: 8px 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame {
+    animation: none;
+  }
+}

@@ -1,0 +1,108 @@
+/*
+ * The dashboard's wait.
+ *
+ * Four arcs sweeping a ring, which is the shape this screen opens on. Every
+ * value is a token; the arcs are `--ink` mixed into the ground rather than
+ * four greys, so the ramp follows the ink.
+ */
+.wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 56px;
+  min-height: 78vh;
+  padding: 64px 24px 96px;
+  background: var(--bg);
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.dial {
+  width: 208px;
+  height: 208px;
+}
+
+.datum {
+  fill: none;
+  stroke: color-mix(in srgb, var(--ink) 30%, var(--bg));
+  stroke-width: 1.2;
+}
+
+/*
+ * The wedges arrive; they do not travel. Each lands in place at its own
+ * extent either side of the datum, and the figure holds still once they are
+ * all in — the first cut had four arcs chasing each other round the ring,
+ * which is a segmented spinner whatever it is called.
+ */
+.wedge {
+  fill: color-mix(in srgb, var(--ink) 68%, var(--bg));
+  opacity: 0;
+  transform-origin: 100px 100px;
+  animation: arrive 3.2s ease-in-out infinite;
+}
+
+.wedge:nth-child(3) {
+  fill: color-mix(in srgb, var(--ink) 82%, var(--bg));
+}
+.wedge:nth-child(5) {
+  fill: color-mix(in srgb, var(--ink) 40%, var(--bg));
+}
+.wedge:nth-child(7) {
+  fill: color-mix(in srgb, var(--ink) 52%, var(--bg));
+}
+.wedge:nth-child(8) {
+  fill: var(--ink);
+}
+
+@keyframes arrive {
+  0% {
+    opacity: 0;
+  }
+  18%,
+  76% {
+    opacity: 1;
+  }
+  96%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.words {
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.note {
+  margin: 8px 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--meta);
+}
+
+/* The static state is the finished drawing, as it must be. */
+/* The static state is the finished drawing, as it must be. */
+@media (prefers-reduced-motion: reduce) {
+  .wedge {
+    animation: none;
+    opacity: 1;
+  }
+}
