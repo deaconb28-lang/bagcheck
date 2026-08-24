@@ -580,7 +580,7 @@ html[data-mode="dark"] {
    * These are the grid values only. The wedges take --moss and --loss.
    */
   /* Gridlines are meant to be faint; they carry no reading on their own. */
-  --wheel-grid: color-mix(in srgb, var(--signal) 14%, transparent);
+  --wheel-grid: color-mix(in srgb, var(--signal) 11%, transparent);
   /*
    * A leader line, which is drawn at .45 opacity on top of this — so the
    * token has to be strong enough to survive that. At the grid's own 14% it
@@ -595,9 +595,9 @@ html[data-mode="dark"] {
    */
   --wheel-datum: color-mix(in srgb, var(--ink) 46%, transparent);
   /* Your own weighted return. Dashed, and the brighter of the two. */
-  --wheel-book: color-mix(in srgb, var(--ink) 62%, transparent);
+  --wheel-book: color-mix(in srgb, var(--ink) 78%, transparent);
   /* The benchmark. Comparison, so it is signal, and it sits back. */
-  --wheel-bench: color-mix(in srgb, var(--signal) 78%, transparent);
+  --wheel-bench: color-mix(in srgb, var(--signal) 92%, transparent);
   /*
    * Cash is never a colour. It is money you own and have not deployed, which
    * is not a bet that has failed to move, and it must never read as either a

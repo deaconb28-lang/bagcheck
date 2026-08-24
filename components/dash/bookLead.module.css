@@ -7,24 +7,35 @@
  * small-rectangles tell, and 96px of nothing divides these better than a
  * border would.
  */
+/*
+ * The wheel is the focal point and the layout has to say so.
+ *
+ * At 1.55 against 1 with the list running the full column, the two read as a
+ * pair of equals — and the list, being bright bars on a dark field, won.
+ * The chart takes more of the width now and the list is capped, so it sits
+ * beside the wheel as a note rather than competing with it.
+ */
 .grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
   align-items: center;
-  gap: 56px;
+  gap: 40px;
 }
 
 .figure {
   min-width: 0;
+  display: flex;
+  justify-content: center;
   /*
    * The longest label runs past the viewBox by design — the SVG is
    * `overflow: visible` and this is the room that makes that safe.
    */
-  padding: 0 36px;
+  padding: 0 48px;
 }
 
 .aside {
   min-width: 0;
+  max-width: 400px;
   align-self: center;
 }
 

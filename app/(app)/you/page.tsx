@@ -280,9 +280,6 @@ export default async function DashboardPage({
       .sort((a, b) => b.weight - a.weight);
   })();
 
-  /* The wheel's own count, not the book's — they differ whenever a holding
-     has no cost basis and is left off the chart. */
-  const wheelNames = wheelPositions.length;
 
 
   /*
@@ -390,13 +387,7 @@ export default async function DashboardPage({
                 benchmark={
                   view.index != null ? { label: "S&P 500", ret: view.index * 100 } : null
                 }
-                centre={{
-                  primary:
-                    book.unrealisedPct != null ? signedPct(book.unrealisedPct) : "—",
-                  secondary: `${money(book.value)} · ${wheelNames} ${
-                    wheelNames === 1 ? "NAME" : "NAMES"
-                  }`,
-                }}
+                value={money(book.value)}
                 contributions={view.positions
                   .filter((position) => position.pnl != null)
                   .map((position) => ({ symbol: position.symbol, pnl: position.pnl as number }))}

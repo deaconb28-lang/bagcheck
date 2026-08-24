@@ -58,7 +58,14 @@ export interface WheelProps {
   /** Your weighted return, drawn as the dashed ring. */
   bookReturn: number;
   benchmark?: WheelBenchmark | null;
-  centre: { primary: string; secondary: string };
+  /**
+   * The account's value, already formatted. The centre's *figure* is not a
+   * prop: it is `bookReturn` through the same formatter the legend uses, so
+   * the two can never disagree — they did, and the middle of the chart read
+   * +5.3% while the ring beside it read +5.29%. The name count is the
+   * wheel's own, after dust is folded, for the same reason.
+   */
+  value: string;
   /** Rendered above the chart when the scale had to do something unusual. */
   caption?: string | null;
 }
@@ -111,7 +118,7 @@ function jagged(a0: number, a1: number, r: number, cx: number, cy: number): stri
   return pts.join("");
 }
 
-export function Wheel({ positions, bookReturn, benchmark, centre, caption }: WheelProps) {
+export function Wheel({ positions, bookReturn, benchmark, value, caption }: WheelProps) {
   const box = BOX;
   const cx = box.vb / 2;
   const cy = box.vb / 2;
@@ -256,15 +263,16 @@ export function Wheel({ positions, bookReturn, benchmark, centre, caption }: Whe
   ];
 
   /*
-   * Two reference labels too close together collide.
+   * The reference lines are drawn in the chart and named *underneath* it.
    *
-   * The threshold is the label's own height plus breathing room, not the 6px
-   * the specification gives: the type is 8.5px mono in an 11px box, so two
-   * rings 16px apart still stack their labels into one run of text. Rendering
-   * is what caught it — at 6px the check passed and the labels overlapped.
+   * Their labels used to sit at twelve o'clock beside the ring column, which
+   * put six axis figures and two reference figures into one hundred-pixel
+   * strip over the busiest part of the drawing. They are the two most
+   * important lines here — the whole judgement is whether a wedge crosses one
+   * — so crowding them was exactly backwards. In the legend they are read
+   * once, in full, and the chart gets its top back.
    */
   const refRadii = refs.map((r) => radiusFor(r.v, scale, box));
-  const collide = refRadii.length === 2 && Math.abs(refRadii[0] - refRadii[1]) < 22;
 
   const titleId = "wheel-title";
   const descId = "wheel-desc";
@@ -346,39 +354,18 @@ export function Wheel({ positions, bookReturn, benchmark, centre, caption }: Whe
             );
           })}
 
-          {refs.map((ref, i) => {
-            const r = refRadii[i];
-            return (
-              <g key={ref.label}>
-                <circle
-                  cx={cx}
-                  cy={cy}
-                  r={r}
-                  fill="none"
-                  stroke={ref.stroke}
-                  strokeWidth={1.2}
-                  strokeDasharray={ref.dash}
-                />
-                <g className={styles.axis}>
-                  <rect
-                    x={cx - 34 - ref.label.length * 5.4}
-                    y={cy - r - 15 - (collide && i === 1 ? 12 : 0)}
-                    width={ref.label.length * 5.4 + 10}
-                    height={11}
-                    rx={3}
-                  />
-                  <text
-                    className={styles.refLabel}
-                    x={cx - 30}
-                    y={cy - r - 6 - (collide && i === 1 ? 12 : 0)}
-                    textAnchor="end"
-                  >
-                    {ref.label}
-                  </text>
-                </g>
-              </g>
-            );
-          })}
+          {refs.map((ref, i) => (
+            <circle
+              key={ref.label}
+              cx={cx}
+              cy={cy}
+              r={refRadii[i]}
+              fill="none"
+              stroke={ref.stroke}
+              strokeWidth={1.4}
+              strokeDasharray={ref.dash}
+            />
+          ))}
         </g>
 
         {/* ── Wedges ── */}
@@ -396,7 +383,14 @@ export function Wheel({ positions, bookReturn, benchmark, centre, caption }: Whe
             const fill = w.isCash
               ? "var(--wheel-cash)"
               : w.ret > 0
-                ? `var(--wheel-gain-${step(w.ret)})`
+                ? /*
+                   * The remainder takes the dimmest step whatever its blend
+                   * comes to. It is four positions worth six-tenths of a
+                   * percent, and at the top of the ramp it drew as a bright
+                   * spike reaching further out than anything real on the
+                   * chart — emphasis in inverse proportion to its size.
+                   */
+                  `var(--wheel-gain-${w.isRest ? 1 : step(w.ret)})`
                 : w.ret < 0
                   ? "url(#wheel-loss)"
                   : "var(--wheel-cash)";
@@ -464,25 +458,6 @@ export function Wheel({ positions, bookReturn, benchmark, centre, caption }: Whe
                 onMouseEnter={() => focus(w.ticker)}
                 onMouseLeave={() => focus(null)}
               >
-                {/*
-                  * The company's mark, on the side the label runs away from.
-                  *
-                  * `/api/logo/[symbol]` always answers with an image — a
-                  * drawn monogram when no provider has the ticker — so there
-                  * is no broken state to handle here. Cash and the folded
-                  * remainder wear none, because neither is a company.
-                  */}
-                {!w.isCash && !w.isRest ? (
-                  <image
-                    className={styles.logo}
-                    href={`/api/logo/${encodeURIComponent(w.ticker)}`}
-                    x={tag.side === "right" ? tag.x - 22 : tag.x + 4}
-                    y={tag.y - 13}
-                    width={16}
-                    height={16}
-                    preserveAspectRatio="xMidYMid slice"
-                  />
-                ) : null}
                 <text className={styles.ticker} x={tag.x} y={tag.y} textAnchor={anchor}>
                   {w.ticker}
                 </text>
@@ -505,23 +480,34 @@ export function Wheel({ positions, bookReturn, benchmark, centre, caption }: Whe
         <text
           className={styles.centrePrimary}
           x={cx}
-          y={cy - 10}
+          y={cy - 8}
           textAnchor="middle"
-          data-long={centre.primary.length > 7 || undefined}
+          data-long={fmtPct(bookReturn).length > 7 || undefined}
         >
-          {centre.primary}
+          {fmtPct(bookReturn)}
         </text>
-        <text className={styles.centreSecondary} x={cx} y={cy + 18} textAnchor="middle">
-          {centre.secondary}
+        <text className={styles.centreSecondary} x={cx} y={cy + 22} textAnchor="middle">
+          {value} · {clean.length} {clean.length === 1 ? "NAME" : "NAMES"}
         </text>
       </svg>
 
-      {caption || folded ? (
-        <figcaption className={styles.caption}>
-          {caption ??
-            `${folded} positions under ${DUST_WEIGHT}% of the book are drawn together as REST`}
-        </figcaption>
-      ) : null}
+      <figcaption className={styles.legend}>
+        <span className={styles.key}>
+          <i className={styles.keyBook} aria-hidden="true" />
+          Your book {fmtPct(bookReturn)}
+        </span>
+        {benchmark ? (
+          <span className={styles.key}>
+            <i className={styles.keyBench} aria-hidden="true" />
+            {benchmark.label} {fmtPct(benchmark.ret)}
+          </span>
+        ) : null}
+        {caption || folded ? (
+          <span className={styles.keyNote}>
+            {caption ?? `${folded} under ${DUST_WEIGHT}% drawn together as REST`}
+          </span>
+        ) : null}
+      </figcaption>
 
       {/*
         The accessible chart.

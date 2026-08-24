@@ -53,7 +53,23 @@ export function Contribution({ rows, limit = 7, money }: ContributionProps) {
           const share = Math.min(1, Math.abs(row.pnl) / peak);
           return (
             <li key={row.symbol} className={styles.row} style={{ animationDelay: `${i * 40}ms` }}>
-              <span className={styles.symbol}>{row.symbol}</span>
+              <span className={styles.name}>
+                {/*
+                  * The company's mark belongs here rather than on the wheel.
+                  * On a wedge label it was a 16px badge against 12px type in
+                  * the busiest part of the drawing; in a ruled list there is
+                  * a column for it and it does what a mark is for — letting
+                  * the eye find a row without reading it.
+                  */}
+                <img
+                  className={styles.logo}
+                  src={`/api/logo/${encodeURIComponent(row.symbol)}`}
+                  alt=""
+                  width={22}
+                  height={22}
+                />
+                <span className={styles.symbol}>{row.symbol}</span>
+              </span>
               <span className={styles.track} aria-hidden="true">
                 <i
                   className={styles.bar}

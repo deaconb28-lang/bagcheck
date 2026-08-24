@@ -23,14 +23,15 @@ export function BookLead({
   positions,
   bookReturn,
   benchmark,
-  centre,
+  value,
   contributions,
   money,
 }: {
   positions: WheelPosition[];
   bookReturn: number;
   benchmark: WheelBenchmark | null;
-  centre: { primary: string; secondary: string };
+  /** The account value, formatted. The wheel derives its own figure and count. */
+  value: string;
   contributions: ContributionRow[];
   money: (value: number) => string;
 }) {
@@ -41,7 +42,7 @@ export function BookLead({
           positions={positions}
           bookReturn={bookReturn}
           benchmark={benchmark}
-          centre={centre}
+          value={value}
         />
       </div>
 

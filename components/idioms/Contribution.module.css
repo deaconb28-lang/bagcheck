@@ -9,7 +9,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 26px;
   min-width: 0;
 }
 
@@ -22,7 +22,7 @@
 .eyebrow {
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 11.5px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--ink3);
@@ -47,10 +47,10 @@
 
 .row {
   display: grid;
-  grid-template-columns: 62px minmax(0, 1fr) auto;
+  grid-template-columns: 108px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 14px;
-  padding: 13px 0;
+  gap: 18px;
+  padding: 15px 0;
   border-bottom: 1px solid var(--line-light);
   animation: rise 0.42s ease-out both;
 }
@@ -59,9 +59,25 @@
   border-bottom: 0;
 }
 
+.name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.logo {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--r-control);
+  object-fit: cover;
+  background: var(--inset);
+}
+
 .symbol {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 12.5px;
   letter-spacing: 0.04em;
   color: var(--ink);
   overflow: hidden;
@@ -69,7 +85,7 @@
 }
 
 .track {
-  height: 10px;
+  height: 7px;
   min-width: 0;
 }
 
@@ -82,14 +98,21 @@
 }
 
 /* Direction is fill as well as colour: gained solid, lost hatched. */
+/*
+ * The same material as the wheel's wedges: the fill sits back and a
+ * full-strength hairline draws the edge. At full moss these bars were the
+ * loudest thing on the block and pulled the eye off the chart they exist to
+ * support — two charts in one language, and only one of them is the hero.
+ */
 .bar[data-dir="up"] {
-  background: var(--moss);
+  background: var(--wheel-gain-3);
+  box-shadow: inset 0 0 0 1px var(--moss);
 }
 
 .bar[data-dir="down"] {
   background: repeating-linear-gradient(
     135deg,
-    var(--loss) 0 2px,
+    color-mix(in srgb, var(--loss) 58%, transparent) 0 2px,
     transparent 2px 5px
   );
   box-shadow: inset 0 0 0 1px var(--loss);
