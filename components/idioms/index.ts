@@ -10,3 +10,5 @@ export type { CurvePoint } from "./EquityCurve";
 export { HeatGrid } from "./HeatGrid";
 export type { HeatDay } from "./HeatGrid";
 export { ScoreRing } from "./ScoreRing";
+export { Wheel } from "./Wheel";
+export type { WheelProps } from "./Wheel";

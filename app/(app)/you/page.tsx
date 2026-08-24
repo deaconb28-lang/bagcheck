@@ -44,7 +44,9 @@ import { Heatmap } from "@/components/dash/Heatmap";
 import { nextUp, trophiesFrom } from "@/lib/trophies";
 import { activityCalendar, investedCurve, positionColumns } from "@/lib/dayone";
 import { WrappedReady } from "@/components/dash/WrappedReady";
-import { ScoreHero } from "@/components/dash/ScoreHero";
+import { Wheel } from "@/components/idioms";
+import heroStyles from "@/components/dash/hero.module.css";
+import type { WheelPosition } from "@/lib/wheel";
 import { Collection } from "@/components/dash/Collection";
 import { EquityCurve, HeatGrid } from "@/components/idioms";
 
@@ -234,6 +236,44 @@ export default async function DashboardPage({
   const unrealisedColumns = positionColumns(data.holdings);
 
   /*
+   * ── The wheel's input ──
+   *
+   * Weight is a share of the *invested* book plus whatever cash the broker
+   * reported, so the angles sum to the account rather than to the positions
+   * alone — a book that is a fifth cash and does not say so overstates every
+   * name on it by a fifth.
+   *
+   * `pnlPct` is return on cost, which is the figure the radius means. A
+   * holding the broker priced but gave no cost basis for has no return to
+   * draw, so it is left out of the wheel entirely rather than drawn at zero:
+   * a wedge sitting exactly on break-even is a statement, and "we don't know"
+   * is not that statement.
+   */
+  const wheelPositions: WheelPosition[] = (() => {
+    const priced = view.allocation.filter((slice) => slice.value > 0 && slice.pnlPct != null);
+    const cash = book.cash != null && book.cash > 0 ? book.cash : 0;
+    const total = priced.reduce((sum, slice) => sum + slice.value, 0) + cash;
+    if (total <= 0) return [];
+
+    const rows: WheelPosition[] = priced.map((slice) => ({
+      ticker: slice.label,
+      weight: (slice.value / total) * 100,
+      ret: slice.pnlPct as number,
+    }));
+
+    /*
+     * Cash is a position in the account and is never a colour. It draws as a
+     * band on the break-even ring, because money you have not deployed has
+     * not gained or lost anything.
+     */
+    if (cash > 0) {
+      rows.push({ ticker: "CASH", weight: (cash / total) * 100, ret: 0, isCash: true });
+    }
+    return rows.sort((a, b) => b.weight - a.weight);
+  })();
+
+
+  /*
    * The closest unearned trophy, for the read's foot.
    *
    * `trophiesFrom` is pure and reads the screen this page already loaded, so
@@ -328,23 +368,59 @@ export default async function DashboardPage({
           * is the order this file's own note says the screen is in. Three rules
           * with a label on each is what makes that order visible.
           */}
-        {view.read ? (
+        {wheelPositions.length >= 2 ? (
           <>
-            <Act label="The read" note="What the instrument concluded tonight." lead />
+            <Act label="The book" note="Every position at once: how much, and how it has done." lead />
             <div data-reveal>
-              <ScoreHero
-                read={view.read}
-                year={view.wrapped.year}
-                allocation={view.allocation}
-                note={note}
-                next={nextTrophy}
-                /*
-                 * The health card is earned once there is a score to put on
-                 * it, which is exactly the condition `view.read` already
-                 * carries. A locked card renders no button at all.
-                 */
-                shareable
+              <Wheel
+                positions={wheelPositions}
+                bookReturn={book.unrealisedPct ?? 0}
+                benchmark={
+                  view.index != null ? { label: "S&P 500", ret: view.index * 100 } : null
+                }
+                centre={{
+                  primary:
+                    book.unrealisedPct != null ? signedPct(book.unrealisedPct) : "—",
+                  secondary: `${money(book.value)} · ${book.positions} ${
+                    book.positions === 1 ? "NAME" : "NAMES"
+                  }`,
+                }}
               />
+
+              {/*
+                * The night's written reading, kept.
+                *
+                * It used to sit inside the score hero, and replacing that
+                * block with the wheel would have taken it off the screen
+                * with everything else — which is the state this file's own
+                * note says it spent a long time in, generated every night
+                * and read by nobody but the email. It is the product's own
+                * voice, so it is `--accent` behind a 2px rule, as it was.
+                */}
+              {note?.sentence ? (
+                <div className={heroStyles.note}>
+                  <p className={heroStyles.noteLine}>{note.sentence}</p>
+                  {note.tail ? <p className={heroStyles.noteTail}>{note.tail}</p> : null}
+                </div>
+              ) : null}
+
+              {nextTrophy ? (
+                <a className={heroStyles.next} href="/trophies">
+                  <span className={heroStyles.nextLabel}>Closest to earning</span>
+                  <span className={heroStyles.nextName}>{nextTrophy.name}</span>
+                  <span className={heroStyles.nextMeter} aria-hidden="true">
+                    <span
+                      className={heroStyles.nextFill}
+                      style={{
+                        transform: `scaleX(${Math.min(1, nextTrophy.have / nextTrophy.need)})`,
+                      }}
+                    />
+                  </span>
+                  <span className={`num ${heroStyles.nextCount}`}>
+                    {nextTrophy.have} / {nextTrophy.need}
+                  </span>
+                </a>
+              ) : null}
             </div>
           </>
         ) : null}

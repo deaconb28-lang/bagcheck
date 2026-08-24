@@ -563,6 +563,67 @@ html[data-mode="dark"] {
    */
 
   /*
+   * ── The wheel ────────────────────────────────────────────────────────
+   *
+   * A polar chart where the angle is weight and the radius is return, read
+   * against a break-even ring.
+   *
+   * **It does not reintroduce the wedge palette.** The specification it was
+   * built from gives every ticker a stable hue and says that frees colour
+   * from doing performance work. Here it is the other way round: the radius
+   * already carries performance, so a hue on top of it would be the *same*
+   * reading twice — and identity is already carried three ways, by the
+   * position in the sweep, by the leader line and by the label. So the fill
+   * means money, the way it does everywhere else, and this file's own
+   * withdrawal note stands.
+   *
+   * These are the grid values only. The wedges take --moss and --loss.
+   */
+  /* Gridlines are meant to be faint; they carry no reading on their own. */
+  --wheel-grid: color-mix(in srgb, var(--signal) 14%, transparent);
+  /*
+   * A leader line, which is drawn at .45 opacity on top of this — so the
+   * token has to be strong enough to survive that. At the grid's own 14% it
+   * resolved to about 6% on screen and the leaders were invisible, which the
+   * standalone render did not catch because it used a literal.
+   */
+  --wheel-lead: color-mix(in srgb, var(--signal) 55%, transparent);
+  /*
+   * The break-even ring is the datum the whole chart is read against, and it
+   * may never be mistaken for a gridline — so it is a different weight and a
+   * different value, not the same value at a higher alpha.
+   */
+  --wheel-datum: color-mix(in srgb, var(--ink) 46%, transparent);
+  /* Your own weighted return. Dashed, and the brighter of the two. */
+  --wheel-book: color-mix(in srgb, var(--ink) 62%, transparent);
+  /* The benchmark. Comparison, so it is signal, and it sits back. */
+  --wheel-bench: color-mix(in srgb, var(--signal) 78%, transparent);
+  /*
+   * Cash is never a colour. It is money you own and have not deployed, which
+   * is not a bet that has failed to move, and it must never read as either a
+   * gain or a loss.
+   */
+  --wheel-cash: color-mix(in srgb, var(--signal) 40%, transparent);
+  /*
+   * A gained wedge, in four steps.
+   *
+   * Moss at strength rather than at full: a wedge is a hundred pixels of
+   * annulus and a hue does not fill a surface here. The outline is drawn in
+   * full --moss on every step, so the edge the radius is read off stays the
+   * saturated mark and the area behind it does not.
+   *
+   * The four steps are banded off how far the wedge reaches, so the shade and
+   * the radius say the same thing — a deeper wedge is a brighter one. On this
+   * ground a low mix reads as dark, so the least profitable position recedes
+   * and the best one comes forward, which is the order the eye should find
+   * them in.
+   */
+  --wheel-gain-1: color-mix(in srgb, var(--moss) 20%, transparent);
+  --wheel-gain-2: color-mix(in srgb, var(--moss) 38%, transparent);
+  --wheel-gain-3: color-mix(in srgb, var(--moss) 56%, transparent);
+  --wheel-gain-4: color-mix(in srgb, var(--moss) 78%, transparent);
+
+  /*
    * ── Glass ────────────────────────────────────────────────────────────
    *
    * Stated once, and rationed the way every other material here is.
