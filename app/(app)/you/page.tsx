@@ -235,6 +235,20 @@ export default async function DashboardPage({
   const invested = investedCurve(facts.ledger);
   const activity = activityCalendar(facts.ledger);
   /*
+   * A session set that is all zeroes is not a chart.
+   *
+   * Every column is drawn as a share of the window's peak, so a set of
+   * sessions whose amounts are all zero renders as a full-width panel of
+   * blank space under a heading and a legend — the shape of a chart with
+   * nothing in it, which is indistinguishable from one that failed. The
+   * length of the array was the only gate, and length is the wrong question:
+   * what matters is whether anything in it has height. When nothing does, the
+   * unrealised columns are the better answer, and they are a real measurement
+   * rather than a placeholder.
+   */
+  const realisedDrawable = perf.sessions.some((session) => session.amount !== 0);
+
+  /*
    * Off the *refreshed* positions, like every other chart here.
    *
    * This read `data.holdings` — the rows as Mongo stored them, before the
@@ -695,9 +709,9 @@ export default async function DashboardPage({
             */}
           <Panel art="charts">
             <PanelHead
-              eyebrow={perf.sessions.length ? `Daily P&L · ${window.label}` : "Your positions"}
+              eyebrow={realisedDrawable ? `Daily P&L · ${window.label}` : "Your positions"}
             >
-              {perf.sessions.length ? <Legend up={perf.up} down={perf.down} /> : null}
+              {realisedDrawable ? <Legend up={perf.up} down={perf.down} /> : null}
             </PanelHead>
             {/*
               * No hero figure, and no percentage either.
@@ -708,7 +722,7 @@ export default async function DashboardPage({
               * inside a single scroll, and the return five times in total. The
               * columns are what this panel is for.
               */}
-            {perf.sessions.length ? (
+            {realisedDrawable ? (
               <>
                 <PnlColumns sessions={perf.sessions} peak={perf.peak} />
                 <ChartAxis labels={perf.axis} />
