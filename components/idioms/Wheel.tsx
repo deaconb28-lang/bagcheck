@@ -480,13 +480,13 @@ export function Wheel({ positions, bookReturn, benchmark, value, caption }: Whee
         <text
           className={styles.centrePrimary}
           x={cx}
-          y={cy - 8}
+          y={cy - 2}
           textAnchor="middle"
           data-long={fmtPct(bookReturn).length > 7 || undefined}
         >
           {fmtPct(bookReturn)}
         </text>
-        <text className={styles.centreSecondary} x={cx} y={cy + 22} textAnchor="middle">
+        <text className={styles.centreSecondary} x={cx} y={cy + 34} textAnchor="middle">
           {value} · {clean.length} {clean.length === 1 ? "NAME" : "NAMES"}
         </text>
       </svg>

@@ -182,9 +182,18 @@
 
 /* ── Centre ───────────────────────────────────────────────────────────── */
 
+/*
+ * The figure fills the hole it sits in.
+ *
+ * The inner radius is 112 of a 320 viewBox, which is a 224-unit disc — at
+ * 68px the number floated in the middle of it and the centre read as a large
+ * dark hole with a caption, rather than as the thing the ring is wrapped
+ * around. Anton's floor is 32px and its ceiling here is the chord it has to
+ * fit inside; this is most of the way to it.
+ */
 .centrePrimary {
   font-family: var(--font-poster);
-  font-size: 68px;
+  font-size: 86px;
   letter-spacing: -0.02em;
   fill: var(--ink);
 }
@@ -195,7 +204,7 @@
  * worse than a smaller one.
  */
 .centrePrimary[data-long] {
-  font-size: 50px;
+  font-size: 62px;
 }
 
 .centreSecondary {
