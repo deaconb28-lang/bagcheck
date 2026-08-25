@@ -707,7 +707,7 @@ export default async function DashboardPage({
             * per position is a real figure off one synced snapshot, and for a
             * reader who only ever buys it is *the* answer to "how is it going".
             */}
-          <Panel art="charts">
+          <Panel art="charts" span>
             <PanelHead
               eyebrow={realisedDrawable ? `Daily P&L · ${window.label}` : "Your positions"}
             >
