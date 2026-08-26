@@ -23,6 +23,7 @@ import {
   PanelNote,
   Row,
   Stat,
+  Split,
   Stats,
   TotalValue,
   money,
@@ -419,40 +420,6 @@ export default async function DashboardPage({
                 money={money}
               />
 
-              {/*
-                * The night's written reading, kept.
-                *
-                * It used to sit inside the score hero, and replacing that
-                * block with the wheel would have taken it off the screen
-                * with everything else — which is the state this file's own
-                * note says it spent a long time in, generated every night
-                * and read by nobody but the email. It is the product's own
-                * voice, so it is `--accent` behind a 2px rule, as it was.
-                */}
-              {note?.sentence ? (
-                <div className={heroStyles.note}>
-                  <p className={heroStyles.noteLine}>{note.sentence}</p>
-                  {note.tail ? <p className={heroStyles.noteTail}>{note.tail}</p> : null}
-                </div>
-              ) : null}
-
-              {nextTrophy ? (
-                <a className={heroStyles.next} href="/trophies">
-                  <span className={heroStyles.nextLabel}>Closest to earning</span>
-                  <span className={heroStyles.nextName}>{nextTrophy.name}</span>
-                  <span className={heroStyles.nextMeter} aria-hidden="true">
-                    <span
-                      className={heroStyles.nextFill}
-                      style={{
-                        transform: `scaleX(${Math.min(1, nextTrophy.have / nextTrophy.need)})`,
-                      }}
-                    />
-                  </span>
-                  <span className={`num ${heroStyles.nextCount}`}>
-                    {nextTrophy.have} / {nextTrophy.need}
-                  </span>
-                </a>
-              ) : null}
             </div>
           </>
         ) : null}
@@ -469,8 +436,59 @@ export default async function DashboardPage({
           * is up, and cannot answer what a given name is worth, which is the
           * question a holder arrives with.
           */}
+        {/*
+          * The account in the main column, the commentary in a rail.
+          *
+          * The night's written reading and the closest trophy used to sit
+          * under the wheel, in the full width of the page, which gave a
+          * sentence the same claim on the reader as the chart above it. They
+          * are commentary — Origin stacks exactly this kind of card in a rail
+          * beside the money and it is the right shape for them: a fixed
+          * measure, next to the object they are about rather than under it.
+          */}
         <div data-reveal>
-          <PositionsTable positions={view.positions} />
+          <Split
+            rail={
+              <>
+              {/*
+                  * The night's written reading, kept.
+                  *
+                  * It used to sit inside the score hero, and replacing that
+                  * block with the wheel would have taken it off the screen
+                  * with everything else — which is the state this file's own
+                  * note says it spent a long time in, generated every night
+                  * and read by nobody but the email. It is the product's own
+                  * voice, so it is `--accent` behind a 2px rule, as it was.
+                  */}
+                {note?.sentence ? (
+                  <div className={heroStyles.note}>
+                    <p className={heroStyles.noteLine}>{note.sentence}</p>
+                    {note.tail ? <p className={heroStyles.noteTail}>{note.tail}</p> : null}
+                  </div>
+                ) : null}
+
+                {nextTrophy ? (
+                  <a className={heroStyles.next} href="/trophies">
+                    <span className={heroStyles.nextLabel}>Closest to earning</span>
+                    <span className={heroStyles.nextName}>{nextTrophy.name}</span>
+                    <span className={heroStyles.nextMeter} aria-hidden="true">
+                      <span
+                        className={heroStyles.nextFill}
+                        style={{
+                          transform: `scaleX(${Math.min(1, nextTrophy.have / nextTrophy.need)})`,
+                        }}
+                      />
+                    </span>
+                    <span className={`num ${heroStyles.nextCount}`}>
+                      {nextTrophy.have} / {nextTrophy.need}
+                    </span>
+                  </a>
+                ) : null}
+              </>
+            }
+          >
+            <PositionsTable positions={view.positions} />
+          </Split>
         </div>
 
         {view.positions.filter((position) => position.pnlPct != null).length >= 2 ? (

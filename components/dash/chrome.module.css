@@ -622,3 +622,48 @@
     padding-top: 14px;
   }
 }
+
+/*
+ * ── Main and rail ──
+ *
+ * The dashboard was a stack of equal-width bands, which gives every block on
+ * it the same claim on the reader. A rail is how the good portfolio products
+ * separate the account from the commentary about it.
+ */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 34px;
+  align-items: start;
+  margin-top: 20px;
+}
+
+.splitMain {
+  min-width: 0;
+}
+
+.splitRail {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  /* It follows the main column down rather than sitting at the top of a tall
+     block with its own empty half beneath it. */
+  position: sticky;
+  top: 96px;
+}
+
+/*
+ * A 340px rail beside a narrowed chart is two columns too narrow to read
+ * rather than one that works, so below this it goes under.
+ */
+@media (max-width: 1080px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+  }
+
+  .splitRail {
+    position: static;
+  }
+}

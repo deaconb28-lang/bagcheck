@@ -248,6 +248,37 @@ export function Stat({
   );
 }
 
+/**
+ * A main column with a rail beside it.
+ *
+ * The dashboard was twelve full-width bands stacked six thousand pixels deep,
+ * which is not a layout — it is a list of panels, and everything on it claims
+ * the same importance because everything on it is the same width. Every
+ * portfolio product that reads well does the opposite: Origin puts net worth
+ * and spending in a main column and stacks the contextual cards — the weekly
+ * recap, the market brief, the budget nudge — in a narrower rail beside them,
+ * so the eye knows which column is the account and which is commentary.
+ *
+ * The rail is a fixed width rather than a fraction: it holds prose and small
+ * cards, and prose has a measure. Below 1080px it drops under the main column,
+ * because a 340px rail beside a 400px chart is two things too narrow to read
+ * instead of one.
+ */
+export function Split({
+  children,
+  rail,
+}: {
+  children: React.ReactNode;
+  rail: React.ReactNode;
+}) {
+  return (
+    <div className={styles.split}>
+      <div className={styles.splitMain}>{children}</div>
+      <aside className={styles.splitRail}>{rail}</aside>
+    </div>
+  );
+}
+
 export function Row({
   kind,
   children,
