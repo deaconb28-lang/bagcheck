@@ -45,6 +45,7 @@ import { nextUp, trophiesFrom } from "@/lib/trophies";
 import { activityCalendar, investedCurve, positionColumns } from "@/lib/dayone";
 import { WrappedReady } from "@/components/dash/WrappedReady";
 import { BookLead } from "@/components/dash/BookLead";
+import { PositionsTable } from "@/components/dash/PositionsTable";
 import { ReturnBars } from "@/components/idioms";
 import heroStyles from "@/components/dash/hero.module.css";
 import type { WheelPosition } from "@/lib/wheel";
@@ -455,6 +456,22 @@ export default async function DashboardPage({
             </div>
           </>
         ) : null}
+
+        {/*
+          * The book as a table, directly under the money.
+          *
+          * Six portfolio products were looked at before this was added and
+          * five of them lead with exactly this object — Monarch, Origin,
+          * Quicken, Fey and Kraken all make a holdings table the primary
+          * thing on the screen and let the charts sit around it. This
+          * dashboard drew the same account three ways and never once as a
+          * list of its positions: a chart answers which is biggest and which
+          * is up, and cannot answer what a given name is worth, which is the
+          * question a holder arrives with.
+          */}
+        <div data-reveal>
+          <PositionsTable positions={view.positions} />
+        </div>
 
         {view.positions.filter((position) => position.pnlPct != null).length >= 2 ? (
           <div data-reveal>

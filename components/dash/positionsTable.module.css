@@ -1,0 +1,167 @@
+/*
+ * The book as a table.
+ *
+ * Read from Fey's register more than the others: near-black, a company mark
+ * beside every ticker, hairline rules between rows, and colour confined to
+ * the one column that carries a direction. The other five references reach
+ * for a header fill and a zebra stripe; both are ways of separating rows that
+ * a 1px rule does with less ink.
+ */
+
+.wrap {
+  /* A table is the one thing on this page allowed to scroll sideways: the
+     alternative is dropping a column, and every column here is a figure. */
+  overflow-x: auto;
+  margin-top: 4px;
+}
+
+.table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  text-align: right;
+}
+
+.table thead th {
+  padding: 0 0 14px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--meta);
+  border-bottom: 1px solid var(--line2);
+  white-space: nowrap;
+}
+
+.table tbody th,
+.table tbody td {
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line-light);
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.table tbody tr:last-child th,
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* ── The name ─────────────────────────────────────────────────────────── */
+
+.name {
+  text-align: left;
+  padding-right: 24px !important;
+}
+
+.who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.who2 {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.logo {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-control);
+  object-fit: cover;
+  background: var(--inset);
+}
+
+.symbol {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+
+.company {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: var(--meta);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+/* ── The figures ──────────────────────────────────────────────────────── */
+
+.num {
+  padding-left: 24px !important;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  color: var(--ink2);
+}
+
+.prices {
+  color: var(--meta);
+  font-size: 12px;
+}
+
+.arrow {
+  color: var(--line2);
+  padding: 0 2px;
+}
+
+/*
+ * The one lit column. A chip rather than plain text, because the return is
+ * what the eye is scanning for and an outlined block finds itself faster than
+ * a coloured word in a column of coloured words.
+ */
+.chip {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: var(--r-control);
+  border: 1px solid transparent;
+  font-size: 12.5px;
+}
+
+.chip[data-dir="up"] {
+  color: var(--moss);
+  border-color: var(--moss-line);
+  background: color-mix(in srgb, var(--moss) 9%, transparent);
+}
+
+.chip[data-dir="down"] {
+  color: var(--loss);
+  border-color: var(--loss-line);
+  background: color-mix(in srgb, var(--loss) 9%, transparent);
+}
+
+.chip[data-dir="flat"] {
+  color: var(--meta);
+  border-color: var(--line2);
+}
+
+.pnl[data-dir="up"] {
+  color: var(--moss);
+}
+
+.pnl[data-dir="down"] {
+  color: var(--loss);
+}
+
+/*
+ * A holding the broker priced but gave no cost basis for keeps its row and
+ * says so. Dropping it would understate the account; drawing it at zero would
+ * be a claim. An em dash is the only honest mark.
+ */
+.absent {
+  color: var(--meta);
+}
+
+@media (max-width: 900px) {
+  .company {
+    display: none;
+  }
+}
