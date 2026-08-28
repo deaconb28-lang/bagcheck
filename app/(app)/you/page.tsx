@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getUserId, isAuthConfigured } from "@/auth";
 import { accessFor, factsFrom, getDailyInsight, isDbConfigured, loadScreen, syncClock, wrappedOpenedAt } from "@/lib/db";
-import { dashboardFor, fieldLine } from "@/lib/portfolio/load";
+import { dashboardFor, fieldLine, rangeOf } from "@/lib/portfolio/load";
 import { RATE_FLOOR } from "@/lib/portfolio/view";
-import type { Pattern, RangeKey } from "@/lib/portfolio/types";
+import type { Pattern } from "@/lib/portfolio/types";
 import { EmptyState } from "@/components/app/EmptyState";
 import { FirstScore } from "@/components/app/FirstScore";
 import { PageGrid } from "@/components/app/PageGrid";
@@ -47,6 +47,7 @@ import { activityCalendar, investedCurve, positionColumns } from "@/lib/dayone";
 import { WrappedReady } from "@/components/dash/WrappedReady";
 import { BookLead } from "@/components/dash/BookLead";
 import { PositionsTable } from "@/components/dash/PositionsTable";
+import { MoneyHero } from "@/components/dash/MoneyHero";
 import { ReturnBars } from "@/components/idioms";
 import heroStyles from "@/components/dash/hero.module.css";
 import type { WheelPosition } from "@/lib/wheel";
@@ -64,7 +65,6 @@ import { EquityCurve, HeatGrid } from "@/components/idioms";
  *
  * Year to date is the window everything else on the screen already agrees on.
  */
-const RANGE: RangeKey = "ytd";
 
 /**
  * Below this the grid is one lit cell in a field of empties, which reads as a
@@ -104,10 +104,13 @@ export const dynamic = "force-dynamic";
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ connected?: string }>;
+  searchParams: Promise<{ connected?: string; range?: string }>;
 }) {
   const userId = await getUserId();
-  const { connected } = await searchParams;
+  const { connected, range: rawRange } = await searchParams;
+  /* `rangeOf` and `dashboardFor(userId, range)` were both written for this and
+     never called with anything but a constant. */
+  const RANGE = rangeOf(rawRange);
 
   const syncDialog =
     connected === "1" && userId ? (
@@ -403,6 +406,27 @@ export default async function DashboardPage({
           * is the order this file's own note says the screen is in. Three rules
           * with a label on each is what makes that order visible.
           */}
+        {/*
+          * The money, before anything else.
+          *
+          * Every brokerage home screen read for this opens with the account's
+          * value and its change, then a line, then the ranges — Fidelity,
+          * Lightyear, Acorns, Copilot, QuestMobile and Quicken without
+          * exception. This screen had the value as small mono text inside the
+          * composition chart's centre, which is the one place a reader opening
+          * the app is not looking.
+          */}
+        <div data-reveal>
+          <MoneyHero
+            value={book.value}
+            gain={perf.gain}
+            ret={perf.ret}
+            curve={view.curve}
+            range={RANGE}
+            basis={view.provenance.marks}
+          />
+        </div>
+
         {wheelPositions.length >= 2 ? (
           <>
             <Act label="The read" note="Every position, and how far it is from breaking even." lead />
