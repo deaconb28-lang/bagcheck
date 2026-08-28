@@ -39,7 +39,7 @@
 }
 
 .delta {
-  margin: 14px 0 0;
+  margin: 16px 0 0;
   font-family: var(--font-voice);
   font-size: 17px;
   font-weight: 600;
@@ -71,13 +71,13 @@
  */
 .chart {
   width: 100%;
-  margin-top: 26px;
+  margin-top: 32px;
 }
 
 .ranges {
   display: flex;
   gap: 6px;
-  margin-top: 18px;
+  margin-top: 24px;
 }
 
 .range {
@@ -103,13 +103,21 @@
   background: var(--ink-field);
 }
 
+/*
+ * Where the figures came from. It ran the full width in uppercase mono
+ * directly under the hero — a hundred and twenty characters of chrome in the
+ * first thing a reader sees. It is a footnote to the value, so it reads like
+ * one: sentence case, a measure it cannot exceed, and set back far enough
+ * that the eye skips it until it wants it.
+ */
 .basis {
-  margin: 16px 0 0;
+  margin: 18px 0 0;
+  max-width: 62ch;
   font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--meta);
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--meta) 74%, transparent);
 }
 
 @media (max-width: 560px) {

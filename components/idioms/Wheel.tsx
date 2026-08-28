@@ -481,7 +481,6 @@ export function Wheel({ positions, bookReturn, benchmark, value, caption }: Whee
           {wedges.map((w, i) => {
             const tag = tags[i];
             const anchor = tag.side === "right" ? "start" : "end";
-            const tone = w.isCash || w.ret === 0 ? "flat" : w.ret > 0 ? "up" : "down";
             return (
               <g
                 key={`tag-${w.ticker}`}
@@ -493,16 +492,20 @@ export function Wheel({ positions, bookReturn, benchmark, value, caption }: Whee
                 <text className={styles.ticker} x={tag.x} y={tag.y} textAnchor={anchor}>
                   {w.ticker}
                 </text>
-                <text
-                  className={styles.figure}
-                  data-tone={tone}
-                  x={tag.x}
-                  y={tag.y + 13}
-                  textAnchor={anchor}
-                >
-                  {fmtPct(w.ret)}
-                  {w.ret > scale.ceil ? " ↑" : ""} · {w.weight.toFixed(1)}%
-                </text>
+                {/*
+                  * The ticker, and nothing else.
+                  *
+                  * This carried the return and the weight under every name,
+                  * which made it the *third* place those two figures appear
+                  * on one screen — the list beside the chart states both, and
+                  * the table under it states both again. Eight tickers each
+                  * with a second line is sixteen label rows orbiting a
+                  * drawing, and the drawing is what the reader came for.
+                  *
+                  * What the label has to do is answer "which wedge is that",
+                  * and a ticker answers it. The magnitude is the radius; the
+                  * exact figure is two inches away in type.
+                  */}
               </g>
             );
           })}

@@ -154,7 +154,7 @@
 
 .ticker {
   font-family: var(--font-mono);
-  font-size: 15.5px;
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.04em;
   fill: var(--ink);
@@ -193,7 +193,7 @@
  */
 .centrePrimary {
   font-family: var(--font-poster);
-  font-size: 96px;
+  font-size: 62px;
   letter-spacing: -0.02em;
   fill: var(--ink);
 }
@@ -203,8 +203,14 @@
  * runs past the inner hole, and a centre figure that overlaps the wedges is
  * worse than a smaller one.
  */
+/*
+ * One hero per screen, and it is the account's value in the block above this.
+ * The centre was 96px, which put two figures of near-identical weight six
+ * hundred pixels apart and left a reader with no answer to "what am I looking
+ * at first". The rate is the chart's own summary, not the page's headline.
+ */
 .centrePrimary[data-long] {
-  font-size: 62px;
+  font-size: 44px;
 }
 
 .centreSecondary {
