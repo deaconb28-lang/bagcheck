@@ -39,14 +39,16 @@ export default function manifest(): MetadataRoute.Manifest {
     display: "standalone",
     orientation: "portrait",
     /*
-     * Black, like the app and like `themeColor` in `app/layout.tsx`. These
-     * were `#f4f4f6` — a light grey left over from the light-first build —
-     * so a phone launching the saved app flashed pale and then painted
-     * itself black. The comment above has always said keep the three in
-     * step; this is the commit where they are.
+     * The light ground, like the app and like `themeColor` in
+     * `app/layout.tsx`. These were black while the app was permanently dark;
+     * light is the default now, so a phone launching the saved app would
+     * otherwise flash black and then paint itself light — the same failure
+     * these values had before, in the other direction. The note above has
+     * always said keep the three in step, and this is the second time that
+     * has actually had to be acted on.
      */
-    background_color: "#000000",
-    theme_color: "#000000",
+    background_color: "#f4f4f6",
+    theme_color: "#f4f4f6",
     /*
      * Raster, and not only the SVG.
      *

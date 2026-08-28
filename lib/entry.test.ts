@@ -29,9 +29,33 @@ test("the manifest states its own id, so changing start_url does not mint a seco
   assert.match(manifest, /id:\s*"\/"/);
 });
 
-test("the manifest's colours stay in step with the black ground", () => {
-  assert.match(manifest, /background_color:\s*"#000000"/);
-  assert.match(manifest, /theme_color:\s*"#000000"/);
+test("the manifest, the theme colour and the ground all state the same value", () => {
+  /*
+   * The real invariant is agreement, not a particular hex. A manifest is JSON
+   * and a theme colour is a meta tag, so neither can cite `--bg` — these are
+   * the places its value is written out by hand, and the failure they produce
+   * is a phone launching the saved app in one ground and repainting into the
+   * other. It has now happened once in each direction.
+   */
+  const layout = readFileSync("app/layout.tsx", "utf8");
+  const tokens = readFileSync("styles/tokens.css", "utf8");
+
+  const bg = /:root\s*\{[\s\S]*?--bg:\s*(#[0-9a-fA-F]{6})/.exec(tokens)?.[1];
+  assert.ok(bg, "the default ground is stated in :root");
+
+  const themed = /themeColor:\s*"(#[0-9a-fA-F]{6})"/.exec(layout)?.[1];
+  const background = /background_color:\s*"(#[0-9a-fA-F]{6})"/.exec(manifest)?.[1];
+  const theme = /theme_color:\s*"(#[0-9a-fA-F]{6})"/.exec(manifest)?.[1];
+
+  assert.equal(themed?.toLowerCase(), bg.toLowerCase(), "layout themeColor drifted from --bg");
+  assert.equal(background?.toLowerCase(), bg.toLowerCase(), "manifest background drifted");
+  assert.equal(theme?.toLowerCase(), bg.toLowerCase(), "manifest theme colour drifted");
+});
+
+test("the app opens light unless the reader has chosen otherwise", () => {
+  const layout = readFileSync("app/layout.tsx", "utf8");
+  assert.match(layout, /m='light'/);
+  assert.match(layout, /dataset\.mode='light'/, "the catch path falls back to light too");
 });
 
 test("a visitor with no session is sent to the landing rather than an empty state", () => {

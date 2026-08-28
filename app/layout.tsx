@@ -162,7 +162,13 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#000000",
+  /*
+   * The light ground, because that is what the app now opens on. A browser
+   * chrome colour is a meta tag and cannot cite a custom property, so this is
+   * the one place `--bg` is written twice and the two are kept in step by
+   * hand — the same standing note that applied when it said #000000.
+   */
+  themeColor: "#f4f4f6",
 };
 
 export default function RootLayout({
@@ -200,16 +206,22 @@ export default function RootLayout({
     >
       <head>
         {/*
-          Before paint, so a reader who chose light never sees black first.
-          It is inline and tiny for the same reason every anti-flash script
-          is: anything that arrives with the bundle arrives too late.
+          Before paint, so neither mode flashes the other on the way in. It is
+          inline and tiny for the same reason every anti-flash script is:
+          anything arriving with the bundle arrives too late.
+
+          **Light is the default, and the system preference is not consulted.**
+          That is deliberate rather than an oversight: `prefers-color-scheme`
+          is the right fallback for a product with no opinion, and this one
+          has one. A reader who wants dark takes it from the rail's foot and
+          the choice is remembered; until they do, the app opens light.
         */}
         <script
           dangerouslySetInnerHTML={{
             __html:
               "(function(){try{var m=localStorage.getItem('sc-mode');" +
-              "if(m!=='light'&&m!=='dark'){m=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}" +
-              "document.documentElement.dataset.mode=m;}catch(e){document.documentElement.dataset.mode='dark';}})()",
+              "if(m!=='light'&&m!=='dark'){m='light';}" +
+              "document.documentElement.dataset.mode=m;}catch(e){document.documentElement.dataset.mode='light';}})()",
           }}
         />
       </head>
