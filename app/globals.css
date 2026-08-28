@@ -468,14 +468,14 @@ button {
   margin: 24px 0 0;
   padding-top: 20px;
   border-top: 1px solid var(--edge);
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.45;
   color: var(--ink3);
 }
 
 .dashEmpty {
   margin: 24px 0 0;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.5;
   color: var(--ink3);
   max-width: 54ch;
@@ -493,7 +493,7 @@ button {
 .dashProv {
   margin: 14px 0 0;
   font-family: var(--font-mono), monospace;
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 0.04em;
   line-height: 1.5;
   color: var(--meta);

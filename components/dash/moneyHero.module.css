@@ -18,8 +18,8 @@
 .eyebrow {
   margin: 0 0 12px;
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.18em;
+  font-size: 13px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--meta);
 }
@@ -41,7 +41,7 @@
 .delta {
   margin: 16px 0 0;
   font-family: var(--font-voice);
-  font-size: 17px;
+  font-size: 22px;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -84,7 +84,7 @@
   padding: 7px 14px;
   border-radius: var(--r-pill);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--meta);
@@ -114,7 +114,7 @@
   margin: 18px 0 0;
   max-width: 92ch;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.7;
   letter-spacing: 0.04em;
   color: color-mix(in srgb, var(--meta) 74%, transparent);
@@ -122,7 +122,7 @@
 
 @media (max-width: 560px) {
   .delta {
-    font-size: 15px;
+    font-size: 18px;
   }
 
   .chart {
