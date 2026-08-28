@@ -386,13 +386,7 @@ export default async function DashboardPage({
           * for; the ordering is only wrong for somebody who has already seen
           * it, and for them it is not rendered at all.
           */}
-        {view.wrapped.earned > 0 && !openedWrapped ? (
-          <WrappedReady
-            year={view.wrapped.year}
-            earned={view.wrapped.earned}
-            total={view.wrapped.total}
-          />
-        ) : null}
+
 
         {/*
           * ── Three acts ──
@@ -416,6 +410,8 @@ export default async function DashboardPage({
           * composition chart's centre, which is the one place a reader opening
           * the app is not looking.
           */}
+
+
         <div data-reveal>
           <MoneyHero
             value={book.value}
@@ -423,9 +419,19 @@ export default async function DashboardPage({
             ret={perf.ret}
             curve={view.curve}
             range={RANGE}
+            fallbackGain={book.unrealised}
+            fallbackPct={book.unrealisedPct != null ? book.unrealisedPct / 100 : null}
             basis={view.provenance.marks}
           />
         </div>
+
+        {view.wrapped.earned > 0 && !openedWrapped ? (
+          <WrappedReady
+            year={view.wrapped.year}
+            earned={view.wrapped.earned}
+            total={view.wrapped.total}
+          />
+        ) : null}
 
         {wheelPositions.length >= 2 ? (
           <>

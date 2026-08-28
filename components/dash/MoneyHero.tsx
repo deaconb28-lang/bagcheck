@@ -44,16 +44,37 @@ export function MoneyHero({
   curve,
   range,
   basis,
+  fallbackGain,
+  fallbackPct,
 }: {
   value: number;
   gain: number | null;
   ret: number | null;
   curve: DashboardView["curve"];
   range: RangeKey;
+  /** Unrealised P&L, for when the window closed nothing. */
+  fallbackGain: number | null;
+  fallbackPct: number | null;
   /** What the curve is drawn on — the account, or the book. Stated, not implied. */
   basis: string | null;
 }) {
-  const up = (gain ?? 0) >= 0;
+  /*
+   * The change, or the next-best true change.
+   *
+   * `gain` is the window's realised movement and it is null for an account
+   * that has not closed anything in the window — which is most accounts, and
+   * was this one. The line then rendered nothing at all, leaving a value with
+   * no change under it: the one shape no brokerage home screen has, because
+   * a number on its own does not answer the question the app was opened with.
+   *
+   * So it falls back to unrealised P&L, which is a real figure off the same
+   * snapshot, and the label changes with it. A fallback wearing the original
+   * heading would be a different measurement under the same word.
+   */
+  const shown = gain ?? fallbackGain;
+  const shownPct = gain != null ? ret : fallbackPct;
+  const over = gain != null ? rangeLabel(range) : "on what you hold";
+  const up = (shown ?? 0) >= 0;
 
   return (
     <section className={styles.hero}>
@@ -65,13 +86,15 @@ export function MoneyHero({
         The change, on one line, with the arrow doing the direction as well as
         the colour — the same rule the rest of this product runs on.
       */}
-      {gain != null ? (
+      {shown != null ? (
         <p className={styles.delta} data-dir={up ? "up" : "down"}>
           <span aria-hidden="true">{up ? "▲" : "▼"}</span>{" "}
           {up ? "+" : "−"}
-          {money(Math.abs(gain))}
-          {ret != null ? <span className={styles.pct}> ({signedPct(ret * 100)})</span> : null}
-          <span className={styles.since}> · {rangeLabel(range)}</span>
+          {money(Math.abs(shown))}
+          {shownPct != null ? (
+            <span className={styles.pct}> ({signedPct(shownPct * 100)})</span>
+          ) : null}
+          <span className={styles.since}> · {over}</span>
         </p>
       ) : null}
 
