@@ -435,7 +435,18 @@ export default async function DashboardPage({
 
         {wheelPositions.length >= 2 ? (
           <>
-            <Act label="The read" note="Every position, and how far it is from breaking even." lead />
+            <Act
+              label="The read"
+              /*
+               * The note said "Every position, and how far it is from
+               * breaking even", which is a definition of the chart rather
+               * than a reason to look at it — a reader who can see a chart
+               * does not need to be told what its axes are. This says what
+               * they will learn from it.
+               */
+              note="Which names are carrying the account, and which are costing it."
+              lead
+            />
             <div data-reveal>
               <BookLead
                 positions={wheelPositions}

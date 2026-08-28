@@ -454,11 +454,17 @@
   overflow: hidden;
 }
 
+/*
+ * Progress toward a trophy is not scarcity, and it was drawing in `--ember`,
+ * which this palette gives to streaks, records and the live. A meter counting
+ * up to a thing you have not earned yet is neither — it is a quantity, and a
+ * quantity on this screen is drawn in ink.
+ */
 .nextFill {
   display: block;
   height: 100%;
   border-radius: 2px;
-  background: var(--ember);
+  background: var(--ink);
   transform-origin: left center;
   animation: nextFill 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }

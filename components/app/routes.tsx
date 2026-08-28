@@ -129,13 +129,92 @@ export type RouteDef = {
  * Every route retired from this list still resolves. They are redirect stubs,
  * because those URLs are in bookmarks and in links minted before the renames.
  */
+
+/* ── Six marks, drawn for the six sections ────────────────────────────────
+ *
+ * The rail went up with borrowed glyphs: Holdings wore the patterns mark and
+ * Trophies wore the cards mark, because those were the drawings that already
+ * existed. An icon-only rail cannot borrow — the mark *is* the label there,
+ * and two sections wearing a third section's drawing is a rail that lies
+ * twice.
+ *
+ * Each is built from something the section actually contains rather than a
+ * generic noun: the dashboard is the dart's own ring, holdings are stacked
+ * positions at different weights, insights is a rule with a reading off it,
+ * trophies is a filled disc on a ribbon, wrapped is a card in a deck, public
+ * is a card with a share arrow leaving it. All `currentColor`, all on the
+ * first paint, none fetched.
+ */
+
+export function DashGlyph({ size = 21 }: GlyphProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.7" pathLength="100"
+        strokeDasharray="37 13 37 13" strokeDashoffset="6" />
+      <path d="M18 6.2 L8.5 12 L12.2 13.2 L12.5 17" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function HoldingsGlyph({ size = 21 }: GlyphProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3.5" y="5" width="17" height="3.4" rx="1.2" fill="currentColor" />
+      <rect x="3.5" y="10.3" width="12" height="3.4" rx="1.2" fill="currentColor" opacity=".72" />
+      <rect x="3.5" y="15.6" width="7.5" height="3.4" rx="1.2" fill="currentColor" opacity=".44" />
+    </svg>
+  );
+}
+
+export function ReadGlyph({ size = 21 }: GlyphProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M3.5 15.5 L8.5 10 L12 13 L20.5 4.5" stroke="currentColor" strokeWidth="1.8"
+        strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="12" cy="13" r="1.9" fill="currentColor" />
+      <path d="M3.5 19.5h17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity=".45" />
+    </svg>
+  );
+}
+
+export function TrophyGlyph({ size = 21 }: GlyphProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="9" r="5.4" fill="currentColor" />
+      <path d="M8.6 13.6 L7 21 l5-2.6 L17 21 l-1.6-7.4" stroke="currentColor" strokeWidth="1.7"
+        strokeLinejoin="round" fill="none" />
+    </svg>
+  );
+}
+
+export function DeckGlyph({ size = 21 }: GlyphProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="7" y="3.5" width="12" height="16" rx="2.4" stroke="currentColor" strokeWidth="1.7"
+        transform="rotate(7 13 11.5)" />
+      <rect x="4" y="5.5" width="11" height="15" rx="2.2" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function ShareGlyph({ size = 21 }: GlyphProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3.5" y="8" width="12" height="12.5" rx="2.4" stroke="currentColor" strokeWidth="1.7" />
+      <path d="M12 10.5 L20.5 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M15 3.5h5.5V9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"
+        strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export const ROUTES: RouteDef[] = [
-  { href: "/you", label: "Dashboard", Glyph: HomeGlyph },
-  { href: "/holdings", label: "Holdings", Glyph: PatternsGlyph },
-  { href: "/insights", label: "Insights", Glyph: InsightsGlyph },
-  { href: "/trophies", label: "Trophies", Glyph: CardsGlyph },
-  { href: "/wrapped", label: "Wrapped", Glyph: WrappedGlyph },
-  { href: "/public", label: "Public", Glyph: LedgerGlyph },
+  { href: "/you", label: "Dashboard", Glyph: DashGlyph },
+  { href: "/holdings", label: "Holdings", Glyph: HoldingsGlyph },
+  { href: "/insights", label: "Insights", Glyph: ReadGlyph },
+  { href: "/trophies", label: "Trophies", Glyph: TrophyGlyph },
+  { href: "/wrapped", label: "Wrapped", Glyph: DeckGlyph },
+  { href: "/public", label: "Public", Glyph: ShareGlyph },
 ];
 
 /**

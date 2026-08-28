@@ -20,13 +20,24 @@
   border-radius: var(--r-panel);
   padding: 30px 32px;
   overflow: hidden;
-  color: var(--share-ink);
-  background: linear-gradient(
-    160deg,
-    var(--card-violet-deep) 0%,
-    var(--card-violet-mid) 46%,
-    var(--ember) 132%
-  );
+  /*
+   * ── The one filled surface, and it is not a hue ──
+   *
+   * This was a violet-to-amber gradient across the widest object on the page:
+   * two of the six families, at full strength, filling a surface. The rule
+   * this palette runs on is that a hue reaches a figure, a 3px meter or a 1px
+   * edge and stops — and a gradient covering a third of the fold is the
+   * clearest possible breach of it. Violet is the product's own voice, which
+   * it can still be at the scale of a rule beside a sentence; it cannot be a
+   * ground.
+   *
+   * The plate inverts instead. On this palette the inversion is the strongest
+   * gesture available in either mode, which is exactly right for the one
+   * artefact on the screen a reader is meant to want to open, and it costs no
+   * colour at all.
+   */
+  background: var(--ink-field);
+  color: var(--bg);
   border: 0;
 }
 
@@ -103,7 +114,6 @@
   font-weight: 600;
   border-radius: var(--r-pill);
   padding: 7px 13px;
-  color: var(--share-ink);
   border: 1px solid rgba(255, 255, 255, 0.45);
 }
 
@@ -139,12 +149,10 @@
   flex: none;
   background: rgba(255, 255, 255, 0.16);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  color: var(--share-ink);
 }
 
 .promoGhost:hover {
   background: rgba(255, 255, 255, 0.26);
-  color: var(--share-ink);
 }
 
 .promoSolid {
