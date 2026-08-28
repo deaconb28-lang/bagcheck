@@ -147,14 +147,14 @@
 }
 
 .lead {
-  opacity: 0.45;
+  opacity: 0.3;
 }
 
 /* ── Labels ───────────────────────────────────────────────────────────── */
 
 .ticker {
   font-family: var(--font-mono);
-  font-size: 14.5px;
+  font-size: 15.5px;
   font-weight: 500;
   letter-spacing: 0.04em;
   fill: var(--ink);
@@ -167,7 +167,7 @@
 
 .figure {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 12.5px;
   letter-spacing: 0.03em;
   fill: var(--ink3);
 }
@@ -193,7 +193,7 @@
  */
 .centrePrimary {
   font-family: var(--font-poster);
-  font-size: 86px;
+  font-size: 96px;
   letter-spacing: -0.02em;
   fill: var(--ink);
 }
@@ -209,9 +209,9 @@
 
 .centreSecondary {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  fill: var(--ink3);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  fill: var(--meta);
 }
 
 .caption {

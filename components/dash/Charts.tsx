@@ -78,10 +78,25 @@ export function PnlColumns({ sessions, peak }: { sessions: Session[]; peak: numb
   );
 }
 
+/**
+ * The axis, reduced to its ends and its middle.
+ *
+ * Six evenly spaced ticks under a chart is the default a plotting library
+ * gives you, and on a home screen it is furniture: the reading is the shape,
+ * and the exact date under the fourth column is a coordinate nobody is
+ * looking up. The brokerage screens this was read against show two labels or
+ * none. Three keeps the span legible — where it starts, where it ends, and
+ * that the middle is where you would expect.
+ */
 export function ChartAxis({ labels }: { labels: string[] }) {
+  const shown =
+    labels.length <= 3
+      ? labels
+      : [labels[0], labels[Math.floor(labels.length / 2)], labels[labels.length - 1]];
+
   return (
-    <div className={styles.axis}>
-      {labels.map((label, i) => (
+    <div className={styles.axis} data-sparse={labels.length > 3 || undefined}>
+      {shown.map((label, i) => (
         <span key={`${label}-${i}`}>{label}</span>
       ))}
     </div>

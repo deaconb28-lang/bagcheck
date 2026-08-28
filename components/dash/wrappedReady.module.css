@@ -99,3 +99,28 @@
     justify-content: center;
   }
 }
+
+/*
+ * The waiting state.
+ *
+ * The block used to vanish when nothing had been earned, which is exactly
+ * when a reader most needs to know the thing exists. It stays, and it sits
+ * back: the full-strength inverted plate is for a Wrapped that is actually
+ * ready, and spending it on one that is not would make the loudest object on
+ * the page an announcement of nothing.
+ */
+.note[data-empty] {
+  background: var(--s1);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--line-light);
+}
+
+.note[data-empty] .open {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--line2);
+}
+
+.note[data-empty] .spark {
+  color: var(--meta);
+}

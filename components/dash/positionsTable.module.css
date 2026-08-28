@@ -165,3 +165,70 @@
     display: none;
   }
 }
+
+/*
+ * ── The phone ──
+ *
+ * A six-column table at a 720px minimum on a 390px screen is a sideways
+ * scroll, and a sideways scroll is where columns go to be unread. Every
+ * brokerage app collapses the same data into a two-line row instead: who it
+ * is on the left, what it is worth and how it has done on the right, and the
+ * detail a tap away. The table becomes that here rather than shrinking.
+ */
+@media (max-width: 620px) {
+  .wrap {
+    overflow-x: visible;
+  }
+
+  .table {
+    min-width: 0;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tbody tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "name value"
+      "name return";
+    align-items: center;
+    row-gap: 2px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line-light);
+  }
+
+  .table tbody th,
+  .table tbody td {
+    padding: 0 !important;
+    border-bottom: 0;
+  }
+
+  .table tbody th.name {
+    grid-area: name;
+  }
+
+  /* Value on the first line, return under it. The two columns a holder
+     actually scans; cost, weight and unrealised are on the holdings screen. */
+  .table tbody td:nth-of-type(4) {
+    grid-area: value;
+    text-align: right;
+  }
+
+  .table tbody td:nth-of-type(3) {
+    grid-area: return;
+    text-align: right;
+  }
+
+  .table tbody td:nth-of-type(1),
+  .table tbody td:nth-of-type(2),
+  .table tbody td:nth-of-type(5) {
+    display: none;
+  }
+
+  .company {
+    display: block;
+  }
+}

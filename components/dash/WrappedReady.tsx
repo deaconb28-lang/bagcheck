@@ -21,7 +21,7 @@ import styles from "./wrappedReady.module.css";
  */
 export function WrappedReady({ year, earned, total }: { year: number; earned: number; total: number }) {
   return (
-    <section className={styles.note} data-reveal aria-live="polite">
+    <section className={styles.note} data-empty={earned === 0 || undefined} data-reveal aria-live="polite">
       <span className={styles.spark} aria-hidden="true">
         {/* The dart, arriving. The mark as the messenger. */}
         <svg viewBox="0 0 34 34" width="26" height="26" fill="none" aria-hidden="true">
@@ -32,10 +32,32 @@ export function WrappedReady({ year, earned, total }: { year: number; earned: nu
       </span>
 
       <div className={styles.body}>
-        <p className={styles.eyebrow}>Your {year} Wrapped is ready</p>
+        {/*
+          * Zero earned is a state, not a reason to disappear.
+          *
+          * The block was gated on `earned > 0`, so an account that had minted
+          * nothing saw no Wrapped on the dashboard at all — and the commonest
+          * way to have minted nothing is to have connected recently or to
+          * have a sync that has not landed, which is precisely when a reader
+          * most wants to know the thing exists and what fills it. An absent
+          * block reads as a missing feature; a block stating its own
+          * condition reads as a product waiting on data.
+          */}
+        <p className={styles.eyebrow}>
+          {earned > 0 ? `Your ${year} Wrapped is ready` : `Your ${year} Wrapped is filling in`}
+        </p>
         <p className={styles.line}>
-          <span className={`num ${styles.count}`}>{earned}</span> of {total} cards, straight off
-          what your brokerage just handed over.
+          {earned > 0 ? (
+            <>
+              <span className={`num ${styles.count}`}>{earned}</span> of {total} cards, straight
+              off what your brokerage just handed over.
+            </>
+          ) : (
+            <>
+              None of the {total} cards have been earned yet. Each one mints itself off your
+              ledger as the year gives it something to say.
+            </>
+          )}
         </p>
       </div>
 

@@ -334,9 +334,22 @@ export function Wheel({ positions, bookReturn, benchmark, value, caption }: Whee
         */}
         <g className={styles.spin} style={{ transformOrigin: `${cx}px ${cy}px` }}>
         <g className={styles.rings}>
+          {/*
+            The axis, reduced to the ring that carries a reading.
+            
+            Six concentric gridlines behind a chart whose whole argument is
+            two dashed circles made a dotted field, and the two rings that
+            matter had to compete with it. What a reader needs from the axis
+            here is a sense of scale, not a coordinate — the exact figure is
+            printed beside every wedge already.
+          */}
           {rings.map((v) => {
             const r = radiusFor(v, scale, box);
             const zero = Math.abs(v) < 1e-9;
+            /* Keep the ends of the scale and drop the middle: two rings say
+               how far out and how far in, and six say nothing more. */
+            const edge = v === rings[0] || v === rings[rings.length - 1];
+            if (!zero && !edge) return null;
             return (
               <g key={`ring-${v}`}>
                 <circle

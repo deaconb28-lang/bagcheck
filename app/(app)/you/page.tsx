@@ -425,7 +425,7 @@ export default async function DashboardPage({
           />
         </div>
 
-        {view.wrapped.earned > 0 && !openedWrapped ? (
+        {!openedWrapped ? (
           <WrappedReady
             year={view.wrapped.year}
             earned={view.wrapped.earned}
