@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getUserId } from "@/auth";
+import { AppRail, MobileTabs } from "@/components/app/AppRail";
 import { appLocked } from "@/lib/launch";
 import styles from "./app.module.css";
 
@@ -46,7 +47,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <div className={styles.fieldFade} />
       </div>
 
-      <div className={styles.canvas}>{children}</div>
+      <AppRail />
+
+      <div className={styles.canvasCol}>
+        <div className={styles.canvas}>{children}</div>
+      </div>
+
+      <MobileTabs />
     </div>
   );
 }

@@ -6,15 +6,6 @@ import styles from "./AppNav.module.css";
 
 export type AppTab = "dash" | "holdings" | "insights" | "trophies" | "wrapped" | "ledger";
 
-const TABS: Array<{ key: AppTab; label: string; href: string }> = [
-  { key: "dash", label: "Dashboard", href: "/you" },
-  { key: "holdings", label: "Holdings", href: "/holdings" },
-  { key: "insights", label: "Insights", href: "/insights" },
-  { key: "trophies", label: "Trophies", href: "/trophies" },
-  { key: "wrapped", label: "Wrapped", href: "/wrapped" },
-  /* The public ledger. A tab leads to a place, not to a settings anchor. */
-  { key: "ledger", label: "Public", href: "/public" },
-];
 
 /**
  * The one row of chrome, and now the only navigation the app has.
@@ -32,8 +23,8 @@ const TABS: Array<{ key: AppTab; label: string; href: string }> = [
  * product hiding behind a button.
  */
 export function AppNav({
-  active,
-  handle,
+  active: _active,
+  handle: _handle,
   accounts,
   syncedAt,
   user,
@@ -55,25 +46,15 @@ export function AppNav({
           <Wordmark />
         </Link>
 
-        <nav className={styles.tabs} aria-label="Sections">
-          {TABS.map((raw) => {
-            const tab =
-              raw.key === "ledger" && handle
-                ? { ...raw, href: `/@${handle}` }
-                : raw;
-            return (
-            <Link
-              key={tab.key}
-              href={tab.href}
-              className={styles.tab}
-              data-active={tab.key === active || undefined}
-              aria-current={tab.key === active ? "page" : undefined}
-            >
-              {tab.label}
-            </Link>
-            );
-          })}
-        </nav>
+        {/*
+          The tabs moved to the rail.
+          
+          Six labelled tabs across the top of every screen is a row of words a
+          reader learns once and then never reads again, spending the head of
+          the page on it every time. The rail carries the same six as marks at
+          the edge; what stays here is the account cluster, which is not
+          navigation — it is state.
+        */}
       </div>
 
       <div className={styles.right}>

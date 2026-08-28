@@ -1,159 +1,102 @@
 /*
- * The rail is a fill and a hairline, nothing else. No border on the buttons,
- * no resting shadow — a surface is a fill, and the active state is the only
- * thing carrying colour.
+ * The rail, and the tab bar it becomes.
  *
- * It was 76px and icon-only, which meant three destinations identified by
- * three drawn glyphs and a `title` attribute nobody hovers for. With three
- * routes there is no crowding argument for hiding their names: the rail is
- * wide enough to say them, and a navigation whose labels are visible is one
- * fewer thing to learn.
+ * 72px of icon-only column. The width is the whole argument: at six sections
+ * a labelled rail costs 200px of every screen for words a reader learns once,
+ * and the reading is what the width is for.
  */
 .rail {
   position: sticky;
   top: 0;
-  z-index: 20;
-  height: 100vh;
-  height: 100svh;
-  width: var(--rail-w);
-  flex: none;
-  background: var(--sunken);
-  border-right: 1px solid var(--line);
+  z-index: 6;
+  flex: 0 0 72px;
+  width: 72px;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 4px;
-  padding: 24px 12px 20px;
+  align-items: center;
+  gap: 28px;
+  padding: 22px 0;
+  border-right: 1px solid var(--line-light);
+  background: var(--bg);
 }
 
 .mark {
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
-  background: var(--ink-fill);
-  border: 1px solid var(--ink-line);
-  color: var(--ink);
   display: grid;
   place-items: center;
-  margin: 0 0 24px 4px;
-  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-control);
+  color: var(--ink);
+  text-decoration: none;
 }
 
-.item {
-  min-height: 46px;
-  border-radius: 14px;
+.list {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 0 12px;
-  color: var(--ink3);
-  flex: none;
-  font-size: 14.5px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.item svg {
-  flex: none;
+/*
+ * A 44px target with the glyph centred in it. The active state is a fill
+ * rather than a hue: navigation is the clearest case of chrome there is, and
+ * a semantic colour borrowed to paint it is the one thing this palette does
+ * not allow.
+ */
+.item {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-control);
+  color: var(--meta);
+  text-decoration: none;
+  transition: background 0.16s ease, color 0.16s ease;
 }
 
 .item:hover {
   color: var(--ink);
-  transform: translateY(-1px);
-}
-
-/*
- * The active tab is `--ink-fill`, not a hue. Navigation furniture is the
- * clearest case of chrome there is, and hue in this product means something.
- */
-.item[data-active] {
   background: var(--ink-fill);
-  border: 1px solid var(--ink-line);
+}
+
+.item[aria-current="page"] {
   color: var(--ink);
-  font-weight: 600;
+  background: var(--ink-fill-active);
 }
 
-/* The label rides the item; screen readers already have it from the text. */
-.label {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.spacer {
-  flex: 1;
+.item:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }
 
 /*
- * The foot is a row rather than a stack: with 220px to work in, the mode
- * switch and the avatar sitting side by side reads as one cluster of account
- * furniture instead of two more items in the navigation list.
+ * The label is present for a screen reader on every item — an icon-only rail
+ * that is icon-only to assistive technology as well is not navigation, it is
+ * a row of unnamed buttons.
  */
-.foot {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 4px;
-}
-
-.avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 999px;
-  background: var(--inset);
-  border: 1px solid var(--line2);
-  color: var(--ink2);
-  display: grid;
-  place-items: center;
-  font-family: var(--font-display), system-ui, sans-serif;
-  font-weight: 700;
-  font-size: 12.5px;
-  letter-spacing: -0.008em;
-  flex: none;
-  transition: transform 0.18s ease;
-}
-
-/*
- * The name, and only the name.
- *
- * It carried the linked institution underneath, which at this width ellipsed
- * to "INTERACTIV…" — a truncated word reads as a layout failure, and the
- * institution is already stated in full on /you where it belongs. Dropping it
- * also took a Mongo round trip off the render path of every app screen.
- */
-.who {
-  min-width: 0;
-  flex: 1;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ink2);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.avatar:hover {
-  transform: scale(1.06);
-}
-
 .sr {
   position: absolute;
   width: 1px;
   height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+  border: 0;
 }
 
-/* Bottom tabs — mobile */
+/* ── The phone ────────────────────────────────────────────────────────── */
 
 .tabs {
   display: none;
 }
 
-@media (max-width: 899px) {
+@media (max-width: 900px) {
   .rail {
     display: none;
   }
@@ -163,35 +106,69 @@
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 40;
+    z-index: 6;
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: minmax(0, 1fr);
-    background: var(--sunken);
-    border-top: 1px solid var(--line);
-    padding-bottom: env(safe-area-inset-bottom);
+    gap: 2px;
+    padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--line-light);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(18px);
   }
 
   .tab {
-    min-height: 56px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    color: var(--ink3);
-    padding: 10px 4px;
-    transition: color 0.18s ease;
+    gap: 4px;
+    min-height: 44px;
+    padding: 4px 2px;
+    border-radius: var(--r-control);
+    color: var(--meta);
+    text-decoration: none;
   }
 
-  .tab[data-active] {
+  .tab[aria-current="page"] {
     color: var(--ink);
+    background: var(--ink-fill-active);
   }
 
   .tabLabel {
-    font-family: var(--font-mono), monospace;
-    font-size: 9.5px;
-    letter-spacing: 0.1em;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item {
+    transition: none;
+  }
+}
+
+/*
+ * The foot pushes to the bottom of the rail. The mode switch is the one
+ * control here that goes nowhere, so it sits apart from the destinations
+ * rather than reading as a seventh section.
+ */
+.foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.foot .item {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
+.foot .item:hover {
+  background: var(--ink-fill);
 }

@@ -131,6 +131,11 @@ export type RouteDef = {
  */
 export const ROUTES: RouteDef[] = [
   { href: "/you", label: "Dashboard", Glyph: HomeGlyph },
+  { href: "/holdings", label: "Holdings", Glyph: PatternsGlyph },
+  { href: "/insights", label: "Insights", Glyph: InsightsGlyph },
+  { href: "/trophies", label: "Trophies", Glyph: CardsGlyph },
+  { href: "/wrapped", label: "Wrapped", Glyph: WrappedGlyph },
+  { href: "/public", label: "Public", Glyph: LedgerGlyph },
 ];
 
 /**

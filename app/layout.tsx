@@ -187,9 +187,32 @@ export default function RootLayout({
      */
     <html
       lang="en"
-      data-mode="dark"
+      /*
+       * The mode is no longer stamped here.
+       *
+       * It was `data-mode="dark"`, permanently, and the full light palette
+       * sat in `:root` unselected — history rather than a second product.
+       * Both are now real: the script below reads the reader's stored choice,
+       * falls back to the system preference, and writes the attribute before
+       * first paint so neither mode flashes the other on the way in.
+       */
       className={`${display.variable} ${serif.variable} ${body.variable} ${mono.variable} ${poster.variable} ${voice.variable}`}
     >
+      <head>
+        {/*
+          Before paint, so a reader who chose light never sees black first.
+          It is inline and tiny for the same reason every anti-flash script
+          is: anything that arrives with the bundle arrives too late.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var m=localStorage.getItem('sc-mode');" +
+              "if(m!=='light'&&m!=='dark'){m=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}" +
+              "document.documentElement.dataset.mode=m;}catch(e){document.documentElement.dataset.mode='dark';}})()",
+          }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

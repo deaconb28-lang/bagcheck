@@ -8,17 +8,30 @@
  */
 .shell {
   min-height: 100svh;
-  display: grid;
   /*
-   * One column. There was a 220px labelled rail here holding a single tab and,
-   * a thousand pixels below it, the account cluster — furniture for a product
-   * that has one screen. The mark, the avatar and the light switch moved into
-   * the header, which is the one row of chrome this app now has.
+   * Rail and canvas.
+   *
+   * There was one column here: the rail had been removed when this product
+   * had a single screen, on the reasoning that navigation between one place
+   * is chrome asking to be read. There are six sections now, and at six a
+   * horizontal tab row spends the top of every page on words a reader learns
+   * once — so the navigation goes to the edge, icon only, and the whole
+   * remaining frame belongs to the reading.
    */
-  grid-template-columns: minmax(0, 1fr);
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font-voice), var(--font-body), system-ui, sans-serif;
+  display: flex;
+  align-items: flex-start;
+}
+
+.canvasCol {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* The tab bar is fixed at the foot below 900px and would sit on the content. */
+@media (max-width: 900px) {
+  .canvasCol {
+    padding-bottom: 76px;
+  }
 }
 
 /*
