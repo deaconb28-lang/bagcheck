@@ -122,6 +122,31 @@
 
   /* ── Loss — money down, nothing else. ── */
   --loss: #c62f37;
+
+  /*
+   * ── The wheel, in light ──
+   *
+   * These existed only in the dark block, and an SVG `fill` handed an
+   * unresolved custom property does not fall through — it paints black. So in
+   * light mode every gaining wedge on the polar chart rendered as a solid
+   * black arc and every gaining bar in the contribution list rendered hollow,
+   * with only its 1px edge left. Nothing but a render in light could have
+   * shown that: the markup, the types and the tests were all correct.
+   *
+   * The mixes are stronger here than on black. A hue laid over white at 20%
+   * is a tint that reads as absence; the same mix on black reads as a colour
+   * sitting back. The ramp has to be tuned per ground, not shared.
+   */
+  --wheel-grid: color-mix(in srgb, var(--signal) 22%, transparent);
+  --wheel-lead: color-mix(in srgb, var(--signal) 62%, transparent);
+  --wheel-datum: color-mix(in srgb, var(--ink) 42%, transparent);
+  --wheel-book: color-mix(in srgb, var(--ink) 70%, transparent);
+  --wheel-bench: color-mix(in srgb, var(--signal) 88%, transparent);
+  --wheel-cash: color-mix(in srgb, var(--signal) 34%, transparent);
+  --wheel-gain-1: color-mix(in srgb, var(--moss) 26%, transparent);
+  --wheel-gain-2: color-mix(in srgb, var(--moss) 44%, transparent);
+  --wheel-gain-3: color-mix(in srgb, var(--moss) 62%, transparent);
+  --wheel-gain-4: color-mix(in srgb, var(--moss) 84%, transparent);
   --loss-tint: rgba(198, 47, 55, 0.09);
   --loss-line: rgba(198, 47, 55, 0.28);
 

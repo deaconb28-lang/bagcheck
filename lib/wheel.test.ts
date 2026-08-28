@@ -71,8 +71,16 @@ test("the worked example's scale matches the specification", () => {
     positions.map((p) => p.ret),
     BENCH.ret,
   );
-  /* kOut = (252-150)/40.03 = 2.548 ; kIn = (150-112)/9.86 = 3.854 */
-  assert.ok(Math.abs(scale.k - 2.548) < 0.01, `k was ${scale.k}`);
+  /*
+   * Derived from the box rather than hard-coded: the specification's own
+   * 2.548 was computed against its constants, and this build draws the ring
+   * larger. What the test is actually for is that the *binding* end is the
+   * one with less room, which is the part that would break silently.
+   */
+  const kOut = (BOX.rMax - BOX.r0) / 40.03;
+  const kIn = (BOX.r0 - BOX.rMin) / 9.86;
+  assert.ok(Math.abs(scale.k - Math.min(kOut, kIn)) < 0.001, `k was ${scale.k}`);
+  assert.ok(kOut < kIn, "the outward side should bind on this book");
   assert.equal(scale.truncated, false);
 });
 

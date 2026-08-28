@@ -54,21 +54,37 @@ export interface WheelBox {
 export const BOX: WheelBox = {
   vb: 640,
   /*
+   * ── The drawing fills its frame ──
+   *
+   * These were 150 / 112 / 252 on a 320 radius, which left a fifth of the
+   * viewBox empty at the rim and drew an annulus thin enough that the ring
+   * read as line-work rather than as an object. The hero of the screen cannot
+   * be the smallest thing on it. The labels now sit just outside the box,
+   * which is what `overflow: visible` and the column's own padding are for.
+   */
+  /*
    * The break-even ring sits below centre-radius on purpose: it leaves 102px
    * outward and 38px inward, and in a long-only book gains run larger than
    * losses. A book carrying shorts or inverse products wants r0 at 200.
    */
-  r0: 150,
+  r0: 186,
   /*
    * The innermost pixel a wedge may reach, which is what protects the centre
    * figure. Below about 105 the label has no chord to sit on.
    */
-  rMin: 112,
-  rMax: 252,
-  rLead: 272,
-  rLabel: 280,
-  /** Degrees of total whitespace between adjacent wedges. */
-  gap: 1.3,
+  rMin: 140,
+  rMax: 300,
+  rLead: 316,
+  rLabel: 324,
+  /**
+   * Degrees of whitespace between adjacent wedges.
+   *
+   * It was 1.3, and at that width a book of seven names read as seven
+   * fragments floating at seven radii rather than as one ring that varies.
+   * The gap only has to separate two wedges, and a hairline of ground does
+   * that — anything more starts dismantling the circle.
+   */
+  gap: 0.7,
   /** A wedge is never drawn thinner than this, or a sliver vanishes. */
   minSpan: 1.2,
 };

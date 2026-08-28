@@ -300,12 +300,31 @@ export function Wheel({ positions, bookReturn, benchmark, value, caption }: Whee
             is a direction a large share of readers never see.
           */}
           <pattern id="wheel-loss" width="5" height="5" patternTransform="rotate(135)" patternUnits="userSpaceOnUse">
-            <rect width="5" height="5" fill="var(--loss)" fillOpacity="0.22" />
-            <line x1="0" y1="0" x2="0" y2="5" stroke="var(--loss)" strokeWidth="2" />
+            <rect width="5" height="5" fill="var(--loss)" fillOpacity="0.14" />
+            <line x1="0" y1="0" x2="0" y2="5" stroke="var(--loss)" strokeWidth="1.3" />
           </pattern>
         </defs>
 
         <circle cx={cx} cy={cy} r={box.r0} fill="url(#wheel-core)" />
+
+        {/*
+          The spine.
+          
+          Every reading here grows out of or bites into the break-even circle,
+          and until this was drawn that circle only existed where a wedge
+          happened to touch it — so a book of seven names read as seven
+          fragments at seven radii rather than as one ring that varies. Whoop's
+          ring has a full track behind its arc for exactly this reason: the
+          shape has to be legible before the data is.
+        */}
+        <circle
+          cx={cx}
+          cy={cy}
+          r={box.r0}
+          fill="none"
+          stroke="var(--wheel-datum)"
+          strokeWidth={3}
+        />
 
         {/*
           The figure spins into place as one body — rings and wedges together,
@@ -325,8 +344,8 @@ export function Wheel({ positions, bookReturn, benchmark, value, caption }: Whee
                   cy={cy}
                   r={r}
                   fill="none"
-                  stroke={zero ? "var(--wheel-datum)" : "var(--wheel-grid)"}
-                  strokeWidth={zero ? 1.4 : 1}
+                  stroke={zero ? "transparent" : "var(--wheel-grid)"}
+                  strokeWidth={zero ? 0 : 1}
                 />
                 {!zero ? (
                   /*
@@ -362,7 +381,7 @@ export function Wheel({ positions, bookReturn, benchmark, value, caption }: Whee
               r={refRadii[i]}
               fill="none"
               stroke={ref.stroke}
-              strokeWidth={1.4}
+              strokeWidth={1.1}
               strokeDasharray={ref.dash}
             />
           ))}

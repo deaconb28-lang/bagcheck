@@ -139,14 +139,21 @@ export const ROUTES: RouteDef[] = [
 ];
 
 /**
- * The phone gets the dashboard and the account.
+ * The phone gets five, not seven.
  *
- * The rail's foot carries the avatar on a desktop, and below 900px the rail is
- * gone — so a phone with a one-item tab bar would have no way to reach
- * settings, the linked institution or sign-out at all. Two 48px targets across
- * 390px is not a tab bar anyone mis-taps.
+ * All six sections plus the account is seven labelled targets across 390px,
+ * which crowds every label and clips the longest. The reference apps do not
+ * go past five — Public runs five, Whoop four — so the phone carries the
+ * dashboard, the holdings, the insights, the year, and the account. Trophies
+ * and the public page are a tap further in rather than a tab nobody can read.
+ *
+ * The account has to be one of them: the rail is gone at this width and its
+ * foot is where settings, the linked institution and sign-out live.
  */
 export const MOBILE_ROUTES: RouteDef[] = [
-  ...ROUTES,
+  ROUTES[0],
+  ROUTES[1],
+  ROUTES[2],
+  ROUTES[4],
   { href: "/profile", label: "Account", Glyph: DnaGlyph },
 ];

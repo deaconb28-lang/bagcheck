@@ -32,7 +32,7 @@
    * `justify-content: center` put the two objects next to each other and let
    * the leftover width fall outside them, which is where empty space belongs.
    */
-  grid-template-columns: minmax(0, 720px) 360px;
+  grid-template-columns: minmax(0, 820px) 340px;
   justify-content: center;
   align-items: center;
   gap: 48px;
