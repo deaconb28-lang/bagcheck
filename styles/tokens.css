@@ -137,16 +137,31 @@
    * is a tint that reads as absence; the same mix on black reads as a colour
    * sitting back. The ramp has to be tuned per ground, not shared.
    */
-  --wheel-grid: color-mix(in srgb, var(--signal) 22%, transparent);
-  --wheel-lead: color-mix(in srgb, var(--signal) 62%, transparent);
+  --wheel-grid: color-mix(in srgb, var(--signal) 42%, transparent);
+  --wheel-lead: color-mix(in srgb, var(--signal) 96%, transparent);
   --wheel-datum: color-mix(in srgb, var(--ink) 42%, transparent);
   --wheel-book: color-mix(in srgb, var(--ink) 70%, transparent);
   --wheel-bench: color-mix(in srgb, var(--signal) 88%, transparent);
   --wheel-cash: color-mix(in srgb, var(--signal) 34%, transparent);
-  --wheel-gain-1: color-mix(in srgb, var(--moss) 26%, transparent);
-  --wheel-gain-2: color-mix(in srgb, var(--moss) 44%, transparent);
-  --wheel-gain-3: color-mix(in srgb, var(--moss) 62%, transparent);
-  --wheel-gain-4: color-mix(in srgb, var(--moss) 84%, transparent);
+  /*
+   * ── The ramp goes the other way on white ──
+   *
+   * These were mixes with `transparent`, which is the right construction on
+   * black — a low mix there lands dim, and dim is what a step down a ramp
+   * should be. On a near-white ground the same construction lands *pale*: a
+   * 26% mix of moss over #f4f4f6 is a pastel, and four pastels are four
+   * shades nobody can tell apart. The render showed exactly that — a chart
+   * whose whole reading is the fill, washed out.
+   *
+   * So on light the ramp steps toward the ink rather than toward the ground.
+   * Every step is a full-strength moss darkened, and the deepest is nearly
+   * `--moss-deep`, which is the value this palette already reserves for the
+   * one green that has to hold its own against white.
+   */
+  --wheel-gain-1: color-mix(in srgb, var(--moss) 88%, white 34%);
+  --wheel-gain-2: color-mix(in srgb, var(--moss) 92%, white 18%);
+  --wheel-gain-3: var(--moss);
+  --wheel-gain-4: var(--moss-deep);
   --loss-tint: rgba(198, 47, 55, 0.09);
   --loss-line: rgba(198, 47, 55, 0.28);
 
