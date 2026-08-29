@@ -306,8 +306,24 @@
  * own, and `pointer-events: none` keeps it out of the way of anything that can
  * be pressed.
  */
+/*
+ * Dark only, exactly like the field behind the shell.
+ *
+ * The six images are drawn near-black on purpose, which is what lets them sit
+ * under a near-black plate at half strength and read as texture. Under a *pale*
+ * plate the same image at the same strength is a mid-grey slab: on the light
+ * ground five panels down the dashboard — the race, the daily columns, the
+ * book, the year grid and the set — rendered as grey rectangles with dark type
+ * on them. That passes a contrast probe and fails on sight, which is the same
+ * class of failure `.field` already has a rule for and for the same reason.
+ *
+ * A light-ground art set is a real thing to draw and this is not it. Until
+ * there is one, the light plate is the plate, which is the design the panels
+ * shipped with before the mechanism existed.
+ */
 .panel[data-art]::before {
   content: "";
+  display: none;
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -316,6 +332,10 @@
   background-position: center;
   opacity: 0.5;
   pointer-events: none;
+}
+
+:global(html[data-mode="dark"]) .panel[data-art]::before {
+  display: block;
 }
 
 .panel[data-art="read"]::before {

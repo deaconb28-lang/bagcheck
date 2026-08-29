@@ -84,7 +84,11 @@
   flex: 0 0 auto;
   /* Two cards' worth of overlap to the right of the first. */
   width: calc(var(--card-w) * 1px * 1.72);
-  height: calc(var(--card-w) * 1px * 1920 / 1080);
+  /*
+   * Plus the drop the two cards behind take. The block clips, so a height of
+   * exactly one card cuts the corner off the last one in the fan.
+   */
+  height: calc(var(--card-w) * 1px * 1920 / 1080 + 28px);
   text-decoration: none;
 }
 
