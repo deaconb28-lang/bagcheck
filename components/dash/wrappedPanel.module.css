@@ -1,0 +1,137 @@
+/*
+ * The Wrapped panel: the copy on the left, the cards on the right.
+ *
+ * App tokens, not `--mk-*` — this block lives on the dashboard, and the cards
+ * inside it are iframes carrying their own palette, so nothing here sets a
+ * card's colour or type. The one job of this file is how the fan sits and how
+ * big it draws.
+ *
+ * `--card-w` is a plain number and every length below derives from it, because
+ * `scale()` takes a ratio. `calc(300px / 1080)` is a length, which invalidates
+ * the transform rather than failing loudly — the deck once drew a row of
+ * top-left crops for exactly that reason, and every card's type sits in its
+ * lower half, so what showed was pictures with no words on them.
+ */
+
+.block {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 48px;
+  padding: 40px;
+  border-radius: var(--r-panel);
+  background: var(--s1);
+  overflow: hidden;
+}
+
+.copy {
+  min-width: 0;
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.title {
+  margin: 14px 0 0;
+  font-size: clamp(28px, 3.4vw, 44px);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.tail {
+  margin: 14px 0 0;
+  max-width: 46ch;
+  font-size: 16.5px;
+  line-height: 1.5;
+  color: var(--ink3);
+}
+
+.door {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 26px;
+  height: 50px;
+  padding: 0 26px;
+  border-radius: var(--r-btn);
+  background: var(--ink-field);
+  color: var(--on-ink);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.16s ease;
+}
+
+.door:hover {
+  background: color-mix(in srgb, var(--ink-field) 88%, var(--accent));
+}
+
+/* ── The fan ──────────────────────────────────────────────────────────── */
+
+.fan {
+  --card-w: 208;
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  /* Two cards' worth of overlap to the right of the first. */
+  width: calc(var(--card-w) * 1px * 1.72);
+  height: calc(var(--card-w) * 1px * 1920 / 1080);
+  text-decoration: none;
+}
+
+.slot {
+  position: absolute;
+  top: 0;
+  left: calc(var(--i) * var(--card-w) * 0.36 * 1px);
+  width: calc(var(--card-w) * 1px);
+  height: calc(var(--card-w) * 1px * 1920 / 1080);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--share-bg);
+  box-shadow: 0 22px 60px rgb(0 0 0 / 0.32);
+  /*
+    * The card behind sits back rather than being dimmed: an overlay over an
+    * artefact's own palette is a second exposure of somebody's poster.
+    */
+  transform: translateY(calc(var(--i) * 14px)) scale(calc(1 - var(--i) * 0.05));
+  transform-origin: top left;
+  z-index: calc(3 - var(--i));
+}
+
+.paper {
+  width: 1080px;
+  height: 1920px;
+  border: 0;
+  display: block;
+  transform-origin: top left;
+  /* A ratio, not a length — see the note at the top of this file. */
+  transform: scale(calc(var(--card-w) / 1080));
+  pointer-events: none;
+}
+
+/*
+ * Below a laptop the fan goes under the copy and shrinks. It is never dropped:
+ * the whole argument for this block is that the reader sees a card, and a
+ * phone is where they are most likely to be when they first do.
+ */
+@media (max-width: 900px) {
+  .block {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    padding: 32px 26px;
+  }
+
+  .fan {
+    --card-w: 168;
+    justify-self: start;
+  }
+}

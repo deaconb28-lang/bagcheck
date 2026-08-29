@@ -45,6 +45,7 @@ import { Heatmap } from "@/components/dash/Heatmap";
 import { nextUp, trophiesFrom } from "@/lib/trophies";
 import { activityCalendar, investedCurve, positionColumns } from "@/lib/dayone";
 import { WrappedReady } from "@/components/dash/WrappedReady";
+import { wrappedDeck } from "@/lib/wrapped/year";
 import { BookLead } from "@/components/dash/BookLead";
 import { PositionsTable } from "@/components/dash/PositionsTable";
 import { MoneyHero } from "@/components/dash/MoneyHero";
@@ -52,6 +53,7 @@ import { ReturnBars } from "@/components/idioms";
 import heroStyles from "@/components/dash/hero.module.css";
 import type { WheelPosition } from "@/lib/wheel";
 import { Collection } from "@/components/dash/Collection";
+import { WrappedPanel } from "@/components/dash/WrappedPanel";
 import { EquityCurve, HeatGrid } from "@/components/idioms";
 
 /**
@@ -197,7 +199,7 @@ export default async function DashboardPage({
    * model call, which is exactly what this group's `loading.tsx` exists for.
    * Swallowed on failure, because a dashboard must not fail on a sentence.
    */
-  const [{ view, facts }, user, note, openedWrapped] = await Promise.all([
+  const [{ view, facts }, user, note, openedWrapped, deck] = await Promise.all([
     dashboardFor(userId, RANGE, data),
     shellUser(),
     latest
@@ -218,6 +220,23 @@ export default async function DashboardPage({
      * decided before the page renders, not after.
      */
     wrappedOpenedAt(userId).catch(() => null),
+    /*
+     * The cards themselves, because the screen was advertising them three
+     * times without ever showing one.
+     *
+     * This is a cache read on the ordinary path: `warmUser` builds the deck in
+     * the sync's own `after()`, so by the time anybody opens the dashboard the
+     * documents are already stored under this year's fingerprint. The cold
+     * path is a fresh account whose ledger has only just landed, which is what
+     * this group's `loading.tsx` exists for. Swallowed on failure and gated on
+     * `example` below: the sample deck is the right answer on `/wrapped`,
+     * where the page says whose year it is showing, and the wrong one on
+     * somebody's own dashboard, where a stranger's cards under their own
+     * heading reads as their year having arrived wrong.
+     */
+    wrappedDeck(userId, new Date().getUTCFullYear(), {})
+      .then((d) => (d.example ? null : d.cards))
+      .catch(() => null),
   ]);
   const { book, performance: perf, window } = view;
 
@@ -1134,35 +1153,50 @@ export default async function DashboardPage({
           </Row>
         )}
 
+        {/*
+          * ── The year, shown rather than described ──
+          *
+          * This was a promo tile: a percentage set large on a gradient, under
+          * a heading naming the year, next to a pill carrying the archetype.
+          * Everything on it was a figure the screen had already printed
+          * somewhere else, and none of it was a card — so the one artefact in
+          * this product worth posting was advertised on its own dashboard by a
+          * rectangle that looked nothing like it.
+          *
+          * The panel shows the cards. Where the deck cannot be shown — an
+          * account that has earned nothing, or a store that would only hand
+          * back the sample — the tile is still the right answer, because it
+          * needs no ledger to be true.
+          */}
         <Row kind="full">
-          {/*
-            * The door, not the tally. The count moved to the set at the foot
-            * of the page, where twelve frames say it better than a sentence
-            * can — printing "9 of 12" in both places is one screen making the
-            * same statement twice, in the weaker form.
-            */}
-          {/*
-            * The hero is the year when there is no return to put there.
-            *
-            * It was an em dash — a 56px placeholder on a saturated gradient,
-            * which renders as a blank space and reads as a figure that failed
-            * to load. An account with one day of marks has no return, and the
-            * year is the thing this card is actually about: unambiguously
-            * true, and it needs no ledger to say.
-            */}
-          <WrappedPromo
-            year={String(view.wrapped.year)}
-            headline={
-              perf.ret == null ? String(view.wrapped.year) : signedPct(perf.ret * 100)
-            }
-            sub={
-              perf.ret == null
-                ? `${view.wrapped.earned} of ${view.wrapped.total} cards so far, built from what your brokerage has handed over`
-                : "Your year, read straight off your brokerage"
-            }
-            pills={view.wrapped.archetype ? [view.wrapped.archetype] : []}
-            ready={view.wrapped.earned > 0}
-          />
+          {deck?.length ? (
+            <WrappedPanel
+              year={view.wrapped.year}
+              earned={view.wrapped.earned}
+              total={view.wrapped.total}
+              cards={deck}
+            />
+          ) : (
+            /*
+              * The hero is the year when there is no return to put there.
+              *
+              * It was an em dash — a 56px placeholder on a saturated gradient,
+              * which renders as a blank space and reads as a figure that
+              * failed to load. An account with one day of marks has no return,
+              * and the year is the thing this card is actually about.
+              */
+            <WrappedPromo
+              year={String(view.wrapped.year)}
+              headline={perf.ret == null ? String(view.wrapped.year) : signedPct(perf.ret * 100)}
+              sub={
+                perf.ret == null
+                  ? `${view.wrapped.earned} of ${view.wrapped.total} cards so far, built from what your brokerage has handed over`
+                  : "Your year, read straight off your brokerage"
+              }
+              pills={view.wrapped.archetype ? [view.wrapped.archetype] : []}
+              ready={view.wrapped.earned > 0}
+            />
+          )}
         </Row>
         {/*
           * The set, last, and it is the only block on the screen that is about

@@ -1,15 +1,13 @@
 import { after } from "next/server";
 import Link from "next/link";
 import { auth, getUserId, isAuthConfigured } from "@/auth";
-import { accessFor, getCollections, isDbConfigured, markWrappedOpened, syncClock } from "@/lib/db";
+import { accessFor, isDbConfigured, markWrappedOpened } from "@/lib/db";
 import { appLocked } from "@/lib/launch";
 import { wrappedDeck } from "@/lib/wrapped/year";
 import { windowFor, windowsFor } from "@/lib/wrapped/window";
 import { SupercruiseMark } from "@/components/brand/SupercruiseMark";
 import { GoogleSignIn } from "@/components/app/GoogleSignIn";
-import { AppNav } from "@/components/app/AppNav";
 import { Paywall } from "@/components/app/Paywall";
-import { shellUser } from "@/components/app/shellUser";
 import { CardFonts } from "@/components/cards/CardFonts";
 import { StillToCome } from "./StillToCome";
 import { YearDeck } from "./YearDeck";
@@ -324,27 +322,20 @@ async function Bar({
 }) {
   const signedIn = Boolean(userId);
   /*
-   * A signed-in reader gets the app's own nav, because Wrapped is one of the
-   * four tabs and arriving here should not feel like leaving the product. A
-   * signed-out visitor gets the bar: the landing hands off to this page
-   * directly, and a nav whose every tab would bounce them to a sign-in is
-   * chrome that only knows how to refuse.
+   * One bar, signed in or out.
+   *
+   * A signed-in reader used to get `<AppNav>` here, on the reasoning that
+   * arriving at your own year should not feel like leaving the product. That
+   * reasoning was sound while the app was stamped permanently dark and the two
+   * grounds happened to match. They do not any more: `(flex)` is the marketing
+   * field and is dark whatever the reader has chosen, the nav speaks the app's
+   * tokens, and light is now the default — so the mark, the wordmark and the
+   * avatar all rendered near-black on a near-black field and the whole of the
+   * chrome on this screen was invisible. A component that has to guess which
+   * world it has been dropped into is a component in the wrong world: this
+   * group has its own bar, spoken in `--mk-*` like everything else here, and
+   * the door into the app is what a signed-in reader actually needs from it.
    */
-  if (signedIn && isDbConfigured()) {
-    const { connections } = await getCollections();
-    const conn = await connections
-      .findOne({ userId: userId! }, { projection: { _id: 0, accounts: 1, lastSyncAt: 1 } })
-      .catch(() => null);
-    return (
-      <AppNav
-        active="wrapped"
-        accounts={conn?.accounts?.length ?? 0}
-        syncedAt={syncClock(conn?.lastSyncAt ?? null)}
-        user={await shellUser()}
-      />
-    );
-  }
-
   return (
     <header className={styles.bar}>
       <Link href="/" className={styles.brand} aria-label="supercruise home">

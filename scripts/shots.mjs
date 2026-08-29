@@ -48,48 +48,50 @@ const WIDTHS = [
 ];
 
 /*
- * `modes` is which of light/dark the screen has anything to say about — and
- * since the app went dark-only there is one answer for anything wearing app
- * chrome. Forcing light on those produced a state that cannot occur in
- * production, and it duly "found" a wordmark at 1.02:1 that no reader can
- * ever see. Marketing is unaffected either way: it speaks `--mk-*`, which is
- * stated once and never flipped by mode.
+ * `modes` is which of light/dark the screen has anything to say about. The app
+ * was dark-only for a long time and this list said so; it is not any more —
+ * light is the default a fresh reader gets, so every screen wearing app chrome
+ * is swept in both, at every width. A ramp tuned on black is not a ramp: a
+ * `color-mix` with `transparent` reads dim on black and pale on white, and the
+ * pale end is the one that fails. Marketing is unaffected either way: it speaks
+ * `--mk-*`, which is stated once and never flipped by mode.
  */
+const BOTH = ["light", "dark"];
 const SCREENS = [
   { key: "landing", path: "/", modes: ["light"] },
   { key: "pricing", path: "/pricing", modes: ["light"] },
-  { key: "privacy", path: "/legal/privacy", modes: ["dark"] },
-  { key: "terms", path: "/legal/terms", modes: ["dark"] },
-  { key: "icons", path: "/legal/icons", modes: ["dark"] },
-  { key: "photos", path: "/legal/photos", modes: ["dark"] },
-  { key: "start", path: "/start", modes: ["dark"] },
-  { key: "you", path: "/you", modes: ["dark"] },
-  { key: "holdings", path: "/holdings", modes: ["dark"] },
-  { key: "insights", path: "/insights", modes: ["dark"] },
-  { key: "trophies", path: "/trophies", modes: ["dark"] },
-  { key: "public", path: "/public", modes: ["dark"] },
-  { key: "wrapped", path: "/wrapped", modes: ["dark"] },
-  { key: "profile", path: "/profile", modes: ["dark"] },
+  { key: "privacy", path: "/legal/privacy", modes: BOTH },
+  { key: "terms", path: "/legal/terms", modes: BOTH },
+  { key: "icons", path: "/legal/icons", modes: BOTH },
+  { key: "photos", path: "/legal/photos", modes: BOTH },
+  { key: "start", path: "/start", modes: BOTH },
+  { key: "you", path: "/you", modes: BOTH },
+  { key: "holdings", path: "/holdings", modes: BOTH },
+  { key: "insights", path: "/insights", modes: BOTH },
+  { key: "trophies", path: "/trophies", modes: BOTH },
+  { key: "public", path: "/public", modes: BOTH },
+  { key: "wrapped", path: "/wrapped", modes: BOTH },
+  { key: "profile", path: "/profile", modes: BOTH },
   /*
    * The two waiting states. They are transient in the app — Next swaps a
    * `loading.tsx` out the moment its segment resolves — so this is the only
    * way the sweep can see them. `/debug/loading` renders both and exists only
    * while DEBUG_PAGE is set, which `serve()` below does.
    */
-  { key: "loading", path: "/debug/loading", modes: ["dark"] },
+  { key: "loading", path: "/debug/loading", modes: BOTH },
   /*
    * The public handle page. It is the one surface a stranger reaches from a
    * posted link and it had never been shot — the seed now claims and publishes
    * `@deacon` so there is something here to look at.
    */
-  { key: "handle", path: "/@deacon", modes: ["dark"] },
+  { key: "handle", path: "/@deacon", modes: BOTH },
   /*
    * `/app` is a redirect, so this shot is really an assertion: the seeded
    * account has a linked brokerage, so it must land on the dashboard. If it
    * ever lands on `/start` instead, the entry router has started sending
    * connected people back through onboarding.
    */
-  { key: "entry", path: "/app", modes: ["dark"] },
+  { key: "entry", path: "/app", modes: BOTH },
 ];
 
 /**
@@ -129,6 +131,13 @@ const SECTIONS = [
    */
   { key: "dash-light", path: "/you", mode: "light" },
   { key: "holdings-light", path: "/holdings", mode: "light" },
+  /*
+   * And the light dashboard whole, because the fold is a third of it and the
+   * ramp that fails on white fails furthest down — the gain steps, the meters
+   * and the provenance lines all live below it.
+   */
+  { key: "page-dash-light", path: "/you", selector: '[class*="chrome_page"]', mode: "light" },
+  { key: "page-holdings-light", path: "/holdings", selector: '[class*="chrome_page"]', mode: "light" },
   /*
    * Each waiting state whole. The viewport shot above catches the app one's
    * fold and cuts the Wrapped one off entirely, since the preview stacks both
