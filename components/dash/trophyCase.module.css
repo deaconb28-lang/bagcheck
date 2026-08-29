@@ -34,9 +34,14 @@
   --tone: var(--signal);
 }
 
-/* The band's ground, same mechanism as `.panel[data-art]`. */
+/*
+ * The band's ground, same mechanism as `.panel[data-art]` — dark only for the
+ * same reason. The images are drawn near-black; under a pale plate half
+ * strength is a grey slab rather than a texture.
+ */
 .band::before {
   content: "";
+  display: none;
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -52,6 +57,10 @@
 
 .band[data-tone="signal"]::before {
   background-image: url("/dash/findings.webp");
+}
+
+:global(html[data-mode="dark"]) .band::before {
+  display: block;
 }
 
 .head {

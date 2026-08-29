@@ -194,20 +194,22 @@
   --halo-accent: radial-gradient(60% 54% at 50% 26%, rgba(255, 255, 255, 0.07), transparent 72%);
 
   /*
-   * The consistency ramp, in the reserved violet.
+   * The score's ramp, in gold — the same family the dark block gives it.
    *
-   * It used to be moss, which put a hundred green cells on a dashboard that
-   * already had a green ring and eight green meters — at that point the hue
-   * had stopped carrying information and was just the colour of the product.
-   * "Days inside your rules" is Supercruise's own reading of the conduct, which
-   * is exactly what the violet is reserved for, and it leaves green meaning
-   * one thing on this screen: money went up.
+   * It was moss once, which put a hundred green cells on a dashboard that
+   * already had a green ring and eight green meters; then violet, on the
+   * reasoning that the score is Supercruise's own reading. Gold is what this
+   * palette actually reserves for the score, and the dark block has said so
+   * for a while — so the year of days drew gold on black and violet on white,
+   * which is one measurement wearing two families depending on a preference
+   * the reading has nothing to do with. Steps toward the ink, not toward
+   * transparent: a ramp mixed with the ground has no top step on white.
    */
   --h0: rgba(14, 14, 18, 0.045);
-  --h1: #f1ecfd;
-  --h2: #ddd0f8;
-  --h3: #b79ceb;
-  --h4: #6d3fd4;
+  --h1: #f7eeda;
+  --h2: #e7cf9a;
+  --h3: #c99b3c;
+  --h4: #a1690a;
 
   /*
    * The count ramp: steps down `--signal`, for a grid whose cells are a

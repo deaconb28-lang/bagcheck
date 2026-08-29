@@ -16,9 +16,17 @@
   background: var(--s1);
 }
 
-/* The set's own ground, same mechanism as `.panel[data-art]`. */
+/*
+ * The set's own ground, same mechanism as `.panel[data-art]` — including the
+ * part where it is dark only. The six images are drawn near-black, so under a
+ * pale plate the same half-strength wash is a mid-grey slab rather than a
+ * texture. This is a second copy of that mechanism and it duly missed the fix
+ * the first one got: the collection was the one block left grey at the foot of
+ * a light dashboard.
+ */
 .block::before {
   content: "";
+  display: none;
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -26,6 +34,10 @@
   background: url("/dash/set.webp") center / cover;
   opacity: 0.5;
   pointer-events: none;
+}
+
+:global(html[data-mode="dark"]) .block::before {
+  display: block;
 }
 
 .head {
