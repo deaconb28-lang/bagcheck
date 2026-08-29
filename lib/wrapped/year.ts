@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { getCollections } from "@/lib/db/collections";
 import { getDerived } from "@/lib/db/derived";
 import { loadScreen } from "@/lib/db/screen";
+import type { ScreenData } from "@/lib/db/screen";
 import { archetypeFor } from "@/lib/archetypes";
 import { indexReturnYtd, isMarketConfigured, profilesFor } from "@/lib/market";
 import { CARDS } from "../../wrapped/cards.mjs";
@@ -137,8 +138,22 @@ export async function statsForYear(
   year: number,
   name?: string | null,
   window: WrappedWindow = yearWindow(year),
+  /*
+   * The screen, when the caller already holds one.
+   *
+   * `loadScreen` is not memoised, so a page that has read the ledger and then
+   * asks for its deck reads it a second time in the same navigation — which is
+   * the failure this repository already fixed once for the share-card
+   * assembly. The dashboard is that caller again: it draws the cards now, and
+   * it defaults to the same 400 scores this needs, so a screen handed over
+   * here is an identical document rather than a smaller one.
+   */
+  screen?: ScreenData,
 ): Promise<{ stats: WrappedStats; context: WrappedContext } | null> {
-  const [data, derived] = await Promise.all([loadScreen(userId, 400), getDerived(userId)]);
+  const [data, derived] = await Promise.all([
+    screen ? Promise.resolve(screen) : loadScreen(userId, 400),
+    getDerived(userId),
+  ]);
   if (!derived) return null;
 
   const { transactions } = await getCollections();
@@ -219,10 +234,10 @@ export async function statsForYear(
 export async function wrappedYear(
   userId: string,
   year: number,
-  opts: { refresh?: boolean; name?: string | null; window?: WrappedWindow } = {},
+  opts: { refresh?: boolean; name?: string | null; window?: WrappedWindow; screen?: ScreenData } = {},
 ): Promise<WrappedYear | null> {
   const window = opts.window ?? yearWindow(year);
-  const computed = await statsForYear(userId, year, opts.name, window);
+  const computed = await statsForYear(userId, year, opts.name, window, opts.screen);
   if (!computed) return null;
 
   const { stats, context } = computed;
@@ -288,11 +303,17 @@ export interface ShownCard {
 export async function wrappedDeck(
   userId: string | null,
   year: number,
-  opts: { example?: boolean; name?: string | null; window?: WrappedWindow } = {},
+  opts: {
+    example?: boolean;
+    name?: string | null;
+    window?: WrappedWindow;
+    /** A screen the caller already read. See `statsForYear`. */
+    screen?: ScreenData;
+  } = {},
 ): Promise<{ cards: ShownCard[]; example: boolean; stats: WrappedStats | null }> {
   const real =
     !opts.example && userId
-      ? await wrappedYear(userId, year, { name: opts.name, window: opts.window })
+      ? await wrappedYear(userId, year, { name: opts.name, window: opts.window, screen: opts.screen })
       : null;
 
   if (real?.cards.length) {

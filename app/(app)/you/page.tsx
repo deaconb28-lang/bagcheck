@@ -234,7 +234,7 @@ export default async function DashboardPage({
      * somebody's own dashboard, where a stranger's cards under their own
      * heading reads as their year having arrived wrong.
      */
-    wrappedDeck(userId, new Date().getUTCFullYear(), {})
+    wrappedDeck(userId, new Date().getUTCFullYear(), { screen: data })
       .then((d) => (d.example ? null : d.cards))
       .catch(() => null),
   ]);
