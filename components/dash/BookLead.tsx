@@ -1,56 +1,36 @@
-import { Contribution, Wheel, type ContributionRow } from "@/components/idioms";
+import { Wheel } from "@/components/idioms";
 import type { WheelBenchmark, WheelPosition } from "@/lib/wheel";
 import styles from "./bookLead.module.css";
 
 /**
- * The dashboard's lead: the wheel, and the reading it cannot give.
+ * The dashboard's book block: the wheel, and nothing beside it.
  *
- * The wheel states a *rate* — return on cost — and a rate is blind to size.
- * A position at a tenth of a percent of the book showing +45% reaches further
- * out than anything else on the chart and moved the account by nothing at
- * all. That is not a flaw in the wheel; it is what a rate means, and it is
- * the reason the wheel cannot be the only thing on this block.
+ * This used to be the wheel plus a second list — unrealised P&L per position,
+ * ranked by what actually moved the account — on the argument that a *rate* is
+ * blind to size and the wheel therefore cannot be the only reading. The
+ * argument was right and the answer was wrong: the positions table two blocks
+ * down already states unrealised P&L per position, in money, beside the
+ * weight, the return, the value and what each name cost. The dashboard was
+ * drawing one snapshot five times — the wheel, that list, this table, a return
+ * chart grouped by industry, and a treemap of the same two variables — and a
+ * reader cannot tell five readings of one fact from five facts.
  *
- * So the same book runs down the right in dollars, ranked by what actually
- * moved. Two readings of one thing: *how did it do*, and *did it matter*.
- *
- * The wheel takes the larger share and is the only object here with a figure
- * set in the poster face — this block has one focal point and the layout says
- * which. Below 1080px the column drops beneath it rather than narrowing:
- * a polar chart squeezed into half a phone is not a chart.
+ * So the wheel keeps the reading only it can give: the shape of the book, and
+ * whether a wedge crosses the line. The figures are in its own key and in the
+ * table. Everything else came off the screen.
  */
 export function BookLead({
   positions,
   bookReturn,
   benchmark,
-  value,
-  contributions,
-  money,
 }: {
   positions: WheelPosition[];
   bookReturn: number;
   benchmark: WheelBenchmark | null;
-  /** The account value, formatted. The wheel derives its own figure and count. */
-  value: string;
-  contributions: ContributionRow[];
-  money: (value: number) => string;
 }) {
   return (
-    <div className={styles.grid}>
-      <div className={styles.figure}>
-        <Wheel
-          positions={positions}
-          bookReturn={bookReturn}
-          benchmark={benchmark}
-          value={value}
-        />
-      </div>
-
-      {contributions.length ? (
-        <div className={styles.aside}>
-          <Contribution rows={contributions} money={money} />
-        </div>
-      ) : null}
+    <div className={styles.block}>
+      <Wheel positions={positions} bookReturn={bookReturn} benchmark={benchmark} />
     </div>
   );
 }

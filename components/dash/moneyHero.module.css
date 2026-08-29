@@ -117,7 +117,16 @@
   font-size: 12px;
   line-height: 1.7;
   letter-spacing: 0.04em;
-  color: color-mix(in srgb, var(--meta) 74%, transparent);
+  /*
+   * `--meta` is already the floor for mono metadata on this ground, and a
+   * mix of it is a *lower* value than the token — which is the class of
+   * failure this project's own note warns about: the token passes on its own
+   * and the mix does not. At 74% it composited to rgb(110,110,110) and read
+   * 4.09:1 against black. The provenance line is the sentence that makes
+   * every figure above it checkable, so it is the last line on the screen
+   * that should be hard to read.
+   */
+  color: var(--meta);
 }
 
 @media (max-width: 560px) {

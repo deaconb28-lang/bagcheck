@@ -17,15 +17,12 @@ import { TRIAL_DAYS, trialLine, trialState } from "@/lib/tiers";
 import {
   Act,
   Page,
-  PageHead,
   Panel,
   PanelHead,
   PanelNote,
   Row,
   Stat,
-  Split,
   Stats,
-  TotalValue,
   money,
   signedMoney,
   signedPct,
@@ -41,14 +38,12 @@ import {
   WeekdayBars,
 } from "@/components/dash/Charts";
 import { InsightCard, WrappedPromo } from "@/components/dash/Cards";
-import { Heatmap } from "@/components/dash/Heatmap";
 import { nextUp, trophiesFrom } from "@/lib/trophies";
 import { activityCalendar, investedCurve, positionColumns } from "@/lib/dayone";
 import { WrappedReady } from "@/components/dash/WrappedReady";
 import { BookLead } from "@/components/dash/BookLead";
 import { PositionsTable } from "@/components/dash/PositionsTable";
 import { MoneyHero } from "@/components/dash/MoneyHero";
-import { ReturnBars } from "@/components/idioms";
 import heroStyles from "@/components/dash/hero.module.css";
 import type { WheelPosition } from "@/lib/wheel";
 import { Collection } from "@/components/dash/Collection";
@@ -362,69 +357,60 @@ export default async function DashboardPage({
 
       <Page>
         {/*
-          * ── The read leads ──
+          * ── Four acts ──
           *
-          * Account value used to open this screen, and it is the least
-          * interesting true thing here: a brokerage app says the same number
-          * faster, and it moves whether or not the reader did anything. What
-          * this product knows that nothing else does is what the conduct
-          * looked like — it has been computing exactly that every night and
-          * drawing it at 64px on a settings page.
-          *
-          * Absent, not defaulted: `view.read` is null until the first nightly
-          * score lands, and an account with holdings but no score falls
-          * straight through to the dashboard. On that path the money leads,
-          * exactly as it used to.
-          */}
-        {/*
-          * The one notice this screen has, and the first thing on it.
-          *
-          * A reader who has just connected has a deck waiting — the sync
-          * builds it now rather than leaving it for whoever opens `/wrapped`
-          * first — and nothing here said so. It is above the read because the
-          * read is what the product concluded and this is what the reader came
-          * for; the ordering is only wrong for somebody who has already seen
-          * it, and for them it is not rendered at all.
-          */}
-
-
-        {/*
-          * ── Three acts ──
-          *
-          * The page is eleven plates deep and every one of them is the same
+          * The page is a dozen plates deep and every one of them is the same
           * near-black rectangle. Read end to end that is eight thousand pixels
           * of undifferentiated evidence, and the eye has nowhere to land.
           *
-          * It has always had three acts and never said so: what the instrument
-          * concluded, what the money did, and what the year looks like — which
-          * is the order this file's own note says the screen is in. Three rules
-          * with a label on each is what makes that order visible.
+          * It was three acts — the read, the money, the year — and the middle
+          * one had quietly swallowed a fourth. Since the money moved to the
+          * top of the screen, "the money" was carrying the account's value,
+          * four stats, the field, the daily columns *and* every reading of the
+          * book: the wheel, a contribution list, the positions table, a return
+          * chart and a treemap. Five drawings of one snapshot under a heading
+          * about the brokerage.
+          *
+          * So the book is its own act, and each act now has one subject: what
+          * the brokerage says, what you are holding, what the instrument
+          * concluded, and what the year has proved.
           */}
+        <Act
+          label="The money"
+          note="Straight off your brokerage, and what it has done."
+          lead
+        />
+
         {/*
           * The money, before anything else.
           *
           * Every brokerage home screen read for this opens with the account's
-          * value and its change, then a line, then the ranges — Fidelity,
-          * Lightyear, Acorns, Copilot, QuestMobile and Quicken without
+          * value and its change, then a line, then the ranges — Kraken,
+          * Copilot, Coinbase, Binance, Fidelity, Origin and Quicken without
           * exception. This screen had the value as small mono text inside the
           * composition chart's centre, which is the one place a reader opening
           * the app is not looking.
           */}
-
-
         <div data-reveal>
           <MoneyHero
             value={book.value}
             gain={perf.gain}
-            ret={perf.ret}
             curve={view.curve}
             range={RANGE}
             fallbackGain={book.unrealised}
-            fallbackPct={book.unrealisedPct != null ? book.unrealisedPct / 100 : null}
             basis={view.provenance.marks}
           />
         </div>
 
+        {/*
+          * The one notice this screen has.
+          *
+          * A reader who has just connected has a deck waiting — the sync
+          * builds it now rather than leaving it for whoever opens `/wrapped`
+          * first — and nothing here said so. It stops for good the first time
+          * the deck is opened; a banner that keeps announcing something you
+          * have seen is an advert.
+          */}
         {!openedWrapped ? (
           <WrappedReady
             year={view.wrapped.year}
@@ -433,144 +419,25 @@ export default async function DashboardPage({
           />
         ) : null}
 
-        {wheelPositions.length >= 2 ? (
-          <>
-            <Act
-              label="The read"
-              /*
-               * The note said "Every position, and how far it is from
-               * breaking even", which is a definition of the chart rather
-               * than a reason to look at it — a reader who can see a chart
-               * does not need to be told what its axes are. This says what
-               * they will learn from it.
-               */
-              note="Which names are carrying the account, and which are costing it."
-              lead
-            />
-            <div data-reveal>
-              <BookLead
-                positions={wheelPositions}
-                bookReturn={book.unrealisedPct ?? 0}
-                benchmark={
-                  view.index != null ? { label: "S&P 500", ret: view.index * 100 } : null
-                }
-                value={money(book.value)}
-                contributions={view.positions
-                  .filter((position) => position.pnl != null)
-                  .map((position) => ({ symbol: position.symbol, pnl: position.pnl as number }))}
-                money={money}
-              />
-
-            </div>
-          </>
-        ) : null}
-
         {/*
-          * The book as a table, directly under the money.
-          *
-          * Six portfolio products were looked at before this was added and
-          * five of them lead with exactly this object — Monarch, Origin,
-          * Quicken, Fey and Kraken all make a holdings table the primary
-          * thing on the screen and let the charts sit around it. This
-          * dashboard drew the same account three ways and never once as a
-          * list of its positions: a chart answers which is biggest and which
-          * is up, and cannot answer what a given name is worth, which is the
-          * question a holder arrives with.
-          */}
-        {/*
-          * The account in the main column, the commentary in a rail.
-          *
-          * The night's written reading and the closest trophy used to sit
-          * under the wheel, in the full width of the page, which gave a
-          * sentence the same claim on the reader as the chart above it. They
-          * are commentary — Origin stacks exactly this kind of card in a rail
-          * beside the money and it is the right shape for them: a fixed
-          * measure, next to the object they are about rather than under it.
-          */}
-        <div data-reveal>
-          <Split
-            rail={
-              <>
-              {/*
-                  * The night's written reading, kept.
-                  *
-                  * It used to sit inside the score hero, and replacing that
-                  * block with the wheel would have taken it off the screen
-                  * with everything else — which is the state this file's own
-                  * note says it spent a long time in, generated every night
-                  * and read by nobody but the email. It is the product's own
-                  * voice, so it is `--accent` behind a 2px rule, as it was.
-                  */}
-                {note?.sentence ? (
-                  <div className={heroStyles.note}>
-                    <p className={heroStyles.noteLine}>{note.sentence}</p>
-                    {note.tail ? <p className={heroStyles.noteTail}>{note.tail}</p> : null}
-                  </div>
-                ) : null}
-
-                {nextTrophy ? (
-                  <a className={heroStyles.next} href="/trophies">
-                    <span className={heroStyles.nextLabel}>Closest to earning</span>
-                    <span className={heroStyles.nextName}>{nextTrophy.name}</span>
-                    <span className={heroStyles.nextMeter} aria-hidden="true">
-                      <span
-                        className={heroStyles.nextFill}
-                        style={{
-                          transform: `scaleX(${Math.min(1, nextTrophy.have / nextTrophy.need)})`,
-                        }}
-                      />
-                    </span>
-                    <span className={`num ${heroStyles.nextCount}`}>
-                      {nextTrophy.have} / {nextTrophy.need}
-                    </span>
-                  </a>
-                ) : null}
-              </>
-            }
-          >
-            <PositionsTable positions={view.positions} />
-          </Split>
-        </div>
-
-        {view.positions.filter((position) => position.pnlPct != null).length >= 2 ? (
-          <div data-reveal>
-            {/*
-              * The same book the wheel draws, as a table you can read.
-              *
-              * A rate on its own is the least useful true thing about a
-              * position: *from what, to what* is the sentence a reader wants,
-              * and both numbers are already on the ledger. This states them,
-              * groups by the provider's industry, and puts the exposure
-              * inside the bar — none of which a polar chart has room for.
-              */}
-            <ReturnBars positions={view.positions} money={money} />
-          </div>
-        ) : null}
-
-        <Act label="The money" note="Straight off your brokerage, year to date." />
-
-        <div data-reveal>
-          <PageHead
-            eyebrow="Total value · year to date"
-            title={<TotalValue value={book.value} delta={perf.gain} deltaPct={perf.ret} />}
-          />
-        </div>
-
-        {/*
-          * Four figures, each the best one this account can actually answer.
+          * Four figures, and not one of them is the figure directly above.
           *
           * Every card here used to state a *closed-trading* statistic — return
           * over a window, win rate over round trips, realised P&L, Sharpe over
-          * daily marks — and every one of them is null until a reader has both
-          * sold something and been connected long enough to have a curve. An
+          * daily marks — and every one is null until a reader has both sold
+          * something and been connected long enough to have a curve. An
           * account that connected this week and holds eight positions read as
-          * four em-dashes, on a screen sitting on a fully priced book.
+          * four em-dashes, on a screen sitting on a fully priced book. So each
+          * falls back to the figure the same data answers with no history at
+          * all, and the label changes with the figure: a fallback that kept
+          * the old heading would be a different number under the same word.
           *
-          * So each falls back to the figure the same data answers without any
-          * history at all: return on cost, positions in profit, unrealised
-          * P&L, what it cost. The label changes with the figure — a fallback
-          * that kept the old heading would be a different number under the
-          * same word, which is worse than the dash it replaced.
+          * What the fallbacks must not do is land on the hero. Two of them
+          * did: the P&L card fell back to unrealised P&L and the return card
+          * to return on cost, which are exactly the money and the rate the
+          * block above already states — so an account with no closed trades
+          * read its own change three times inside four hundred pixels. Each
+          * card now falls through to something the hero does not say.
           */}
         <Stats>
           <Stat
@@ -617,11 +484,10 @@ export default async function DashboardPage({
             * arithmetic, not a model. It stays null under ten closed trips,
             * because a rate over three is a coin landing heads twice.
             *
-            * Below the floor it now says so rather than quietly becoming a
+            * Below the floor it says so rather than quietly becoming a
             * different statistic: the reader gets "In profit" as the figure,
             * and the tail names the win rate and how many trips are left
-            * before it can be one. A metric that silently swaps for another
-            * under the same heading is worse than a dash.
+            * before it can be one.
             */}
           <Stat
             label={perf.winRate.pct == null ? "In profit" : "Win rate"}
@@ -639,49 +505,60 @@ export default async function DashboardPage({
                 : `Win rate needs ${RATE_FLOOR} closed trips · ${perf.winRate.trades} on file`
             }
           />
+          {/*
+            * Realised P&L, or what the book cost.
+            *
+            * The fallback was unrealised P&L, which is the exact figure the
+            * hero prints when the window closed nothing — the same money, at
+            * hero size, twice. Cost basis is a fact about the same snapshot
+            * that appears nowhere else on the screen, and it is the other half
+            * of the sentence the return card states as a rate.
+            */}
           <Stat
-            label={perf.sessions.length ? `${window.label} P&L` : "Unrealised P&L"}
+            label={perf.sessions.length ? `${window.label} P&L` : "Cost basis"}
             value={
               perf.sessions.length
                 ? signedMoney(perf.realised)
-                : book.priced
-                  ? signedMoney(book.unrealised)
+                : book.cost > 0
+                  ? money(book.cost)
                   : "—"
             }
             tone={
-              perf.sessions.length
-                ? perf.realised >= 0
-                  ? "moss"
-                  : "loss"
-                : book.priced
-                  ? book.unrealised >= 0
-                    ? "moss"
-                    : "loss"
-                  : undefined
+              perf.sessions.length ? (perf.realised >= 0 ? "moss" : "loss") : undefined
             }
             tail={
               perf.sessions.length
                 ? `${perf.up} up, ${perf.down} down`
-                : book.priced
-                  ? "On what you hold"
-                  : "Nothing closed in this window"
+                : book.cost > 0
+                  ? `what ${book.positions} ${book.positions === 1 ? "position" : "positions"} cost you`
+                  : "No cost basis reported"
             }
           />
+          {/*
+            * Sharpe, or the shape of the book.
+            *
+            * This fell back to cost basis, which the card beside it now
+            * carries. How many names the account is spread across — and how
+            * much of it is sitting in cash — is a complete fact off one
+            * snapshot, needs no history, and is stated nowhere else in figures.
+            */}
           <Stat
-            label={perf.sharpe == null ? "Cost basis" : "Sharpe"}
+            label={perf.sharpe == null ? "Positions" : "Sharpe"}
             value={
               perf.sharpe != null
                 ? perf.sharpe.toFixed(2)
-                : book.cost > 0
-                  ? money(book.cost)
+                : book.positions > 0
+                  ? String(book.positions)
                   : "—"
             }
             tail={
               perf.sharpe != null
                 ? "Annualised, no risk-free rate"
-                : book.cost > 0
-                  ? `what ${book.positions} ${book.positions === 1 ? "position" : "positions"} cost you`
-                  : "Needs a season of marks"
+                : book.cashShare != null
+                  ? `${(book.cashShare * 100).toFixed(0)}% of the account is uninvested cash`
+                  : book.priced > 0
+                    ? `${book.priced} priced by your brokerage`
+                    : "Needs a season of marks"
             }
           />
         </Stats>
@@ -714,11 +591,6 @@ export default async function DashboardPage({
                 * and saying nothing about the missing row is the failure this
                 * whole screen is built to avoid: a reader cannot tell an
                 * honest absence from a broken chart, and assumes the second.
-                *
-                * A return needs two marks on the equity curve to exist at all
-                * — a single day has no span to measure over — so an account
-                * that connected this week is genuinely unquotable rather than
-                * being withheld. That is a sentence, not a silence.
                 */}
               {view.field.rows.find((row) => row.you)?.basis === "cost" ? (
                 <p className="dashEmpty">
@@ -747,17 +619,6 @@ export default async function DashboardPage({
             </Panel>
           </Row>
         ) : (
-          /*
-           * The field, absent, saying why.
-           *
-           * It used to render nothing at all, which is indistinguishable from
-           * a broken screen: a dashboard that promises a comparison and shows
-           * no comparison has to say whether it is missing or refusing. The
-           * refusal itself is unchanged — a fund the provider will not quote
-           * is dropped rather than drawn at zero, and a six-month figure is
-           * never set beside a twelve-month one — because a comparison nobody
-           * can check is the one thing this screen must not print.
-           */
           <Row kind="full">
             <Panel art="race">
               <PanelHead eyebrow="The race" title="Not a comparison yet" />
@@ -771,32 +632,25 @@ export default async function DashboardPage({
           </Row>
         )}
 
-        <Row kind="wide">
-          {/*
-            * The realised chart when there is one, the book itself when there
-            * is not.
-            *
-            * This is the largest panel on the screen and it drew an empty
-            * rectangle for every account that had never sold anything — half a
-            * fold of nothing, on a page whose whole claim is that it reads a
-            * brokerage. What replaces it is not a placeholder: unrealised P&L
-            * per position is a real figure off one synced snapshot, and for a
-            * reader who only ever buys it is *the* answer to "how is it going".
-            */}
-          <Panel art="charts" span>
+        {/*
+          * The daily columns, at the width of the page.
+          *
+          * They shared a row with a treemap of the book, which put the one
+          * chart about *time* beside one about *composition* at half width
+          * each — and the treemap said what the wheel two acts down already
+          * says. The columns get the row.
+          */}
+        <Row kind="full">
+          <Panel art="charts">
             <PanelHead
               eyebrow={realisedDrawable ? `Daily P&L · ${window.label}` : "Your positions"}
             >
               {realisedDrawable ? <Legend up={perf.up} down={perf.down} /> : null}
             </PanelHead>
             {/*
-              * No hero figure, and no percentage either.
-              *
-              * Both are already on the stat row directly above this panel —
-              * "YTD P&L" is the same realised total and "Return" is the same
-              * percentage — so the screen was setting one number at 40px twice
-              * inside a single scroll, and the return five times in total. The
-              * columns are what this panel is for.
+              * No hero figure, and no percentage either. Both are on the stat
+              * row directly above this panel, and the money is at the top of
+              * the screen. The columns are what this panel is for.
               */}
             {realisedDrawable ? (
               <>
@@ -805,15 +659,9 @@ export default async function DashboardPage({
               </>
             ) : unrealisedColumns.length ? (
               /*
-                * The same idiom, a different measurement.
-                *
-                * It drew horizontal bars — honest, and visibly not the chart
-                * beside it, so the screen read as though the P&L chart had
-                * failed to load. Columns off a zero line are what this panel
-                * is: green above, hatched below, largest first. The heading
-                * and the tail carry the difference, which is the part that
-                * matters — realised is what closing did, this is what holding
-                * has done so far.
+                * The same idiom, a different measurement. Realised is what
+                * closing did; this is what holding has done so far, position
+                * by position, off the latest snapshot.
                 */
               <>
                 <PnlColumns
@@ -828,15 +676,9 @@ export default async function DashboardPage({
               </>
             ) : (
               /*
-                * Name the condition that is actually true.
-                *
-                * This said "nothing closed in this window" whatever the
-                * reason, and that is only one of three. A reader holding
-                * eight names whose broker reported no cost basis was told to
-                * sell something — advice that would not have drawn the chart
-                * either, on a screen that had just drawn those eight names
-                * twice above. An empty state that explains the wrong absence
-                * is worse than one that says nothing.
+                * Name the condition that is actually true. This said "nothing
+                * closed in this window" whatever the reason, and that is only
+                * one of three.
                 */
               <p className="dashEmpty">
                 {!view.positions.length
@@ -845,76 +687,31 @@ export default async function DashboardPage({
               </p>
             )}
           </Panel>
-
-          <Panel art="charts" span>
-            {/*
-              * ── The map replaced the ring ──
-              *
-              * A pie can only answer "how much", and to answer even that it
-              * needed a ramp of `--signal` and a written exemption from the
-              * one-hue-one-meaning rule, because a pie has to colour by
-              * *which*. A treemap carries "which" in area and order, so the
-              * fill goes back to money: green is up, red is down, and the
-              * biggest tile is the name the account is most exposed to.
-              */}
-            <PanelHead eyebrow="The book" title="Every name, sized and lit">
-              <PanelNote>Area is share of the book · fill is return on cost</PanelNote>
-            </PanelHead>
-            <Heatmap
-              grouped
-              items={view.positions.map((position) => ({
-                symbol: position.symbol,
-                value: position.value,
-                pnlPct: position.pnlPct,
-                sector: position.sector,
-              }))}
-            />
-            {view.concentration ? <p className="dashSentence">{view.concentration}</p> : null}
-            {/*
-              * The same money at the grain that carries the risk. The map
-              * answers "which names"; this answers "which kind of thing", and
-              * a book of five evenly-weighted semiconductor names is
-              * concentrated in a way no arrangement of five names can show.
-              */}
-            <SectorMix sectors={view.sectors} cover={view.sectorsCover} />
-            {/*
-              * Cash is the one part of an account that is definitely not
-              * invested, and nothing on this screen said so. Absent rather
-              * than zero when the brokerage will not report a balance — that
-              * is a fact about the connection, not a holding of nothing.
-              */}
-            {book.cashShare != null ? (
-              <p className="dashProv">
-                {(book.cashShare * 100).toFixed(0)}% of the account is uninvested cash
-              </p>
-            ) : null}
-          </Panel>
         </Row>
 
         {/*
-          * Two questions the columns above cannot answer, and both are absent
-          * rather than empty when the ledger cannot answer them either.
+          * The running total. Realised only, so it is absent until eight
+          * sessions have closed something — which is most new accounts and
+          * every buy-and-hold one.
           *
-          * `dailyPnl` is a *sparse* series — only days that closed something
-          * appear — so an account that has never sold has one cumulative point
-          * and a year of blank cells. The view gates both on `MIN_SESSIONS`,
-          * which is the engine's own floor for reporting a pattern at all.
+          * What used to fill the gap was an account-value curve, and that is
+          * the same series `<MoneyHero>` draws at the top of the page in the
+          * same component: one line, twice, on one screen. The two lines below
+          * are the ones that are genuinely different — money you put in, and
+          * profit you took out.
           */}
-        {/*
-          * The running total — or, for an account that has never sold, the
-          * account's own value instead.
-          *
-          * `cumulative` is realised P&L, so it is empty until eight sessions
-          * have closed something. That is most new accounts and *every*
-          * buy-and-hold one, and the block simply vanished for them: the
-          * widest panel on the screen, absent, on an account with a perfectly
-          * good curve behind it.
-          *
-          * The substitute is value rather than profit and is labelled as
-          * value, because a deposit moves it exactly like a gain does. Calling
-          * it P&L would be the one thing this screen must not do; calling it
-          * what it is costs nothing.
-          */}
+        {view.cumulative.length ? (
+          <Row kind="full">
+            <Panel>
+              <PanelHead eyebrow={`Cumulative P&L · ${window.label}`}>
+                <PanelNote>Running total, session by session</PanelNote>
+              </PanelHead>
+              <PnlWave points={view.cumulative} />
+              <p className="dashProv">Realised only · moves when a position closes</p>
+            </Panel>
+          </Row>
+        ) : null}
+
         {/*
           * ── The day-one line: what you have put in ──
           *
@@ -922,12 +719,9 @@ export default async function DashboardPage({
           * that connected today does not have. What it does have is every
           * transaction the brokerage remembers, and cumulative net invested is
           * a real line off exactly that — one that moves when the reader acts
-          * rather than when the market does.
-          *
-          * It is labelled as what it is. Calling money-in an equity curve
-          * would be the single most misleading thing this screen could do, so
-          * the head says "What you have put in" and the tail says it does not
-          * move with the market.
+          * rather than when the market does. It is labelled as what it is:
+          * calling money-in an equity curve would be the single most
+          * misleading thing this screen could do.
           */}
         {!view.cumulative.length && view.curve.length < 2 && invested.length >= 2 ? (
           <Row kind="full">
@@ -941,7 +735,6 @@ export default async function DashboardPage({
                 market does. Your value curve starts once there are two days of marks.
               </p>
             </Panel>
-
           </Row>
         ) : null}
 
@@ -962,64 +755,186 @@ export default async function DashboardPage({
           </Row>
         ) : null}
 
-        {view.cumulative.length || view.curve.length >= 2 ? (
-          <Row kind="wide">
-            <Panel>
-              {view.cumulative.length ? (
-                <>
-                  {/*
-                    * No hero figure here. The running total ends on exactly
-                    * the number the P&L stat states four blocks up, and this
-                    * screen printed it twice at 40px — the same measurement,
-                    * in the same window, on the same page. The curve is what
-                    * this panel is for; the figure is already said.
-                    */}
-                  <PanelHead eyebrow={`Cumulative P&L · ${window.label}`}>
-                    <PanelNote>Running total, session by session</PanelNote>
-                  </PanelHead>
-                  <PnlWave points={view.cumulative} />
-                  <p className="dashProv">Realised only · moves when a position closes</p>
-                </>
-              ) : (
-                <>
-                  {/* Same reason: this ends on the total value at the head of the act. */}
-                  <PanelHead eyebrow="Account value">
-                    <PanelNote>Every day your brokerage reported one</PanelNote>
-                  </PanelHead>
-                  <EquityCurve series={view.curve} />
-                  <p className="dashProv">
-                    Value, not profit — a deposit lifts it like a gain does
-                  </p>
-                </>
-              )}
-            </Panel>
+        {/* ── Act two: what you are holding ── */}
+        <Act
+          label="The book"
+          /*
+           * The note used to say "Every position, and how far it is from
+           * breaking even", which is a definition of the chart rather than a
+           * reason to look at it — a reader who can see a chart does not need
+           * to be told what its axes are. This says what they will learn.
+           */
+          note="Which names are carrying the account, and which are costing it."
+        />
 
-            <Panel art="grid">
-              <PanelHead eyebrow="The year in days" />
-              {view.calendar.length ? <HeatGrid days={view.calendar} /> : null}
-              <p className="dashProv">
-                One day&apos;s realised P&amp;L · empty means nothing closed
-              </p>
+        {wheelPositions.length >= 2 ? (
+          <div data-reveal>
+            <BookLead
+              positions={wheelPositions}
+              bookReturn={book.unrealisedPct ?? 0}
+              benchmark={view.index != null ? { label: "S&P 500", ret: view.index * 100 } : null}
+            />
+          </div>
+        ) : null}
+
+        {/*
+          * The same money at the grain that carries the risk.
+          *
+          * The wheel answers "which names"; this answers "which kind of
+          * thing", and a book of five evenly-weighted semiconductor names is
+          * concentrated in a way no arrangement of five names can show. It
+          * shared a panel with a treemap that drew weight and return over
+          * again — the wheel's own two variables in a second geometry — and
+          * the treemap is now only on `/holdings`, which leads with it.
+          */}
+        {view.sectors.length ? (
+          <Row kind="full">
+            <Panel art="charts">
+              <PanelHead eyebrow="The book by industry" title="What kind of thing you own">
+                <PanelNote>Share of the priced book</PanelNote>
+              </PanelHead>
+              <SectorMix sectors={view.sectors} cover={view.sectorsCover} />
+              {view.concentration ? <p className="dashSentence">{view.concentration}</p> : null}
             </Panel>
           </Row>
         ) : null}
 
-        <Act label="The year" note="What your own history has proved so far." />
+        {/*
+          * The book as a table, at the full width of the page.
+          *
+          * Five portfolio products were looked at before this was added and
+          * every one of them makes a holdings table a primary object —
+          * Monarch, Origin, Quicken, Fey and Kraken — and let the charts sit
+          * around it. A chart answers which is biggest and which is up, and
+          * cannot answer what a given name is worth, which is the question a
+          * holder arrives with. It used to sit in a narrowed column beside a
+          * rail of commentary, which is six columns of figures in two thirds
+          * of the room they need.
+          */}
+        <div data-reveal>
+          <PositionsTable positions={view.positions} />
+        </div>
+
+        {/* ── Act three: what the instrument concluded ── */}
+        <Act label="The read" note="What your own history says about how you trade." />
 
         {/*
-          * The one place the score has a *history* rather than a value, and
-          * the twin of the money calendar above it. It reads the same band
-          * table the streaks do — before those were reconciled, the same
-          * Tuesday could be "inside your rules" in the ring and a pale cell
-          * in the grid beside it.
+          * The night's written reading, in the main column.
+          *
+          * `generateInsight` runs against Anthropic every night, is held
+          * character-for-character to the fact pack, and is stored per user
+          * per day — and for a long time the only reader it reached was the
+          * notify email. It then spent a while in a 340px rail beside a table,
+          * which is the right shape for a card and the wrong one for the one
+          * sentence this product writes. It is the product's own voice, so it
+          * is `--accent` behind a 2px rule.
           */}
+        {note?.sentence || nextTrophy ? (
+          <div data-reveal>
+            {note?.sentence ? (
+              <div className={heroStyles.note}>
+                <p className={heroStyles.noteLine}>{note.sentence}</p>
+                {note.tail ? <p className={heroStyles.noteTail}>{note.tail}</p> : null}
+              </div>
+            ) : null}
+
+            {/*
+              * The closest unearned trophy, on the read's own foot.
+              *
+              * It spent a while in a 340px rail, and `<a class="next">` is a
+              * three-column pill asking for 460 — so a label, a name, a meter
+              * and a count were folded into a 300px box with a 999px radius,
+              * which renders as a tall lozenge with its own empty half. The
+              * foot is the container it was drawn for.
+              *
+              * It is the reason to open the screen tomorrow, and it is never a
+              * date and never a projection: a real subtraction of two counts
+              * already on file.
+              */}
+            {nextTrophy ? (
+              <div className={heroStyles.foot}>
+                <a className={heroStyles.next} href="/trophies">
+                  <span className={heroStyles.nextLabel}>Closest to earning</span>
+                  <span className={heroStyles.nextName}>{nextTrophy.name}</span>
+                  <span className={heroStyles.nextMeter} aria-hidden="true">
+                    <span
+                      className={heroStyles.nextFill}
+                      style={{
+                        transform: `scaleX(${Math.min(1, nextTrophy.have / nextTrophy.need)})`,
+                      }}
+                    />
+                  </span>
+                  <span className={`num ${heroStyles.nextCount}`}>
+                    {nextTrophy.have} / {nextTrophy.need}
+                  </span>
+                </a>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
         {/*
-          * The grid waits for eight scored nights, because one lit cell in a
-          * field of empties reads as a broken chart rather than as a young
-          * account. What it does not do any more is wait *silently* — an act
-          * headed "The year" with nothing under it says less than a sentence
-          * naming the count would.
+          * The findings, drawn.
+          *
+          * They were three rows inside one panel, each with its chart shrunk
+          * to a 104px chip beside the sentence it was evidence for — so the
+          * reader could see that something had been measured and never what.
+          * Each is a card now: the chart across the top of its own plate, the
+          * reading under it. The row shape follows the count, because a
+          * third-width card sitting alone in a three-column grid reads as two
+          * cards that failed to load.
           */}
+        {insights.length ? (
+          <Row kind={insights.length >= 3 ? "thirds" : insights.length === 2 ? "halves" : "full"}>
+            {insights.slice(0, 3).map((pattern, i) => (
+              <InsightCard
+                key={pattern.key}
+                delay={50 + i * 80}
+                eyebrow={INSIGHT_EYEBROW[pattern.kind]}
+                range={pattern.range}
+                chart={
+                  pattern.chart.type === "weekday" ? (
+                    <WeekdayBars cells={pattern.chart.cells} worst={pattern.chart.worst} />
+                  ) : pattern.chart.type === "holds" ? (
+                    <HoldMeters
+                      winners={pattern.chart.winners}
+                      losers={pattern.chart.losers}
+                    />
+                  ) : (
+                    <span className="dashImpact" data-tone={pattern.tone}>
+                      {pattern.impact != null ? signedMoney(pattern.impact) : "—"}
+                    </span>
+                  )
+                }
+                title={pattern.title}
+                body={pattern.body}
+              />
+            ))}
+          </Row>
+        ) : (
+          <Row kind="full">
+            <Panel art="findings">
+              <PanelHead eyebrow="Insights this week" />
+              {/*
+                * A refusal with a door, rather than a refusal. The behaviour
+                * findings do need a history — but the book itself is readable
+                * now, and `/insights` says so on its own first band.
+                */}
+              <p className="dashEmpty">
+                No behaviour pattern has cleared its sample floor yet — those need a
+                history to be anything but a coincidence. What your book already says is
+                on the insights screen.
+              </p>
+              <p className="dashProv">
+                <Link href="/insights">Read what your book says →</Link>
+              </p>
+            </Panel>
+          </Row>
+        )}
+
+        {/* ── Act four: what the year has proved ── */}
+        <Act label="The year" note="What your own history has proved so far." />
+
         {/*
           * ── The year the brokerage remembers, until we have one of our own ──
           *
@@ -1072,83 +987,29 @@ export default async function DashboardPage({
         ) : null}
 
         {/*
-          * The findings, drawn.
-          *
-          * They were three rows inside one panel, each with its chart shrunk
-          * to a 104px chip beside the sentence it was evidence for — so the
-          * reader could see that something had been measured and never what.
-          * Each is a card now: the chart across the top of its own plate, the
-          * reading under it. The row shape follows the count, because a
-          * third-width card sitting alone in a three-column grid reads as two
-          * cards that failed to load.
+          * The money calendar, beside the scored one rather than beside a
+          * curve it has nothing to do with.
           */}
-        {insights.length ? (
-          <Row kind={insights.length >= 3 ? "thirds" : insights.length === 2 ? "halves" : "full"}>
-            {insights.slice(0, 3).map((pattern, i) => (
-              <InsightCard
-                key={pattern.key}
-                delay={50 + i * 80}
-                eyebrow={INSIGHT_EYEBROW[pattern.kind]}
-                range={pattern.range}
-                chart={
-                  pattern.chart.type === "weekday" ? (
-                    <WeekdayBars cells={pattern.chart.cells} worst={pattern.chart.worst} />
-                  ) : pattern.chart.type === "holds" ? (
-                    <HoldMeters
-                      winners={pattern.chart.winners}
-                      losers={pattern.chart.losers}
-                    />
-                  ) : (
-                    <span className="dashImpact" data-tone={pattern.tone}>
-                      {pattern.impact != null ? signedMoney(pattern.impact) : "—"}
-                    </span>
-                  )
-                }
-                title={pattern.title}
-                body={pattern.body}
-              />
-            ))}
-          </Row>
-        ) : (
+        {view.calendar.length ? (
           <Row kind="full">
-            <Panel art="findings">
-              <PanelHead eyebrow="Insights this week" />
-              {/*
-                * A refusal with a door, rather than a refusal.
-                *
-                * "Nothing has cleared a sample floor yet" is true and it is
-                * the end of the conversation. The behaviour findings do need a
-                * history — but the book itself is readable now, and
-                * `/insights` says so on its own first band, so this points at
-                * it instead of stopping.
-                */}
-              <p className="dashEmpty">
-                No behaviour pattern has cleared its sample floor yet — those need a
-                history to be anything but a coincidence. What your book already says is
-                on the insights screen.
-              </p>
+            <Panel art="grid">
+              <PanelHead eyebrow="The year in days" />
+              <HeatGrid days={view.calendar} />
               <p className="dashProv">
-                <Link href="/insights">Read what your book says →</Link>
+                One day&apos;s realised P&amp;L · empty means nothing closed
               </p>
             </Panel>
           </Row>
-        )}
+        ) : null}
 
         <Row kind="full">
           {/*
-            * The door, not the tally. The count moved to the set at the foot
-            * of the page, where twelve frames say it better than a sentence
-            * can — printing "9 of 12" in both places is one screen making the
-            * same statement twice, in the weaker form.
-            */}
-          {/*
-            * The hero is the year when there is no return to put there.
+            * The door, not the tally. The count is on the set at the foot of
+            * the page, where twelve frames say it better than a sentence can.
             *
-            * It was an em dash — a 56px placeholder on a saturated gradient,
-            * which renders as a blank space and reads as a figure that failed
-            * to load. An account with one day of marks has no return, and the
-            * year is the thing this card is actually about: unambiguously
-            * true, and it needs no ledger to say.
+            * The hero is the year when there is no return to put there: it was
+            * an em dash, which renders as a blank on a saturated gradient and
+            * reads as a figure that failed to load.
             */}
           <WrappedPromo
             year={String(view.wrapped.year)}
@@ -1164,11 +1025,10 @@ export default async function DashboardPage({
             ready={view.wrapped.earned > 0}
           />
         </Row>
+
         {/*
-          * The set, last, and it is the only block on the screen that is about
-          * what happens next. Twelve frames and which the ledger has proved —
-          * the count used to be a sentence on a promo tile, which is the least
-          * legible form a collection can take.
+          * The set, last, and the only block on the screen about what happens
+          * next. Twelve frames and which the ledger has proved.
           */}
         <div data-reveal>
           <Collection year={view.wrapped.year} earnedNos={view.wrapped.earnedNos} />

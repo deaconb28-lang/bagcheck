@@ -108,8 +108,16 @@
   font-size: 13.5px;
 }
 
+/*
+ * The arrow in "cost → now".
+ *
+ * It took `--line2`, which is a *border* token: backgrounds, borders and
+ * tracks are meant to be faint and are exempt from the contrast floor, and
+ * text is not. At 1.27:1 the one glyph carrying the relationship between the
+ * two figures either side of it was invisible.
+ */
 .arrow {
-  color: var(--line2);
+  color: var(--meta);
   padding: 0 2px;
 }
 

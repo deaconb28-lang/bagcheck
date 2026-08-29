@@ -138,7 +138,12 @@
    * sitting back. The ramp has to be tuned per ground, not shared.
    */
   --wheel-grid: color-mix(in srgb, var(--signal) 42%, transparent);
-  --wheel-lead: color-mix(in srgb, var(--signal) 96%, transparent);
+  /*
+   * The full annulus a wedge could occupy, at almost nothing. Every radial
+   * gauge worth reading draws one, and the reason is the same here as on a
+   * fitness ring: the shape has to be legible before the data is.
+   */
+  --wheel-track: color-mix(in srgb, var(--ink) 5%, transparent);
   --wheel-datum: color-mix(in srgb, var(--ink) 42%, transparent);
   --wheel-book: color-mix(in srgb, var(--ink) 70%, transparent);
   --wheel-bench: color-mix(in srgb, var(--signal) 88%, transparent);
@@ -622,12 +627,14 @@ html[data-mode="dark"] {
   /* Gridlines are meant to be faint; they carry no reading on their own. */
   --wheel-grid: color-mix(in srgb, var(--signal) 11%, transparent);
   /*
-   * A leader line, which is drawn at .45 opacity on top of this — so the
-   * token has to be strong enough to survive that. At the grid's own 14% it
-   * resolved to about 6% on screen and the leaders were invisible, which the
-   * standalone render did not catch because it used a literal.
+   * The track: the full annulus a wedge could occupy, at almost nothing.
+   *
+   * It replaced `--wheel-lead`, which painted the leader lines out to the
+   * ring of orbiting tickers this chart no longer draws. On black it has to
+   * be a mix of ink rather than of signal — a steel at any legible strength
+   * reads as a second, wider gridline, and the track is not a reading.
    */
-  --wheel-lead: color-mix(in srgb, var(--signal) 55%, transparent);
+  --wheel-track: color-mix(in srgb, var(--ink) 4%, transparent);
   /*
    * The break-even ring is the datum the whole chart is read against, and it
    * may never be mistaken for a gridline — so it is a different weight and a

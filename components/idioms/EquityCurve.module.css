@@ -18,6 +18,15 @@
   box-shadow: var(--glow-moss);
 }
 
+/*
+ * `signal` is exposure and comparison, not money — the cumulative-invested
+ * line, and an account-value curve whose window is down. A moss halo behind
+ * either says "up" in the one channel the reader is not reading.
+ */
+.svg[data-tone="signal"] {
+  box-shadow: var(--glow-azure);
+}
+
 .axis {
   display: flex;
   justify-content: space-between;

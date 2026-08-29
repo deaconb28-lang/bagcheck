@@ -4,14 +4,36 @@
  * Every value here is a token. The type is the product's own: mono for
  * labels, counts and comparatives, and the poster face for the one figure in
  * the middle — which is the only place on this screen that earns it.
+ *
+ * The block is two objects: the drawing, and the key that says which wedge is
+ * which. The key used to be a ring of orbiting tickers on leader lines and a
+ * second, invisible copy of the same information for a screen reader. One
+ * visible list does both jobs, and it is what let the leaders go.
  */
 
 .wrap {
   position: relative;
   margin: 0;
   display: grid;
-  gap: 30px;
+  /*
+   * The key is a fixed column rather than a fraction. It holds four short
+   * values in a row and it stops being readable long before a fraction of a
+   * wide page would stop giving it width — the same reason the dashboard's
+   * own rail is fixed.
+   */
+  grid-template-columns: minmax(0, 1fr) 316px;
+  align-items: center;
+  gap: 52px;
+}
+
+/* ── The drawing ──────────────────────────────────────────────────────── */
+
+.stage {
+  position: relative;
+  min-width: 0;
+  display: grid;
   justify-items: center;
+  gap: 22px;
 }
 
 /*
@@ -24,10 +46,10 @@
  * plate under it: a filled surface inside a filled page is the small
  * rectangles tell, and this screen's own rule is that a block is not a card.
  */
-.wrap::before {
+.stage::before {
   content: "";
   position: absolute;
-  inset: -6% 12% 14%;
+  inset: -4% 4% 16%;
   border-radius: 50%;
   /*
    * Neutral, deliberately. A moss-tinted wash behind a book that is *down*
@@ -47,15 +69,15 @@
 .svg {
   position: relative;
   z-index: 1;
+  display: block;
   width: 100%;
-  max-width: 100%;
-  height: auto;
   /*
-   * The longest label starts at r=280 and runs outward, which crosses the
-   * viewBox edge. Letting it paint outside is the honest fix; the container
-   * carries the padding that makes room for it.
+   * The drawing is capped rather than left to fill: past about 520px the
+   * annulus stops gaining anything a reader can use and the block starts
+   * spending the fold on a circle.
    */
-  overflow: visible;
+  max-width: 540px;
+  height: auto;
 }
 
 /* ── Grid ─────────────────────────────────────────────────────────────── */
@@ -73,22 +95,96 @@
 }
 
 /*
- * ── The legend ──
+ * The axis labels' own ground.
  *
- * The two reference lines, named once and in full beneath the chart. They are
- * the whole judgement this drawing offers — does a wedge cross the line — and
- * they used to be two of eight figures crammed into a hundred-pixel strip at
- * twelve o'clock.
+ * A ring label lands wherever the data happened to put a wedge, so without a
+ * plate behind it the value reads as debris scattered over the chart.
  */
-.legend {
+.axis rect {
+  fill: var(--bg);
+  fill-opacity: 0.82;
+}
+
+/* ── Wedges ───────────────────────────────────────────────────────────── */
+
+.wedge {
+  stroke-linejoin: miter;
+  paint-order: stroke fill;
+  transition: opacity 0.18s ease;
+}
+
+/*
+ * The rank numeral.
+ *
+ * It sits on the datum, which means it sits on top of its own wedge's fill —
+ * a hatch on a loss, four different strengths of moss on a gain. The ground
+ * stroke is what makes one value legible over all of them: the numeral is
+ * painted stroke-first in the page's own colour, so it carries its own plate
+ * without a rectangle being drawn.
+ */
+.rank {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  fill: var(--ink);
+  stroke: var(--bg);
+  stroke-width: 3.5px;
+  paint-order: stroke fill;
+  transition: opacity 0.18s ease;
+}
+
+/* ── Centre ───────────────────────────────────────────────────────────── */
+
+/*
+ * One hero per screen, and it is the account's value in the block above this.
+ * The rate is the chart's own summary, not the page's headline.
+ */
+.centrePrimary {
+  font-family: var(--font-poster);
+  font-size: 64px;
+  letter-spacing: -0.02em;
+  fill: var(--ink);
+}
+
+/*
+ * A long figure is stepped down rather than clipped. `+1,284.50%` at 64px
+ * runs past the inner hole, and a centre figure that overlaps the wedges is
+ * worse than a smaller one.
+ */
+.centrePrimary[data-long] {
+  font-size: 44px;
+}
+
+/*
+ * The eyebrow names the metric, which is this product's rule everywhere else
+ * and was the one thing the middle of this chart never did: it read
+ * `$412,388 · 8 NAMES` under a percentage, so the biggest figure in the
+ * drawing had nothing beside it saying what it measured.
+ */
+.centreSecondary {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  fill: var(--meta);
+}
+
+/* ── The two reference lines ──────────────────────────────────────────── */
+
+/*
+ * Named in full under the drawing. They are the whole judgement this chart
+ * offers — does a wedge cross the line — and they used to be two of eight
+ * figures crammed into a hundred-pixel strip at twelve o'clock.
+ */
+.refs {
   position: relative;
   z-index: 1;
+  margin: 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 10px 26px;
-  max-width: 620px;
+  gap: 8px 24px;
 }
 
 .key {
@@ -96,7 +192,7 @@
   align-items: center;
   gap: 9px;
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink3);
@@ -120,250 +216,235 @@
   border-top-style: dotted;
 }
 
-.keyNote {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--meta);
+/* ── The key ──────────────────────────────────────────────────────────── */
+
+.keyPane {
+  min-width: 0;
 }
 
-/* ── Wedges ───────────────────────────────────────────────────────────── */
-
-.wedge {
-  /*
-   * A sliver is a 1.2° target, which is not a target. A transparent stroke
-   * widens what the pointer can hit without widening what the eye reads —
-   * the fill is still the figure.
-   */
-  stroke-linejoin: miter;
-  paint-order: stroke fill;
-  transition: opacity 0.18s ease;
-}
-
-.lead,
-.tag {
-  transition: opacity 0.18s ease;
-}
-
-.lead {
-  opacity: 0.3;
-}
-
-/* ── Labels ───────────────────────────────────────────────────────────── */
-
-.ticker {
-  font-family: var(--font-mono);
-  font-size: 17px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  fill: var(--ink);
-}
-
-.logo {
-  border-radius: 3px;
-  opacity: 0.92;
-}
-
-.figure {
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  letter-spacing: 0.03em;
-  fill: var(--ink3);
-}
-
-.figure[data-tone="up"] {
-  fill: var(--moss);
-}
-
-.figure[data-tone="down"] {
-  fill: var(--loss);
-}
-
-/* ── Centre ───────────────────────────────────────────────────────────── */
-
-/*
- * The figure fills the hole it sits in.
- *
- * The inner radius is 112 of a 320 viewBox, which is a 224-unit disc — at
- * 68px the number floated in the middle of it and the centre read as a large
- * dark hole with a caption, rather than as the thing the ring is wrapped
- * around. Anton's floor is 32px and its ceiling here is the chord it has to
- * fit inside; this is most of the way to it.
- */
-.centrePrimary {
-  font-family: var(--font-poster);
-  font-size: 62px;
-  letter-spacing: -0.02em;
-  fill: var(--ink);
-}
-
-/*
- * A long figure is stepped down rather than clipped. `+1,284.50%` at 54px
- * runs past the inner hole, and a centre figure that overlaps the wedges is
- * worse than a smaller one.
- */
-/*
- * One hero per screen, and it is the account's value in the block above this.
- * The centre was 96px, which put two figures of near-identical weight six
- * hundred pixels apart and left a reader with no answer to "what am I looking
- * at first". The rate is the chart's own summary, not the page's headline.
- */
-.centrePrimary[data-long] {
-  font-size: 44px;
-}
-
-.centreSecondary {
-  font-family: var(--font-mono);
-  font-size: 14px;
-  letter-spacing: 0.16em;
-  fill: var(--meta);
+.book {
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .caption {
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
+  font-size: 11px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--meta);
-  text-align: center;
+  text-align: left;
+  padding-bottom: 12px;
+}
+
+.book thead th {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--meta);
+  text-align: left;
+  padding: 0 0 8px;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.hRank {
+  width: 30px;
+}
+
+.hNum {
+  text-align: right;
+}
+
+.row {
+  transition: opacity 0.18s ease;
+  animation: key-in 0.5s ease-out both;
+}
+
+.row td,
+.row th {
+  padding: 11px 0 12px;
+  border-bottom: 1px solid var(--line-light);
+  vertical-align: middle;
+}
+
+.book tbody tr:last-child td,
+.book tbody tr:last-child th {
+  border-bottom: 0;
+}
+
+.rankCell {
+  width: 30px;
+}
+
+/*
+ * Rank as a numeral in a hairline chip — the race's device, and it is the
+ * join between the two halves of this block: the numeral on the wedge and the
+ * numeral in the list are the same fact, and one of them can be read.
+ */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 21px;
+  height: 21px;
+  border: 1px solid var(--line2);
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink2);
+}
+
+.symbol {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  text-align: left;
+  padding-left: 12px;
+}
+
+.weight {
+  position: relative;
+  width: 76px;
+  text-align: right;
+  font-size: 13px;
+  color: var(--ink3);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * The weight bar, under the figure it restates.
+ *
+ * An angle is the one quantity this chart encodes that a reader cannot
+ * compare accurately by eye — two wedges twelve degrees apart look the same —
+ * so weight is stated twice: in type, and as a length, which is the channel
+ * the eye is good at. It grows from the right because the figure it belongs
+ * to is set right.
+ */
+.track {
+  position: absolute;
+  right: 0;
+  bottom: 7px;
+  display: block;
+  width: 100%;
+  height: 2px;
+  /*
+   * The bar needs a track, for the reason the drawing does: a 9.7% bar with
+   * nothing behind it is fourteen pixels of grey under a number, which reads
+   * as debris rather than as a proportion. The track is what makes it a
+   * share of something.
+   */
+  background: var(--line-light);
+}
+
+.bar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--signal);
+  opacity: 0.6;
+  transform-origin: right center;
+}
+
+.ret {
+  text-align: right;
+  font-size: 13px;
+  padding-left: 14px;
+  color: var(--ink3);
+  font-variant-numeric: tabular-nums;
+}
+
+.ret[data-dir="up"] {
+  color: var(--moss);
+}
+
+.ret[data-dir="down"] {
+  color: var(--loss);
+}
+
+.note {
+  margin: 14px 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--meta);
 }
 
 /* ── Focus ────────────────────────────────────────────────────────────── */
 
+/*
+ * One position lights in the three places it appears — the wedge, its numeral
+ * and its row. Nothing depends on it: every figure the hover reveals is
+ * already printed in the key.
+ */
 .focused .wedge,
-.focused .lead,
-.focused .tag {
-  opacity: 0.22;
+.focused .rank,
+.focused .row {
+  opacity: 0.26;
 }
 
 .focused .on {
   opacity: 1;
 }
 
-.focused .lead.on {
-  opacity: 0.75;
-}
+/* ── The phone ────────────────────────────────────────────────────────── */
 
-/* ── The accessible chart ─────────────────────────────────────────────── */
-
-.sr {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
+/*
+ * Below 1080 the key drops beneath the drawing rather than narrowing with it.
+ * A polar chart in half a laptop is a polar chart nobody can read.
+ */
+@media (max-width: 1080px) {
+  .wrap {
+    grid-template-columns: minmax(0, 560px);
+    justify-content: center;
+    gap: 40px;
+  }
 }
 
 /*
- * ── The phone ──
+ * ── There is no mobile step-down for the centre figure ──
  *
- * Below 560px the second label line goes; below 400px the labels and leaders
- * go entirely and the legend under the chart carries the names. Text is never
- * scaled below about 9px rendered, so what gives way is the number of things
- * drawn rather than their size.
+ * There was, and it was a bug rather than a refinement. A `font-size` on SVG
+ * text inside a viewBox is in *user units*, not CSS pixels, so the figure
+ * already scales with the drawing: 64 units in a 342px-wide render composites
+ * to about 34 CSS px. Stepping it to 46 units on a phone therefore does not
+ * make room for anything — the hole shrinks by exactly the same factor — it
+ * just renders the figure at about 25px, under the 32px floor this project
+ * sets for the poster face, on the one screen where it is the only thing in
+ * the middle of the chart.
+ *
+ * `data-long` stays, because that one is not about the viewport: it is about
+ * how many characters the value has, and ten of them at 64 units run past the
+ * inner hole at every size.
  */
 @media (max-width: 560px) {
-  .figure {
-    display: none;
+  .symbol {
+    padding-left: 10px;
   }
 }
 
-@media (max-width: 400px) {
-  .tag,
-  .lead {
-    display: none;
+@keyframes key-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
   }
-
-  .centrePrimary {
-    font-size: 44px;
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .wedge,
-  .lead,
-  .tag {
+  .rank,
+  .row {
     transition: none;
   }
-}
 
-/*
- * The axis labels' own ground.
- *
- * A ring label lands wherever the data happened to put a wedge, so without a
- * plate behind it the column of values reads as debris scattered over the
- * chart — which is exactly how it rendered before this existed.
- */
-.axis rect {
-  fill: var(--bg);
-  fill-opacity: 0.82;
-}
-
-/*
- * ── The entrance ──
- *
- * The figure arrives turning: it enters from the right of where it belongs,
- * rotating, and decelerates into place while the annotations fade up behind
- * it. Three things move on three elements, which is what keeps them from
- * fighting — the stage translates, the body rotates, the labels fade. Two
- * animations on one property would silently drop one of them.
- *
- * The rotation is on the rings-and-wedges group only. The labels sit outside
- * it and never turn, because text on its side is not a reading; they are held
- * back until the spin has almost stopped, so nothing is asked to be read
- * while it is moving.
- *
- * The rest state is the finished design, so a browser that runs none of this
- * paints the chart exactly where it belongs.
- */
-.stage {
-  animation: wheel-settle 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.spin {
-  animation: wheel-spin 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.annotations {
-  animation: wheel-annotate 0.6s ease-out 0.95s both;
-}
-
-@keyframes wheel-settle {
-  from {
-    transform: translateX(7%);
-  }
-  to {
-    transform: none;
-  }
-}
-
-@keyframes wheel-spin {
-  from {
-    transform: rotate(186deg);
-  }
-  to {
-    transform: rotate(0deg);
-  }
-}
-
-@keyframes wheel-annotate {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .stage,
-  .spin,
-  .annotations {
+  .row {
     animation: none;
   }
 }

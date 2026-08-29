@@ -1,78 +1,19 @@
 /*
- * The lead block's layout.
+ * The book block's frame.
  *
- * The wheel takes the larger share because it is the focal point, and the
- * contribution list sits beside it as the reading it cannot give. There is no
- * plate under either: a filled surface inside a filled page is the
- * small-rectangles tell, and 96px of nothing divides these better than a
- * border would.
- */
-/*
- * The wheel is the focal point and the layout has to say so.
+ * There is no plate under it: a filled surface inside a filled page is the
+ * small-rectangles tell, and the act rule above it plus the air below divide
+ * it better than a border would.
  *
- * It did not. The chart column was a share of a 1470px page, so the drawing
- * sat in about six hundred pixels of a twelve-hundred-pixel column with the
- * rest as black — stranded left of centre while the contribution list, which
- * fills its own column edge to edge, read as the stronger object. A focal
- * point surrounded by dead space is not a focal point.
- *
- * So the block is capped and centred, and the list takes a fixed column
- * rather than a share. Whatever the window does, the chart gets the width
- * that is left and fills it.
+ * The block is capped and centred rather than given a share of the page. The
+ * wheel and its key are two objects of a known size, and a fraction of a
+ * 1240px canvas kept handing the drawing a column far wider than the drawing
+ * — so it sat marooned left of centre with a gulf between it and the list.
+ * Explicit width, centred, and the leftover falls outside, which is where
+ * empty space belongs.
  */
-.grid {
-  display: grid;
-  /*
-   * Both tracks are stated, and the pair is centred — not a fraction of
-   * whatever the page happens to be.
-   *
-   * `minmax(0, 1fr)` with a cap on the container kept giving the chart a
-   * column far wider than the drawing, so the wheel sat marooned in black
-   * with a gulf between it and the list. Explicit tracks plus
-   * `justify-content: center` put the two objects next to each other and let
-   * the leftover width fall outside them, which is where empty space belongs.
-   */
-  grid-template-columns: minmax(0, 820px) 340px;
-  justify-content: center;
-  align-items: center;
-  gap: 48px;
-}
-
-.figure {
-  min-width: 0;
-  display: flex;
-  justify-content: center;
-  /*
-   * The longest label runs past the viewBox by design — the SVG is
-   * `overflow: visible` and this is the room that makes that safe. It was
-   * 48px, which spent the width the drawing needed on air it did not.
-   */
-  padding: 0 26px;
-}
-
-.aside {
-  min-width: 0;
-  align-self: center;
-}
-
-/*
- * Below 1080 the list drops beneath the wheel rather than narrowing with it.
- * A polar chart in half a laptop is a polar chart nobody can read, and the
- * labels are the first thing to go.
- */
-@media (max-width: 1080px) {
-  .grid {
-    grid-template-columns: minmax(0, 620px);
-    gap: 48px;
-  }
-
-  .figure {
-    padding: 0 24px;
-  }
-}
-
-@media (max-width: 560px) {
-  .figure {
-    padding: 0;
-  }
+.block {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
 }

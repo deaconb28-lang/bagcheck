@@ -15,11 +15,14 @@
  *   radial extent  return on cost, signed — a loss reads as *inward*
  *   direction      the sign, drawn as well as coloured, so the reading
  *                  survives greyscale and colour blindness
- *   fill           identity only, one stable value per ticker
+ *   sweep order    identity, as a rank — the wedges run clockwise from twelve
+ *                  in weight order, and the key beside the chart runs in the
+ *                  same order under the same numerals
  *
  * Radius carries exactly one variable. The eye reads radial *area*, not
  * radial length, so a second quantity in the same channel would mislead in a
- * way no legend can undo.
+ * way no legend can undo. Identity is carried by *order* rather than by hue,
+ * which is what lets the fill go on meaning money.
  */
 
 export interface WheelPosition {
@@ -45,37 +48,47 @@ export interface WheelBox {
   r0: number;
   rMin: number;
   rMax: number;
-  rLead: number;
-  rLabel: number;
+  /** The radius the rank numerals sit on. Constant, so they form a ring. */
+  rRank: number;
   gap: number;
   minSpan: number;
 }
 
+/**
+ * ── The drawing gets the whole frame ──
+ *
+ * These allowed 40 units past `rMax` for leader lines and another ring of
+ * orbiting tickers beyond that, which the SVG then painted outside its own
+ * viewBox on `overflow: visible` with the column carrying 26px of padding to
+ * make room. A quarter of the radius, plus a fragile escape hatch, spent on
+ * saying which wedge is which.
+ *
+ * Nine ring charts were read for this — YNAB, Quicken, Binance, Coinbase,
+ * Twenty, Glide, Adobe Express, Oura, Garmin — and exactly one of them draws
+ * leader lines. Every other one names its segments in a list beside the ring
+ * and lets the drawing be a drawing. So the labels are gone, the leaders are
+ * gone, the overflow is gone, and the radius they cost comes back to the
+ * annulus, which is the part that carries a reading.
+ *
+ * The break-even ring still sits below centre-radius: 100 units run outward
+ * against 78 inward, because in a long-only book gains run larger than
+ * losses. A book carrying shorts or inverse products wants r0 near 220.
+ */
 export const BOX: WheelBox = {
   vb: 640,
-  /*
-   * ── The drawing fills its frame ──
-   *
-   * These were 150 / 112 / 252 on a 320 radius, which left a fifth of the
-   * viewBox empty at the rim and drew an annulus thin enough that the ring
-   * read as line-work rather than as an object. The hero of the screen cannot
-   * be the smallest thing on it. The labels now sit just outside the box,
-   * which is what `overflow: visible` and the column's own padding are for.
-   */
-  /*
-   * The break-even ring sits below centre-radius on purpose: it leaves 102px
-   * outward and 38px inward, and in a long-only book gains run larger than
-   * losses. A book carrying shorts or inverse products wants r0 at 200.
-   */
-  r0: 186,
+  r0: 206,
   /*
    * The innermost pixel a wedge may reach, which is what protects the centre
-   * figure. Below about 105 the label has no chord to sit on.
+   * figure. Below about 105 the figure has no chord to sit on.
    */
-  rMin: 140,
-  rMax: 300,
-  rLead: 316,
-  rLabel: 324,
+  rMin: 128,
+  rMax: 306,
+  /*
+   * The numerals sit on the datum, which is the one radius every wedge
+   * touches — a gain grows out of it and a loss bites into it, so a numeral
+   * there is always on its own wedge whichever way the position went.
+   */
+  rRank: 206,
   /**
    * Degrees of whitespace between adjacent wedges.
    *
@@ -88,6 +101,33 @@ export const BOX: WheelBox = {
   /** A wedge is never drawn thinner than this, or a sliver vanishes. */
   minSpan: 1.2,
 };
+
+/**
+ * Arc length, in user units, of a wedge at a given radius.
+ *
+ * This is what decides whether a numeral is drawn on a wedge at all. The
+ * rule is the heatmap's rule — what a shape has room to say is asked of the
+ * shape, in pixels, and the floor is silence: a wedge too thin for a legible
+ * numeral keeps its colour, its angle and its row in the key, and says
+ * nothing on the drawing rather than saying it illegibly.
+ */
+export function arcRoom(wedge: { a0: number; a1: number }, r: number): number {
+  return ((wedge.a1 - wedge.a0) * Math.PI * r) / 180;
+}
+
+/**
+ * The arc a rank numeral needs before it is worth drawing, for a numeral of
+ * `digits` glyphs.
+ *
+ * Eight units a glyph plus thirteen of clearance either side. The per-glyph
+ * term is not decoration: a fixed floor sized for "3" lets "12" be drawn on a
+ * wedge with room for one character, and the second digit then runs over the
+ * gap into the neighbouring wedge — which is a label on the wrong position,
+ * the worst failure a key like this has.
+ */
+export function rankRoom(digits: number): number {
+  return 13 + 8 * digits;
+}
 
 /* ── Validation ───────────────────────────────────────────────────────────
  *
@@ -474,47 +514,6 @@ export function foldDust(
     positions: [...kept, { ticker: "REST", weight, ret, isRest: true }],
     folded: dust.length,
   };
-}
-
-/* ── Labels ───────────────────────────────────────────────────────────────*/
-
-export interface Tag {
-  ticker: string;
-  side: "left" | "right";
-  /** The mid-angle position, before collision resolution. */
-  y: number;
-  x: number;
-  mid: number;
-  /** Where the wedge's own outer edge sits, so the leader starts clear of it. */
-  outer: number;
-}
-
-/**
- * Two-sided force separation.
- *
- * Push down through each column, then pull back up if the last one ran off
- * the bottom — one pass in each direction is enough because the columns are
- * already sorted and every move is monotonic.
- */
-export function declutter(tags: Tag[], minGap: number, vb: number): Tag[] {
-  const out = tags.map((t) => ({ ...t }));
-
-  for (const side of ["right", "left"] as const) {
-    const col = out.filter((t) => t.side === side).sort((a, b) => a.y - b.y);
-    if (col.length < 2) continue;
-
-    for (let i = 1; i < col.length; i++) {
-      const need = col[i - 1].y + minGap - col[i].y;
-      if (need > 0) col[i].y += need;
-    }
-    for (let i = col.length - 2; i >= 0; i--) {
-      const need = col[i].y + minGap - col[i + 1].y;
-      if (need > 0) col[i].y -= need;
-    }
-    for (const t of col) t.y = Math.max(18, Math.min(vb - 18, t.y));
-  }
-
-  return out;
 }
 
 /* ── Formatting and description ───────────────────────────────────────────*/

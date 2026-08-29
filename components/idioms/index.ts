@@ -1,5 +1,3 @@
-export { AllocationRing } from "./AllocationRing";
-export type { Slice } from "./AllocationRing";
 export { CountUp } from "./CountUp";
 export type { CountKind } from "./CountUp";
 export { Distribution } from "./Distribution";
@@ -12,6 +10,3 @@ export type { HeatDay } from "./HeatGrid";
 export { ScoreRing } from "./ScoreRing";
 export { Wheel } from "./Wheel";
 export type { WheelProps } from "./Wheel";
-export { Contribution } from "./Contribution";
-export type { ContributionRow, ContributionProps } from "./Contribution";
-export { ReturnBars } from "./ReturnBars";

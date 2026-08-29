@@ -64,7 +64,21 @@ export function EquityCurve({
 
   return (
     <figure className={styles.figure}>
-      <svg viewBox={`0 0 ${W} ${H}`} className={styles.svg} preserveAspectRatio="none" aria-hidden="true">
+      {/*
+        The glow follows the tone.
+
+        It was `--glow-moss` unconditionally, so a curve drawn in `signal` —
+        the cumulative-invested line, or an account whose window is *down* —
+        sat inside a green halo. That is the ground contradicting the figure,
+        which is the one thing a glow rationed to live data must never do.
+      */}
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className={styles.svg}
+        data-tone={tone}
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
         {gridlines.map((y) => (
           <line key={y} x1={0} x2={W} y1={y} y2={y} stroke="var(--line-light)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
         ))}

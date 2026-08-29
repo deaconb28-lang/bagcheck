@@ -90,53 +90,6 @@ export function PageHead({
   );
 }
 
-/**
- * The hero figure, with its cents stepped back rather than shrunk.
- *
- * Splitting on the decimal is done here so no page has to: a figure that
- * arrives as a formatted string and gets sliced at the call site is a figure
- * that will one day be sliced in the wrong place by a locale that puts the
- * separator somewhere else.
- */
-export function TotalValue({
-  value,
-  delta,
-  deltaPct,
-}: {
-  value: number;
-  /** Money made over the window, flows removed. Null when unknowable. */
-  delta: number | null;
-  deltaPct: number | null;
-}) {
-  const [dollars, cents] = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  })
-    .format(value)
-    .split(".");
-
-  return (
-    <div className={styles.total}>
-      <span className={`num ${styles.totalFigure}`}>
-        {dollars}
-        <span className={styles.cents}>.{cents}</span>
-      </span>
-      {delta != null ? (
-        <span
-          className={`num ${styles.delta}`}
-          data-tone={delta >= 0 ? "moss" : "loss"}
-        >
-          {delta >= 0 ? "▲" : "▼"} {money(Math.abs(delta))}
-          {deltaPct != null
-            ? ` · ${deltaPct >= 0 ? "+" : "−"}${Math.abs(deltaPct * 100).toFixed(2)}%`
-            : ""}
-        </span>
-      ) : null}
-    </div>
-  );
-}
-
 export function Chips({ children }: { children: React.ReactNode }) {
   return <div className={styles.chips}>{children}</div>;
 }

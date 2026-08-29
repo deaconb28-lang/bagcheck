@@ -120,6 +120,28 @@ const SECTIONS = [
    */
   { key: "dash-fold", path: "/you", mode: "dark" },
   /*
+   * The wheel and its key, on their own.
+   *
+   * The set piece of the product had never had a shot of its own — it was
+   * judged from a 6,800px page image where it is one band among a dozen, and
+   * an SVG whose labels used to paint outside its own viewBox is exactly the
+   * object that needs looking at close up.
+   */
+  { key: "dash-book", path: "/you", selector: '[class*="bookLead_block"]', mode: "dark" },
+  /*
+   * And the same block on a handset. The wheel is the only object on this
+   * screen that reflows into a different composition below 1080 — the key
+   * drops beneath the drawing rather than beside it — so the desktop shot
+   * says nothing about the arrangement a phone actually gets.
+   */
+  {
+    key: "dash-book-390",
+    path: "/you",
+    selector: '[class*="bookLead_block"]',
+    mode: "dark",
+    width: 390,
+  },
+  /*
    * Each waiting state whole. The viewport shot above catches the app one's
    * fold and cuts the Wrapped one off entirely, since the preview stacks both
    * on one page — and the fold is the least interesting thing about a screen
@@ -470,7 +492,7 @@ for (const screen of SCREENS) {
 for (const section of SECTIONS) {
   if (only && !only.includes(section.key)) continue;
   await shoot(section.key, section.path, {
-    width: 1440,
+    width: section.width ?? 1440,
     height: 900,
     mode: section.mode ?? "light",
     selector: section.selector,

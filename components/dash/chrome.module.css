@@ -178,49 +178,6 @@
   color: var(--meta);
 }
 
-/* ── The hero figure, with its cents stepped back ── */
-.total {
-  display: flex;
-  align-items: baseline;
-  gap: 18px;
-  margin-top: 12px;
-  flex-wrap: wrap;
-}
-
-.totalFigure {
-  font-size: 64px;
-  line-height: 1;
-  font-weight: 700;
-  letter-spacing: -0.045em;
-  color: var(--ink);
-}
-
-/*
- * The cents are the same size and weight and only a third as bright. A figure
- * that shrinks its own decimals is two type sizes pretending to be one number;
- * dimming them keeps the lockup and still says which part to read.
- */
-/*
- * 45%, not the 35% the mock used. At 64px this is large text and needs 3:1;
- * 35% white on the field reads 2.8 and fails, which is a thing nobody would
- * ever notice by eye and every contrast probe notices immediately.
- */
-.cents {
-  color: var(--meta);
-}
-
-.delta {
-  font-size: 22px;
-  font-weight: 600;
-}
-
-.delta[data-tone="moss"] {
-  color: var(--moss);
-}
-
-.delta[data-tone="loss"] {
-  color: var(--loss);
-}
 
 /* ── Chips: a range, a sort order ── */
 .chips {
@@ -567,14 +524,6 @@
 
   .headline {
     font-size: 34px;
-  }
-
-  .totalFigure {
-    font-size: 44px;
-  }
-
-  .delta {
-    font-size: 17px;
   }
 
   .panel {

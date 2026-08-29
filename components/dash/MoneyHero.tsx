@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { money, signedPct } from "./Chrome";
+import { money } from "./Chrome";
 import { EquityCurve } from "@/components/idioms";
 import type { DashboardView, RangeKey } from "@/lib/portfolio/types";
 import styles from "./moneyHero.module.css";
@@ -40,21 +40,17 @@ const RANGES: Array<{ key: RangeKey; label: string }> = [
 export function MoneyHero({
   value,
   gain,
-  ret,
   curve,
   range,
   basis,
   fallbackGain,
-  fallbackPct,
 }: {
   value: number;
   gain: number | null;
-  ret: number | null;
   curve: DashboardView["curve"];
   range: RangeKey;
   /** Unrealised P&L, for when the window closed nothing. */
   fallbackGain: number | null;
-  fallbackPct: number | null;
   /** What the curve is drawn on — the account, or the book. Stated, not implied. */
   basis: string | null;
 }) {
@@ -72,7 +68,6 @@ export function MoneyHero({
    * heading would be a different measurement under the same word.
    */
   const shown = gain ?? fallbackGain;
-  const shownPct = gain != null ? ret : fallbackPct;
   const over = gain != null ? rangeLabel(range) : "on what you hold";
   const up = (shown ?? 0) >= 0;
 
@@ -91,9 +86,16 @@ export function MoneyHero({
           <span aria-hidden="true">{up ? "▲" : "▼"}</span>{" "}
           {up ? "+" : "−"}
           {money(Math.abs(shown))}
-          {shownPct != null ? (
-            <span className={styles.pct}> ({signedPct(shownPct * 100)})</span>
-          ) : null}
+          {/*
+            The money, and not the rate.
+            
+            This line carried the percentage in brackets as well, which is the
+            brokerage-home-screen convention and is also the exact figure the
+            "Return" card states a hundred pixels below it — with a benchmark
+            beside it, which is the more useful of the two renderings. A figure
+            appears once per screen, so the hero keeps the money and the stat
+            row keeps the rate.
+          */}
           <span className={styles.since}> · {over}</span>
         </p>
       ) : null}

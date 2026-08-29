@@ -4,14 +4,15 @@ import {
   BOX,
   K_MAX,
   K_MIN,
-  declutter,
   describe as describeWheel,
   fmtPct,
   foldDust,
   gainRamp,
   layout,
   radii,
+  arcRoom,
   radiusFor,
+  rankRoom,
   ringValues,
   solveScale,
   validate,
@@ -169,23 +170,6 @@ test("the ring steps are nice numbers and always include the datum", () => {
   assert.ok(rings.includes(0), "zero is the datum and is always drawn");
   assert.deepEqual(rings, [-10, 0, 10, 20, 30, 40]);
   assert.ok(rings.length >= 4 && rings.length <= 7);
-});
-
-test("declutter separates a column and keeps it on the canvas", () => {
-  const tags = [0, 4, 8, 12].map((i) => ({
-    ticker: `T${i}`,
-    side: "right" as const,
-    y: 300 + i,
-    x: 400,
-    mid: 0,
-    outer: 200,
-  }));
-  const out = declutter(tags, 26, 640);
-  const ys = out.map((t) => t.y).sort((a, b) => a - b);
-  for (let i = 1; i < ys.length; i++) {
-    assert.ok(ys[i] - ys[i - 1] >= 26 - 1e-9, `gap ${ys[i] - ys[i - 1]}`);
-  }
-  assert.ok(ys[0] >= 18 && ys[ys.length - 1] <= 622);
 });
 
 test("a signed percentage uses a real minus sign", () => {
@@ -358,4 +342,25 @@ test("gridlines are never drawn closer than their own labels", () => {
     assert.ok(gap >= 20 - 1e-9, `${rings[i - 1]}% to ${rings[i]}% is ${gap.toFixed(1)}px`);
   }
   assert.ok(rings.includes(0));
+});
+
+test("a rank numeral is only drawn where its own wedge has the arc for it", () => {
+  /*
+   * The floor is silence, the same rule the heatmap runs on: a wedge too thin
+   * for a legible numeral keeps its colour, its angle and its row in the key.
+   */
+  const wide = { a0: 0, a1: 40 };
+  const sliver = { a0: 0, a1: 1.2 };
+  assert.ok(arcRoom(wide, BOX.rRank) >= rankRoom(1));
+  assert.ok(arcRoom(sliver, BOX.rRank) < rankRoom(1));
+
+  /*
+   * And a two-digit numeral needs more room than a one-digit one, or "12"
+   * gets drawn on a wedge with space for one character and its second glyph
+   * runs across the gap onto the neighbour — a label on the wrong position.
+   */
+  assert.ok(rankRoom(2) > rankRoom(1));
+  const tight = { a0: 0, a1: 6 };
+  assert.ok(arcRoom(tight, BOX.rRank) >= rankRoom(1));
+  assert.ok(arcRoom(tight, BOX.rRank) < rankRoom(2));
 });
