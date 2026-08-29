@@ -40,7 +40,7 @@
  * length, which is the rule the whole motion section turns on.
  */
 .seg {
-  animation: sweep 0.42s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+  animation: sweep 0.24s cubic-bezier(0.2, 0.8, 0.3, 1) both;
 }
 
 @keyframes sweep {

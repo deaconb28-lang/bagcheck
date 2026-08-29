@@ -466,7 +466,7 @@
   border-radius: 2px;
   background: var(--ink);
   transform-origin: left center;
-  animation: nextFill 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: nextFill 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes nextFill {

@@ -79,7 +79,7 @@ export function ReturnBars({
                 <div
                   key={row.symbol}
                   className={styles.row}
-                  style={{ animationDelay: `${Math.min(i * 40, 240)}ms` }}
+                  style={{ animationDelay: `${Math.min(i * 22, 130)}ms` }}
                 >
                   {/*
                     * The name sits on the side the bar runs *away* from, so

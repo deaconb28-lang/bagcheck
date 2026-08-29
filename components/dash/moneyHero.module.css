@@ -112,10 +112,10 @@
  */
 .basis {
   margin: 18px 0 0;
-  max-width: 92ch;
+  max-width: 64ch;
   font-family: var(--font-mono);
   font-size: 12px;
-  line-height: 1.7;
+  line-height: 1.6;
   letter-spacing: 0.04em;
   color: color-mix(in srgb, var(--meta) 74%, transparent);
 }

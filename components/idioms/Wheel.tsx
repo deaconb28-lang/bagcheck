@@ -228,7 +228,7 @@ export function Wheel({ positions, bookReturn, benchmark, value, caption }: Whee
     draw(0);
     const step = (ts: number) => {
       if (t0 == null) t0 = ts;
-      const p = Math.min((ts - t0) / 1150, 1);
+      const p = Math.min((ts - t0) / 600, 1);
       draw(1 - Math.pow(1 - p, 3));
       if (p < 1) raf = requestAnimationFrame(step);
     };

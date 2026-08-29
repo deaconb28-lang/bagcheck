@@ -194,7 +194,7 @@
   border-radius: 2px;
   background: var(--tone);
   transform-origin: left center;
-  animation: meterIn 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: meterIn 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes meterIn {

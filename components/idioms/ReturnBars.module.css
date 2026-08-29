@@ -115,7 +115,7 @@
 .row {
   position: relative;
   height: 34px;
-  animation: rise 0.44s ease-out both;
+  animation: rise 0.22s ease-out both;
 }
 
 /* ── The bar ──────────────────────────────────────────────────────────── */
@@ -129,7 +129,7 @@
   justify-content: center;
   border-radius: 2px;
   transform-origin: left;
-  animation: grow 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: grow 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .bar[data-dir="down"] {

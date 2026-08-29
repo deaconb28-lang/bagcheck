@@ -275,7 +275,22 @@ export function wrappedStats(input: StatsInput): { stats: WrappedStats; context:
 
   return {
     stats: {
-      USER_NAME: input.name?.trim() || null,
+      /*
+       * Never null, and that is the whole fix.
+       *
+       * A card earns only when *every* token it needs resolves, and the cover
+       * needs `USER_NAME` — which it does not even use as its subject. Its
+       * hero is the year; the name appears once, in "For ___" at the foot. So
+       * the one card every connected reader should own was gated on a
+       * decoration, and any account whose name lookup came back empty earned
+       * nothing at all. With no cards the deck falls back to the example one,
+       * `example` is true, and the dashboard reports "0 of 12" — which is
+       * exactly what a reader with a perfectly good ledger was seeing.
+       *
+       * "For you" is correct copy rather than a placeholder, so the card reads
+       * properly whether or not the brokerage or the provider gave us a name.
+       */
+      USER_NAME: input.name?.trim() || "you",
       YEAR: String(input.year),
       TOTAL_RETURN_PCT: pct(totalReturn),
       CONTRIBUTION_COUNT: contributions.length ? count(contributions.length) : null,

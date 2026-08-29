@@ -52,7 +52,7 @@ export function Contribution({ rows, limit = 7, money }: ContributionProps) {
           const up = row.pnl >= 0;
           const share = Math.min(1, Math.abs(row.pnl) / peak);
           return (
-            <li key={row.symbol} className={styles.row} style={{ animationDelay: `${i * 40}ms` }}>
+            <li key={row.symbol} className={styles.row} style={{ animationDelay: `${i * 22}ms` }}>
               <span className={styles.name}>
                 {/*
                   * The company's mark belongs here rather than on the wheel.

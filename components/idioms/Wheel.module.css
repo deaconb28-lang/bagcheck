@@ -322,15 +322,15 @@
  * paints the chart exactly where it belongs.
  */
 .stage {
-  animation: wheel-settle 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: wheel-settle 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .spin {
-  animation: wheel-spin 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: wheel-spin 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .annotations {
-  animation: wheel-annotate 0.6s ease-out 0.95s both;
+  animation: wheel-annotate 0.24s ease-out 0.42s both;
 }
 
 @keyframes wheel-settle {

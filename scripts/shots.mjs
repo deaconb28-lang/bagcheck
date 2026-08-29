@@ -120,6 +120,16 @@ const SECTIONS = [
    */
   { key: "dash-fold", path: "/you", mode: "dark" },
   /*
+   * The same fold on the light ground.
+   *
+   * Every shot in this group was `mode: "dark"`, which was right while the app
+   * was stamped permanently dark — and then the app started opening light and
+   * nothing here followed. The light palette has sat in `:root` for months
+   * with no probe ever reading a single one of its values.
+   */
+  { key: "dash-light", path: "/you", mode: "light" },
+  { key: "holdings-light", path: "/holdings", mode: "light" },
+  /*
    * Each waiting state whole. The viewport shot above catches the app one's
    * fold and cuts the Wrapped one off entirely, since the preview stacks both
    * on one page — and the fold is the least interesting thing about a screen
@@ -392,7 +402,7 @@ async function shoot(name, path, { width, height, mode, selector, full }) {
    */
   if (mode) {
     await page.addInitScript(`
-      try { localStorage.setItem("supercruise-mode", ${JSON.stringify(mode)}); } catch {}
+      try { localStorage.setItem("sc-mode", ${JSON.stringify(mode)}); } catch {}
       document.addEventListener("DOMContentLoaded", () => {
         document.documentElement.dataset.mode = ${JSON.stringify(mode)};
       });

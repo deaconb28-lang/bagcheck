@@ -34,7 +34,7 @@
 }
 
 .area {
-  animation: fadeArea 800ms ease-out 500ms both;
+  animation: fadeArea 240ms ease-out 160ms both;
 }
 
 @keyframes drawCurve {
