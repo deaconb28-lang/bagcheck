@@ -92,6 +92,21 @@ export function ReturnBars({
                     style={up ? { right: `calc(${100 - zero}% + 14px)` } : { left: `calc(${zero}% + 14px)` }}
                   >
                     <span className={styles.symbol}>{row.symbol}</span>
+                    {/*
+                      * The share of the book, on the page ground.
+                      *
+                      * It used to sit inside the bar, centred on a fill that
+                      * runs four steps of green — so one ink had to clear
+                      * 4.5:1 against all four on both grounds, which it
+                      * cannot: near-black read 2.65:1 on the darkest step in
+                      * light mode and white read 2.84:1 on the mid step in
+                      * dark. A label on a chart's own fill is a contrast
+                      * problem with no answer; beside it there is nothing to
+                      * measure against but the page.
+                      */}
+                    <span className={`num ${styles.share}`}>
+                      {(row.weight * 100).toFixed(1)}%
+                    </span>
                     {row.name ? <span className={styles.company}>{row.name}</span> : null}
                   </div>
 
@@ -100,20 +115,27 @@ export function ReturnBars({
                     data-dir={up ? "up" : "down"}
                     data-step={step(row.ret)}
                     style={{ left: `${left}%`, width: `${width}%` }}
-                  >
-                    {/* Only where the bar is wide enough to hold it. */}
-                    {width > 7 ? (
-                      <span className={styles.weight}>{(row.weight * 100).toFixed(2)}%</span>
-                    ) : null}
-                  </div>
+                  />
 
                   <div
                     className={styles.read}
                     data-side={up ? "right" : "left"}
+                    /*
+                      * Clamped inside the chart.
+                      *
+                      * A bar that runs almost the whole way out pushes its
+                      * reading past the right edge, and the sweep caught the
+                      * page scrolling sideways at 390px because of it — a
+                      * horizontal scrollbar on a phone, opened by a figure
+                      * nobody could reach anyway. `min`/`max` stop the
+                      * reading at the chart's own edge; where a bar is that
+                      * long the figure lands on its end, which is the one
+                      * place on the row it cannot be confused about.
+                      */
                     style={
                       up
-                        ? { left: `calc(${left + width}% + 12px)` }
-                        : { right: `calc(${100 - left}% + 12px)` }
+                        ? { left: `min(calc(${left + width}% + 12px), calc(100% - 108px))` }
+                        : { right: `min(calc(${100 - left}% + 12px), calc(100% - 108px))` }
                     }
                   >
                     <span className={styles.figure} data-dir={up ? "up" : "down"}>

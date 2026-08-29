@@ -37,7 +37,7 @@
    * colour at all.
    */
   background: var(--ink-field);
-  color: var(--bg);
+  color: var(--on-ink);
   border: 0;
 }
 
@@ -51,8 +51,8 @@
   border-radius: var(--r-pill);
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(255, 255, 255, 0.06) 46%,
+    color-mix(in srgb, var(--on-ink) 18%, transparent) 0%,
+    color-mix(in srgb, var(--on-ink) 6%, transparent) 46%,
     transparent 70%
   );
 }
@@ -72,19 +72,27 @@
   gap: 12px;
 }
 
+/*
+ * `--on-ink-body`, not a literal white.
+ *
+ * The plate is `--ink-field`, which is white in dark mode — so a hardcoded
+ * white label on it was white on white, and the two lines at the head of the
+ * dashboard's Wrapped tile read 1.00:1. There is a token for "type on the
+ * inverted plate" and it is the only thing that can be right in both modes.
+ */
 .promoLabel {
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--on-ink-body);
 }
 
 .promoState {
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--on-ink-body);
 }
 
 .promoFigure {
@@ -99,7 +107,7 @@
   margin-top: 12px;
   font-size: 16px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.86);
+  color: var(--on-ink-body);
 }
 
 .promoPills {
@@ -114,7 +122,7 @@
   font-weight: 600;
   border-radius: var(--r-pill);
   padding: 7px 13px;
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  border: 1px solid color-mix(in srgb, var(--on-ink) 45%, transparent);
 }
 
 .promoPill[data-solid] {
@@ -147,12 +155,12 @@
 
 .promoGhost {
   flex: none;
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: color-mix(in srgb, var(--on-ink) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--on-ink) 30%, transparent);
 }
 
 .promoGhost:hover {
-  background: rgba(255, 255, 255, 0.26);
+  background: color-mix(in srgb, var(--on-ink) 26%, transparent);
 }
 
 .promoSolid {
@@ -289,8 +297,8 @@
 .locked {
   display: flex;
   flex-direction: column;
-  border: 1px dashed rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.018);
+  border: 1px dashed var(--line2);
+  background: var(--inset);
   border-radius: var(--r-panel);
   padding: 30px 32px;
   min-width: 0;
@@ -327,7 +335,7 @@
  */
 .lockedArt {
   margin-top: 26px;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--ink3);
 }
 
 .teaser {
@@ -347,14 +355,14 @@
   font-size: 24px;
   font-weight: 600;
   letter-spacing: -0.03em;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--ink2);
 }
 
 .lockedBody {
   margin: 10px 0 0;
   font-size: 16px;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--ink3);
 }
 
 .lockedSpacer {

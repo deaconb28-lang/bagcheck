@@ -108,8 +108,16 @@
   font-size: 13.5px;
 }
 
+/*
+ * `--meta`, not `--line2`.
+ *
+ * A hairline token used as text is the commonest way a glyph disappears: this
+ * read 1.35:1 on white and 1.27:1 on black — invisible on *both* grounds, in
+ * the one place the row says which way the number moved. Borders and tracks
+ * are meant to be faint; this is a word.
+ */
 .arrow {
-  color: var(--line2);
+  color: var(--meta);
   padding: 0 2px;
 }
 
@@ -126,14 +134,22 @@
   font-size: 14.5px;
 }
 
+/*
+ * The deep step, because the chip supplies its own ground.
+ *
+ * `--moss` on the page clears 4.74:1; the same ink over the chip's own 9%
+ * tint reads 4.19:1, and `--loss` goes 4.95 to 4.33. A fill a component adds
+ * under its own text is part of that text's contrast, and neither figure was
+ * ever measured against it.
+ */
 .chip[data-dir="up"] {
-  color: var(--moss);
+  color: var(--moss-deep);
   border-color: var(--moss-line);
   background: color-mix(in srgb, var(--moss) 9%, transparent);
 }
 
 .chip[data-dir="down"] {
-  color: var(--loss);
+  color: var(--loss-deep);
   border-color: var(--loss-line);
   background: color-mix(in srgb, var(--loss) 9%, transparent);
 }

@@ -159,11 +159,15 @@
   box-shadow: inset 0 0 0 1px var(--loss);
 }
 
-.weight {
-  font-family: var(--font-mono);
+/*
+ * The share, under the ticker on the page ground. See the note in the
+ * component: this was centred inside the bar, where no single ink clears
+ * 4.5:1 against four steps of a fill on two grounds.
+ */
+.share {
   font-size: 12.5px;
-  letter-spacing: 0.04em;
-  color: var(--ink);
+  letter-spacing: 0.02em;
+  color: var(--ink3);
   white-space: nowrap;
 }
 

@@ -221,6 +221,15 @@ function sample() {
     if (cs.visibility === "hidden" || cs.display === "none" || Number(cs.opacity) < 0.5) continue;
     const r = el.getBoundingClientRect();
     if (!r.width || !r.height) continue;
+    /*
+     * Visually-hidden text is for a screen reader, and a screen reader has no
+     * contrast. The standard 1x1 clip is `clip-path: inset(50%)` on a 1px box,
+     * which is neither `display: none` nor `visibility: hidden` and duly came
+     * back as a failure on every loading shot — a live-region announcement
+     * nobody is being asked to look at.
+     */
+    if (r.width <= 2 && r.height <= 2) continue;
+    if (cs.clipPath && cs.clipPath !== "none" && /inset\(\s*50%/.test(cs.clipPath)) continue;
     /* Phone mocks are drawings of the app, not text anyone is asked to read. */
     if (el.closest('[aria-hidden="true"]')) continue;
     /*

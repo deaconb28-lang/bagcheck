@@ -117,7 +117,14 @@
   font-size: 12px;
   line-height: 1.6;
   letter-spacing: 0.04em;
-  color: color-mix(in srgb, var(--meta) 74%, transparent);
+  /*
+   * `--meta` itself. The 74% mix read 2.85:1 on white and 4.09:1 on black —
+   * the ramp's dim end is already the dim end, and a mix of it is a second
+   * dimming nobody measured. Provenance is the line that says where every
+   * figure above it came from; it is the last thing on this screen that
+   * should be hard to read.
+   */
+  color: var(--meta);
 }
 
 @media (max-width: 560px) {

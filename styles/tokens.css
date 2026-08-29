@@ -77,7 +77,14 @@
   --ink3: #55555f;
   /* 4.9:1 on white. Mono labels are 10–12px, which is small text by WCAG's
      reckoning, so the quietest grey in the system still has to clear 4.5. */
-  --meta: #6e6e78;
+  /*
+   * Darker than #6e6e78, which cleared 4.5:1 on pure white and failed on every
+   * tinted plate in the product — the collection frames, the trophy tiles and
+   * the case's face meta all read 4.36–4.41 against their own grounds. A ramp
+   * measured against the page is a ramp that fails on everything sitting on
+   * it.
+   */
+  --meta: #62626c;
 
   /* ── Edges. Panels get --edge; rows inside a list get --line-light. ── */
   --edge: rgba(14, 14, 18, 0.08);
@@ -422,6 +429,53 @@
   --mk-violet-mid: #6d28d9;
   --mk-violet-deep: #4c1d95;
   --mk-violet-abyss: #3b0764;
+
+  /*
+   * ── The fifteen that had no light value ──────────────────────────────
+   *
+   * These were declared inside `html[data-mode="dark"]` and nowhere else, on
+   * the reasoning that the app was dark-only and the light block was history.
+   * Light is the default now, and the cost of the omission is not a wrong
+   * colour — it is a *missing declaration*: an unresolved `var()` invalidates
+   * the whole property it sits in rather than falling through to the next
+   * value, so every rule that cited one of these simply stopped applying.
+   *
+   * The holdings heatmap is what made it visible. Its tile background is a
+   * specular gradient over the heat mix, and the gradient names `--glass-lit`
+   * — so in light mode the entire `background` was thrown away and the
+   * flagship chart on `/holdings` drew as a white rectangle with seven
+   * tickers floating on it. No fill, no rank chip, no rim light, and every
+   * automated check green: the map still had its areas, its order and its
+   * `aria-label`, and only a render says otherwise.
+   *
+   * The values below are the same *meanings* with the ends swapped, exactly
+   * like the rest of this file. A specular edge is white on both grounds but
+   * has to be far quieter on a pale plate, where white on near-white is not a
+   * highlight but an erasure; a rim hairline goes to near-black, because on
+   * white the thing that separates an object from its ground is a shadow
+   * rather than a light.
+   */
+  --avatar-grad: linear-gradient(140deg, #5b21b6, #7c3aed);
+  --chrome: rgba(255, 255, 255, 0.92);
+  --glass: color-mix(in srgb, var(--s1) 72%, transparent);
+  --glass-deep: color-mix(in srgb, var(--bg) 72%, transparent);
+  --glass-lit: rgba(255, 255, 255, 0.5);
+  --glass-rim: rgba(14, 14, 18, 0.1);
+  --glass-blur: blur(20px) saturate(150%);
+  --nav-dim: rgba(14, 14, 18, 0.62);
+  /*
+   * Gold is the score's family and the score reads on a pale ground only when
+   * it is taken down toward the ink: #ffc857 on white is 1.6:1, which is a
+   * highlighter rather than a figure.
+   */
+  --gold: #a1690a;
+  --gold-deep: #7a4e05;
+  --gold-line: rgba(161, 105, 10, 0.34);
+  --gold-tint: rgba(161, 105, 10, 0.1);
+  --glow-gold: 0 0 0 1px rgba(161, 105, 10, 0.18);
+  --halo-gold: radial-gradient(60% 54% at 50% 26%, rgba(161, 105, 10, 0.05), transparent 72%);
+  /* The single worst column in a chart, one step past `--loss`. */
+  --loss-deep: #a8141f;
 }
 
 /*

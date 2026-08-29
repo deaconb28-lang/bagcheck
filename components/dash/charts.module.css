@@ -1,3 +1,13 @@
+/*
+ * `--ink3`, not a literal 60% white.
+ *
+ * The rule "small text on the dark field needs 60% white" was written down as
+ * a hex in ten places, which is the same failure as any other palette value
+ * outside `tokens.css`: it is a colour that only knows one ground. Light is
+ * the default now, and every one of these read 1.00:1 — white on white — on
+ * the table heads, the company names, the weights and the insight bodies. The
+ * token carries a value for each ground; the literal carries one.
+ */
 /* ── Daily realised P&L, as columns off a zero line ─────────────────────── */
 .columns {
   position: relative;
@@ -15,7 +25,7 @@
   right: 0;
   top: var(--zero-at, 50%);
   height: 1px;
-  background: rgba(255, 255, 255, 0.16);
+  background: var(--line2);
   z-index: 1;
 }
 
@@ -107,7 +117,7 @@
   margin-top: 14px;
   font-size: 13px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--ink3);
 }
 
 .legend {
@@ -116,7 +126,7 @@
   gap: 18px;
   font-size: 13px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--ink3);
 }
 
 .legendItem {
@@ -232,7 +242,7 @@
   gap: 10px;
   font-size: 14px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--ink3);
 }
 
 .holdWin,
@@ -255,7 +265,7 @@
   margin-top: 8px;
   height: 14px;
   border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--track);
   overflow: hidden;
 }
 
